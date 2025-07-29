@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:food_inspector/features/splash/SplashService.dart';
+
+import '../SplashService.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_inspector/features/login/bloc/loginBloc.dart';
 
+import '../../../Screens/login/bloc/loginBloc.dart';
 import '../../utils/validators.dart';
 
 
