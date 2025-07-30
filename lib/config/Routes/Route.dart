@@ -19,7 +19,7 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.homeScreen:
       return  MaterialPageRoute(builder: (context) => Homescreen(),);
     case RouteName.loginScreen:
-      return  MaterialPageRoute(builder: (context) => Loginscreen(),);
+      return  MaterialPageRoute(builder: (context) => LoginScreen(),);
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => Profilescreen(),);
     case RouteName.faqScreen:

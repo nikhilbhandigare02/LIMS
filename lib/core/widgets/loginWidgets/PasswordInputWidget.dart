@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
+import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../utils/validators.dart';
 
-class Passwordinput extends StatefulWidget {
-  final FocusNode PasswordFocusNode;
+class PasswordInput extends StatefulWidget {
+  final FocusNode passwordFocusNode;
   final formkey;
 
-  const Passwordinput({
+  const PasswordInput({
     super.key,
     required this.formkey,
-    required this.PasswordFocusNode,
+    required this.passwordFocusNode,
   });
 
   @override
-  State<Passwordinput> createState() => _PasswordinputState();
+  State<PasswordInput> createState() => _PasswordInputState();
 }
 
-class _PasswordinputState extends State<Passwordinput> {
+class _PasswordInputState extends State<PasswordInput> {
   bool _obscureText = true;
 
   void _toggleVisibility() {
@@ -28,45 +29,47 @@ class _PasswordinputState extends State<Passwordinput> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(buildWhen: (current, previous) => current.username != previous.username,
-        builder: (context, state){
-      return TextFormField(
-        focusNode: widget.PasswordFocusNode,
-        obscureText: _obscureText,
-        style: TextStyle(fontSize: 16, color: Colors.black87),
-        decoration: InputDecoration(
-          hintText: 'Enter your password',
-          hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-          prefixIcon: Icon(Icons.lock_outline, color: Colors.blueAccent),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey[600],
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (current, previous) => current.password != previous.password,
+      builder: (context, state) {
+        return TextFormField(
+          focusNode: widget.passwordFocusNode,
+          obscureText: _obscureText,
+          style: const TextStyle(fontSize: 16, color: customColors.black87),
+          decoration: InputDecoration(
+            hintText: 'Enter your password',
+            hintStyle: TextStyle( fontSize: 16),
+            prefixIcon: const Icon(Icons.lock_outline, color: customColors.primary),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureText ? Icons.visibility_off : Icons.visibility,
+                color: customColors.black87,
+              ),
+              onPressed: _toggleVisibility,
             ),
-            onPressed: _toggleVisibility,
+            filled: true,
+            fillColor: customColors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: customColors.greyDivider),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: customColors.greyDivider),
+            ),
           ),
-          filled: true,
-          fillColor: Colors.grey[100],
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade400),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blueAccent, width: 0.5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-        ),
-        onChanged: (value) {
-          context.read<LoginBloc>().add(PasswordEvent(password: value));
-        },
-        onFieldSubmitted: (value) {},
-        validator: (value) => Validators.validateEmptyField(value, 'Password'),
-      );
-    });
+          onChanged: (value) {
+            context.read<LoginBloc>().add(PasswordEvent(password: value));
+          },
+          onFieldSubmitted: (value) {},
+          validator: (value) => Validators.validateEmptyField(value, 'Password'),
+        );
+      },
+    );
   }
 }

@@ -7,9 +7,9 @@ part 'loginEvent.dart';
 part 'loginState.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  final LoginRepository loginRepository = LoginRepository();
+  final LoginRepository loginRepository;
 
-  LoginBloc() : super(const LoginState()) {
+  LoginBloc({required this.loginRepository}) : super(const LoginState()) {
     on<UsernameEvent>(username);
     on<PasswordEvent>(password);
     on<LoginButtonEvent>(submitButton);
@@ -24,9 +24,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> submitButton(
-    LoginButtonEvent event,
-    Emitter<LoginState> emit,
-  ) async {
+      LoginButtonEvent event,
+      Emitter<LoginState> emit,
+      ) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
     try {
       Map<String, dynamic> data = {
@@ -34,22 +34,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         'password': state.password,
       };
       final response = await loginRepository.loginApi(data);
-      if(response.error != null && response.error!.isNotEmpty){
-            emit(
-                state.copyWith(message: 'Invalid credentials', apiStatus: ApiStatus.error),
-            );
-      } else{
+
+      if (response.result == "success") {
         emit(state.copyWith(
-            message: 'Success',
-            apiStatus: ApiStatus.success));
+          message: response.remark ?? 'Login Successful',
+          apiStatus: ApiStatus.success,
+        ));
+      } else {
+        emit(state.copyWith(
+          message: response.remark ?? 'Invalid credentials',
+          apiStatus: ApiStatus.error,
+        ));
       }
     } catch (e) {
-      emit(
-        state.copyWith(
-          message: 'Something went wrong',
-          apiStatus: ApiStatus.error,
-        ),
-      );
+      emit(state.copyWith(
+        message: 'Something went wrong',
+        apiStatus: ApiStatus.error,
+      ));
     }
   }
+
 }

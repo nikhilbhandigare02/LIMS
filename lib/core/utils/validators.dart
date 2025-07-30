@@ -1,5 +1,5 @@
 class Validators {
-  static String? validatePass(String? value) {
+  static String? validateUsername(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Username is required';
     }
