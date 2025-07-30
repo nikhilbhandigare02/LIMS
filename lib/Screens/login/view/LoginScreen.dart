@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/widgets/loginWidgets/EmailInputWidget.dart';
 import '../../../core/widgets/loginWidgets/PasswordInputWidget.dart';
 import '../../../core/widgets/loginWidgets/submitButton.dart';
+import '../../registration/view/registration.dart';
 import '../bloc/loginBloc.dart';
 
 class Loginscreen extends StatefulWidget {
@@ -99,6 +100,24 @@ class _LoginscreenState extends State<Loginscreen> {
                     Loginbutton(formkey: _formKey),
 
                     const SizedBox(height: 30),
+                    // In your LoginScreen or any other screen
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'New user? Sign up',
+                        style: TextStyle(
+                          color: Color(0xFF1E88E5),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    )
 
                   ],
                 ),
