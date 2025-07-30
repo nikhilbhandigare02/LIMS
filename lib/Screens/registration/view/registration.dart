@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
+import '../../../config/Routes/RouteName.dart';
+import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../login/view/LoginScreen.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -131,6 +133,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     const SizedBox(height: 20),
                     buildTextField(
+                      controller: _fullNameController,
+                      label: 'Reg. No',
+                      icon: Icons.account_circle_outlined,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your full name';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    buildTextField(
                       controller: _emailController,
                       label: 'E-mail',
                       icon: Icons.email_outlined,
@@ -172,98 +186,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-                    buildDropdownField(
-                      label: 'District',
-                      value: _selectedDistrict,
-                      items: _districts,
-                      icon: Icons.location_city_outlined,
-                      onChanged: (value) => setState(() => _selectedDistrict = value),
-                      validator: (value) => value == null ? 'Please select a district' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    buildDropdownField(
-                      label: 'Region',
-                      value: _selectedRegion,
-                      items: _regions,
-                      icon: Icons.map_outlined,
-                      onChanged: (value) => setState(() => _selectedRegion = value),
-                      validator: (value) => value == null ? 'Please select a region' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    buildDropdownField(
-                      label: 'Division',
-                      value: _selectedDivision,
-                      items: _divisions,
-                      icon: Icons.business_outlined,
-                      onChanged: (value) => setState(() => _selectedDivision = value),
-                      validator: (value) => value == null ? 'Please select a division' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    buildDropdownField(
-                      label: 'Area',
-                      value: _selectedArea,
-                      items: _areas,
-                      icon: Icons.place_outlined,
-                      onChanged: (value) => setState(() => _selectedArea = value),
-                      validator: (value) => value == null ? 'Please select an area' : null,
-                    ),
-                    const SizedBox(height: 24),
 
-                    // Terms and Conditions
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Transform.scale(
-                            scale: 1.2,
-                            child: Checkbox(
-                              value: _agreeToTerms,
-                              onChanged: (val) {
-                                setState(() => _agreeToTerms = val ?? false);
-                              },
-                              activeColor: const Color(0xFF1E88E5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'I agree with ',
-                                style: TextStyle(
-                                  color: Colors.grey[700],
-                                  fontSize: 14,
-                                ),
-                                children: const [
-                                  TextSpan(
-                                    text: 'Terms & Conditions',
-                                    style: TextStyle(
-                                      color: Color(0xFF1E88E5),
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
+
                     const SizedBox(height: 30),
 
                     // Sign up Button with gradient and enhanced styling
@@ -318,22 +243,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Already a member
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Loginscreen()),
-                        );
-                      },
-                      child: Text(
-                        "Already have an account? Sign in",
-                        style: TextStyle(
-                          color: Color(0xFF1E88E5),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account ",
+                          style: TextStyle(color: customColors.black87),
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, RouteName.loginScreen);
+                          },
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(color: customColors.primary),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 30),
                   ],

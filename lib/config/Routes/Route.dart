@@ -9,6 +9,7 @@ import '../../Screens/Setting/view/Setting.dart';
 import '../../Screens/home/view/HomeScreen.dart';
 import '../../Screens/login/view/LoginScreen.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
+import '../../Screens/registration/view/registration.dart';
 import '../../Screens/splash/view/SplashScreen.dart';
 
 class Routes{
@@ -19,7 +20,9 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.homeScreen:
       return  MaterialPageRoute(builder: (context) => Homescreen(),);
     case RouteName.loginScreen:
-      return  MaterialPageRoute(builder: (context) => Loginscreen(),);
+      return  MaterialPageRoute(builder: (context) => LoginScreen(),);
+    case RouteName.registrationScreen:
+      return  MaterialPageRoute(builder: (context) => RegistrationScreen(),);
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);
     case RouteName.faqScreen:
