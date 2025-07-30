@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/Themes/colors/colorsTheme.dart';
+
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String screenTitle;
   final String username;
@@ -30,7 +32,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         height: 150,
         decoration: BoxDecoration(
-          color: Colors.indigo,
+          color: customColors.primary,
           borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
           boxShadow: [
             BoxShadow(

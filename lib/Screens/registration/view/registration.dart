@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
+import '../../login/view/LoginScreen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -319,7 +320,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                     // Already a member
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Loginscreen()),
+                        );
+                      },
                       child: Text(
                         "Already have an account? Sign in",
                         style: TextStyle(
