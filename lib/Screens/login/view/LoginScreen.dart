@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/login/repository/loginRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
-
 import '../../../core/widgets/loginWidgets/CaptchaWidget.dart';
 import '../../../core/widgets/loginWidgets/EmailInputWidget.dart';
 import '../../../core/widgets/loginWidgets/PasswordInputWidget.dart';
