@@ -27,7 +27,7 @@ class CustomDrawer extends StatelessWidget {
               _buildMenuItem(
                 context,
                 Icons.money,
-                "My Earnings",
+                "Form 6",
                 // onTap: () => Navigator.pushNamed(context, RouteName.earningsScreen),
               ),
               _buildMenuItem(

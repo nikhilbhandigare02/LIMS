@@ -8,7 +8,6 @@ import '../../../core/widgets/RegistrationInput/Curved.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
 import '../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
 import '../../../core/widgets/RoundButton/RoundButton.dart';
-import '../../home/bloc/homeBloc.dart';
 import '../bloc/registrationBloc.dart';
 
 
@@ -206,7 +205,7 @@ class RegistrationScreen extends StatelessWidget {
                             onPressed: () {
                               final formState = _formKey.currentState;
                               if (formState != null && formState.validate()) {
-                                context.read<SampleFormBloc>().add(FormSubmit());
+                                context.read<RegistrationBloc>().add(FormSubmitted());
                               }
                             },
                           ),
