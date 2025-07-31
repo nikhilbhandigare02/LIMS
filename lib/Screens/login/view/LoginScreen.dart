@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.only(top: 40, left: 24),
                   child: const Text(
 
-                    'FOOD SAFETY OFFICER LOGIN',
+                    'FOOD INSPECTOR OFFICER\n LOGIN',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
