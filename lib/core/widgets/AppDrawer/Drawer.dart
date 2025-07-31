@@ -21,7 +21,7 @@ class CustomDrawer extends StatelessWidget {
               _buildMenuItem(
                 context,
                 Icons.account_balance_wallet,
-                "Wallet Balance",
+                "Home",
                 // onTap: () => Navigator.pushNamed(context, RouteName.walletScreen),
               ),
               _buildMenuItem(
@@ -30,20 +30,16 @@ class CustomDrawer extends StatelessWidget {
                 "Form 6",
                 // onTap: () => Navigator.pushNamed(context, RouteName.earningsScreen),
               ),
-              _buildMenuItem(
-                context,
-                Icons.card_giftcard,
-                "Double Dhamaka Bonus",
-                // onTap: () => Navigator.pushNamed(context, RouteName.bonusScreen),
-              ),
-              const Divider(),
-              _buildSectionTitle("Others"),
+
               _buildMenuItem(
                 context,
                 Icons.library_books,
                 "Sample List Records",
                 onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
               ),
+              const Divider(),
+              _buildSectionTitle("Others"),
+
               _buildMenuItem(
                 context,
                 Icons.settings,
@@ -56,23 +52,26 @@ class CustomDrawer extends StatelessWidget {
                 "Help & Support",
                 onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
               ),
+              // SizedBox(height: 100,),
+              Spacer(),
+              const Divider(),
+              _buildMenuItem(context, Icons.logout, "Logout", onTap: () {
+                ExitConfirmation.show(
+                  context,
+                  title: "Logout",
+                  description: "Are you sure you want to Logout?",
+                  confirmText: "Yes",
+                  cancelText: "No",
+                  confirmIcon: Icons.exit_to_app,
+                  cancelIcon: Icons.cancel_outlined,
+                );
+              }),
+              const SizedBox(height: 10),
             ],
           ),
 
     ),
-          const Divider(),
-          _buildMenuItem(context, Icons.logout, "Logout", onTap: () {
-            ExitConfirmation.show(
-              context,
-              title: "Logout",
-              description: "Are you sure you want to Logout?",
-              confirmText: "Yes",
-              cancelText: "No",
-              confirmIcon: Icons.exit_to_app,
-              cancelIcon: Icons.cancel_outlined,
-            );
-          }),
-          const SizedBox(height: 10),
+
         ],
       ),
     );

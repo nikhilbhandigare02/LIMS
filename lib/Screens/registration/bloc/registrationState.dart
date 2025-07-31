@@ -5,6 +5,8 @@ class RegistrationState extends Equatable {
   final String username;
   final String email;
   final String password;
+  final String message;
+  final ApiStatus apiStatus;
   final String? selectedCountry;
   final String? selectedState;
   final String? selectedDistrict;
@@ -17,20 +19,23 @@ class RegistrationState extends Equatable {
     this.username = '',
     this.email = '',
     this.password = '',
+    this.message = '',
     this.selectedCountry,
     this.selectedState,
     this.selectedDistrict,
     this.countries = const ['India', 'USA'],
     this.states = const [],
     this.districts = const [],
+    this.apiStatus = ApiStatus.initial
   });
 
   RegistrationState copyWith({
     String? name,
     String? username,
+    String? message,
     String? email,
      String? password,
-
+ApiStatus? apiStatus,
     String? selectedCountry,
     String? selectedState,
     String? selectedDistrict,
@@ -41,7 +46,9 @@ class RegistrationState extends Equatable {
     return RegistrationState(
       name: name ?? this.name,
       username: username ?? this.username,
+      apiStatus: apiStatus ?? this.apiStatus,
       password: password ?? this.password,
+      message: message ?? this.message,
       email: email ?? this.email,
       selectedCountry: selectedCountry ?? this.selectedCountry,
       selectedState: selectedState ?? this.selectedState,
@@ -55,6 +62,7 @@ class RegistrationState extends Equatable {
   @override
   List<Object?> get props => [
     name,
+    apiStatus,
     username,
     password,
     email,
@@ -64,5 +72,6 @@ class RegistrationState extends Equatable {
     countries,
     states,
     districts,
+    message
   ];
 }

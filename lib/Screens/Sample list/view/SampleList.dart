@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 import '../../../core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
+import '../../../core/widgets/SampleLIstWidgets/edit.dart';
 
 class SampleAnalysisScreen extends StatefulWidget {
   @override
@@ -227,13 +229,19 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     _buildActionButton(
                       icon: Icons.visibility,
                       color: Colors.blue,
-                      onPressed: () => _showViewDialog(data),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => ViewSampleDialog(data: data),
+                      ),
                     ),
                     SizedBox(width: 12),
                     _buildActionButton(
                       icon: Icons.edit,
                       color: Colors.green,
-                      onPressed: () => _showEditDialog(data),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => EditSampleDialog(data: data),
+                      ),
                     ),
                   ],
                 ),
@@ -390,12 +398,18 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                             children: [
                               IconButton(
                                 icon: Icon(Icons.visibility, color: Colors.blue),
-                                onPressed: () => _showViewDialog(data),
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => ViewSampleDialog(data: data),
+                                ),
                                 iconSize: 20,
                               ),
                               IconButton(
                                 icon: Icon(Icons.edit, color: Colors.green),
-                                onPressed: () => _showEditDialog(data),
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => EditSampleDialog(data: data),
+                                ),
                                 iconSize: 20,
                               ),
                             ],
@@ -413,70 +427,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  void _showViewDialog(SampleData data) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            'Sample Details',
-            style: TextStyle(color: customColors.primary, fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDetailRow('Serial No:', data.serialNo),
-              _buildDetailRow('Status:', data.status),
-              _buildDetailRow('Lab Location:', data.labLocation),
-              _buildDetailRow('Requested Date:', data.sampleRequestedDate),
-              _buildDetailRow('Sent Date:', data.sampleSentDate),
-              _buildDetailRow('Resent Date:', data.sampleResentDate),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close', style: TextStyle(color: customColors.primary)),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  void _showEditDialog(SampleData data) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            'Edit Sample',
-            style: TextStyle(color: customColors.primary, fontWeight: FontWeight.bold),
-          ),
-          content: Text('Edit functionality for Sample ${data.serialNo}'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: customColors.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text('Save', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
