@@ -10,6 +10,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           _buildDrawerHeader(context),
@@ -18,7 +19,7 @@ class CustomDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: [
               _buildSectionTitle("Wallets & Earnings"),
-              _buildMenuItem(
+              _buildMenuItem (
                 context,
                 Icons.account_balance_wallet,
                 "Wallet Balance",

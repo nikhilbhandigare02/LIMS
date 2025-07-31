@@ -14,6 +14,7 @@ import '../../Screens/login/view/LoginScreen.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';
 import '../../Screens/splash/view/SplashScreen.dart';
+import '../../Screens/update_password/view/UpdatePassword.dart';
 
 class Routes{
 static Route<dynamic> generateRoute(RouteSettings setting){
@@ -22,6 +23,9 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => Splashscreen(),);
     case RouteName.homeScreen:
       return  MaterialPageRoute(builder: (context) => Form6Screen(),);
+    case RouteName.updateScreen:
+      return  MaterialPageRoute(builder: (context) => UpdatePasswordScreen(),);
+
     case RouteName.loginScreen:
       return  MaterialPageRoute(builder: (context) => LoginScreen(),);
     case RouteName.registrationScreen:

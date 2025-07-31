@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.only(top: 40, left: 24),
                   child: const Text(
 
-                    'FOOD INSPECTOR OFFICER\n LOGIN',
+                    'FSO LOGIN',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "Inspector login portal",
+                                " login portal",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: customColors.black87,

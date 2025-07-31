@@ -53,7 +53,7 @@ class RegistrationScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.only(top: 40, left: 24),
                   child: const Text(
-                    'FOOD INSPECTOR OFFICER\n REGISTRATION',
+                    'FSO REGISTRATION',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -224,7 +224,7 @@ class RegistrationScreen extends StatelessWidget {
                                 },
                                 child: const Text(
                                   "Sign In",
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontWeight: FontWeight.w600, color: customColors.primary),
                                 ),
                               ),
                             ],
