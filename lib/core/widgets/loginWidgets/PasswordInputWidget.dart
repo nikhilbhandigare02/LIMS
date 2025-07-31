@@ -32,42 +32,54 @@ class _PasswordInputState extends State<PasswordInput> {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (current, previous) => current.password != previous.password,
       builder: (context, state) {
-        return TextFormField(
-          focusNode: widget.passwordFocusNode,
-          obscureText: _obscureText,
-          style: const TextStyle(fontSize: 16, color: customColors.black87),
-          decoration: InputDecoration(
-            hintText: 'Enter your password',
-            hintStyle: TextStyle( fontSize: 16),
-            prefixIcon: const Icon(Icons.lock_outline, color: customColors.primary),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscureText ? Icons.visibility_off : Icons.visibility,
-                color: customColors.black87,
+        return Container(
+          decoration: BoxDecoration(
+            color: customColors.white,
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
               ),
-              onPressed: _toggleVisibility,
-            ),
-            filled: true,
-            fillColor: customColors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: customColors.greyDivider),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: customColors.primary, width: 0.5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: customColors.greyDivider),
-            ),
+            ],
           ),
-          onChanged: (value) {
-            context.read<LoginBloc>().add(PasswordEvent(password: value));
-          },
-          onFieldSubmitted: (value) {},
-          validator: (value) => Validators.validateEmptyField(value, 'Password'),
+          child: TextFormField(
+            focusNode: widget.passwordFocusNode,
+            obscureText: _obscureText,
+            style: const TextStyle(fontSize: 16, color: customColors.black87),
+            decoration: InputDecoration(
+              hintText: 'Enter your password',
+              hintStyle: const TextStyle(fontSize: 16),
+              prefixIcon: const Icon(Icons.lock_outline, color: customColors.primary),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: customColors.black87,
+                ),
+                onPressed: _toggleVisibility,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.greyDivider),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.greyDivider),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            onChanged: (value) {
+              context.read<LoginBloc>().add(PasswordEvent(password: value));
+            },
+            validator: (value) => Validators.validateEmptyField(value, 'Password'),
+          ),
         );
       },
     );

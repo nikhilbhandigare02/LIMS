@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/home/repository/homeRepository.dart';
 import 'package:food_inspector/core/widgets/AppDrawer/Drawer.dart';
+import 'package:food_inspector/core/widgets/RoundButton/RoundButton.dart';
 
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
@@ -32,6 +33,7 @@ class _Form6ScreenState extends State<Form6Screen> {
     return BlocProvider(
       create: (_) => sampleFormBloc,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppHeader(
           screenTitle: "Form 6",
           username: "Rajeev Ranjan",
@@ -72,7 +74,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                     label: "District",
                     value: state.district ?? '',
                     items: const ["Milk", "Water", "Soil"],
-                    onChanged: (val){ if (val != null) { context.read<SampleFormBloc>().add(DistrictChanged(val));}},
+                    onChanged: (val){ context.read<SampleFormBloc>().add(DistrictChanged(val));},
                   ),
                   SizedBox(height: 10,),
 
@@ -80,7 +82,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                     label: "Region",
                     value: state.region,
                     items: const ["Milk", "Water", "Soil"],
-                    onChanged: (val){ if (val != null) { context.read<SampleFormBloc>().add(RegionChanged(val));}},
+                    onChanged: (val){ context.read<SampleFormBloc>().add(RegionChanged(val));},
                   ),
                   SizedBox(height: 10,),
 
@@ -88,7 +90,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                     label: "Division",
                     value: state.division,
                     items: const ["Milk", "Water", "Soil"],
-                    onChanged: (val){ if (val != null) { context.read<SampleFormBloc>().add(DivisionChanged(val));}},
+                    onChanged: (val){ context.read<SampleFormBloc>().add(DivisionChanged(val));},
                   ),
                   SizedBox(height: 10,),
 
@@ -96,7 +98,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                     label: "Area",
                     value: state.area,
                     items: const ["Milk", "Water", "Soil"],
-                    onChanged: (val){ if (val != null) { context.read<SampleFormBloc>().add(AreaChanged(val));}},
+                    onChanged: (val){ context.read<SampleFormBloc>().add(AreaChanged(val));},
                   ),
                   SizedBox(height: 20,),
 
@@ -138,7 +140,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                     label: "Number of Sample/Article",
                     value: state.article,
                     items: const ["Milk", "Water", "Soil"],
-                    onChanged: (val){ if (val != null) { context.read<SampleFormBloc>().add(articleChanged(val));}},
+                    onChanged: (val){ context.read<SampleFormBloc>().add(articleChanged(val));},
                   ),
                   const SizedBox(height: 10),
                   BlocYesNoRadio(
@@ -217,12 +219,10 @@ class _Form6ScreenState extends State<Form6Screen> {
                     onChanged: (val) => context.read<SampleFormBloc>().add(FoemVIWrapperChanged(val)),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<SampleFormBloc>().add(FormSubmit());
-                    },
-                    child: const Text("Submit"),
-                  )
+                  RoundButton(text: 'Submit Form', onPressed: (){
+                  context.read<SampleFormBloc>().add(FormSubmit());
+
+                  }),
                 ],
               );
             },

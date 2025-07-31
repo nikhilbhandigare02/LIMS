@@ -39,7 +39,7 @@ class LoginButton extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               color: customColors.primary,
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: TextButton(
               onPressed: () {
