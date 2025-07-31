@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
+import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has MessageType enum and showTopRightOverlay
+
 import '../../../Screens/login/bloc/loginBloc.dart';
-import '../../utils/Message.dart'; // make sure this import is correct
 
 class LoginButton extends StatelessWidget {
   final GlobalKey<FormState> formkey;
@@ -14,26 +15,43 @@ class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
-      listenWhen: (current, previous) => current.apiStatus != previous.apiStatus,
+      listenWhen: (current, previous) =>
+      current.apiStatus != previous.apiStatus,
       listener: (context, state) {
-        if (state.apiStatus == ApiStatus.success) {
-          Message.showTopRightOverlay(context, 'Login Successful', Colors.green);
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pushReplacementNamed(context, RouteName.homeScreen);
-          });
-        }
+        switch (state.apiStatus) {
+          case ApiStatus.loading:
+            Message.showTopRightOverlay(
+              context,
+              'Logging in...',
+              MessageType.info,
+            );
+            break;
 
-        if (state.apiStatus == ApiStatus.loading) {
-          Message.showTopRightOverlay(context, 'Logging in...', Colors.blue);
-        }
+          case ApiStatus.success:
+            Message.showTopRightOverlay(
+              context,
+              'Login Successful',
+              MessageType.success,
+            );
+            Future.delayed(const Duration(seconds: 2), () {
+              Navigator.pushReplacementNamed(context, RouteName.homeScreen);
+            });
+            break;
 
-        if (state.apiStatus == ApiStatus.error) {
-          Message.showTopRightOverlay(context, 'Login Failed', Colors.redAccent);
-        }
+          case ApiStatus.error:
+            Message.showTopRightOverlay(
+              context,
+              'Login Failed',
+              MessageType.error,
+            );
+            break;
 
+          default:
+            break;
+        }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
-        buildWhen: (current, previous) => false,
+        buildWhen: (current, previous) => false, // Button UI doesn't change except loader
         builder: (context, state) {
           return Container(
             width: double.infinity,
@@ -58,7 +76,11 @@ class LoginButton extends StatelessWidget {
               )
                   : const Text(
                 'Login',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           );

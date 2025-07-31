@@ -47,7 +47,7 @@ class _Form6ScreenState extends State<Form6Screen> {
               return ListView(
                 children: [
                   SizedBox(height: 10,),
-                  Text('Officer Information', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: customColors.primary)),
+                  Text('Other Information', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: customColors.primary)),
                   BlocTextInput(
                     label: "Name of Sender",
                     initialValue: state.senderName,
@@ -101,7 +101,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                   ),
                   SizedBox(height: 20,),
 
-                  Text('Sample Information' , style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: customColors.primary),),
+                  Text('Sample Details' , style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: customColors.primary),),
                   BlocTextInput(
                     label: "Sample Code Number",
                     initialValue: state.sampleCode,

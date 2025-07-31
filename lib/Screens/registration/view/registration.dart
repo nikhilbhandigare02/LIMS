@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/Screens/registration/Repository/resisterRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/core/utils/validators.dart';
 
@@ -19,7 +20,7 @@ class RegistrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => RegistrationBloc(),
+      create: (_) => RegistrationBloc(regRepository: registerRepository()),
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         body: Column(
@@ -198,7 +199,16 @@ class RegistrationScreen extends StatelessWidget {
                             onChanged: (val) => print(val),
                           ),
 
+                          CustomTextField(
+                            label: 'Address',
+                            icon: Icons.location_on_outlined,
+                            initialValue: state.email,
+                            keyboardType: TextInputType.text,
+                            validator: Validators.validateEmail,
+                            onChanged: (val) =>
+                                bloc.add(EmailChanged(val)),
 
+                          ),
                           const SizedBox(height: 10),
                           RoundButton(
                             text: 'Register Account',

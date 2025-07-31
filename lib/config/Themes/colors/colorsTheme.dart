@@ -10,6 +10,7 @@ class customColors{
   static const Color white70 = Colors.white70;
   static const Color redAccent = Colors.redAccent;
   static const Color greyDivider = Color(0xFFEEEEEE);
+  static const Color green = Colors.green;
 }
 
 
