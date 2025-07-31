@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String screenTitle;
@@ -25,16 +26,16 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: 6,
-      shadowColor: Colors.black.withOpacity(0.3),
+      shadowColor: customColors.black87.withOpacity(0.3),
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
       child: Container(
         height: 150,
         decoration: BoxDecoration(
-          color: Colors.indigo,
+          color: customColors.primary,
           borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: customColors.black87.withOpacity(0.2),
               offset: const Offset(0, 4),
               blurRadius: 8,
             ),
@@ -50,25 +51,25 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   IconButton(
                     icon: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: customColors.white,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: customColors.black87.withOpacity(0.1),
                             offset: const Offset(0, 2),
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
                         ],
                       ),
-                      child: const Icon(Icons.keyboard_arrow_left_sharp, size: 32, color: Colors.black54),
+                      child:  Icon(Icons.keyboard_arrow_left_sharp, size: 32, color: customColors.black87),
                     ),
                     onPressed: onBackTap ?? () => Navigator.of(context).pop(),
                   )
                 else
                   Builder(
                     builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu, color: Colors.white),
+                      icon: const Icon(Icons.menu, color: customColors.white),
                       onPressed: onMenuTap ?? () => Scaffold.of(context).openDrawer(),
                     ),
                   ),
@@ -83,7 +84,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: customColors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -91,7 +92,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         "$username • ID: $userId",
                         style: const TextStyle(
                           fontSize: 15,
-                          color: Colors.white70,
+                          color: customColors.white,
                         ),
                       ),
                     ],

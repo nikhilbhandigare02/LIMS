@@ -17,7 +17,10 @@ class BlocTextInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
       initialValue: initialValue,
       onChanged: onChanged,
       validator: (value) => Validators.validateEmptyField(value, label),
@@ -50,13 +53,11 @@ class BlocDropdown extends StatelessWidget {
       ),
       hint: Text('Select $label'),
       items: items
-          .map((item) => DropdownMenuItem(
-        value: item,
-        child: Text(item),
-      ))
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
           .toList(),
       onChanged: onChanged,
-      validator: (val) => val == null || val.isEmpty ? '$label is required' : null,
+      validator: (val) =>
+          val == null || val.isEmpty ? '$label is required' : null,
     );
   }
 }
@@ -95,10 +96,13 @@ class BlocDatePicker extends StatelessWidget {
             decoration: InputDecoration(
               labelText: label,
               errorText: field.errorText,
+              border: const OutlineInputBorder(),
             ),
-            child: Text(selectedDate != null
-                ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
-                : "Select Date"),
+            child: Text(
+              selectedDate != null
+                  ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
+                  : "Select Date",
+            ),
           ),
         );
       },
