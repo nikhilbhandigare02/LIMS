@@ -6,7 +6,7 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 import '../../Screens/FAQ/view/FAQScreen.dart';
 import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Setting/view/Setting.dart';
-import '../../Screens/home/view/HomeScreen.dart';
+import '../../Screens/home/view/Form6Screen.dart';
 import '../../Screens/login/view/LoginScreen.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';
@@ -18,7 +18,7 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.splashScreen:
       return  MaterialPageRoute(builder: (context) => Splashscreen(),);
     case RouteName.homeScreen:
-      return  MaterialPageRoute(builder: (context) => Homescreen(),);
+      return  MaterialPageRoute(builder: (context) => Form6Screen(),);
     case RouteName.loginScreen:
       return  MaterialPageRoute(builder: (context) => LoginScreen(),);
     case RouteName.registrationScreen:
