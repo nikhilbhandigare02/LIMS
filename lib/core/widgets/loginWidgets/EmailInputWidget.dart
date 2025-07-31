@@ -20,35 +20,49 @@ class EmailInput extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (current, previous) => current.username != previous.username,
       builder: (context, state) {
-        return TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          focusNode: emailFocusNode,
-          style: const TextStyle(fontSize: 16, color: customColors.black87),
-          decoration: InputDecoration(
-            hintText: 'Enter your email',
-            hintStyle: TextStyle( fontSize: 16),
-            prefixIcon: const Icon(Icons.email, color: customColors.primary),
-            filled: true,
-            fillColor: customColors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: customColors.greyDivider),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: customColors.primary, width: 0.5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: customColors.greyDivider),
-            ),
+        return Container(
+          decoration: BoxDecoration(
+            color: customColors.white,
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
-          onChanged: (value) {
-            context.read<LoginBloc>().add(UsernameEvent(username: value));
-          },
-          onFieldSubmitted: (value) {},
-          validator: Validators.validateUsername,
+          child: TextFormField(
+            keyboardType: TextInputType.emailAddress,
+            focusNode: emailFocusNode,
+            style: const TextStyle(fontSize: 16, color: customColors.black87),
+
+            decoration: InputDecoration(
+              hintText: 'Enter your email',
+              hintStyle: TextStyle( fontSize: 16),
+              prefixIcon: const Icon(Icons.email, color: customColors.primary),
+              filled: true,
+              fillColor: customColors.white,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.greyDivider),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.greyDivider),
+              ),
+            ),
+            onChanged: (value) {
+              context.read<LoginBloc>().add(UsernameEvent(username: value));
+            },
+            onFieldSubmitted: (value) {},
+            validator: Validators.validateUsername,
+          ),
         );
       },
     );

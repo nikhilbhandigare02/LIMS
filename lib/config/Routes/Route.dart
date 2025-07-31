@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 
+
+
+import '../../Screens/FORM6/view/Form6Screen.dart';
+
 import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/Setting/view/Setting.dart';
-import '../../Screens/home/view/Form6Screen.dart';
 import '../../Screens/login/view/LoginScreen.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';

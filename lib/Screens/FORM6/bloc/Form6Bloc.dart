@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:food_inspector/Screens/login/bloc/loginBloc.dart';
 
 import '../../../core/utils/enums.dart';
-import '../repository/homeRepository.dart';
+import '../repository/form6Repository.dart';
 
-part 'homeEvent.dart';
-part 'homeState.dart';
+part 'Form6Event.dart';
+part 'Form6State.dart';
 
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
@@ -17,9 +17,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(sampleCode: event.value));
     });
     on<senderNameChanged>((event, emit) {
+      print(state.senderName);
+
       emit(state.copyWith(senderName: event.value));
     });
     on<DistrictChanged>((event, emit) {
+      print(state.district);
       emit(state.copyWith(district: event.value));
     });
     on<CollectionDateChanged>((event, emit) {
@@ -71,6 +74,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(article: event.value));
     });
     on<RegionChanged>((event, emit) {
+      print(state.region);
       emit(state.copyWith(region: event.value));
     });
     on<DivisionChanged>((event, emit) {

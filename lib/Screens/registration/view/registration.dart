@@ -1,291 +1,244 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
-import '../../../config/Routes/RouteName.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:food_inspector/core/utils/validators.dart';
+
 import '../../../config/Themes/colors/colorsTheme.dart';
-import '../../login/view/LoginScreen.dart';
+import '../../../core/widgets/RegistrationInput/Curved.dart';
+import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
+import '../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
+import '../../../core/widgets/RoundButton/RoundButton.dart';
+import '../bloc/registrationBloc.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
-}
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class RegistrationScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  bool _agreeToTerms = true;
-  bool _obscurePassword = true;
 
-  final _usernameController = TextEditingController();
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  // Dropdown controllers
-  String? _selectedDistrict;
-  String? _selectedRegion;
-  String? _selectedDivision;
-  String? _selectedArea;
-
-  // Sample data for dropdowns
-  final List<String> _districts = ['District A', 'District B', 'District C', 'District D'];
-  final List<String> _regions = ['Region 1', 'Region 2', 'Region 3', 'Region 4'];
-  final List<String> _divisions = ['Division X', 'Division Y', 'Division Z'];
-  final List<String> _areas = ['Area 1', 'Area 2', 'Area 3', 'Area 4'];
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _handleSignUp() {
-    if (_formKey.currentState?.validate() ?? false) {
-      print('Username: ${_usernameController.text}');
-      print('Full Name: ${_fullNameController.text}');
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
-      print('District: $_selectedDistrict');
-      print('Region: $_selectedRegion');
-      print('Division: $_selectedDivision');
-      print('Area: $_selectedArea');
-    }
-  }
+  RegistrationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              ClipPath(
-                clipper: CurvedClipper(),
-                child: Container(
-                  height: 220,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
+    return BlocProvider(
+      create: (_) => RegistrationBloc(),
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: Column(
+          children: [
+            // Curved Header
+            Stack(
+              children: [
+                ClipPath(
+                  clipper: CurvedClipper(),
+                  child: Container(
+                    height: 220,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 220,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(top: 40, left: 24),
-                child: const Text(
-                  'FSO REGISTRATION',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    shadows: [Shadow(color: Colors.black26, blurRadius: 2)],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Scrollable Form
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    buildTextField(
-                      controller: _usernameController,
-                      label: 'Username',
-                      icon: Icons.person_outline,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a username';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                      controller: _fullNameController,
-                      label: 'Full name',
-                      icon: Icons.account_circle_outlined,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                      controller: _fullNameController,
-                      label: 'Reg. No',
-                      icon: Icons.account_circle_outlined,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                      controller: _emailController,
-                      label: 'E-mail',
-                      icon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter an email';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                      controller: _passwordController,
-                      label: 'Password',
-                      icon: Icons.lock_outline,
-                      obscureText: _obscurePassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: Color(0xFF1E88E5),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a password';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-
-
-
-                    const SizedBox(height: 30),
-
-                    // Sign up Button with gradient and enhanced styling
-                    Container(
-                      width: double.infinity,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        gradient: _agreeToTerms
-                            ? LinearGradient(
-                          colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        )
-                            : null,
-                        color: _agreeToTerms ? null : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: _agreeToTerms ? [
-                          BoxShadow(
-                            color: Color(0xFF1E88E5).withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: Offset(0, 6),
-                          ),
-                        ] : [],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _agreeToTerms ? _handleSignUp : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.white,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Create Account',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, size: 20),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account ",
-                          style: TextStyle(color: customColors.black87),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, RouteName.loginScreen);
-                          },
-                          child: Text(
-                            'Sign In',
-                            style: TextStyle(color: customColors.primary),
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 30),
-                  ],
+                  ),
+                ),
+                Container(
+                  height: 220,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(top: 40, left: 24),
+                  child: const Text(
+                    'FOOD INSPECTOR OFFICER\n REGISTRATION',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      shadows: [Shadow(color: Colors.black26, blurRadius: 2)],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Scrollable Form
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: BlocBuilder<RegistrationBloc, RegistrationState>(
+                    builder: (context, state) {
+                      final bloc = context.read<RegistrationBloc>();
+
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 26,
+                                backgroundColor: customColors.primary,
+                                child: Icon(Icons.health_and_safety,
+                                    color: customColors.white, size: 28),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Register to your account",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: customColors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Registration portal",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: customColors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 30),
+                          CustomTextField(
+                            label: 'Username',
+                            icon: Icons.person,
+                            initialValue: state.username,
+                            validator: Validators.validateUsername,
+                            onChanged: (val) =>
+                                bloc.add(UsernameChanged(val)),
+                          ),
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Full Name',
+                            icon: Icons.account_circle,
+                            initialValue: state.name,
+                            validator: Validators.validateName,
+                            onChanged: (val) =>
+                                bloc.add(NameChanged(val)),
+                          ),
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Email',
+                            icon: Icons.email_outlined,
+                            initialValue: state.email,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: Validators.validateEmail,
+                            onChanged: (val) =>
+                                bloc.add(EmailChanged(val)),
+                          ),
+                          const SizedBox(height: 10),
+                          // COUNTRY
+                          BlocBuilder<RegistrationBloc, RegistrationState>(
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  // Country Dropdown
+                                  buildDropdownField(
+                                    label: 'Select Country',
+                                    value: state.selectedCountry,
+                                    items: state.countries,
+                                    icon: Icons.public,
+                                    validator: Validators.validateCountry,
+                                    onChanged: (value) {
+                                      context.read<RegistrationBloc>().add(CountryChanged(value!));
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // State Dropdown (changes based on selected country)
+                                  buildDropdownField(
+                                    label: 'Select State',
+                                    value: state.selectedState,
+                                    items: state.states,
+                                    icon: Icons.map,
+                                    validator: Validators.validateState,
+                                    onChanged: (value) {
+                                      context.read<RegistrationBloc>().add(StateChanged(value!));
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  buildDropdownField(
+                                    label: 'Select District',
+                                    value: state.selectedDistrict,
+                                    items: state.districts,
+                                    icon: Icons.location_city,
+                                    validator: Validators.validateDistrict,
+
+                                    onChanged: (value) {
+                                      context.read<RegistrationBloc>().add(DistrictNameChanged(value!));
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+
+
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Password',
+                            icon: Icons.lock,
+                            obscureText: true,
+                            isPassword: true, // required to show toggle icon
+                            validator: Validators.validatePassword,
+                            onChanged: (val) => print(val),
+                          ),
+
+
+                          const SizedBox(height: 10),
+                          RoundButton(
+                            text: 'Register Account',
+                            onPressed: () {
+                              final formState = _formKey.currentState;
+                              if (formState != null && formState.validate()) {
+                                context.read<RegistrationBloc>().add(FormSubmitted());
+                              }
+                            },
+                          ),
+
+                          SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account?",
+                                style: TextStyle(color: customColors.black87),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, RouteName.loginScreen);
+                                },
+                                child: const Text(
+                                  "Sign In",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-}
-
-// Custom curved clipper
-class CurvedClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 60);
-    final controlPoint = Offset(size.width / 2, size.height + 20);
-    final endPoint = Offset(size.width, size.height - 60);
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

@@ -1,4 +1,4 @@
-part of 'homeBloc.dart';
+part of 'Form6Bloc.dart';
 
 abstract class SampleFormEvent extends Equatable {
   const SampleFormEvent();
@@ -21,28 +21,28 @@ class senderNameChanged extends SampleFormEvent {
 }
 
 class DistrictChanged extends SampleFormEvent {
-  final String value;
+  final String? value;
   const DistrictChanged(this.value);
   @override
   List<Object?> get props => [];
 }
 
 class RegionChanged extends SampleFormEvent {
-  final String value;
+  final String? value;
   const RegionChanged(this.value);
   @override
   List<Object?> get props => [];
 }
 
 class DivisionChanged extends SampleFormEvent {
-  final String value;
+  final String? value;
   const DivisionChanged(this.value);
   @override
   List<Object?> get props => [];
 }
 
 class AreaChanged extends SampleFormEvent {
-  final String value;
+  final String? value;
   const AreaChanged(this.value);
   @override
   List<Object?> get props => [];
@@ -77,7 +77,7 @@ class QuantitySampleChanged extends SampleFormEvent {
 }
 
 class articleChanged extends SampleFormEvent {
-  final String value;
+  final String? value;
   const articleChanged(this.value);
   @override
   List<Object?> get props => [];

@@ -17,9 +17,11 @@ class BlocTextInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      style: const TextStyle(fontSize: 14),
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
       initialValue: initialValue,
       onChanged: onChanged,
@@ -97,11 +99,16 @@ class BlocDatePicker extends StatelessWidget {
               labelText: label,
               errorText: field.errorText,
               border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
             ),
             child: Text(
               selectedDate != null
                   ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
                   : "Select Date",
+              style: const TextStyle(fontSize: 14),
             ),
           ),
         );
@@ -130,27 +137,38 @@ class BlocYesNoRadio extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label),
+            Text(label, style: const TextStyle(fontSize: 14)),
             Row(
               children: [
-                Radio<bool>(
-                  value: true,
-                  groupValue: value,
-                  onChanged: (val) {
-                    onChanged(val!);
-                    field.didChange(val);
-                  },
+                Row(
+                  children: [
+                    Radio<bool>(
+                      visualDensity: VisualDensity.compact,
+                      value: true,
+                      groupValue: value,
+                      onChanged: (val) {
+                        onChanged(val!);
+                        field.didChange(val);
+                      },
+                    ),
+                    const Text("Yes", style: TextStyle(fontSize: 14)),
+                  ],
                 ),
-                const Text("Yes"),
-                Radio<bool>(
-                  value: false,
-                  groupValue: value,
-                  onChanged: (val) {
-                    onChanged(val!);
-                    field.didChange(val);
-                  },
+                  SizedBox(width: 100,),
+                Row(
+                  children: [
+                    Radio<bool>(
+                      visualDensity: VisualDensity.compact,
+                      value: false,
+                      groupValue: value,
+                      onChanged: (val) {
+                        onChanged(val!);
+                        field.didChange(val);
+                      },
+                    ),
+                    const Text("No", style: TextStyle(fontSize: 14)),
+                  ],
                 ),
-                const Text("No"),
               ],
             ),
             if (field.hasError)
@@ -158,7 +176,7 @@ class BlocYesNoRadio extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 12),
                 child: Text(
                   field.errorText ?? '',
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ),
           ],
