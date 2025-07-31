@@ -56,7 +56,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       backgroundColor: Colors.grey[50],
       body: Column(
         children: [
-          // Enhanced top curved header
           Stack(
             children: [
               ClipPath(
