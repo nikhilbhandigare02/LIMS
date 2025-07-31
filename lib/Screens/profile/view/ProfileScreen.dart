@@ -41,11 +41,10 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Positioned(
-                  top: 12,
+                  top: 25,
                   left: screenWidth * 0.06,
                   child: IconButton(
                     icon: Container(
-                      padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -58,10 +57,9 @@ class UserProfileScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-
                       child: const Icon(
                         Icons.keyboard_arrow_left_sharp,
-                        size: 32,
+                        size: 38,
                         color: Colors.black54,
                       ),
                     ),

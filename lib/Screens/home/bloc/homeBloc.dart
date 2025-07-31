@@ -90,7 +90,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
 
     try {
-      // Construct the form data
       final formData = {
         'senderName': state.senderName,
         'sampleCode': state.sampleCode,

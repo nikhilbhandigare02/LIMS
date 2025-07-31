@@ -40,9 +40,9 @@ class CustomDrawer extends StatelessWidget {
               _buildSectionTitle("Others"),
               _buildMenuItem(
                 context,
-                Icons.question_answer,
-                "FAQ",
-                onTap: () => Navigator.pushNamed(context, RouteName.faqScreen),
+                Icons.library_books,
+                "Sample List Records",
+                onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
               ),
               _buildMenuItem(
                 context,

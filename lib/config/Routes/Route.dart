@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:food_inspector/Screens/registration/view/registration.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 
-
-import '../../Screens/FAQ/view/FAQScreen.dart';
 import '../../Screens/Help_Support/view/Help_Suport.dart';
+import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/Setting/view/Setting.dart';
 import '../../Screens/home/view/Form6Screen.dart';
 import '../../Screens/login/view/LoginScreen.dart';
@@ -25,10 +25,12 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => RegistrationScreen(),);
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);
-    case RouteName.faqScreen:
-      return  MaterialPageRoute(builder: (context) => Faqscreen(),);
+    case RouteName.SampleAnalysisScreen:
+      return  MaterialPageRoute(builder: (context) => SampleAnalysisScreen(),);
     case RouteName.supportScreen:
       return  MaterialPageRoute(builder: (context) => HelpSuport(),);
+    case RouteName.registerScreen:
+      return  MaterialPageRoute(builder: (context) => RegistrationScreen(),);
     case RouteName.settingScreen:
       return  MaterialPageRoute(builder: (context) => Setting(),);
     default:
