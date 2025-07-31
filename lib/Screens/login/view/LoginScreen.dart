@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Colors.grey,
                             blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),
@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 CircleAvatar(
                                   radius: 26,
-                                  backgroundColor: customColors.primary.withOpacity(0.1),
+                                  backgroundColor: customColors.primary,
                                   child: Icon(Icons.health_and_safety,
                                       color: customColors.primary, size: 28),
                                 ),
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       "Inspector login portal",
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: customColors.black87.withOpacity(0.6),
+                                        color: customColors.black87,
                                       ),
                                     ),
                                   ],
