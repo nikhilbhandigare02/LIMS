@@ -8,5 +8,6 @@ class RouteName{
   static const String supportScreen = 'supportScreen';
   static const String settingScreen = 'settingScreen';
   static const String registerScreen = 'registerScreen';
-  static const String updateScreen = 'updateScreen';
+   static const String updateScreen = 'updateScreen';
+
 }

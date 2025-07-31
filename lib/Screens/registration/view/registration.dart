@@ -198,7 +198,7 @@ class RegistrationScreen extends StatelessWidget {
                             validator: Validators.validatePassword,
                             onChanged: (val) => print(val),
                           ),
-
+                          const SizedBox(height: 10),
                           CustomTextField(
                             label: 'Address',
                             icon: Icons.location_on_outlined,
