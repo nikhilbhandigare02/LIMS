@@ -155,7 +155,7 @@ class BlocYesNoRadio extends StatelessWidget {
                     const Text("Yes", style: TextStyle(fontSize: 14)),
                   ],
                 ),
-                  SizedBox(width: 100,),
+                const SizedBox(width: 100),
                 Row(
                   children: [
                     Radio<bool>(

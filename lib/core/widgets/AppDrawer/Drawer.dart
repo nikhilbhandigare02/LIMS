@@ -23,12 +23,12 @@ class CustomDrawer extends StatelessWidget {
                 context,
                 Icons.account_balance_wallet,
                 "Home",
-                // onTap: () => Navigator.pushNamed(context, RouteName.walletScreen),
+                onTap: () => Navigator.pushNamed(context, RouteName.homeScreen),
               ),
               _buildMenuItem(
                 context,
                 Icons.money,
-                "Form 6",
+                "Form VI",
                 // onTap: () => Navigator.pushNamed(context, RouteName.earningsScreen),
               ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
 import '../bloc/Form6Bloc.dart';
 
@@ -41,31 +42,76 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
 
   ],
   [
-    BlocYesNoRadio(label: "Preservative Added?", value: state.preservativeAdded, onChanged: (val) => bloc.add(PreservativeAddedChanged(val))),
-    SizedBox(height: 16,),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Preservative Added?",
+          value: state.preservativeAdded,
+          onChanged: (val) => bloc.add(PreservativeAddedChanged(val)),
+        );
+      },
+    ),    SizedBox(height: 16,),
     BlocTextInput(label: "if yes, Mention the name of Preservative", initialValue: state.preservativeName, onChanged: (val) => bloc.add(preservativeNameChanged(val))),
     SizedBox(height: 16,),
     BlocTextInput(label: "Quantity of Preservative ", initialValue: state.preservativeQuantity, onChanged: (val) => bloc.add(preservativeQuantityChanged(val))),
     SizedBox(height: 16,),
-    BlocYesNoRadio(label: "Signature & thumb impression of the person/witness from whom the sample has been taken", value: state.personSignature, onChanged: (val) => bloc.add(personSignatureChanged(val))),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Signature & thumb impression of the person/witness from whom the sample has been taken",
+          value: state.personSignature,
+          onChanged: (val) => bloc.add(personSignatureChanged(val)),
+        );
+      },
+    ),
     SizedBox(height: 16,),
     BlocTextInput(label: "Paper Slip Number", initialValue: state.slipNumber, onChanged: (val) => bloc.add(slipNumberChanged(val))),
     SizedBox(height: 16,),
-    BlocYesNoRadio(label: "Signature of DO OR any officer authorized by FSO", value: state.DOSignature, onChanged: (val) => bloc.add(DOSignatureChanged(val))),
-
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Signature of DO OR any officer authorized by FSO",
+          value: state.DOSignature,
+          onChanged: (val) => bloc.add(DOSignatureChanged(val)),
+        );
+      },
+    ),
   ],
   [
 
     BlocTextInput(label: "Code Number of sample on Wrapper", initialValue: state.sampleCodeNumber, onChanged: (val) => bloc.add(sampleCodeNumberChanged(val))),
     SizedBox(height: 16,),
-    BlocYesNoRadio(label: "Impression of seal of the sender ", value: state.sealImpression, onChanged: (val) => bloc.add(sealImpressionChanged(val))),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Impression of seal of the sender ",
+          value: state.sealImpression,
+          onChanged: (val) => bloc.add(sealImpressionChanged(val)),
+        );
+      },
+    ),
     SizedBox(height: 16,),
     BlocTextInput(label: "Number of Seal", initialValue: state.numberofSeal, onChanged: (val) => bloc.add(numberofSealChanged(val))),
     SizedBox(height: 16,),
-    BlocYesNoRadio(label: "Memorandum in Form VI (Sealed packed & Specimen of the seal)", value: state.formVI, onChanged: (val) => bloc.add(formVIChanged(val))),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Memorandum in Form VI (Sealed packed & Specimen of the seal)",
+          value: state.formVI,
+          onChanged: (val) => bloc.add(formVIChanged(val)),
+        );
+      },
+    ),
     SizedBox(height: 16,),
-    BlocYesNoRadio(label: "Form VI is inside the sample Wrapper?", value: state.FoemVIWrapper, onChanged: (val) => bloc.add(FoemVIWrapperChanged(val))),
-
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, state) {
+        return BlocYesNoRadio(
+          label: "Form VI is inside the sample Wrapper?",
+          value: state.FoemVIWrapper,
+          onChanged: (val) => bloc.add(FoemVIWrapperChanged(val)),
+        );
+      },
+    ),
   ],
 
 ];

@@ -11,6 +11,8 @@ class customColors{
   static const Color redAccent = Colors.redAccent;
   static const Color greyDivider = Color(0xFFEEEEEE);
   static const Color green = Colors.green;
+  static const Color grey = Colors.grey;
+  static const Color orange = Colors.orange;
 }
 
 

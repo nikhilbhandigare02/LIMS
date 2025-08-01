@@ -101,7 +101,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Welcome Back!",
+                                "Update Password",
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -109,13 +109,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                "Forgot Password",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: customColors.black87,
-                                ),
-                              ),
+
                             ],
                           ),
                         ],

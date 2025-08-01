@@ -1,4 +1,5 @@
 // form6_step_screen.dart
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -112,10 +113,16 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: customColors.greyDivider,
-                    foregroundColor: Colors.black,
+                    backgroundColor: customColors.grey,
+                    foregroundColor: customColors.black87,
                   ),
-                  child: const Text("Previous"),
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.left_chevron, color: customColors.white,),
+                      SizedBox(width: 6,),
+                       Text("Previous", style: TextStyle(color: customColors.white),),
+                    ],
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -132,7 +139,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
                       if (widget.section == 'other') {
                         await saveOtherInfo(state);
-                        Navigator.pop(context, 'completed'); // 👈 send completion status back
+                        Navigator.pop(context, 'completed');
 
                         // Optional: Navigate to Sample step after short delay
                         Future.delayed(Duration(milliseconds: 300), () {
@@ -153,12 +160,19 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                       }
                     }
                   },
-                  child: Text(
-                    currentStep < stepFields.length - 1
-                        ? "Next"
-                        : widget.section == 'other'
-                        ? "Save & Next"
-                        : "Submit",
+                  child: Row(
+                    children: [
+                      Text(
+                        currentStep < stepFields.length - 1
+                            ? "Next"
+                            : widget.section == 'other'
+                            ? "Save & Next"
+                            : "Submit",
+                        style: TextStyle(fontWeight: FontWeight.bold,),
+                      ),
+                      SizedBox(width: 6,),
+                      Icon(CupertinoIcons.right_chevron, color: Colors.white,)
+                    ],
                   ),
                 ),
               ],

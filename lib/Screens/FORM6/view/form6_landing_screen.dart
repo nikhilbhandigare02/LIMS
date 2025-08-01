@@ -84,6 +84,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: customColors.white,
       appBar: AppHeader(
         screenTitle: 'Form VI',
         username: 'Rajan',
@@ -151,7 +152,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
               if (isOtherComplete && isSampleComplete)
                 ElevatedButton.icon(
                   onPressed: handleSubmit,
-                  icon: Icon(Icons.check_circle),
+                  icon: Icon(Icons.check_circle, color: customColors.white,),
                   label: Text("Submit Form", style: TextStyle(color: customColors.white),),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: customColors.primary,
@@ -163,7 +164,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
-                    '⚠️ Please fill up all sections.',
+                    '⚠️ Form not filled. Please fill the form.',
                     style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -189,7 +190,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: customColors.black54,
               blurRadius: 4,
               offset: Offset(2, 2),
             ),
@@ -202,7 +203,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             Icon(
               isComplete ? Icons.check_circle : Icons.info_outline,
               size: 40,
-              color: isComplete ? Colors.green : Colors.orange,
+              color: isComplete ? customColors.green : customColors.orange,
             ),
             const SizedBox(height: 16),
             Text(
@@ -215,7 +216,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
               isComplete ? '✅ Complete' : '❌ Incomplete',
               style: TextStyle(
                 fontSize: 14,
-                color: isComplete ? Colors.green : Colors.redAccent,
+                color: isComplete ? customColors.green : customColors.redAccent,
                 fontWeight: FontWeight.w600,
               ),
             ),

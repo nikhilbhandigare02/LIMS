@@ -59,7 +59,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.keyboard_arrow_left_sharp,
-                        size: 26,
+                        size: 32,
                         color: Colors.black54,
                       ),
                     ),
