@@ -79,7 +79,8 @@ class BlocDatePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormField<DateTime>(
-      validator: (value) => selectedDate == null ? '$label is required' : null,
+      initialValue: selectedDate,
+      validator: (value) => value == null ? '$label is required' : null,
       builder: (field) {
         return InkWell(
           onTap: () async {
@@ -91,7 +92,7 @@ class BlocDatePicker extends StatelessWidget {
             );
             if (picked != null) {
               onChanged(picked);
-              field.didChange(picked);
+              field.didChange(picked); // update FormField state
             }
           },
           child: InputDecorator(
@@ -105,8 +106,8 @@ class BlocDatePicker extends StatelessWidget {
               ),
             ),
             child: Text(
-              selectedDate != null
-                  ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
+              field.value != null
+                  ? "${field.value!.day}-${field.value!.month}-${field.value!.year}"
                   : "Select Date",
               style: const TextStyle(fontSize: 14),
             ),

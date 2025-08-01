@@ -10,7 +10,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
     SizedBox(height: 16,),
     BlocTextInput(label: "DO Number", initialValue: state.DONumber, onChanged: (val) => bloc.add(DONumberChanged(val))),
     SizedBox(height: 16,),
-    BlocDropdown(label: "District", value: state.district ?? '', items: ["Milk", "Water"], onChanged: (val) => bloc.add(DistrictChanged(val))),
+    BlocDropdown(label: "District", value: state.district ?? '', items: ["Kolhapur", "Thane", "Pune", "Mumbai"], onChanged: (val) => bloc.add(DistrictChanged(val))),
     SizedBox(height: 16,),
     BlocDropdown(label: "Region", value: state.region, items: ["East", "West"], onChanged: (val) => bloc.add(RegionChanged(val))),
     SizedBox(height: 16,),

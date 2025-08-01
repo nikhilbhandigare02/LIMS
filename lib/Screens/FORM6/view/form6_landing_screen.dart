@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:food_inspector/core/utils/Message.dart';
+import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form6_step_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Form6LandingScreen extends StatefulWidget {
   @override
@@ -36,6 +41,36 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     print('isSampleComplete: $isSampleComplete');
   }
 
+  // Future<void> handleSubmit() async {
+  //   if (isOtherComplete && isSampleComplete) {
+  //     await secureStorage.deleteAll(); // 🧹 Clear everything
+  //     Message.showTopRightOverlay(context, '✅ Form submitted successfully.', MessageType.success);
+  //
+  //     Navigator.pop(context);
+  //   } else {
+  //     showIncompleteMessage();
+  //   }
+  // }
+
+  Future<void> handleSubmit() async {
+    if (isOtherComplete && isSampleComplete) {
+      await secureStorage.deleteAll(); // 🧹 Clear everything
+      Message.showTopRightOverlay(
+        context,
+        '✅ Form submitted successfully.',
+        MessageType.success,
+      );
+
+      Navigator.pushNamedAndRemoveUntil(context, RouteName.homeScreen, (route)=>false); // or navigate as needed
+    } else {
+      Message.showTopRightOverlay(
+        context,
+        '⚠️ Form not filled. Please fill the form.',
+        MessageType.error,
+      );
+    }
+  }
+
   void showIncompleteMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -46,24 +81,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     );
   }
 
-  // Future<void> handleSubmit() async {
-  //   if (isOtherComplete && isSampleComplete) {
-  //     await secureStorage.deleteAll();
-  //
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('✅ Form submitted successfully.'),
-  //         backgroundColor: Colors.green,
-  //         behavior: SnackBarBehavior.floating,
-  //       ),
-  //     );
-  //
-  //     Navigator.pushReplacementNamed(context, '/home');
-  //   } else {
-  //     showIncompleteMessage();
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +88,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         screenTitle: 'Form VI',
         username: 'Rajan',
         userId: 'S1234',
+
       ),
+      drawer: CustomDrawer(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -100,9 +119,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                             ),
                           ),
                         );
-
                         if (result == 'completed') {
-                          await secureStorage.write(key: 'form6_other_section', value: 'complete');
                           setState(() => isOtherComplete = true);
                         }
                       },
@@ -121,9 +138,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                             ),
                           ),
                         );
-
                         if (result == 'completed') {
-                          await secureStorage.write(key: 'form6_sample_section', value: 'complete');
                           setState(() => isSampleComplete = true);
                         }
                       },
@@ -132,16 +147,27 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              // ElevatedButton.icon(
-              //   onPressed: handleSubmit,
-              //   icon: Icon(Icons.check_circle),
-              //   label: Text("Submit Form"),
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.teal,
-              //     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              //     textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              //   ),
-              // ),
+
+              if (isOtherComplete && isSampleComplete)
+                ElevatedButton.icon(
+                  onPressed: handleSubmit,
+                  icon: Icon(Icons.check_circle),
+                  label: Text("Submit Form", style: TextStyle(color: customColors.white),),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: customColors.primary,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              if (!isOtherComplete || !isSampleComplete)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    '⚠️ Please fill up all sections.',
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                ),
+
             ],
           ),
         ),
