@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 
@@ -7,11 +9,11 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 
 import '../../Screens/FORM6/view/Form6Screen.dart';
 
+import '../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/Setting/view/Setting.dart';
 import '../../Screens/UpdateSample/view/UpdateSample.dart';
-import '../../Screens/login/view/LoginScreen.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';
 import '../../Screens/splash/view/SplashScreen.dart';
@@ -23,14 +25,15 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.splashScreen:
       return  MaterialPageRoute(builder: (context) => Splashscreen(),);
     case RouteName.homeScreen:
-      return  MaterialPageRoute(builder: (context) => Form6Screen(),);
+      return  MaterialPageRoute(builder: (context) => Form6LandingScreen(),);
     case RouteName.updateScreen:
       return  MaterialPageRoute(builder: (context) => UpdatePasswordScreen(),);
 
     case RouteName.loginScreen:
       return  MaterialPageRoute(builder: (context) => LoginScreen(),);
     case RouteName.registrationScreen:
-      return  MaterialPageRoute(builder: (context) => RegistrationScreen(),);
+      return  MaterialPageRoute(builder: (context) => RegistrationScreen());
+
     // case RouteName.UpdatesampleScreen:
     //   return  MaterialPageRoute(builder: (context) => Updatesample(),);
     case RouteName.profileScreen:

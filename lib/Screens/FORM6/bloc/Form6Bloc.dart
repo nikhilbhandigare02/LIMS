@@ -18,7 +18,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     });
     on<senderNameChanged>((event, emit) {
       print(state.senderName);
-
       emit(state.copyWith(senderName: event.value));
     });
     on<DistrictChanged>((event, emit) {
@@ -77,6 +76,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print(state.region);
       emit(state.copyWith(region: event.value));
     });
+    on<senderDesignationChanged>((event, emit) {
+      print(state.senderDesignation);
+      emit(state.copyWith(senderDesignation: event.value));
+    });
+    on<DONumberChanged>((event, emit) {
+      print(state.DONumber);
+      emit(state.copyWith(DONumber: event.value));
+    });
     on<DivisionChanged>((event, emit) {
       emit(state.copyWith(division: event.value));
     });
@@ -85,6 +92,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     });
     on<FormSubmit>(_onFormSubmit);
 
+    on<FormResetEvent>((event, emit) {
+      emit(const SampleFormState());
+    });
   }
 
   Future<void> _onFormSubmit(

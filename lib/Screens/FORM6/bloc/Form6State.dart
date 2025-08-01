@@ -144,4 +144,35 @@ class SampleFormState extends Equatable {
     message,
     apiStatus
   ];
+
+  // Check if 'Other Information' section is complete
+  bool get isOtherInfoComplete {
+    return senderName.isNotEmpty &&
+        senderDesignation.isNotEmpty &&
+        DONumber.isNotEmpty &&
+        district.isNotEmpty &&
+        region.isNotEmpty &&
+        division.isNotEmpty &&
+        area.isNotEmpty;
+  }
+
+  // Check if 'Sample Details' section is complete
+  bool get isSampleInfoComplete {
+    return sampleCode.isNotEmpty &&
+        collectionDate != null &&
+        placeOfCollection.isNotEmpty &&
+        SampleName.isNotEmpty &&
+        QuantitySample.isNotEmpty &&
+        article.isNotEmpty &&
+        preservativeAdded != null &&
+        personSignature != null &&
+        slipNumber.isNotEmpty &&
+        DOSignature != null &&
+        sampleCodeNumber.isNotEmpty &&
+        sealImpression != null &&
+        numberofSeal.isNotEmpty &&
+        formVI != null &&
+        FoemVIWrapper != null;
+  }
+
 }

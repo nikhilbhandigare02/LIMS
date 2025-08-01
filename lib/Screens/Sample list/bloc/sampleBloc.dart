@@ -10,7 +10,7 @@ part 'sampleState.dart';
 class SampleBloc extends Bloc<getSampleListEvent, getSampleListState>{
   final SampleRepository sampleRepository;
   SampleBloc({required this.sampleRepository}):super(getSampleListState(fetchSampleList: ApiResponse.loading())){
-on<getSampleListEvent> (_getSampleListEvent);
+    on<getSampleListEvent> (_getSampleListEvent);
   }
 
 

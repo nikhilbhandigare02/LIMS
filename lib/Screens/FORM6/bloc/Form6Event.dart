@@ -150,12 +150,22 @@ class sealImpressionChanged extends SampleFormEvent {
   @override
   List<Object?> get props => [];
 }
-
+class ResetForm6Event extends SampleFormEvent{}
 class numberofSealChanged extends SampleFormEvent {
   final String value;
   const numberofSealChanged(this.value);
   @override
   List<Object?> get props => [];
+}
+
+class UpdateFormField extends SampleFormEvent {
+  final String field;
+  final dynamic value;
+
+  const UpdateFormField({required this.field, required this.value});
+
+  @override
+  List<Object?> get props => [field, value];
 }
 
 class formVIChanged extends SampleFormEvent {
@@ -173,3 +183,4 @@ class FoemVIWrapperChanged extends SampleFormEvent {
 }
 
 class FormSubmit extends SampleFormEvent {}
+class FormResetEvent extends SampleFormEvent {}

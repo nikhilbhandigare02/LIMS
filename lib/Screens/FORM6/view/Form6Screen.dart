@@ -34,7 +34,7 @@ class _Form6ScreenState extends State<Form6Screen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppHeader(
-          screenTitle: "Form 6",
+          screenTitle: "Form VI",
           username: "Rajeev Ranjan",
           userId: "394884",
           showBack: false,
@@ -72,7 +72,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                   BlocDropdown(
                     label: "District",
                     value: state.district ?? '',
-                    items: const ["Milk", "Water", "Soil"],
+                    items: const ["Kolhapur", "Mumbai", "Thane"],
                     onChanged: (val){ context.read<SampleFormBloc>().add(DistrictChanged(val));},
                   ),
                   SizedBox(height: 10,),
@@ -80,7 +80,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                   BlocDropdown(
                     label: "Region",
                     value: state.region,
-                    items: const ["Milk", "Water", "Soil"],
+                    items: const ["Pune Region", "Konkan Region", "Konkan Region"],
                     onChanged: (val){ context.read<SampleFormBloc>().add(RegionChanged(val));},
                   ),
                   SizedBox(height: 10,),
@@ -88,7 +88,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                   BlocDropdown(
                     label: "Division",
                     value: state.division,
-                    items: const ["Milk", "Water", "Soil"],
+                    items: const ["Kolhapur Division", "Mumbai Division", "Thane Division"],
                     onChanged: (val){ context.read<SampleFormBloc>().add(DivisionChanged(val));},
                   ),
                   SizedBox(height: 10,),
@@ -96,7 +96,7 @@ class _Form6ScreenState extends State<Form6Screen> {
                   BlocDropdown(
                     label: "Area",
                     value: state.area,
-                    items: const ["Milk", "Water", "Soil"],
+                    items: const ["Kolhapur Area", "Mumbai Area", "Thane Area"],
                     onChanged: (val){ context.read<SampleFormBloc>().add(AreaChanged(val));},
                   ),
                   SizedBox(height: 20,),
