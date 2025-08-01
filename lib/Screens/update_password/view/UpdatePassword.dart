@@ -47,11 +47,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                     height: 220,
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                     color: customColors.primary,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12,
@@ -87,39 +83,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Avatar + Greeting
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 26,
-                            backgroundColor: customColors.primary,
-                            child: Icon(Icons.health_and_safety,
-                                color: customColors.white, size: 28),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Welcome Back!",
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: customColors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Forgot Password",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: customColors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                   
 
                       const SizedBox(height: 40),
                       CurrentPasswordInput(
