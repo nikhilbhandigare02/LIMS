@@ -9,7 +9,7 @@ class UserProfileScreen extends StatelessWidget {
     'name': 'John Doe',
     'username': 'john.doe',
     'doNumber': 'DO-2024-001234',
-    'designation': 'Senior Software Engineer',
+    'designation': 'Food Safety Officer ',
   };
 
   @override
@@ -41,7 +41,7 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Positioned(
-                  top: 25,
+                  top: 30,
                   left: screenWidth * 0.06,
                   child: IconButton(
                     icon: Container(
@@ -59,7 +59,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.keyboard_arrow_left_sharp,
-                        size: 26,
+                        size: 40,
                         color: Colors.black54,
                       ),
                     ),

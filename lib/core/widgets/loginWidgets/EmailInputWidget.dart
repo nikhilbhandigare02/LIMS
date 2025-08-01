@@ -38,9 +38,9 @@ class EmailInput extends StatelessWidget {
             style: const TextStyle(fontSize: 16, color: customColors.black87),
 
             decoration: InputDecoration(
-              hintText: 'Enter your email',
+              hintText: 'Enter Username',
               hintStyle: TextStyle( fontSize: 16),
-              prefixIcon: const Icon(Icons.email, color: customColors.primary),
+              prefixIcon: const Icon(Icons.person_2, color: customColors.primary),
               filled: true,
               fillColor: customColors.white,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
