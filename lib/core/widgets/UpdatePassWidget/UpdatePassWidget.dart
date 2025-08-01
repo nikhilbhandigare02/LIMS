@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
+import 'package:food_inspector/Screens/update_password/BLOC/UpdatePassBloc.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has MessageType enum and showTopRightOverlay
 
-import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
-import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
 
-class LoginButton extends StatelessWidget {
+class UpdatePassButton extends StatelessWidget {
   final GlobalKey<FormState> formkey;
 
-  const LoginButton({super.key, required this.formkey});
+  const UpdatePassButton({super.key, required this.formkey});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<UpdatePasswordBloc, UpdatePasswordState>(
       listenWhen: (current, previous) =>
       current.apiStatus != previous.apiStatus,
       listener: (context, state) {
@@ -33,27 +31,18 @@ class LoginButton extends StatelessWidget {
           case ApiStatus.success:
             Message.showTopRightOverlay(
               context,
-              'Login Successful',
+              'Update password Successful',
               MessageType.success,
             );
             Future.delayed(const Duration(seconds: 2), () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-                    child: Form6LandingScreen(),
-                  ),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, RouteName.homeScreen);
             });
-
             break;
 
           case ApiStatus.error:
             Message.showTopRightOverlay(
               context,
-              'Login Failed',
+              'update Failed',
               MessageType.error,
             );
             break;
@@ -62,7 +51,7 @@ class LoginButton extends StatelessWidget {
             break;
         }
       },
-      child: BlocBuilder<LoginBloc, LoginState>(
+      child: BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
         buildWhen: (current, previous) => false, // Button UI doesn't change except loader
         builder: (context, state) {
           return Container(
@@ -74,7 +63,7 @@ class LoginButton extends StatelessWidget {
             child: TextButton(
               onPressed: () {
                 if (formkey.currentState!.validate()) {
-                  context.read<LoginBloc>().add(LoginButtonEvent());
+                  context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
                 }
               },
               child: state.apiStatus == ApiStatus.loading

@@ -86,6 +86,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       // Avatar + Greeting
 
+                      Row(
+                        children: [
+
+                          const SizedBox(width: 12),
+
+                        ],
+                      ),
+
+
 
                       const SizedBox(height: 30),
 
