@@ -1,3 +1,4 @@
+// form6_step_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -73,10 +74,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   }
 
   Future<void> clearFormData() async {
-    await secureStorage.delete(key: 'form6_other_data');
-    await secureStorage.delete(key: 'form6_sample_data');
-    await secureStorage.delete(key: 'form6_other_section');
-    await secureStorage.delete(key: 'form6_sample_section');
+    await secureStorage.deleteAll();
     print('🧹 Cleared all form6 data from secure storage');
   }
 
@@ -86,11 +84,11 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
     return Scaffold(
       appBar: AppHeader(
-        screenTitle: widget.section == 'other'
-            ? 'Other Information'
-            : 'Sample Details',
+        screenTitle: widget.section == 'other' ? 'Other Information' : 'Sample Details',
         username: 'Rajan',
         userId: 'S0001',
+        showBack: true,
+
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -108,19 +106,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (currentStep == 0) {
-                      if (widget.section == 'sample') {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: bloc,
-                              child: const Form6StepScreen(section: 'other'),
-                            ),
-                          ),
-                        );
-                      } else {
-                        Navigator.pop(context);
-                      }
+                      Navigator.pop(context);
                     } else {
                       setState(() => currentStep--);
                     }
@@ -146,27 +132,24 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
                       if (widget.section == 'other') {
                         await saveOtherInfo(state);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: bloc,
-                              child: const Form6StepScreen(section: 'sample'),
+                        Navigator.pop(context, 'completed'); // 👈 send completion status back
+
+                        // Optional: Navigate to Sample step after short delay
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: bloc,
+                                child: const Form6StepScreen(section: 'sample'),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        });
                       } else {
                         await saveSampleInfo(state);
-                        await clearFormData(); // Clear after submission
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: bloc,
-                              child: Form6LandingScreen(),
-                            ),
-                          ),
-                        );
+                        await clearFormData();
+                        Navigator.pop(context, 'completed');
                       }
                     }
                   },
