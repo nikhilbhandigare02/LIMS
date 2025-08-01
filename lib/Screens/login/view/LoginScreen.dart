@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/login/repository/loginRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 
-
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 
 import '../../../core/widgets/loginWidgets/CaptchaWidget.dart';
@@ -49,11 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 220,
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                     color: customColors.primary,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12,
@@ -90,40 +85,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       // Avatar + Greeting
+
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: 26,
-                            backgroundColor: customColors.primary,
-                            child: Icon(Icons.health_and_safety,
-                                color: customColors.white, size: 28),
-                          ),
+
                           const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Welcome Back!",
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: customColors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Inspector login portal",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: customColors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
+
                         ],
                       ),
 
-                      const SizedBox(height: 40),
+
+
+                      const SizedBox(height: 30),
 
                       // Email & Password
                       EmailInput(
@@ -143,10 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Forgot Password Clicked")),
-                            );
+                            Navigator.pushNamed(context, RouteName.forgotPasswordScreen);
                           },
                           child: Text(
                             "Forgot Password?",
@@ -181,8 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 30),
+                       const SizedBox(height: 30),
                     ],
                   ),
                 ),

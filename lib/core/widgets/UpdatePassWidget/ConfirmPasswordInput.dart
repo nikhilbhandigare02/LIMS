@@ -50,7 +50,7 @@ class _ConfirmPasswordInputState extends State<ConfirmPasswordInput> {
             obscureText: _obscureText,
             style: const TextStyle(fontSize: 16, color: customColors.black87),
             decoration: InputDecoration(
-              hintText: 'Enter your password',
+              hintText: 'Confirm new password',
               hintStyle: const TextStyle(fontSize: 16),
               prefixIcon: const Icon(Icons.lock_outline, color: customColors.primary),
               suffixIcon: IconButton(

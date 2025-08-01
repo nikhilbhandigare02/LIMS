@@ -9,7 +9,11 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 
 import '../../Screens/FORM6/view/Form6Screen.dart';
 
+import '../../Screens/ForgotScreen/View/ForgotScreen.dart';
+import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
+
 import '../../Screens/FORM6/view/form6_landing_screen.dart';
+
 import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/Setting/view/Setting.dart';
@@ -28,7 +32,10 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => Form6LandingScreen(),);
     case RouteName.updateScreen:
       return  MaterialPageRoute(builder: (context) => UpdatePasswordScreen(),);
-
+    case RouteName.forgotPasswordScreen:
+      return  MaterialPageRoute(builder: (context) => ForgotScreen(),);
+    case RouteName.resetPasswordScreen:
+      return  MaterialPageRoute(builder: (context) => ResetPasswordScreen(),);
     case RouteName.loginScreen:
       return  MaterialPageRoute(builder: (context) => LoginScreen(),);
     case RouteName.registrationScreen:

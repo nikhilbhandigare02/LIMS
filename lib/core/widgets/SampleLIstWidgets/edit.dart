@@ -118,7 +118,7 @@ class _EditSampleDialogState extends State<EditSampleDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
         ),
-        SizedBox(width: 72),
+        SizedBox(width: 120),
         ElevatedButton(
           onPressed: () {
             if (resendConfirmed && selectedDate == null) {

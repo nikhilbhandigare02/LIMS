@@ -21,34 +21,34 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     SampleData(
       serialNo: "001",
       sampleSentDate: "2024-01-15",
-      sampleResentDate: "2024-01-18",
+      sampleResentDate: "",
       sampleRequestedDate: "2024-01-12",
-      status: "Completed",
-      labLocation: "Lab A - Mumbai",
+      status: "re-requested",
+      labLocation: " Mumbai",
     ),
     SampleData(
       serialNo: "002",
       sampleSentDate: "2024-01-20",
       sampleResentDate: "-",
-      sampleRequestedDate: "2024-01-18",
-      status: "In Progress",
-      labLocation: "Lab B - Delhi",
+      sampleRequestedDate: "-",
+      status: "sample receive entry pending",
+      labLocation: " Nagpur",
     ),
     SampleData(
       serialNo: "003",
       sampleSentDate: "2024-01-25",
-      sampleResentDate: "2024-01-28",
-      sampleRequestedDate: "2024-01-22",
-      status: "Pending",
-      labLocation: "Lab C - Bangalore",
+      sampleResentDate: " ",
+      sampleRequestedDate: " ",
+      status: "sample receive entry pending",
+      labLocation: "Nashik",
     ),
     SampleData(
       serialNo: "004",
       sampleSentDate: "2024-02-01",
       sampleResentDate: "-",
-      sampleRequestedDate: "2024-01-30",
-      status: "Completed",
-      labLocation: "Lab A - Mumbai",
+      sampleRequestedDate: " ",
+      status: "send for codeing",
+      labLocation: " Mumbai",
     ),
   ];
 
@@ -81,11 +81,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
   Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'completed':
+      case 'send for codeing':
         return Colors.green;
-      case 'in progress':
+      case 'sample receive entry pending':
         return Colors.orange;
-      case 'pending':
+      case 're-requested':
         return Colors.red;
       default:
         return Colors.grey;
@@ -217,12 +217,14 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 SizedBox(height: 16),
                 _buildInfoRow(Icons.location_on, 'Lab Location', data.labLocation),
                 SizedBox(height: 12),
-                _buildInfoRow(Icons.calendar_today, 'Requested Date', data.sampleRequestedDate),
-                SizedBox(height: 12),
                 _buildInfoRow(Icons.send, 'Sent Date', data.sampleSentDate),
                 SizedBox(height: 12),
                 _buildInfoRow(Icons.refresh, 'Resent Date', data.sampleResentDate),
+                SizedBox(height: 12),
+                _buildInfoRow(Icons.calendar_today, 'Requested Date', data.sampleRequestedDate),
                 SizedBox(height: 20),
+
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -234,15 +236,17 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         builder: (context) => ViewSampleDialog(data: data),
                       ),
                     ),
-                    SizedBox(width: 12),
-                    _buildActionButton(
-                      icon: Icons.edit,
-                      color: Colors.green,
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => EditSampleDialog(data: data),
+                    if (data.status.toLowerCase() == 're-requested') ...[
+                      SizedBox(width: 12),
+                      _buildActionButton(
+                        icon: Icons.edit,
+                        color: Colors.green,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) => EditSampleDialog(data: data),
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ],
@@ -404,14 +408,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                 ),
                                 iconSize: 20,
                               ),
-                              IconButton(
-                                icon: Icon(Icons.edit, color: Colors.green),
-                                onPressed: () => showDialog(
-                                  context: context,
-                                  builder: (context) => EditSampleDialog(data: data),
+                              if (data.status.toLowerCase() == 're-requested')
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.green),
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (context) => EditSampleDialog(data: data),
+                                  ),
+                                  iconSize: 20,
                                 ),
-                                iconSize: 20,
-                              ),
                             ],
                           ),
                         ),

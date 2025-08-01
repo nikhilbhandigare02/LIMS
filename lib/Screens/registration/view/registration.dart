@@ -34,11 +34,7 @@ class RegistrationScreen extends StatelessWidget {
                     height: 220,
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                    color: customColors.primary,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12,
@@ -79,48 +75,6 @@ class RegistrationScreen extends StatelessWidget {
 
                       return Column(
                         children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 26,
-                                backgroundColor: customColors.primary,
-                                child: Icon(Icons.health_and_safety,
-                                    color: customColors.white, size: 28),
-                              ),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Register to your account",
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: customColors.black87,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Registration portal",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: customColors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 30),
-                          CustomTextField(
-                            label: 'Username',
-                            icon: Icons.person,
-                            initialValue: state.username,
-                            validator: Validators.validateUsername,
-                            onChanged: (val) =>
-                                bloc.add(UsernameChanged(val)),
-                          ),
                           const SizedBox(height: 10),
                           CustomTextField(
                             label: 'Full Name',
@@ -130,6 +84,17 @@ class RegistrationScreen extends StatelessWidget {
                             onChanged: (val) =>
                                 bloc.add(NameChanged(val)),
                           ),
+
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Contact',
+                            icon: Icons.phone,
+                            initialValue: state.username,
+                            validator: Validators.validateUsername,
+                            onChanged: (val) =>
+                                bloc.add(UsernameChanged(val)),
+                          ),
+
                           const SizedBox(height: 10),
                           CustomTextField(
                             label: 'Email',
@@ -140,36 +105,16 @@ class RegistrationScreen extends StatelessWidget {
                             onChanged: (val) =>
                                 bloc.add(EmailChanged(val)),
                           ),
+
+
                           const SizedBox(height: 10),
                           // COUNTRY
                           BlocBuilder<RegistrationBloc, RegistrationState>(
                             builder: (context, state) {
                               return Column(
                                 children: [
-                                  // Country Dropdown
-                                  buildDropdownField(
-                                    label: 'Select Country',
-                                    value: state.selectedCountry,
-                                    items: state.countries,
-                                    icon: Icons.public,
-                                    validator: Validators.validateCountry,
-                                    onChanged: (value) {
-                                      context.read<RegistrationBloc>().add(CountryChanged(value!));
-                                    },
-                                  ),
-                                  const SizedBox(height: 10),
 
-                                  // State Dropdown (changes based on selected country)
-                                  buildDropdownField(
-                                    label: 'Select State',
-                                    value: state.selectedState,
-                                    items: state.states,
-                                    icon: Icons.map,
-                                    validator: Validators.validateState,
-                                    onChanged: (value) {
-                                      context.read<RegistrationBloc>().add(StateChanged(value!));
-                                    },
-                                  ),
+
                                   const SizedBox(height: 10),
 
                                   buildDropdownField(
@@ -187,6 +132,34 @@ class RegistrationScreen extends StatelessWidget {
                               );
                             },
                           ),
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Location',
+                            icon: Icons.work,
+                            initialValue: state.name,
+                            validator: Validators.validateName,
+                            onChanged: (val) =>
+                                bloc.add(NameChanged(val)),
+                          ),
+
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'designation',
+                            icon: Icons.work,
+                            initialValue: state.name,
+                            validator: Validators.validateName,
+                            onChanged: (val) =>
+                                bloc.add(NameChanged(val)),
+                          ),
+                          const SizedBox(height: 10),
+                          CustomTextField(
+                            label: 'Username',
+                            icon: Icons.person,
+                            initialValue: state.username,
+                            validator: Validators.validateUsername,
+                            onChanged: (val) =>
+                                bloc.add(UsernameChanged(val)),
+                          ),
 
 
                           const SizedBox(height: 10),
@@ -200,15 +173,14 @@ class RegistrationScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           CustomTextField(
-                            label: 'Address',
-                            icon: Icons.location_on_outlined,
-                            initialValue: state.email,
-                            keyboardType: TextInputType.text,
-                            validator: Validators.validateEmail,
-                            onChanged: (val) =>
-                                bloc.add(EmailChanged(val)),
-
+                            label: ' Confirm Password',
+                            icon: Icons.lock,
+                            obscureText: true,
+                            isPassword: true, // required to show toggle icon
+                            validator: Validators.validatePassword,
+                            onChanged: (val) => print(val),
                           ),
+
                           const SizedBox(height: 10),
                           RoundButton(
                             text: 'Register Account',

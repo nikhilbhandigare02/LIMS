@@ -76,7 +76,7 @@ class UpdatePassButton extends StatelessWidget {
                 ),
               )
                   : const Text(
-                'Login',
+                'Reset Password',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

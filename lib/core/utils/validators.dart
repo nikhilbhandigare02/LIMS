@@ -68,6 +68,55 @@ class Validators {
     return null;
   }
 
+  static String? validateMobileNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Mobile number is required';
+    }
+    
+    if (value.length != 10) {
+      return 'Mobile number must be exactly 10 digits';
+    }
+    
+    // Check if it contains only digits
+    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return 'Mobile number must contain only digits';
+    }
+
+    return null;
+  }
+
+  static String? validateOtp(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'OTP is required';
+    }
+    
+    if (value.length < 4) {
+      return 'OTP must be at least 4 digits';
+    }
+    
+    if (value.length > 6) {
+      return 'OTP cannot be more than 6 digits';
+    }
+    
+    // Check if it contains only digits
+    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return 'OTP must contain only digits';
+    }
+
+    return null;
+  }
+
+  static String? validateConfirmPassword(String? value, String? newPassword) {
+    if (value == null || value.isEmpty) {
+      return 'Confirm password is required';
+    }
+    
+    if (newPassword != null && value != newPassword) {
+      return 'Passwords do not match';
+    }
+
+    return null;
+  }
 
   static String? validateEmptyField(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {

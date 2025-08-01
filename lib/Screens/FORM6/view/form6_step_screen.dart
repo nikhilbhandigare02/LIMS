@@ -101,81 +101,84 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                 children: stepFields[currentStep],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    if (currentStep == 0) {
-                      Navigator.pop(context);
-                    } else {
-                      setState(() => currentStep--);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: customColors.grey,
-                    foregroundColor: customColors.black87,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(CupertinoIcons.left_chevron, color: customColors.white,),
-                      SizedBox(width: 6,),
-                       Text("Previous", style: TextStyle(color: customColors.white),),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: customColors.primary,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () async {
-                    final isLastStep = currentStep == stepFields.length - 1;
-
-                    if (!isLastStep) {
-                      setState(() => currentStep++);
-                    } else {
-                      final state = bloc.state;
-
-                      if (widget.section == 'other') {
-                        await saveOtherInfo(state);
-                        Navigator.pop(context, 'completed');
-
-                        // Optional: Navigate to Sample step after short delay
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: bloc,
-                                child: const Form6StepScreen(section: 'sample'),
-                              ),
-                            ),
-                          );
-                        });
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (currentStep == 0) {
+                        Navigator.pop(context);
                       } else {
-                        await saveSampleInfo(state);
-                        await clearFormData();
-                        Navigator.pop(context, 'completed');
+                        setState(() => currentStep--);
                       }
-                    }
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        currentStep < stepFields.length - 1
-                            ? "Next"
-                            : widget.section == 'other'
-                            ? "Save & Next"
-                            : "Submit",
-                        style: TextStyle(fontWeight: FontWeight.bold,),
-                      ),
-                      SizedBox(width: 6,),
-                      Icon(CupertinoIcons.right_chevron, color: Colors.white,)
-                    ],
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: customColors.grey,
+                      foregroundColor: customColors.black87,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(CupertinoIcons.left_chevron, color: customColors.white,),
+                        SizedBox(width: 6,),
+                         Text("Previous", style: TextStyle(color: customColors.white),),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: customColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      final isLastStep = currentStep == stepFields.length - 1;
+
+                      if (!isLastStep) {
+                        setState(() => currentStep++);
+                      } else {
+                        final state = bloc.state;
+
+                        if (widget.section == 'other') {
+                          await saveOtherInfo(state);
+                          Navigator.pop(context, 'completed');
+
+                          // Optional: Navigate to Sample step after short delay
+                          Future.delayed(Duration(milliseconds: 300), () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: bloc,
+                                  child: const Form6StepScreen(section: 'sample'),
+                                ),
+                              ),
+                            );
+                          });
+                        } else {
+                          await saveSampleInfo(state);
+                          await clearFormData();
+                          Navigator.pop(context, 'completed');
+                        }
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          currentStep < stepFields.length - 1
+                              ? "Next"
+                              : widget.section == 'other'
+                              ? "Save & Next"
+                              : "Submit",
+                          style: TextStyle(fontWeight: FontWeight.bold,),
+                        ),
+                        SizedBox(width: 6,),
+                        Icon(CupertinoIcons.right_chevron, color: Colors.white,)
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

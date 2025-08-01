@@ -50,7 +50,7 @@ class _CurrentPasswordInputState extends State<CurrentPasswordInput> {
             obscureText: _obscureText,
             style: const TextStyle(fontSize: 16, color: customColors.black87),
             decoration: InputDecoration(
-              hintText: 'Enter your password',
+              hintText: 'Enter your current password',
               hintStyle: const TextStyle(fontSize: 16),
               prefixIcon: const Icon(Icons.lock_outline, color: customColors.primary),
               suffixIcon: IconButton(
