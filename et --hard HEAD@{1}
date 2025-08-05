@@ -1,0 +1,38 @@
+[33m2f58203[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m2f58203[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{1}: commit: save my changes new 6 5
+[33m6fb3cb9[m HEAD@{2}: commit: save my changes new 5 5
+[33m4d546d5[m HEAD@{3}: commit: save my changes new 12.31 5
+[33m28693db[m HEAD@{4}: commit (merge): save my changes new 6.18
+[33m5626bbd[m HEAD@{5}: commit: my new changes 317 7pm
+[33m93c6e04[m HEAD@{6}: commit: save my changes new 6.18
+[33m61da72b[m HEAD@{7}: commit: save my changes new
+[33m3d99256[m HEAD@{8}: commit (merge): my new changes 317 7pm
+[33ma8c4be8[m HEAD@{9}: commit: my new changes 317 6pm
+[33m297cb61[m HEAD@{10}: commit (merge): save my changes new
+[33m2e78c90[m HEAD@{11}: commit: my new changes 317 6pm
+[33m940eb0e[m HEAD@{12}: commit: save my changes new
+[33m34edf37[m HEAD@{13}: pull: Fast-forward
+[33m9d5210c[m HEAD@{14}: commit: my new changes 317
+[33mfb7511d[m HEAD@{15}: commit: new changes 317
+[33m9f38689[m HEAD@{16}: commit: new change by nikhil login
+[33m5888d79[m HEAD@{17}: commit: new change by nikhil login
+[33m052d511[m HEAD@{18}: commit (merge): Merge remote-tracking branch 'origin/main'
+[33m2f7d508[m HEAD@{19}: commit: new change by nikhil4
+[33mb8ec650[m HEAD@{20}: rebase (abort): returning to refs/heads/main
+[33m06b7aa7[m HEAD@{21}: rebase (pick): save my changes
+[33m6c17205[m HEAD@{22}: rebase (start): checkout origin/main
+[33mb8ec650[m HEAD@{23}: reset: moving to HEAD
+[33mb8ec650[m HEAD@{24}: reset: moving to HEAD
+[33mb8ec650[m HEAD@{25}: commit: new change by nikhil3
+[33mbe8d503[m HEAD@{26}: commit: save my changes
+[33me48362f[m HEAD@{27}: commit: new change by nikhil
+[33m375717b[m HEAD@{28}: commit: new commit
+[33m93dae41[m HEAD@{29}: pull: Fast-forward
+[33m90bcfa0[m HEAD@{30}: reset: moving to HEAD
+[33m90bcfa0[m HEAD@{31}: pull: Fast-forward
+[33md0e5f4e[m HEAD@{32}: commit (amend): api end point
+[33m7c7d7c7[m HEAD@{33}: commit (amend): api end point
+[33m2687349[m HEAD@{34}: commit: api end point
+[33m72dda77[m HEAD@{35}: commit: api end point
+[33md28a23a[m HEAD@{36}: Branch: renamed refs/heads/master to refs/heads/main
+[33md28a23a[m HEAD@{38}: commit (initial): first commit
