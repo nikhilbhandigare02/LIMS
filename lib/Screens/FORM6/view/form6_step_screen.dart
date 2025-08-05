@@ -1,8 +1,7 @@
-// form6_step_screen.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:food_inspector/Screens/FORM6/Storage/form6_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import '../bloc/Form6Bloc.dart';
@@ -20,76 +19,113 @@ class Form6StepScreen extends StatefulWidget {
 class _Form6StepScreenState extends State<Form6StepScreen> {
   int currentStep = 0;
   late List<List<Widget>> stepFields;
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
+  final Form6Storage storage = Form6Storage();
 
   @override
   void initState() {
     super.initState();
-    final state = context.read<SampleFormBloc>().state;
     final bloc = context.read<SampleFormBloc>();
+    stepFields = _generateStepFields(bloc.state);
+    _loadSavedData();
+  }
 
-    stepFields = widget.section == 'other'
+  List<List<Widget>> _generateStepFields(SampleFormState state) {
+    final bloc = context.read<SampleFormBloc>();
+    return widget.section == 'other'
         ? getOtherInformationSteps(state, bloc)
         : getSampleDetailsSteps(state, bloc);
   }
 
-  Future<void> saveOtherInfo(SampleFormState state) async {
-    final data = {
-      'senderName': state.senderName,
-      'DONumber': state.DONumber,
-      'senderDesignation': state.senderDesignation,
-      'district': state.district,
-      'region': state.region,
-      'division': state.division,
-      'area': state.area,
-    };
-    await secureStorage.write(key: 'form6_other_data', value: data.toString());
-    await secureStorage.write(key: 'form6_other_section', value: 'complete');
-    print('✅ Saved Other Info: $data');
+  Future<void> _loadSavedData() async {
+    final bloc = context.read<SampleFormBloc>();
+    final savedState = await storage.fetchStoredState();
+
+    if (savedState != null) {
+      bloc.add(LoadSavedFormData(savedState));
+    }
+
+    await Future.delayed(const Duration(milliseconds: 50));
+    setState(() {
+      stepFields = _generateStepFields(bloc.state);
+    });
   }
 
-  Future<void> saveSampleInfo(SampleFormState state) async {
-    final data = {
-      'sampleCode': state.sampleCode,
-      'collectionDate': state.collectionDate,
-      'placeOfCollection': state.placeOfCollection,
-      'SampleName': state.SampleName,
-      'QuantitySample': state.QuantitySample,
-      'article': state.article,
-      'preservativeAdded': state.preservativeAdded,
-      'preservativeName': state.preservativeName,
-      'preservativeQuantity': state.preservativeQuantity,
-      'personSignature': state.personSignature,
-      'slipNumber': state.slipNumber,
-      'DOSignature': state.DOSignature,
-      'sampleCodeNumber': state.sampleCodeNumber,
-      'sealImpression': state.sealImpression,
-      'numberofSeal': state.numberofSeal,
-      'formVI': state.formVI,
-      'FoemVIWrapper': state.FoemVIWrapper,
-    };
+  void _goToNextStep() async {
+    final bloc = context.read<SampleFormBloc>();
 
-    await secureStorage.write(key: 'form6_sample_data', value: data.toString());
-    await secureStorage.write(key: 'form6_sample_section', value: 'complete');
-    print('✅ Saved Sample Info: $data');
+    await storage.saveForm6Data(bloc.state);
+    await Future.delayed(const Duration(milliseconds: 50));
+    await storage.printAllStoredData();
+
+    final state = bloc.state;
+
+    if (currentStep < stepFields.length - 1) {
+      setState(() {
+        currentStep++;
+        stepFields = _generateStepFields(state);
+      });
+    } else {
+      if (widget.section == 'other' && !state.isOtherInfoComplete) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("⚠️ Please complete all required fields."),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (widget.section == 'sample' && !state.isSampleInfoComplete) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("⚠️ Please complete all sample fields."),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      Navigator.pop(context, 'completed');
+
+      if (widget.section == 'other') {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: bloc,
+                child: const Form6StepScreen(section: 'sample'),
+              ),
+            ),
+          );
+        });
+      }
+    }
   }
 
-  Future<void> clearFormData() async {
-    await secureStorage.deleteAll();
-    print('🧹 Cleared all form6 data from secure storage');
+  void _goToPreviousStep() async {
+    if (currentStep == 0) {
+      Navigator.pop(context);
+    } else {
+      final bloc = context.read<SampleFormBloc>();
+      await _loadSavedData(); // Update from storage
+      setState(() {
+        currentStep--;
+        stepFields = _generateStepFields(bloc.state); // Rebuild UI with latest state
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<SampleFormBloc>();
-
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppHeader(
         screenTitle: widget.section == 'other' ? 'Other Information' : 'Sample Details',
         username: 'Rajan',
         userId: 'S0001',
         showBack: true,
-
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -97,8 +133,16 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
           children: [
             const SizedBox(height: 30),
             Expanded(
-              child: ListView(
-                children: stepFields[currentStep],
+              child: BlocBuilder<SampleFormBloc, SampleFormState>(
+                builder: (context, state) {
+                  final steps = widget.section == 'other'
+                      ? getOtherInformationSteps(state, context.read<SampleFormBloc>())
+                      : getSampleDetailsSteps(state, context.read<SampleFormBloc>());
+
+                  return ListView(
+                    children: steps[currentStep],
+                  );
+                },
               ),
             ),
             Padding(
@@ -107,76 +151,40 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      if (currentStep == 0) {
-                        Navigator.pop(context);
-                      } else {
-                        setState(() => currentStep--);
-                      }
-                    },
+                    onPressed: _goToPreviousStep,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: customColors.grey,
                       foregroundColor: customColors.black87,
                     ),
                     child: Row(
                       children: [
-                        Icon(CupertinoIcons.left_chevron, color: customColors.white,),
-                        SizedBox(width: 6,),
-                         Text("Previous", style: TextStyle(color: customColors.white),),
+                        Icon(CupertinoIcons.left_chevron, color: customColors.white),
+                        const SizedBox(width: 6),
+                        Text("Previous", style: TextStyle(color: customColors.white)),
                       ],
                     ),
                   ),
                   ElevatedButton(
+                    onPressed: _goToNextStep,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: customColors.primary,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () async {
-                      final isLastStep = currentStep == stepFields.length - 1;
-
-                      if (!isLastStep) {
-                        setState(() => currentStep++);
-                      } else {
-                        final state = bloc.state;
-
-                        if (widget.section == 'other') {
-                          await saveOtherInfo(state);
-                          Navigator.pop(context, 'completed');
-
-                          // Optional: Navigate to Sample step after short delay
-                          Future.delayed(Duration(milliseconds: 300), () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: bloc,
-                                  child: const Form6StepScreen(section: 'sample'),
-                                ),
-                              ),
-                            );
-                          });
-                        } else {
-                          await saveSampleInfo(state);
-                          await clearFormData();
-                          Navigator.pop(context, 'completed');
-                        }
-                      }
-                    },
                     child: Row(
                       children: [
                         Text(
                           currentStep < stepFields.length - 1
-                              ? "Next"
+                              ? "SAVE & NEXT"
                               : widget.section == 'other'
-                              ? "Save & Next"
-                              : "Submit",
-                          style: TextStyle(fontWeight: FontWeight.bold,),
+                              ? "SAVE & NEXT"
+                              : "SUBMIT",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 6,),
-                        Icon(CupertinoIcons.right_chevron, color: Colors.white,)
+                        const SizedBox(width: 6),
+                        const Icon(CupertinoIcons.right_chevron, color: Colors.white),
                       ],
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

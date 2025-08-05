@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/Message.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
+import '../Storage/form6_storage.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form6_step_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   bool isOtherComplete = false;
   bool isSampleComplete = false;
+  final Form6Storage storage = Form6Storage();
 
   @override
   void initState() {
@@ -28,19 +31,13 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Future<void> loadCompletionStatus() async {
-    String? other = await secureStorage.read(key: 'form6_other_section');
-    String? sample = await secureStorage.read(key: 'form6_sample_section');
+    final savedState = await storage.fetchStoredState();
 
     setState(() {
-      isOtherComplete = other == 'complete';
-      isSampleComplete = sample == 'complete';
+      isOtherComplete = savedState?.isOtherInfoComplete ?? false;
+      isSampleComplete = savedState?.isSampleInfoComplete ?? false;
     });
-
-    print('🔐 Secure Storage Loaded:');
-    print('isOtherComplete: $isOtherComplete');
-    print('isSampleComplete: $isSampleComplete');
   }
-
   // Future<void> handleSubmit() async {
   //   if (isOtherComplete && isSampleComplete) {
   //     await secureStorage.deleteAll(); // 🧹 Clear everything
@@ -54,23 +51,26 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   Future<void> handleSubmit() async {
     if (isOtherComplete && isSampleComplete) {
-      await secureStorage.deleteAll(); // 🧹 Clear everything
+      await storage.clearFormData();
       Message.showTopRightOverlay(
         context,
         '✅ Form submitted successfully.',
         MessageType.success,
       );
-
-      Navigator.pushNamedAndRemoveUntil(context, RouteName.homeScreen, (route)=>false); // or navigate as needed
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+          child: Form6LandingScreen(),
+        ),
+      ));
     } else {
       Message.showTopRightOverlay(
         context,
-        '⚠️ Form not filled. Please fill the form.',
+        '⚠️ Please fill all form sections.',
         MessageType.error,
       );
     }
   }
-
   void showIncompleteMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -122,7 +122,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                         );
                         if (result == 'completed') {
                           setState(() => isOtherComplete = true);
+                          await storage.markSectionComplete(section: 'other');
                         }
+
                       },
                     ),
                     _buildSectionCard(
@@ -141,7 +143,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                         );
                         if (result == 'completed') {
                           setState(() => isSampleComplete = true);
+                          await storage.markSectionComplete(section: 'sample');
                         }
+
                       },
                     ),
                   ],
@@ -151,9 +155,43 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
               if (isOtherComplete && isSampleComplete)
                 ElevatedButton.icon(
-                  onPressed: handleSubmit,
-                  icon: Icon(Icons.check_circle, color: customColors.white,),
-                  label: Text("Submit Form", style: TextStyle(color: customColors.white),),
+                  onPressed: () async {
+                    final storage = Form6Storage();
+
+                    if (isOtherComplete && isSampleComplete) {
+                      await storage.clearFormData(); // ✅ Clear only Form VI fields
+
+                      Message.showTopRightOverlay(
+                        context,
+                        '✅ Form submitted successfully.',
+                        MessageType.success,
+                      );
+
+                      await Future.delayed(Duration(milliseconds: 300)); // let storage clear
+
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider(
+                            create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                            child: Form6LandingScreen(),
+                          ),
+                        ),
+                            (route) => false,
+                      );
+                    } else {
+                      Message.showTopRightOverlay(
+                        context,
+                        '⚠️ Form not filled. Please fill the form.',
+                        MessageType.error,
+                      );
+                    }
+                  },
+                  icon: Icon(Icons.check_circle, color: customColors.white),
+                  label: Text(
+                    "Submit Form",
+                    style: TextStyle(color: customColors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: customColors.primary,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

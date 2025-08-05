@@ -98,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 30),
 
-                      // Email & Password
                       EmailInput(
                         formkey: _formKey,
                         emailFocusNode: emailFocusNode,
