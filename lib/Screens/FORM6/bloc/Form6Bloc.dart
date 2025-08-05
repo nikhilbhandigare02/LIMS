@@ -12,9 +12,12 @@ part 'Form6State.dart';
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
   SampleFormBloc({required this.form6repository}) : super(const SampleFormState()) {
-    on<SampleCodeChanged>((event, emit) {
-      print(state.sampleCode);
-      emit(state.copyWith(sampleCode: event.value));
+    on<SampleCodeDataChanged>((event, emit) {
+      print(state.sampleCodeData);
+      emit(state.copyWith(sampleCodeData: event.value));
+    });
+    on<LoadSavedFormData>((event, emit) {
+      emit(event.savedState); // Replace current state with saved state
     });
     on<senderNameChanged>((event, emit) {
       print(state.senderName);
@@ -25,51 +28,81 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(district: event.value));
     });
     on<CollectionDateChanged>((event, emit) {
+        print(state.collectionDate);
+
       emit(state.copyWith(collectionDate: event.value));
     });
+    on<UpdateValidationErrors>((event, emit) {
+      emit(state.copyWith(fieldErrors: event.errors));
+    });
+
     on<PlaceChanged>((event, emit) {
+      print(state.placeOfCollection);
       emit(state.copyWith(placeOfCollection: event.value));
     });
     on<PreservativeAddedChanged>((event, emit) {
+      print(state.preservativeAdded);
       emit(state.copyWith(preservativeAdded: event.value));
     });
     on<preservativeNameChanged>((event, emit) {
+      print(state.preservativeName);
       emit(state.copyWith(preservativeName: event.value));
     });
     on<preservativeQuantityChanged>((event, emit) {
+      print(state.preservativeQuantity);
       emit(state.copyWith(preservativeQuantity: event.value));
     });
     on<personSignatureChanged>((event, emit) {
+      print(state.personSignature);
       emit(state.copyWith(personSignature: event.value));
     });
     on<slipNumberChanged>((event, emit) {
+      print(state.slipNumber);
       emit(state.copyWith(slipNumber: event.value));
     });
     on<DOSignatureChanged>((event, emit) {
+      print(state.DOSignature);
+
       emit(state.copyWith(DOSignature: event.value));
     });
     on<sampleCodeNumberChanged>((event, emit) {
+      print(state.sampleCodeNumber);
+
       emit(state.copyWith(sampleCodeNumber: event.value));
     });
     on<sealImpressionChanged>((event, emit) {
+      print(state.sealImpression);
+
       emit(state.copyWith(sealImpression: event.value));
     });
     on<numberofSealChanged>((event, emit) {
+      print(state.numberofSeal);
+
       emit(state.copyWith(numberofSeal: event.value));
     });
     on<formVIChanged>((event, emit) {
+      print(state.formVI);
+
       emit(state.copyWith(formVI: event.value));
     });
     on<FoemVIWrapperChanged>((event, emit) {
+      print(state.FoemVIWrapper);
+
       emit(state.copyWith(FoemVIWrapper: event.value));
     });
     on<SampleNameChanged>((event, emit) {
+      print(state.SampleName);
+
       emit(state.copyWith(SampleName: event.value));
     });
     on<QuantitySampleChanged>((event, emit) {
+      print(state.QuantitySample);
+
       emit(state.copyWith(QuantitySample: event.value));
     });
     on<articleChanged>((event, emit) {
+      print(state.article);
+
       emit(state.copyWith(article: event.value));
     });
     on<RegionChanged>((event, emit) {
@@ -85,9 +118,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(DONumber: event.value));
     });
     on<DivisionChanged>((event, emit) {
+      print(state.division);
+
       emit(state.copyWith(division: event.value));
     });
     on<AreaChanged>((event, emit) {
+      print(state.area);
+
       emit(state.copyWith(area: event.value));
     });
     on<FormSubmit>(_onFormSubmit);
@@ -106,7 +143,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     try {
       final formData = {
         'senderName': state.senderName,
-        'sampleCode': state.sampleCode,
+        'sampleCodeData': state.sampleCodeData,
         'DONumber': state.DONumber,
         'district': state.district,
         'region': state.region,

@@ -1,3 +1,5 @@
+import '../../Screens/FORM6/bloc/Form6Bloc.dart';
+
 class Validators {
   static String? validateUsername(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -125,3 +127,93 @@ class Validators {
     return null;
   }
 }
+
+class Form6Validators {
+  static Map<String, String?> validateStep(List<String> fieldNames, SampleFormState state) {
+    final Map<String, String?> errors = {};
+
+    for (final field in fieldNames) {
+      switch (field) {
+        case 'senderName':
+          errors[field] = state.senderName.isEmpty ? 'Sender Name is required' : null;
+          break;
+        case 'DONumber':
+          errors[field] = state.DONumber.isEmpty ? 'DO Number is required' : null;
+          break;
+        case 'senderDesignation':
+          errors[field] = state.senderDesignation.isEmpty ? 'Sender Designation is required' : null;
+          break;
+        case 'district':
+          errors[field] = state.district.isEmpty ? 'District is required' : null;
+          break;
+        case 'region':
+          errors[field] = state.region.isEmpty ? 'Region is required' : null;
+          break;
+        case 'division':
+          errors[field] = state.division.isEmpty ? 'Division is required' : null;
+          break;
+        case 'area':
+          errors[field] = state.area.isEmpty ? 'Area is required' : null;
+          break;
+        case 'sampleCodeData':
+          errors[field] = state.sampleCodeData.isEmpty ? 'Sample Code is required' : null;
+          break;
+        case 'collectionDate':
+          errors[field] = state.collectionDate == null ? 'Collection Date is required' : null;
+          break;
+        case 'placeOfCollection':
+          errors[field] = state.placeOfCollection.isEmpty ? 'Place of Collection is required' : null;
+          break;
+        case 'SampleName':
+          errors[field] = state.SampleName.isEmpty ? 'Sample Name is required' : null;
+          break;
+        case 'QuantitySample':
+          errors[field] = state.QuantitySample.isEmpty ? 'Quantity is required' : null;
+          break;
+        case 'article':
+          errors[field] = state.article.isEmpty ? 'Article is required' : null;
+          break;
+        case 'preservativeAdded':
+          errors[field] = state.preservativeAdded == null ? 'Preservative info required' : null;
+          break;
+        case 'preservativeName':
+          errors[field] = state.preservativeAdded == true && state.preservativeName.isEmpty
+              ? 'Preservative Name required' : null;
+          break;
+        case 'preservativeQuantity':
+          errors[field] = state.preservativeAdded == true && state.preservativeQuantity.isEmpty
+              ? 'Preservative Quantity required' : null;
+          break;
+        case 'personSignature':
+          errors[field] = state.personSignature == null ? 'Signature confirmation required' : null;
+          break;
+        case 'slipNumber':
+          errors[field] = state.slipNumber.isEmpty ? 'Slip Number is required' : null;
+          break;
+        case 'DOSignature':
+          errors[field] = state.DOSignature == null ? 'DO Signature required' : null;
+          break;
+        case 'sampleCodeNumber':
+          errors[field] = state.sampleCodeNumber.isEmpty ? 'Sample Code Number is required' : null;
+          break;
+        case 'sealImpression':
+          errors[field] = state.sealImpression == null ? 'Seal Impression is required' : null;
+          break;
+        case 'numberofSeal':
+          errors[field] = state.numberofSeal.isEmpty ? 'Number of Seals is required' : null;
+          break;
+        case 'formVI':
+          errors[field] = state.formVI == null ? 'Form VI check required' : null;
+          break;
+        case 'FoemVIWrapper':
+          errors[field] = state.FoemVIWrapper == null ? 'Wrapper check required' : null;
+          break;
+        default:
+          errors[field] = null;
+      }
+    }
+
+    return errors;
+  }
+}
+

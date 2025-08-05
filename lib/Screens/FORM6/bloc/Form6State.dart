@@ -2,13 +2,13 @@ part of 'Form6Bloc.dart';
 
 class SampleFormState extends Equatable {
   final String senderName;
-  final String sampleCode;
   final String DONumber;
   final String senderDesignation;
   final String district;
   final String region;
   final String division;
   final String area;
+  final String sampleCodeData;
   final DateTime? collectionDate;
   final String placeOfCollection;
   final String SampleName;
@@ -27,39 +27,41 @@ class SampleFormState extends Equatable {
   final bool? FoemVIWrapper;
   final String message;
   final ApiStatus apiStatus;
+  final Map<String, String?> fieldErrors;
 
   const SampleFormState({
     this.senderName = '',
-    this.sampleCode = '',
     this.DONumber = '',
     this.senderDesignation = '',
     this.district = '',
     this.region = '',
     this.division = '',
     this.area = '',
+    this.sampleCodeData = '',
     this.collectionDate,
     this.placeOfCollection = '',
     this.SampleName = '',
     this.QuantitySample = '',
     this.article = '',
-    this.preservativeAdded ,
+    this.preservativeAdded, // default null
     this.preservativeName = '',
     this.preservativeQuantity = '',
-    this.personSignature,
+    this.personSignature, // default null
     this.slipNumber = '',
-    this.DOSignature,
+    this.DOSignature, // default null
     this.sampleCodeNumber = '',
-    this.sealImpression,
+    this.sealImpression, // default null
     this.numberofSeal = '',
-    this.formVI,
-    this.FoemVIWrapper,
+    this.formVI, // default null
+    this.FoemVIWrapper, // default null
     this.message = '',
-    this.apiStatus = ApiStatus.initial
+    this.apiStatus = ApiStatus.initial,
+    this.fieldErrors = const {},
   });
 
   SampleFormState copyWith({
     String? senderName,
-    String? sampleCode,
+    String? sampleCodeData,
     String? DONumber,
     String? senderDesignation,
     String? district,
@@ -83,11 +85,12 @@ class SampleFormState extends Equatable {
     bool? formVI,
     bool? FoemVIWrapper,
     final String? message,
-    final ApiStatus? apiStatus
+    final ApiStatus? apiStatus,
+    Map<String, String?>? fieldErrors,
   }) {
     return SampleFormState(
       senderName: senderName ?? this.senderName,
-      sampleCode: sampleCode ?? this.sampleCode,
+      sampleCodeData: sampleCodeData ?? this.sampleCodeData,
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
@@ -110,21 +113,22 @@ class SampleFormState extends Equatable {
       numberofSeal: numberofSeal ?? this.numberofSeal,
       formVI: formVI ?? this.formVI,
       FoemVIWrapper: FoemVIWrapper ?? this.FoemVIWrapper,
-        message: message ?? this.message,
-        apiStatus: apiStatus ?? this.apiStatus
+      message: message ?? this.message,
+      apiStatus: apiStatus ?? this.apiStatus,
+      fieldErrors: fieldErrors ?? this.fieldErrors,
     );
   }
 
   @override
   List<Object?> get props => [
     senderName,
-    sampleCode,
     DONumber,
     senderDesignation,
     district,
     region,
     division,
     area,
+    sampleCodeData,
     collectionDate,
     placeOfCollection,
     SampleName,
@@ -142,10 +146,10 @@ class SampleFormState extends Equatable {
     formVI,
     FoemVIWrapper,
     message,
-    apiStatus
+    apiStatus,
+    fieldErrors,
   ];
 
-  // Check if 'Other Information' section is complete
   bool get isOtherInfoComplete {
     return senderName.isNotEmpty &&
         senderDesignation.isNotEmpty &&
@@ -156,9 +160,8 @@ class SampleFormState extends Equatable {
         area.isNotEmpty;
   }
 
-  // Check if 'Sample Details' section is complete
   bool get isSampleInfoComplete {
-    return sampleCode.isNotEmpty &&
+    return sampleCodeData.isNotEmpty &&
         collectionDate != null &&
         placeOfCollection.isNotEmpty &&
         SampleName.isNotEmpty &&
@@ -175,4 +178,80 @@ class SampleFormState extends Equatable {
         FoemVIWrapper != null;
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'senderName': senderName,
+      'sampleCodeData': sampleCodeData,
+      'DONumber': DONumber,
+      'senderDesignation': senderDesignation,
+      'district': district,
+      'region': region,
+      'division': division,
+      'area': area,
+      'collectionDate': collectionDate?.toIso8601String(),
+      'placeOfCollection': placeOfCollection,
+      'SampleName': SampleName,
+      'QuantitySample': QuantitySample,
+      'article': article,
+      'preservativeAdded': preservativeAdded == null ? null : (preservativeAdded! ? 1 : 0),
+      'preservativeName': preservativeName,
+      'preservativeQuantity': preservativeQuantity,
+      'personSignature': personSignature == null ? null : (personSignature! ? 1 : 0),
+      'slipNumber': slipNumber,
+      'DOSignature': DOSignature == null ? null : (DOSignature! ? 1 : 0),
+      'sampleCodeNumber': sampleCodeNumber,
+      'sealImpression': sealImpression == null ? null : (sealImpression! ? 1 : 0),
+      'numberofSeal': numberofSeal,
+      'formVI': formVI == null ? null : (formVI! ? 1 : 0),
+      'FoemVIWrapper': FoemVIWrapper == null ? null : (FoemVIWrapper! ? 1 : 0),
+      'message': message,
+      'apiStatus': apiStatus.name,
+    };
+  }
+
+  factory SampleFormState.fromMap(Map<String, dynamic> map) {
+    return SampleFormState(
+      senderName: map['senderName'] ?? '',
+      sampleCodeData: map['sampleCodeData'] ?? '',
+      DONumber: map['DONumber'] ?? '',
+      senderDesignation: map['senderDesignation'] ?? '',
+      district: map['district'] ?? '',
+      region: map['region'] ?? '',
+      division: map['division'] ?? '',
+      area: map['area'] ?? '',
+      collectionDate: map['collectionDate'] != null ? DateTime.tryParse(map['collectionDate']) : null,
+      placeOfCollection: map['placeOfCollection'] ?? '',
+      SampleName: map['SampleName'] ?? '',
+      QuantitySample: map['QuantitySample'] ?? '',
+      article: map['article'] ?? '',
+      preservativeAdded: map['preservativeAdded'] == null
+          ? null
+          : map['preservativeAdded'] == 1,
+      preservativeName: map['preservativeName'] ?? '',
+      preservativeQuantity: map['preservativeQuantity'] ?? '',
+      personSignature: map['personSignature'] == null
+          ? null
+          : map['personSignature'] == 1,
+      slipNumber: map['slipNumber'] ?? '',
+      DOSignature: map['DOSignature'] == null
+          ? null
+          : map['DOSignature'] == 1,
+      sampleCodeNumber: map['sampleCodeNumber'] ?? '',
+      sealImpression: map['sealImpression'] == null
+          ? null
+          : map['sealImpression'] == 1,
+      numberofSeal: map['numberofSeal'] ?? '',
+      formVI: map['formVI'] == null
+          ? null
+          : map['formVI'] == 1,
+      FoemVIWrapper: map['FoemVIWrapper'] == null
+          ? null
+          : map['FoemVIWrapper'] == 1,
+      message: map['message'] ?? '',
+      apiStatus: ApiStatus.values.firstWhere(
+            (e) => e.name == map['apiStatus'],
+        orElse: () => ApiStatus.initial,
+      ),
+    );
+  }
 }

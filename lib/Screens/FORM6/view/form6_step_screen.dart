@@ -84,7 +84,6 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     final bloc = context.read<SampleFormBloc>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppHeader(
         screenTitle: widget.section == 'other' ? 'Other Information' : 'Sample Details',
         username: 'Rajan',
