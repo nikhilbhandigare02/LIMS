@@ -50,7 +50,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
   Future<void> saveSampleInfo(SampleFormState state) async {
     final data = {
-      'sampleCode': state.sampleCode,
+      'sampleCode': state.sampleCodeData,
       'collectionDate': state.collectionDate,
       'placeOfCollection': state.placeOfCollection,
       'SampleName': state.SampleName,
