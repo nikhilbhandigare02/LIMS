@@ -60,13 +60,23 @@ class _BlocTextInputState extends State<BlocTextInput> {
       controller: _controller,
       onChanged: widget.onChanged,
       decoration: InputDecoration(
-        hintText: 'Enter ${widget.label}',
-        prefixIcon:
-        widget.icon != null ? Icon(widget.icon, color: customColors.primary) : null,
+        hintText: 'Select ${widget.label}',  // ✅ fix here
+        hintStyle: const TextStyle(fontSize: 16),
+        prefixIcon: widget.icon != null
+            ? Icon(widget.icon, color: customColors.primary)
+            : null,  // ✅ fix here
         filled: true,
         fillColor: customColors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: customColors.greyDivider),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+        ),
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: BorderSide(color: customColors.greyDivider),
         ),

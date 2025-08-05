@@ -32,10 +32,22 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
   List<List<Widget>> _generateStepFields(SampleFormState state) {
     final bloc = context.read<SampleFormBloc>();
-    return widget.section == 'other'
-        ? getOtherInformationSteps(state, bloc)
-        : getSampleDetailsSteps(state, bloc);
+    switch (widget.section) {
+      case 'other':
+        return getOtherInformationSteps(state, bloc);
+      case 'sample':
+        return getSampleDetailsSteps(state, bloc);
+      // case 'preservative':
+      //   return getPreservativeSteps(state, bloc);
+      // case 'seal':
+      //   return getSealDetailsSteps(state, bloc);
+      // case 'review':
+      //   return getFinalReviewSteps(state, bloc);
+      default:
+        return [[]];
+    }
   }
+
 
   Future<void> _loadSavedData() async {
     final bloc = context.read<SampleFormBloc>();

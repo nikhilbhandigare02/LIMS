@@ -63,6 +63,10 @@ class Form6Database {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE form6 ADD COLUMN isOtherInfoComplete INTEGER');
       await db.execute('ALTER TABLE form6 ADD COLUMN isSampleInfoComplete INTEGER');
+      await db.execute('ALTER TABLE form6 ADD COLUMN isSampleDetailsComplete INTEGER');
+      await db.execute('ALTER TABLE form6 ADD COLUMN isPreservativeInfoComplete INTEGER');
+      await db.execute('ALTER TABLE form6 ADD COLUMN isSealInfoComplete INTEGER');
+      await db.execute('ALTER TABLE form6 ADD COLUMN isFinalReviewComplete INTEGER');
     }
   }
 
