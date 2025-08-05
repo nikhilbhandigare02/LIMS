@@ -63,16 +63,23 @@ class LoginButton extends StatelessWidget {
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
-        buildWhen: (current, previous) => false, // Button UI doesn't change except loader
+        buildWhen: (current, previous) => false,
         builder: (context, state) {
-          return Container(
+          return SizedBox(
             width: double.infinity,
-            decoration: BoxDecoration(
-              color: customColors.primary,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: TextButton(
-              onPressed: () {
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: customColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                elevation: 0,
+                shadowColor: Colors.transparent,
+              ),
+              onPressed: state.apiStatus == ApiStatus.loading
+                  ? null
+                  : () {
                 if (formkey.currentState!.validate()) {
                   context.read<LoginBloc>().add(LoginButtonEvent());
                 }
@@ -87,10 +94,10 @@ class LoginButton extends StatelessWidget {
                 ),
               )
                   : const Text(
-                'Login',
+                'Sign in',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
