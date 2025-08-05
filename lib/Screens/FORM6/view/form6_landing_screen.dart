@@ -40,6 +40,11 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   Future<void> handleSubmit() async {
     if (isOtherComplete && isSampleComplete) {
       await storage.clearFormData();
+      setState(() {
+        isOtherComplete = false;
+        isSampleComplete = false;
+      });
+
       Message.showTopRightOverlay(
         context,
         '✅ Form submitted successfully.',
@@ -77,7 +82,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       drawer: CustomDrawer(),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -85,7 +90,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                   'Form Sections',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
                 // _buildSectionCard(
                 //   title: 'FSO Details',
                 //   isComplete: isOtherComplete,
@@ -106,7 +110,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 //     }
                 //   },
                 // ),
-                const SizedBox(height: 16),
                 // _buildSectionCard(
                 //   title: 'Sample Details',
                 //   isComplete: isSampleComplete,
@@ -129,7 +132,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 // ),
                 const SizedBox(height: 30),
                 _buildVerticalStepProgress(),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 _buildSubmitButton(),
               ],
             ),
@@ -200,151 +203,213 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     List<Map<String, dynamic>> steps = [
       {
         'title': 'FSO Info',
+        'subtitle': 'Food Safety Officer details',
+        'icon': Icons.person_outline,
         'isComplete': isOtherComplete,
-        'isSub': false,
+        'color': Colors.blue,
         'section': 'other',
+        'isSub': false,
       },
       {
         'title': 'Sample Info',
+        'subtitle': 'Basic sample details',
+        'icon': Icons.science_outlined,
         'isComplete': isSampleComplete,
-        'isSub': false,
+        'color': Colors.green,
         'section': 'sample',
+        'isSub': false,
       },
       {
         'title': 'Preservative Info',
+        'subtitle': 'Preservative information',
+        'icon': Icons.local_pharmacy_outlined,
         'isComplete': isSampleComplete,
+        'color': Colors.purple,
+        'section': 'sample',
         'isSub': true,
-        'section': 'preservative',
       },
       {
         'title': 'Seal Details',
-        'isComplete': isOtherComplete,
+        'subtitle': 'Seal and security details',
+        'icon': Icons.security_outlined,
+        'isComplete': isSampleComplete,
+        'color': Colors.orange,
+        'section': 'other',
         'isSub': true,
-        'section': 'seal',
       },
       {
         'title': 'Review & Submit',
-        'isComplete': isSampleComplete,
+        'subtitle': 'Final review and submission',
+        'icon': Icons.send_outlined,
+        'isComplete': isOtherComplete && isSampleComplete,
+        'color': Colors.indigo,
+        'section': 'sample',
         'isSub': false,
-        'section': 'review',
       },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Progress',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Column(
-            children: List.generate(steps.length, (index) {
-              final step = steps[index];
-              final isLast = index == steps.length - 1;
 
-              return InkWell(
-                onTap: () {
-                  if (step['section'] != 'review') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider.value(
-                          value: context.read<SampleFormBloc>(),
-                          child: Form6StepScreen(section: step['section']),
-                        ),
-                      ),
-                    );
-                  }
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // MARKER + VERTICAL LINE
-                    Column(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 35,
-                          alignment: Alignment.center,
-                          child: step['isSub']
+        Column(
+          children: List.generate(steps.length, (index) {
+            final step = steps[index];
+            final isLast = index == steps.length - 1;
+            final isSub = step['isSub'] == true;
+
+            return InkWell(
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<SampleFormBloc>(),
+                      child: Form6StepScreen(section: step['section']),
+                    ),
+                  ),
+                );
+
+                if (result == 'completed') {
+                  await loadCompletionStatus();
+                }
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Indicator + line
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: isSub
                               ? Container(
-                            width: 8,
-                            height: 8,
+                            width: 20,
+                            height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: step['isComplete']
-                                  ? Colors.green
-                                  : Colors.redAccent,
+                              border: Border.all(
+                                color: Colors.grey.shade500,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Center(
+                              child: Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.shade800,
+                                ),
+                              ),
                             ),
                           )
-                              : CircleAvatar(
-                            radius: 12,
-                            backgroundColor: step['isComplete']
-                                ? Colors.green
-                                : Colors.redAccent,
+                              : Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: step['isComplete']
+                                  ? step['color']
+                                  : Colors.grey.shade300,
+                              shape: BoxShape.circle,
+                              boxShadow: step['isComplete']
+                                  ? [
+                                BoxShadow(
+                                  color: step['color']
+                                      .withOpacity(0.3),
+                                  blurRadius: 6,
+                                  offset: Offset(0, 3),
+                                ),
+                              ]
+                                  : [],
+                            ),
                             child: Icon(
                               step['isComplete']
                                   ? Icons.check
-                                  : Icons.close,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-
-                        // Animated line
-                        if (!isLast)
-                          AnimatedContainer(
-                            duration: Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
-                            width: 2,
-                            height: 40,
-                            decoration: BoxDecoration(
+                                  : step['icon'],
+                              size: 18,
                               color: step['isComplete']
-                                  ? Colors.green
-                                  : Colors.grey.shade400,
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
                             ),
                           ),
-                      ],
-                    ),
-                    const SizedBox(width: 12),
-
-                    // TITLE + RIGHT ICON
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              step['title'],
-                              style: TextStyle(
-                                fontSize: step['isSub'] ? 14 : 18,
-                                fontWeight: step['isSub']
-                                    ? FontWeight.normal
-                                    : FontWeight.w600,
-                                color: step['isComplete']
-                                    ? Colors.green
-                                    : Colors.redAccent,
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.grey.shade600,
-                            ),
-                          ],
                         ),
                       ),
+                      if (!isLast)
+                        Container(
+                          width: 2,
+                          height: 40,
+                          color: step['isComplete']
+                              ? step['color']
+                              : Colors.grey.shade300,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 24),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: step['isComplete']
+                            ? step['color'].withOpacity(0.05)
+                            : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: step['isComplete']
+                              ? step['color'].withOpacity(0.2)
+                              : Colors.grey.shade200,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Left: Title + subtitle
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                step['title'],
+                                style: TextStyle(
+                                  fontSize: isSub ? 14 : 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: step['isComplete']
+                                      ? step['color']
+                                      : Colors.grey.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                step['subtitle'],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Right: Arrow icon
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: step['isComplete']
+                                ? step['color']
+                                : Colors.grey.shade400,
+                          ),
+
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              );
-            }),
-          ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ),
       ],
     );
@@ -365,39 +430,56 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         );
       },
       child: (isOtherComplete && isSampleComplete)
-          ? Center(
-            child: ElevatedButton.icon(
-                    key: const ValueKey("submitButton"),
-                    onPressed: handleSubmit,
-                    icon: Icon(Icons.check_circle, color: customColors.white),
-                    label: Text(
+          ? Container(
+        width: double.infinity,
+        child: TextButton.icon(
+          key: const ValueKey("submitButton"),
+          onPressed: handleSubmit,
+          icon: Icon(Icons.check_circle, color: customColors.white),
+          label: Text(
             "Submit Form",
             style: TextStyle(color: customColors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
+          ),
+          style: ElevatedButton.styleFrom(
             backgroundColor: customColors.primary,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            textStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-          )
-          : Container(
-        key: const ValueKey("warningText"),
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.warning_amber_rounded, color: Colors.red),
-            SizedBox(width: 8),
-            Text(
-              'Form not filled. Please fill the form.',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      )
+          : Card(
+        key: const ValueKey("warningText"),
+        color: Colors.red.shade50,
+        margin: const EdgeInsets.only(top: 10),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              vertical: 12.0, horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.warning_amber_rounded, color: Colors.red),
+              SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'Form not filled. Please fill the form.',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
