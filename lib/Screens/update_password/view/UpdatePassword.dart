@@ -10,6 +10,8 @@ import '../../../core/widgets/UpdatePassWidget/NewPasswordInput.dart';
 import '../../../core/widgets/UpdatePassWidget/UpdatePassWidget.dart';
 
 import '../../../config/Themes/colors/colorsTheme.dart';
+import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
+import '../../../core/utils/validators.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen({super.key});
@@ -70,228 +72,156 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: BlocProvider(
-        create: (_) => updatePasswordBloc,
-        child: Column(
+      backgroundColor: Colors.grey[100],
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           children: [
-            // Enhanced Header with gradient and icon
-            Stack(
+            const SizedBox(height: 20),
+            // Header with back button
+            Row(
               children: [
-                ClipPath(
-                  clipper: CurvedClipper(),
-                  child: Container(
-                    height: 250,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          customColors.primary,
-                          customColors.primary.withOpacity(0.8),
-                          customColors.primary.withOpacity(0.9),
-                        ],
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Row(
+                    children: const [
+                      Icon(
+                        Icons.arrow_back_ios,
+                        color: customColors.primary,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: customColors.primary.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
+                      SizedBox(width: 10),
+                      Text(
+                        "Update Password",
+                        style: TextStyle(
+                          color: customColors.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Decorative circles
-                Positioned(
-                  top: 50,
-                  right: 30,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 80,
-                  right: 60,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.15),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 250,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.only(top: 60, left: 24, right: 24),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Lock icon with animation
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.2),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 2,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.lock_outline,
-                            size: 32,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Update Password',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black26,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ],
             ),
-
-            // Enhanced Form Section
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          // Card container for form fields
-                          Container(
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.02),
-                                  blurRadius: 40,
-                                  offset: const Offset(0, 20),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Section title
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.security,
-                                      color: customColors.primary,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Password Information',
-                                      style: TextStyle(
-                                        color: Colors.grey[800],
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 24),
-
-                                // Password fields with enhanced spacing
-                                CurrentPasswordInput(
-                                  formkey: _formKey,
-                                  passwordFocusNode: currentpassFocusNode,
-                                ),
-                                const SizedBox(height: 20),
-
-                                NewPasswordInput(
-                                  formkey: _formKey,
-                                  passwordFocusNode: newpassFocusNode,
-                                ),
-                                const SizedBox(height: 20),
-
-                                ConfirmPasswordInput(
-                                  formkey: _formKey,
-                                  passwordFocusNode: oldpassFocusNode,
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 32),
-
-
-
-                          const SizedBox(height: 32),
-
-                          // Enhanced button
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: customColors.primary.withOpacity(0.3),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: UpdatePassButton(formkey: _formKey),
-                          ),
-
-                          const SizedBox(height: 30),
-                        ],
-                      ),
+            const SizedBox(height: 15),
+            // Decorative avatar section
+            Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Color(0xFFF2F2F2),
+                  ),
+                  Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: customColors.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
                     ),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: customColors.primary,
+                      size: 50,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 35),
+            // Card-like form area
+            BlocProvider(
+              create: (_) => updatePasswordBloc,
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Current Password
+                      CustomTextField(
+                        label: 'Current Password',
+                        icon: Icons.lock_outline,
+                        obscureText: true,
+                        isPassword: true,
+                        validator: Validators.validatePassword,
+                        onChanged: (value) {},
+                      ),
+                      const SizedBox(height: 16),
+                      // New Password
+                      CustomTextField(
+                        label: 'New Password',
+                        icon: Icons.lock,
+                        obscureText: true,
+                        isPassword: true,
+                        validator: Validators.validatePassword,
+                        onChanged: (value) {},
+                      ),
+                      const SizedBox(height: 16),
+                      // Confirm Password
+                      CustomTextField(
+                        label: 'Confirm Password',
+                        icon: Icons.lock_outline,
+                        obscureText: true,
+                        isPassword: true,
+                        validator: Validators.validatePassword,
+                        onChanged: (value) {},
+                      ),
+                      const SizedBox(height: 25),
+                      // Update Password Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: customColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              // Call Bloc event or update logic here
+                            }
+                          },
+                          child: const Text(
+                            'Update Password',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        '© 2024 Food Safety Organization',
+                        style: TextStyle(
+                          color: Colors.grey.withOpacity(0.6),
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+            const SizedBox(height: 25),
           ],
         ),
       ),
