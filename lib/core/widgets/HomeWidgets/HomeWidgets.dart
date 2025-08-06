@@ -4,10 +4,10 @@ import '../../utils/validators.dart';
 
 BoxDecoration fieldBoxDecoration = BoxDecoration(
 
-color: customColors.white,
-borderRadius: BorderRadius.circular(5),
+  color: customColors.white,
+  borderRadius: BorderRadius.circular(5),
 
-boxShadow: [
+  boxShadow: [
     BoxShadow(
       color: Colors.black.withOpacity(0.08),
       blurRadius: 12,

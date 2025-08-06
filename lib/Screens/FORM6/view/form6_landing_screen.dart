@@ -30,11 +30,13 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Future<void> loadCompletionStatus() async {
-    final savedState = await storage.fetchStoredState();
-    setState(() {
-      isOtherComplete = savedState?.isOtherInfoComplete ?? false;
-      isSampleComplete = savedState?.isSampleInfoComplete ?? false;
-    });
+    final storedState = await Form6Storage().fetchStoredState();
+    if (storedState != null) {
+      setState(() {
+        isOtherComplete = storedState.isOtherInfoComplete;
+        isSampleComplete = storedState.isSampleInfoComplete;
+      });
+    }
   }
 
   Future<void> handleSubmit() async {
@@ -273,6 +275,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 if (result == 'completed') {
                   await loadCompletionStatus();
                 }
+
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
