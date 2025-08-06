@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -10,6 +11,8 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final TextInputType? keyboardType;
   final bool isPassword;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     super.key,
@@ -21,6 +24,8 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.keyboardType,
     this.isPassword = false,
+    this.maxLength,
+    this.inputFormatters,
   });
 
   @override
@@ -38,46 +43,78 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: customColors.white,
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
+    return TextFormField(
+      initialValue: widget.initialValue,
+      obscureText: _obscure,
+      style: const TextStyle(
+        fontSize: 16,
+        color: Colors.black87,
       ),
-      child: TextFormField(
-        initialValue: widget.initialValue,
-        obscureText: _obscure,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          prefixIcon: Icon(widget.icon, color: customColors.primary),
-          suffixIcon: widget.isPassword
-              ? IconButton(
-            icon: Icon(
-              _obscure ? Icons.visibility_off : Icons.visibility,
-              color: customColors.primary,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscure = !_obscure;
-              });
-            },
-          )
-              : null,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: InputDecoration(
+        hintText: widget.label,
+        hintStyle: const TextStyle(
+          fontSize: 16,
+          color: Colors.grey,
         ),
-        validator: widget.validator,
-        onChanged: widget.onChanged,
-        keyboardType: widget.keyboardType,
+        prefixIcon: Icon(
+          widget.icon,
+          color: customColors.primary,
+        ),
+        suffixIcon: widget.isPassword
+            ? IconButton(
+          icon: Icon(
+            _obscure ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscure = !_obscure;
+            });
+          },
+        )
+            : null,
+        filled: true,
+        fillColor: const Color(0xFFF7F8F9),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: customColors.primary,
+            width: 1.5,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: Colors.redAccent,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: Colors.redAccent,
+            width: 1.5,
+          ),
+        ),
+        counterText: widget.maxLength != null ? '' : null,
       ),
+      validator: widget.validator,
+      onChanged: widget.onChanged,
+      keyboardType: widget.keyboardType,
+      maxLength: widget.maxLength,
+      inputFormatters: widget.inputFormatters,
     );
   }
 }

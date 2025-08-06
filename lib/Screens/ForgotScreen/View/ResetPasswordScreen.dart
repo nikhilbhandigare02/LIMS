@@ -55,53 +55,82 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              ClipPath(
-                clipper: CurvedClipper(),
-                child: Container(
-                  height: 220,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: customColors.primary,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
+      backgroundColor: Colors.grey[100],
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          children: [
+            const SizedBox(height: 20),
+            // Header with back button
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Row(
+                    children: const [
+                      Icon(
+                        Icons.arrow_back_ios,
+                        color: customColors.primary,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        "Reset Password",
+                        style: TextStyle(
+                          color: customColors.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Container(
-                height: 220,
+              ],
+            ),
+            const SizedBox(height: 15),
+            // Decorative avatar section
+            Center(
+              child: Stack(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.only(top: 40, left: 24),
-                child: const Text(
-                  'RESET PASSWORD',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    shadows: [Shadow(color: Colors.black26, blurRadius: 2)],
+                children: [
+                  const CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Color(0xFFF2F2F2),
                   ),
-                ),
+                  Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: customColors.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.lock,
+                      color: customColors.primary,
+                      size: 50,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+            ),
+            const SizedBox(height: 35),
+            // Card-like form area
+            Container(
               padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 30),
-                    
                     // New Password Input
                     CustomTextField(
                       label: 'New Password',
@@ -113,9 +142,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         _newPasswordController.text = value;
                       },
                     ),
-                    
                     const SizedBox(height: 16),
-                    
                     // Confirm Password Input
                     CustomTextField(
                       label: 'Confirm Password',
@@ -127,31 +154,31 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         _confirmPasswordController.text = value;
                       },
                     ),
-                    
-                    const SizedBox(height: 30),
-                    
+                    const SizedBox(height: 25),
                     // Reset Password Button
-                    Container(
+                    SizedBox(
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: customColors.primary,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: TextButton(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: customColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          elevation: 0,
+                        ),
                         onPressed: _resetPassword,
                         child: const Text(
                           'Reset Password',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
                             color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
-                    
-                    const SizedBox(height: 30),
-                    
+                    const SizedBox(height: 25),
                     // Back to Login
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -171,12 +198,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '© 2024 Food Safety Organization',
+                      style: TextStyle(
+                        color: Colors.grey.withOpacity(0.6),
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 25),
+          ],
+        ),
       ),
     );
   }

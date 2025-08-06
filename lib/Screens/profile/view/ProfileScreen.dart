@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/Themes/colors/colorsTheme.dart';
+
 class UserProfileScreen extends StatelessWidget {
   final VoidCallback? onBackTap;
 
@@ -9,7 +11,7 @@ class UserProfileScreen extends StatelessWidget {
     'name': 'John Doe',
     'username': 'john.doe',
     'doNumber': 'DO-2024-001234',
-    'designation': 'Senior Software Engineer',
+    'designation': 'Food Safety Officer',
   };
 
   @override
@@ -31,11 +33,12 @@ class UserProfileScreen extends StatelessWidget {
                     height: screenHeight * 0.35,
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: customColors.primary,
+                      // gradient: LinearGradient(
+                      //   colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
+                      //   begin: Alignment.topLeft,
+                      //   end: Alignment.bottomRight,
+                      // ),
                     ),
                   ),
                 ),
@@ -59,7 +62,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.keyboard_arrow_left_sharp,
-                        size: 26,
+                        size: 38,
                         color: Colors.black54,
                       ),
                     ),
@@ -91,7 +94,7 @@ class UserProfileScreen extends StatelessWidget {
                           child: Icon(
                             Icons.person,
                             size: screenWidth * 0.15,
-                            color: const Color(0xFF1E88E5),
+                            color:   customColors.primary,
                           ),
                         ),
                       ),

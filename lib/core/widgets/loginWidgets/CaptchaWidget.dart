@@ -42,78 +42,109 @@ class _CaptchaWidgetState extends State<CaptchaWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // CAPTCHA Display
+        // CAPTCHA Display with new design
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: customColors.white,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            color: const Color(0xFFF7F8F9),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                _captchaCode,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 3,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: customColors.primary,
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  _captchaCode,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 3,
+                    color: customColors.primary,
+                  ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.refresh, color: customColors.black87),
-                onPressed: _generateCaptcha,
-                tooltip: "Refresh Captcha",
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4B3DFE).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: customColors.primary,
+                  ),
+                  onPressed: _generateCaptcha,
+                  tooltip: "Refresh Captcha",
+                ),
               )
             ],
           ),
         ),
-        const SizedBox(height: 10),
-        // CAPTCHA Input Field
-        Container(
-          decoration: BoxDecoration(
-            color: customColors.white,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
-              ),
-            ],
+        const SizedBox(height: 1),
+
+
+        TextFormField(
+          controller: widget.controller,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
           ),
-          child: TextFormField(
-            controller: widget.controller,
-            style: const TextStyle(fontSize: 16, color: customColors.black87),
-            decoration: InputDecoration(
-              hintText: 'Enter Captcha',
-              hintStyle: const TextStyle(fontSize: 16),
-              prefixIcon: const Icon(Icons.verified_user_outlined, color: customColors.primary),
-              filled: true,
-              fillColor: customColors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(color: customColors.greyDivider),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(color: customColors.primary, width: 0.5),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(color: customColors.greyDivider),
+          decoration: InputDecoration(
+            hintText: 'Enter Captcha',
+            hintStyle: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+            prefixIcon: const Icon(
+              Icons.verified_user_outlined,
+              color: customColors.primary,
+            ),
+            filled: true,
+            fillColor: const Color(0xFFF7F8F9),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: customColors.primary,
+                width: 1.5,
               ),
             ),
-            validator: Validators.validateCaptcha,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.redAccent,
+                width: 1.0,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.redAccent,
+                width: 1.5,
+              ),
+            ),
           ),
+          validator: Validators.validateCaptcha,
         ),
       ],
     );
