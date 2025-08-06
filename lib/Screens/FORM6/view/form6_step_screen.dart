@@ -28,6 +28,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     final bloc = context.read<SampleFormBloc>();
     stepFields = _generateStepFields(bloc.state);
     _loadSavedData();
+    print("🔄 Form6StepScreen initialized for section: ${widget.section}");
   }
 
   List<List<Widget>> _generateStepFields(SampleFormState state) {
@@ -37,23 +38,17 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         return getOtherInformationSteps(state, bloc);
       case 'sample':
         return getSampleDetailsSteps(state, bloc);
-      // case 'preservative':
-      //   return getPreservativeSteps(state, bloc);
-      // case 'seal':
-      //   return getSealDetailsSteps(state, bloc);
-      // case 'review':
-      //   return getFinalReviewSteps(state, bloc);
       default:
         return [[]];
     }
   }
-
 
   Future<void> _loadSavedData() async {
     final bloc = context.read<SampleFormBloc>();
     final savedState = await storage.fetchStoredState();
 
     if (savedState != null) {
+      print("🔄 Loading saved state for section: ${widget.section}");
       bloc.add(LoadSavedFormData(savedState));
     }
 
@@ -65,43 +60,64 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
   void _goToNextStep() async {
     final bloc = context.read<SampleFormBloc>();
-
-    await storage.saveForm6Data(bloc.state);
-    await Future.delayed(const Duration(milliseconds: 50));
-    await storage.printAllStoredData();
-
     final state = bloc.state;
+
+    print("🔄 Going to next step. Current step: $currentStep, Total steps: ${stepFields.length}");
+    print("🔄 Current completion status - Other: ${state.isOtherInfoComplete}, Sample: ${state.isSampleInfoComplete}");
+
+    // Save current state
+    await storage.saveForm6Data(state);
+    await Future.delayed(const Duration(milliseconds: 50));
 
     if (currentStep < stepFields.length - 1) {
       setState(() {
         currentStep++;
         stepFields = _generateStepFields(state);
       });
+      print("🔄 Moved to step: $currentStep");
     } else {
-      if (widget.section == 'other' && !state.isOtherInfoComplete) {
+      // Validate completion based on section
+      bool isComplete = false;
+      String errorMessage = "";
+      
+      if (widget.section == 'other') {
+        isComplete = state.isOtherInfoComplete;
+        errorMessage = "⚠️ Please complete all required fields.";
+        print("🔄 Other section completion check: $isComplete");
+      } else if (widget.section == 'sample') {
+        isComplete = state.isSampleInfoComplete;
+        errorMessage = "⚠️ Please complete all sample fields.";
+        print("🔄 Sample section completion check: $isComplete");
+      }
+
+      if (!isComplete) {
+        print("❌ Section not complete, showing error");
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("⚠️ Please complete all required fields."),
+          SnackBar(
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
           ),
         );
         return;
       }
 
-      if (widget.section == 'sample' && !state.isSampleInfoComplete) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("⚠️ Please complete all sample fields."),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+      // Mark section as complete in storage
+      if (widget.section == 'other') {
+        await storage.markSectionComplete(section: 'other');
+        print("✅ Marked 'other' section as complete");
+      } else if (widget.section == 'sample') {
+        await storage.markSectionComplete(section: 'sample');
+        print("✅ Marked 'sample' section as complete");
       }
 
+      // Return to landing screen with completion status
+      print("🔄 Returning to landing screen with completion status");
       Navigator.pop(context, 'completed');
 
+      // Navigate to next section if available
       if (widget.section == 'other') {
         Future.delayed(const Duration(milliseconds: 200), () {
+          print("🔄 Navigating to sample section");
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -126,6 +142,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         currentStep--;
         stepFields = _generateStepFields(bloc.state); // Rebuild UI with latest state
       });
+      print("🔄 Moved to previous step: $currentStep");
     }
   }
 

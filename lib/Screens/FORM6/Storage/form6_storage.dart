@@ -30,6 +30,8 @@ class Form6Storage {
       'numberofSeal': state.numberofSeal,
       'formVI': state.formVI == null ? null : (state.formVI! ? 1 : 0),
       'FoemVIWrapper': state.FoemVIWrapper == null ? null : (state.FoemVIWrapper! ? 1 : 0),
+      'isOtherInfoComplete': state.isOtherInfoComplete ? 1 : 0,
+      'isSampleInfoComplete': state.isSampleInfoComplete ? 1 : 0,
     };
 
     await db.insertForm6Data(data);
@@ -88,6 +90,7 @@ class Form6Storage {
       }
     }
   }
+
   Future<void> markSectionComplete({
     required String section,
     String? subSection,
@@ -102,31 +105,12 @@ class Form6Storage {
     if (section == 'other') {
       updatedData['isOtherInfoComplete'] = 1;
     } else if (section == 'sample') {
-      // Handle sub-sections
-      switch (subSection) {
-        case 'preservative':
-          updatedData['isPreservativeInfoComplete'] = 1;
-          break;
-        case 'seal':
-          updatedData['isSealInfoComplete'] = 1;
-          break;
-        case 'review':
-          updatedData['isFinalReviewComplete'] = 1;
-          break;
-      }
-
-      // Check if all sub-sections are marked complete
-      final isPreservativeDone = updatedData['isPreservativeInfoComplete'] == 1;
-      final isSealDone = updatedData['isSealInfoComplete'] == 1;
-      final isReviewDone = updatedData['isFinalReviewComplete'] == 1;
-
-      if (isPreservativeDone && isSealDone && isReviewDone) {
-        updatedData['isSampleInfoComplete'] = 1;
-      }
+      updatedData['isSampleInfoComplete'] = 1;
     }
 
     await db.delete('form6'); // clear old
     await db.insert('form6', updatedData); // save new
+    print("✅ Marked section '$section' as complete");
   }
 
   Future<void> clearFormData() async {

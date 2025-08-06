@@ -30,12 +30,13 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Future<void> loadCompletionStatus() async {
-    final storedState = await Form6Storage().fetchStoredState();
-    if (storedState != null) {
+    final savedState = await storage.fetchStoredState();
+    if (mounted) {
       setState(() {
-        isOtherComplete = storedState.isOtherInfoComplete;
-        isSampleComplete = storedState.isSampleInfoComplete;
+        isOtherComplete = savedState?.isOtherInfoComplete ?? false;
+        isSampleComplete = savedState?.isSampleInfoComplete ?? false;
       });
+      print("🔄 Loaded completion status - Other: $isOtherComplete, Sample: $isSampleComplete");
     }
   }
 
@@ -74,132 +75,50 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: customColors.white,
-      appBar: AppHeader(
-        screenTitle: 'Form VI',
-        username: 'Rajan',
-        userId: 'S1234',
-      ),
-      drawer: CustomDrawer(),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  'Form Sections',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                // _buildSectionCard(
-                //   title: 'FSO Details',
-                //   isComplete: isOtherComplete,
-                //   backgroundColor: Colors.blue.shade100,
-                //   onTap: () async {
-                //     final result = await Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (_) => BlocProvider.value(
-                //           value: context.read<SampleFormBloc>(),
-                //           child: Form6StepScreen(section: 'other'),
-                //         ),
-                //       ),
-                //     );
-                //     if (result == 'completed') {
-                //       setState(() => isOtherComplete = true);
-                //       await storage.markSectionComplete(section: 'other');
-                //     }
-                //   },
-                // ),
-                // _buildSectionCard(
-                //   title: 'Sample Details',
-                //   isComplete: isSampleComplete,
-                //   backgroundColor: Colors.green.shade100,
-                //   onTap: () async {
-                //     final result = await Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (_) => BlocProvider.value(
-                //           value: context.read<SampleFormBloc>(),
-                //           child: Form6StepScreen(section: 'sample'),
-                //         ),
-                //       ),
-                //     );
-                //     if (result == 'completed') {
-                //       setState(() => isSampleComplete = true);
-                //       await storage.markSectionComplete(section: 'sample');
-                //     }
-                //   },
-                // ),
-                const SizedBox(height: 30),
-                _buildVerticalStepProgress(),
-                const SizedBox(height: 15),
-                _buildSubmitButton(),
-              ],
+    return BlocListener<SampleFormBloc, SampleFormState>(
+      listener: (context, state) {
+        // Update completion status whenever state changes
+        final newOtherComplete = state.isOtherInfoComplete;
+        final newSampleComplete = state.isSampleInfoComplete;
+        
+        if (newOtherComplete != isOtherComplete || newSampleComplete != isSampleComplete) {
+          print("🔄 State changed - Other: $newOtherComplete, Sample: $newSampleComplete");
+          setState(() {
+            isOtherComplete = newOtherComplete;
+            isSampleComplete = newSampleComplete;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: customColors.white,
+        appBar: AppHeader(
+          screenTitle: 'Form VI',
+          username: 'Rajan',
+          userId: 'S1234',
+        ),
+        drawer: CustomDrawer(),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    'Form Sections',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 30),
+                  _buildVerticalStepProgress(),
+                  const SizedBox(height: 15),
+                  _buildSubmitButton(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  // Widget _buildSectionCard({
-  //   required String title,
-  //   required bool isComplete,
-  //   required Color backgroundColor,
-  //   required VoidCallback onTap,
-  // }) {
-  //   return GestureDetector(
-  //     onTap: onTap,
-  //     child: Container(
-  //       width: double.infinity,
-  //       decoration: BoxDecoration(
-  //         color: backgroundColor,
-  //         borderRadius: BorderRadius.circular(16),
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: customColors.black54,
-  //             blurRadius: 4,
-  //             offset: Offset(2, 2),
-  //           ),
-  //         ],
-  //       ),
-  //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Row(
-  //             children: [
-  //               Icon(
-  //                 isComplete ? Icons.check_circle : Icons.info_outline,
-  //                 size: 30,
-  //                 color: isComplete ? customColors.green : customColors.orange,
-  //               ),
-  //               const SizedBox(width: 12),
-  //               Text(
-  //                 title,
-  //                 style: const TextStyle(
-  //                   fontSize: 18,
-  //                   fontWeight: FontWeight.bold,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: 8),
-  //           Text(
-  //             isComplete ? '✅ Complete' : '❌ Incomplete',
-  //             style: TextStyle(
-  //               fontSize: 14,
-  //               color: isComplete ? customColors.green : customColors.redAccent,
-  //               fontWeight: FontWeight.w600,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildVerticalStepProgress() {
     List<Map<String, dynamic>> steps = [
@@ -236,7 +155,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'icon': Icons.security_outlined,
         'isComplete': isSampleComplete,
         'color': Colors.orange,
-        'section': 'other',
+        'section': 'sample',
         'isSub': true,
       },
       {
@@ -253,7 +172,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Column(
           children: List.generate(steps.length, (index) {
             final step = steps[index];
@@ -262,6 +180,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
             return InkWell(
               onTap: () async {
+                print("🔄 Navigating to section: ${step['section']}");
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -273,9 +192,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 );
 
                 if (result == 'completed') {
+                  print("🔄 Form section completed, reloading status");
                   await loadCompletionStatus();
                 }
-
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,6 +336,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       ],
     );
   }
+  
   Widget _buildSubmitButton() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 500),
