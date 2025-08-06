@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
+import '../../../core/widgets/RegistrationInput/PasswordBoxInput.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 import '../../../core/utils/validators.dart';
 import '../bloc/ForgotPasswordBloc.dart';
@@ -27,23 +29,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
   void initState() {
     super.initState();
     forgotPasswordBloc = ForgotPasswordBloc(repository: ForgotPasswordRepository());
-    
-    _mobileController.addListener(() {
-      final text = _mobileController.text;
-      // Keep only digits and max 10 characters
-      final filtered = text.replaceAll(RegExp(r'[^0-9]'), '');
-      if (filtered.length > 10) {
-        _mobileController.text = filtered.substring(0, 10);
-        _mobileController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _mobileController.text.length),
-        );
-      } else if (text != filtered) {
-        _mobileController.text = filtered;
-        _mobileController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _mobileController.text.length),
-        );
-      }
-    });
   }
 
   @override
@@ -100,66 +85,98 @@ class _ForgotScreenState extends State<ForgotScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.grey[50],
-          body: Column(
-            children: [
-              Stack(
-                children: [
-                  ClipPath(
-                    clipper: CurvedClipper(),
-                    child: Container(
-                      height: 220,
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: customColors.primary,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
+          backgroundColor:   Colors.grey[100],
+          body: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              children: [
+                const SizedBox(height: 20),
+                // Header with back button
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.arrow_back_ios,
+                            color: customColors.primary,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "Forgot Password",
+                            style: TextStyle(
+                              color: customColors.primary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  Container(
-                    height: 220,
+                  ],
+                ),
+                const SizedBox(height: 15),
+                // Decorative avatar section
+                Center(
+                  child: Stack(
                     alignment: Alignment.center,
-                    padding: const EdgeInsets.only(top: 40, left: 24),
-                    child: const Text(
-                      'FORGOT PASSWORD',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        shadows: [Shadow(color: Colors.black26, blurRadius: 2)],
+                    children: [
+                      const CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Color(0xFFF2F2F2),
                       ),
-                    ),
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: customColors.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lock_reset,
+                          color: customColors.primary,
+                          size: 50,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
+                ),
+                const SizedBox(height: 35),
+                // Card-like form area
+                Container(
                   padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
-                        const SizedBox(height: 30),
-                        
                         // Mobile Number Input
                         CustomTextField(
                           label: 'Mobile Number',
                           icon: Icons.phone,
+
                           keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           validator: Validators.validateMobileNumber,
                           onChanged: (value) {
                             _mobileController.text = value;
                           },
                         ),
-                        
                         const SizedBox(height: 16),
-                        
                         // Send OTP Button
                         BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
                           builder: (context, state) {
@@ -168,7 +185,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: customColors.primary,
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const TextButton(
                                   onPressed: null,
@@ -183,31 +200,33 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                 ),
                               );
                             }
-                            
                             if (!state.isOtpSent) {
-                              return Container(
+                              return SizedBox(
                                 width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: customColors.primary,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: TextButton(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: customColors.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    elevation: 0,
+                                  ),
                                   onPressed: _sendOtp,
                                   child: const Text(
                                     'Send OTP',
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
                                       color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                   ),
+                                  ),
                                 ),
                               );
                             }
                             return const SizedBox.shrink();
                           },
                         ),
-                        
                         // OTP Input (show after OTP is sent)
                         BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
                           builder: (context, state) {
@@ -215,60 +234,55 @@ class _ForgotScreenState extends State<ForgotScreen> {
                               return Column(
                                 children: [
                                   const SizedBox(height: 20),
-                                  CustomTextField(
+                                  PasswordBoxInput(
                                     label: 'Enter OTP',
-                                    icon: Icons.security,
-                                    keyboardType: TextInputType.number,
-                                    validator: Validators.validateOtp,
+                                    length: 4,
+                                    obscureText: false,
                                     onChanged: (value) {
                                       _otpController.text = value;
                                     },
                                   ),
-                                  
                                   const SizedBox(height: 16),
-                                  
                                   // Verify OTP Button
                                   if (!state.isOtpVerified)
-                                    Container(
+                                    SizedBox(
                                       width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: customColors.primary,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: state is ForgotPasswordLoading
-                                          ? const TextButton(
-                                              onPressed: null,
-                                              child: SizedBox(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: customColors.primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(vertical: 18),
+                                          elevation: 0,
+                                        ),
+                                        onPressed: state is ForgotPasswordLoading ? null : _verifyOtp,
+                                        child: state is ForgotPasswordLoading
+                                            ? const SizedBox(
                                                 width: 20,
                                                 height: 20,
                                                 child: CircularProgressIndicator(
                                                   color: Colors.white,
                                                   strokeWidth: 2,
                                                 ),
-                                              ),
-                                            )
-                                          : TextButton(
-                                              onPressed: _verifyOtp,
-                                              child: const Text(
+                                              )
+                                            : const Text(
                                                 'Verify OTP',
                                                 style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
                                                   color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                            ),
+                                      ),
                                     ),
                                 ],
                               );
                             }
-                            
                             return const SizedBox.shrink();
                           },
                         ),
-                        
-                        const SizedBox(height: 30),
-                        
+                        const SizedBox(height: 25),
                         // Back to Login
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -288,12 +302,22 @@ class _ForgotScreenState extends State<ForgotScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '© 2024 Food Safety Organization',
+                          style: TextStyle(
+                            color: Colors.grey.withOpacity(0.6),
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),

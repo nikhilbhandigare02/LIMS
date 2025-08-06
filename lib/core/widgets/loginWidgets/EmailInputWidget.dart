@@ -20,49 +20,64 @@ class EmailInput extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (current, previous) => current.username != previous.username,
       builder: (context, state) {
-        return Container(
-          decoration: BoxDecoration(
-            color: customColors.white,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
-              ),
-            ],
+        return TextFormField(
+          keyboardType: TextInputType.emailAddress,
+          focusNode: emailFocusNode,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
           ),
-          child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            focusNode: emailFocusNode,
-            style: const TextStyle(fontSize: 16, color: customColors.black87),
-
-            decoration: InputDecoration(
-              hintText: 'Enter Username',
-              hintStyle: TextStyle( fontSize: 16),
-              prefixIcon: const Icon(Icons.person_2, color: customColors.primary),
-              filled: true,
-              fillColor: customColors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(color: customColors.greyDivider),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: const BorderSide(color: customColors.primary, width: 0.5),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(color: customColors.greyDivider),
+          decoration: InputDecoration(
+            hintText: 'Enter Username',
+            hintStyle: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+            prefixIcon: const Icon(
+              Icons.person_2,
+              color: customColors.primary,
+            ),
+            filled: true,
+            fillColor: const Color(0xFFF7F8F9),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: customColors.primary,
+                width: 1.5,
               ),
             ),
-            onChanged: (value) {
-              context.read<LoginBloc>().add(UsernameEvent(username: value));
-            },
-            onFieldSubmitted: (value) {},
-            validator: Validators.validateUsername,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.redAccent,
+                width: 1.0,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.redAccent,
+                width: 1.5,
+              ),
+            ),
           ),
+          onChanged: (value) {
+            context.read<LoginBloc>().add(UsernameEvent(username: value));
+          },
+          onFieldSubmitted: (value) {},
+          validator: Validators.validateUsername,
         );
       },
     );
