@@ -146,10 +146,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
                           const SizedBox(height: 30),
 
-                          // Decorative avatar section with security icon
-                          // Replace the existing logo section (around line 138-179) with this updated code:
-
-// Decorative avatar section with security icon
                           Center(
                             child: Stack(
                               alignment: Alignment.center,
@@ -161,12 +157,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(16), // Rounded rectangle
                                     boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 5),
-                                        spreadRadius: 2,
-                                      ),
+                                      // BoxShadow(
+                                      //   color: Colors.black.withOpacity(0.1),
+                                      //   blurRadius: 15,
+                                      //   offset: const Offset(0, 5),
+                                      //   spreadRadius: 2,
+                                      //  ),
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.05),
                                         blurRadius: 5,
