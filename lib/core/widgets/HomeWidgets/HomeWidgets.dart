@@ -73,15 +73,15 @@ class _BlocTextInputState extends State<BlocTextInput> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: customColors.greyDivider),
+          borderSide: BorderSide(color: customColors.primary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+          borderSide: const BorderSide(color: customColors.primary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: customColors.greyDivider),
+          borderSide: BorderSide(color: customColors.primary,width: 0.5),
         ),
       ),
     );
@@ -128,11 +128,11 @@ class BlocDropdown extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+          borderSide: const BorderSide(color: customColors.primary, ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: customColors.greyDivider),
+          borderSide: BorderSide(color: customColors.primary,width: 0.5),
         ),
       ),
       items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
@@ -186,11 +186,11 @@ class BlocDatePicker extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(color: customColors.primary, width: 0.5),
+            borderSide: const BorderSide(color: customColors.primary),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: customColors.greyDivider),
+            borderSide: BorderSide(color: customColors.primary, width: 0.5),
           ),
         ),
         child: Text(
@@ -206,7 +206,7 @@ class BlocDatePicker extends StatelessWidget {
 
 class BlocYesNoRadio extends StatelessWidget {
   final String label;
-  final bool? value; // can be true, false, or null
+  final bool? value;
   final ValueChanged<bool> onChanged;
   final IconData? icon;
 
@@ -224,7 +224,7 @@ class BlocYesNoRadio extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: customColors.white,
-        border: Border.all(color: customColors.greyDivider),
+        border: Border.all(color: customColors.primary, width: 0.5),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(

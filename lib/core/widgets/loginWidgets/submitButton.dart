@@ -63,7 +63,7 @@ class LoginButton extends StatelessWidget {
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
-        buildWhen: (current, previous) => false,
+        buildWhen: (current, previous) => current.apiStatus != previous.apiStatus,
         builder: (context, state) {
           return SizedBox(
             width: double.infinity,
@@ -105,6 +105,7 @@ class LoginButton extends StatelessWidget {
           );
         },
       ),
+
     );
   }
 }

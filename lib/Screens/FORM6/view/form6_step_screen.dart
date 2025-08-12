@@ -138,10 +138,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       Navigator.pop(context);
     } else {
       final bloc = context.read<SampleFormBloc>();
-      await _loadSavedData(); // Update from storage
+      await _loadSavedData();
       setState(() {
         currentStep--;
-        stepFields = _generateStepFields(bloc.state); // Rebuild UI with latest state
+        stepFields = _generateStepFields(bloc.state);
       });
       print("🔄 Moved to previous step: $currentStep");
     }

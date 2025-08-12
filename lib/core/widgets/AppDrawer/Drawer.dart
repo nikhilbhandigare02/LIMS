@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 import '../../../config/Routes/RouteName.dart';
@@ -53,11 +55,17 @@ class CustomDrawer extends StatelessWidget {
                 "Help & Support",
                 onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
               ),
+              _buildMenuItem(
+                context,
+                Icons.info_outline_rounded,
+                "About Us",
+                onTap: () => Navigator.pushNamed(context, RouteName.AboutUsScreen),
+              ),
               // SizedBox(height: 100,),
               Spacer(),
               const Divider(),
-              _buildMenuItem(context, Icons.logout, "Logout", onTap: () {
-                ExitConfirmation.show(
+              _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
+                final bool confirmed = await ExitConfirmation.show(
                   context,
                   title: "Logout",
                   description: "Are you sure you want to Logout?",
@@ -66,6 +74,15 @@ class CustomDrawer extends StatelessWidget {
                   confirmIcon: Icons.exit_to_app,
                   cancelIcon: Icons.cancel_outlined,
                 );
+
+                if (confirmed) {
+                  // Navigate to login screen and clear navigation history
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RouteName.loginScreen,
+                    (Route<dynamic> route) => false,
+                  );
+                }
               }),
               const SizedBox(height: 10),
             ],
@@ -79,6 +96,48 @@ class CustomDrawer extends StatelessWidget {
   }
 
   Widget _buildDrawerHeader(BuildContext context) {
+    Future<Map<String, String>> loadUserHeader() async {
+      try {
+        const storage = FlutterSecureStorage();
+        final String? jsonString = await storage.read(key: 'loginData');
+        if (jsonString == null || jsonString.isEmpty) {
+          return {
+            'name': 'User',
+            'subtitle': '',
+          };
+        }
+        final Map<String, dynamic> data = jsonDecode(jsonString) as Map<String, dynamic>;
+        String? name;
+        for (final k in ['fullName', 'FullName', 'name', 'Name', 'username', 'Username']) {
+          final v = data[k];
+          if (v != null && v.toString().trim().isNotEmpty) {
+            name = v.toString().trim();
+            break;
+          }
+        }
+        String subtitle = '';
+        final userId = data['userId'] ?? data['UserId'] ?? data['user_id'];
+        final username = data['username'] ?? data['Username'];
+        final email = data['email'] ?? data['Email'];
+        if (userId != null && userId.toString().trim().isNotEmpty) {
+          subtitle = 'User ID: ${userId.toString()}';
+        } else if (username != null && username.toString().trim().isNotEmpty) {
+          subtitle = 'Username: ${username.toString()}';
+        } else if (email != null && email.toString().trim().isNotEmpty) {
+          subtitle = email.toString();
+        }
+        return {
+          'name': name ?? 'User',
+          'subtitle': 'Food Safety Officer',
+        };
+      } catch (_) {
+        return {
+          'name': 'User',
+          'subtitle': '',
+        };
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, RouteName.profileScreen);
@@ -107,23 +166,31 @@ class CustomDrawer extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "Rajeev Ranjan",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: customColors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "User ID: 394884",
-                    style: TextStyle(fontSize: 13, color: customColors.white70),
-                  ),
-                ],
+              child: FutureBuilder<Map<String, String>>(
+                future: loadUserHeader(),
+                builder: (context, snapshot) {
+                  final name = snapshot.hasData ? (snapshot.data!['name'] ?? 'User') : 'User';
+                  final subtitle = snapshot.hasData ? (snapshot.data!['subtitle'] ?? '') : '';
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: customColors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      if (subtitle.isNotEmpty)
+                        Text(
+                          subtitle,
+                          style: const TextStyle(fontSize: 13, color: customColors.white70),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
             // ElevatedButton(
