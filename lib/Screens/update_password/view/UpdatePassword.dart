@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/update_password/BLOC/UpdatePassBloc.dart' hide UpdatePassButton;
+import 'package:food_inspector/Screens/update_password/repository/UpdatePassRepository.dart';
 import 'package:food_inspector/core/widgets/UpdatePassWidget/ConfirmPasswordInput.dart';
 
+import '../../../core/utils/Message.dart';
+import '../../../core/utils/enums.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 
 import '../../../core/widgets/UpdatePassWidget/CurrentPasswordInputField.dart';
@@ -23,22 +26,18 @@ class UpdatePasswordScreen extends StatefulWidget {
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
     with TickerProviderStateMixin {
   late UpdatePasswordBloc updatePasswordBloc;
+  final _formKey = GlobalKey<FormState>();
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  final FocusNode currentpassFocusNode = FocusNode();
-  final FocusNode newpassFocusNode = FocusNode();
-  final FocusNode oldpassFocusNode = FocusNode();
-  final _formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     super.initState();
-    updatePasswordBloc = UpdatePasswordBloc();
+    updatePasswordBloc = UpdatePasswordBloc(updatePassRepository: UpdatePassRepository());
 
-    // Initialize animations
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -55,9 +54,10 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+    );
 
-    // Start animations
     _fadeController.forward();
     _slideController.forward();
   }
@@ -66,74 +66,69 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
+    updatePasswordBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          children: [
-            const SizedBox(height: 20),
-            // Header with back button
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.arrow_back_ios,
-                        color: customColors.primary,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        "Update Password",
-                        style: TextStyle(
-                          color: customColors.primary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            // Decorative avatar section
-            Center(
-              child: Stack(
-                alignment: Alignment.center,
+    return BlocProvider.value(
+      value: updatePasswordBloc,
+      child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            children: [
+              const SizedBox(height: 20),
+              Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 70,
-                    backgroundColor: Color(0xFFF2F2F2),
-                  ),
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: customColors.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.lock_outline,
-                      color: customColors.primary,
-                      size: 50,
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.arrow_back_ios, color: customColors.primary),
+                        SizedBox(width: 10),
+                        Text(
+                          "Update Password",
+                          style: TextStyle(
+                            color: customColors.primary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 35),
-            // Card-like form area
-            BlocProvider(
-              create: (_) => updatePasswordBloc,
-              child: Container(
+              const SizedBox(height: 15),
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Color(0xFFF2F2F2),
+                    ),
+                    Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: customColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.lock_outline,
+                        color: customColors.primary,
+                        size: 50,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 35),
+              Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -146,110 +141,137 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                     ),
                   ],
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      // Current Password
-                      CustomTextField(
-                        label: 'Current Password',
-                        icon: Icons.lock_outline,
-                        obscureText: true,
-                        isPassword: true,
-                        validator: Validators.validatePassword,
-                        onChanged: (value) {},
-                      ),
-                      const SizedBox(height: 16),
-                      // New Password
-                      CustomTextField(
-                        label: 'New Password',
-                        icon: Icons.lock,
-                        obscureText: true,
-                        isPassword: true,
-                        validator: Validators.validatePassword,
-                        onChanged: (value) {},
-                      ),
-                      const SizedBox(height: 16),
-                      // Confirm Password
-                      CustomTextField(
-                        label: 'Confirm Password',
-                        icon: Icons.lock_outline,
-                        obscureText: true,
-                        isPassword: true,
-                        validator: Validators.validatePassword,
-                        onChanged: (value) {},
-                      ),
-                      const SizedBox(height: 25),
-                      // Update Password Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: customColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                child: BlocListener<UpdatePasswordBloc, UpdatePasswordState>(
+                  listener: (context, state) {
+                    switch (state.apiStatus) {
+                      case ApiStatus.loading:
+                        Message.showTopRightOverlay(
+                          context,
+                          'Loading...',
+                          MessageType.info,
+                        );
+                        break;
+                      case ApiStatus.success:
+                        Message.showTopRightOverlay(
+                          context,
+                          state.message,
+                          MessageType.success,
+                        );
+                        Navigator.pop(context);
+                        break;
+                      case ApiStatus.error:
+                        Message.showTopRightOverlay(
+                          context,
+                          state.message,
+                          MessageType.error,
+                        );
+                        break;
+                      default:
+                        break;
+                    }
+                  },
+                  child: BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
+                    buildWhen: (previous, current) =>
+                    previous.Username != current.Username ||
+                        previous.NewPassword != current.NewPassword ||
+                        previous.confirmPassword != current.confirmPassword ||
+                        previous.apiStatus != current.apiStatus,
+                    builder: (context, state) {
+                      return Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              label: 'Username',
+                              icon: Icons.person_outline,
+                              obscureText: false,
+                              isPassword: false,
+                              value: state.Username,
+                              validator: Validators.validateUsername,
+                              onChanged: (value) {
+                                context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
+                              },
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              // Call Bloc event or update logic here
-                            }
-                          },
-                          child: const Text(
-                            'Update Password',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              label: 'New Password',
+                              icon: Icons.lock,
+                              obscureText: true,
+                              isPassword: true,
+                              value: state.NewPassword,
+                              validator: Validators.validatePassword,
+                              onChanged: (value) {
+                                context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
+                              },
                             ),
-                          ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              label: 'Confirm Password',
+                              icon: Icons.lock_outline,
+                              obscureText: true,
+                              isPassword: true,
+                              value: state.confirmPassword,
+                              // validator: (val) {
+                              //   if (val != state.NewPassword) {
+                              //     return 'Passwords do not match';
+                              //   }
+                              //   return null;
+                              // },
+                              onChanged: (value) {
+                                context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
+                              },
+                            ),
+                            const SizedBox(height: 25),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: customColors.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  elevation: 0,
+                                ),
+                                onPressed: state.apiStatus == ApiStatus.loading
+                                    ? null
+                                    : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
+                                  }
+                                },
+                                child: state.apiStatus == ApiStatus.loading
+                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    : const Text(
+                                  'Update Password',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '© 2024 Food Safety Organization',
+                              style: TextStyle(
+                                color: Colors.grey.withOpacity(0.6),
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '© 2024 Food Safety Organization',
-                        style: TextStyle(
-                          color: Colors.grey.withOpacity(0.6),
-                          fontSize: 12,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 25),
-          ],
+              const SizedBox(height: 25),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildRequirementItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(
-            Icons.check_circle_outline,
-            color: Colors.blue[600],
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.blue[700],
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

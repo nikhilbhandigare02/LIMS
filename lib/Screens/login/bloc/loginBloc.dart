@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
@@ -13,6 +14,8 @@ part 'loginState.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
 //login block
   LoginBloc({required this.loginRepository}) : super(const LoginState()) {
     on<UsernameEvent>(username);
@@ -41,8 +44,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         'Password': state.password,
       };
 
-      // Use a session encryption that exposes AES key and IV so we can decrypt
-      // the server's response if it reuses the same AES key
       final session = await encryptWithSession(
         data: loginData,
         rsaPublicKeyPem: rsaPublicKeyPem,
@@ -53,10 +54,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (encryptedResponse != null) {
         print('Encrypted response received: $encryptedResponse');
         try {
-          // Primary attempt: server used the SAME AES key but its OWN IV for the response
           final String encryptedDataBase64 =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-          final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          final String serverIvBase64 =
+          (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decrypted = utf8.decode(
             aesCbcDecrypt(
@@ -68,17 +69,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
           print('Decrypted login response: $decrypted');
 
-          // Optionally parse to a model if needed in future
-          // final Map<String, dynamic> decryptedMap = jsonDecode(decrypted);
-          // final user = UserModel.fromJson(decryptedMap);
+          await secureStorage.write(key: 'loginData', value: decrypted);
+          print('Login data stored securely.');
+
+          final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
+          final String? token = loginResponseMap['Token'];
+
+          if (token != null && token.isNotEmpty) {
+            await secureStorage.write(key: 'authToken', value: token);
+            print('Auth token stored securely.');
+          } else {
+            print('Token not found in login response.');
+          }
         } catch (e) {
           print('Failed to decrypt login response: $e');
-          // Fallback: try decrypting using RSA to recover AES key from server payload
           try {
             final String encryptedAESKey =
-                (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+            (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
             final String encryptedData =
-                (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
             final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
             final String decryptedFallback = await decrypt(
@@ -88,13 +97,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               rsaPrivateKeyPem: rsaPrivateKeyPem,
             );
             print('Decrypted (fallback) login response: $decryptedFallback');
+
+            // Store fallback data similarly
+            await secureStorage.write(key: 'loginData', value: decryptedFallback);
+
+            final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
+            final String? fallbackToken = fallbackMap['Token'];
+            if (fallbackToken != null && fallbackToken.isNotEmpty) {
+              await secureStorage.write(key: 'authToken', value: fallbackToken);
+              print('Fallback auth token stored securely.');
+            } else {
+              print('Token not found in fallback login response.');
+            }
           } catch (e2) {
             print('Fallback decryption also failed: $e2');
           }
         }
 
         emit(state.copyWith(
-          message: 'Login request sent successfully (response is encrypted)',
+          message: 'You have Logged in successfully',
           apiStatus: ApiStatus.success,
         ));
       } else {

@@ -8,17 +8,17 @@ const UpdatePasswordEvent();
 
 
 
-class CurrentPasswordEvent extends UpdatePasswordEvent {
-  final String currentPassword;
-  CurrentPasswordEvent({required this.currentPassword});
+class updateUsernameEvent extends UpdatePasswordEvent {
+  final String username;
+  updateUsernameEvent({required this.username});
   @override
-  List<Object> get props => [currentPassword];
+  List<Object> get props => [username];
 }
 class NewPasswordEvent extends UpdatePasswordEvent {
-  final String newPassword;
-  NewPasswordEvent({required this.newPassword});
+  final String NewPassword;
+  NewPasswordEvent({required this.NewPassword});
   @override
-  List<Object> get props => [newPassword];
+  List<Object> get props => [NewPassword];
 }
 class ConformPasswordEvent extends UpdatePasswordEvent {
   final String confirmPassword;

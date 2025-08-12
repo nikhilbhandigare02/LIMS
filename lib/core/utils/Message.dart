@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'enums.dart';
-
 
 class Message {
   static void showTopRightOverlay(
@@ -15,7 +13,8 @@ class Message {
     );
 
     overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 3)).then((_) => overlayEntry.remove());
+    Future.delayed(const Duration(seconds: 3))
+        .then((_) => overlayEntry.remove());
   }
 
   static IconData getIcon(MessageType type) {
@@ -46,6 +45,7 @@ class Message {
     }
   }
 }
+
 class _OverlayMessage extends StatefulWidget {
   final String message;
   final MessageType type;
@@ -110,35 +110,42 @@ class _OverlayMessageState extends State<_OverlayMessage>
           opacity: _fadeAnimation,
           child: Material(
             color: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, color: Colors.white, size: 24),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Text(
-                      widget.message,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 250), // Limit width
+              child: Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: Colors.white, size: 24),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        widget.message,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -31,7 +31,7 @@ class _NewPasswordInputState extends State<NewPasswordInput> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
-      buildWhen: (current, previous) => current.newPassword != previous.newPassword,
+      buildWhen: (current, previous) => current.Username != previous.Username,
       builder: (context, state) {
         return Container(
           decoration: BoxDecoration(
@@ -77,7 +77,7 @@ class _NewPasswordInputState extends State<NewPasswordInput> {
               fillColor: Colors.white,
             ),
             onChanged: (value) {
-              context.read<UpdatePasswordBloc>().add(NewPasswordEvent(newPassword: value));
+              context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
             },
             validator: (value) => Validators.validateEmptyField(value, 'Password'),
           ),

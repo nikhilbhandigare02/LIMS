@@ -1,18 +1,74 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../config/Themes/colors/colorsTheme.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   final VoidCallback? onBackTap;
 
   const UserProfileScreen({super.key, this.onBackTap});
 
-  final Map<String, dynamic> userData = const {
-    'name': 'John Doe',
-    'username': 'john.doe',
-    'doNumber': 'DO-2024-001234',
-    'designation': 'Food Safety Officer',
-  };
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  String _fullName = 'John Doe';
+  String _username = 'john.doe';
+  String _doNumber = 'DO-2024-001234';
+  String _email = 'john.doe@example.com';
+  final String _designation = 'Food Safety Officer';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserFromSecureStorage();
+  }
+
+  Future<void> _loadUserFromSecureStorage() async {
+    try {
+      final String? jsonString = await _secureStorage.read(key: 'loginData');
+      if (jsonString == null || jsonString.isEmpty) return;
+
+      final Map<String, dynamic> data = _tryParseJson(jsonString);
+
+      String? fullName = _firstNonEmpty(data, ['fullName', 'FullName', 'name', 'Name']);
+      String? username = _firstNonEmpty(data, ['username', 'Username', 'userName', 'UserName']);
+      String? email = _firstNonEmpty(data, ['email', 'Email']);
+      String? doNumber = _firstNonEmpty(data, ['doNumber', 'DONumber', 'DoNumber', 'do_no', 'doNo', 'DoNo']);
+
+      setState(() {
+        if (fullName != null) _fullName = fullName;
+        if (username != null) _username = username;
+        if (email != null) _email = email;
+        if (doNumber != null) _doNumber = doNumber;
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print('Failed to load user from secure storage: $e');
+    }
+  }
+
+  Map<String, dynamic> _tryParseJson(String jsonString) {
+    try {
+      return (jsonDecode(jsonString) as Map).cast<String, dynamic>();
+    } catch (_) {
+      return {};
+    }
+  }
+
+  String? _firstNonEmpty(Map<String, dynamic> map, List<String> keys) {
+    for (final key in keys) {
+      final dynamic value = map[key];
+      if (value == null) continue;
+      final String s = value.toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +122,7 @@ class UserProfileScreen extends StatelessWidget {
                         color: Colors.black54,
                       ),
                     ),
-                    onPressed: onBackTap ?? () => Navigator.of(context).pop(),
+                    onPressed: widget.onBackTap ?? () => Navigator.of(context).pop(),
                   ),
                 ),
                 Container(
@@ -100,7 +156,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        userData['name'],
+                        _fullName,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -109,7 +165,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        userData['designation'],
+                        _designation,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 16,
@@ -130,25 +186,25 @@ class UserProfileScreen extends StatelessWidget {
                   _buildInfoCard(
                     icon: Icons.person_outline,
                     title: 'Full Name',
-                    value: userData['name'],
+                    value: _fullName,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
                     icon: Icons.alternate_email,
                     title: 'Username',
-                    value: userData['username'],
+                    value: _username,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
                     icon: Icons.badge_outlined,
-                    title: 'DO Number',
-                    value: userData['doNumber'],
+                    title: 'Official Designation',
+                    value: _designation,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
-                    icon: Icons.work_outline,
-                    title: 'Official Designation',
-                    value: userData['designation'],
+                    icon: Icons.email_outlined,
+                    title: 'Email',
+                    value: _email,
                   ),
                   const SizedBox(height: 30),
                 ],

@@ -33,7 +33,7 @@ class LoginButton extends StatelessWidget {
           case ApiStatus.success:
             Message.showTopRightOverlay(
               context,
-              'Login Successful',
+              state.message,
               MessageType.success,
             );
             Future.delayed(const Duration(seconds: 2), () {
@@ -53,7 +53,7 @@ class LoginButton extends StatelessWidget {
           case ApiStatus.error:
             Message.showTopRightOverlay(
               context,
-              'Login Failed',
+              state.message,
               MessageType.error,
             );
             break;

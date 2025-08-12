@@ -70,7 +70,6 @@ Uint8List aesCbcDecrypt(Uint8List cipherData, Uint8List key, Uint8List iv) {
   return pkcs7Unpad(output);
 }
 
-/// RSA-OAEP encrypt with SHA-1
 Uint8List rsaOaepEncrypt(Uint8List data, RSAPublicKey publicKey) {
   final encryptor = OAEPEncoding(RSAEngine())..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
 
