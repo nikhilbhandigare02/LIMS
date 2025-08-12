@@ -18,6 +18,7 @@ import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/Setting/view/Setting.dart';
 import '../../Screens/UpdateSample/view/UpdateSample.dart';
+import '../../Screens/about_us/view/aboutUS.dart';
 import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';
 import '../../Screens/splash/view/SplashScreen.dart';
@@ -41,7 +42,11 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.registrationScreen:
       return  MaterialPageRoute(builder: (context) => RegistrationScreen());
 
-    // case RouteName.UpdatesampleScreen:
+    case RouteName.AboutUsScreen:
+      return  MaterialPageRoute(builder: (context) => AboutUsScreen());
+
+
+  // case RouteName.UpdatesampleScreen:
     //   return  MaterialPageRoute(builder: (context) => Updatesample(),);
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);

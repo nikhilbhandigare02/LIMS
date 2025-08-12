@@ -11,4 +11,5 @@ class RouteName{
   static const String updateScreen = 'updateScreen';
   static const String forgotPasswordScreen = 'forgotPasswordScreen';
   static const String resetPasswordScreen = 'resetPasswordScreen';
+  static const String AboutUsScreen = 'AboutUsScreen';
 }

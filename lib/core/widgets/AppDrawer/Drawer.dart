@@ -53,6 +53,12 @@ class CustomDrawer extends StatelessWidget {
                 "Help & Support",
                 onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
               ),
+              _buildMenuItem(
+                context,
+                Icons.info_outline_rounded,
+                "About Us",
+                onTap: () => Navigator.pushNamed(context, RouteName.AboutUsScreen),
+              ),
               // SizedBox(height: 100,),
               Spacer(),
               const Divider(),

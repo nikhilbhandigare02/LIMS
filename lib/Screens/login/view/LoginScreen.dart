@@ -147,66 +147,52 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           const SizedBox(height: 30),
 
                           // Decorative avatar section with security icon
+                          // Replace the existing logo section (around line 138-179) with this updated code:
+
+// Decorative avatar section with security icon
                           Center(
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 Container(
-                                  height: 140,
-                                  width: 140,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        const Color(0xFF1E3A8A).withOpacity(0.1),
-                                        const Color(0xFF3B82F6).withOpacity(0.05),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
+                                  height: 90,
+                                  width: 200,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    shape: BoxShape.circle,
+                                    borderRadius: BorderRadius.circular(16), // Rounded rectangle
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 4),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 5),
+                                        spreadRadius: 2,
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
-                                  ),
-                                  child: Image.asset(
-                                    'assets/phone.png',
-                                    height: 60,
-                                  ),
-                                ),
-                                // Security badge
-                                Positioned(
-                                  right: 10,
-                                  bottom: 10,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.green.withOpacity(0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
+                                    border: Border.all(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      width: 1,
                                     ),
-                                    child: const Icon(
-                                      Icons.verified,
-                                      color: Colors.white,
-                                      size: 16,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Image.asset(
+                                        'assets/logo.png',
+                                        height: 70,
+                                        width: 60,
+                                        fit: BoxFit.contain,
+                                      ),
                                     ),
                                   ),
                                 ),
+
+
                               ],
                             ),
                           ),
