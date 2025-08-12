@@ -100,7 +100,7 @@
           builder: (context, state) {
             return BlocDatePicker(
               label: "Date of Collection",
-              selectedDate: state.collectionDate, // coming from BLoC
+              selectedDate: state.collectionDate,
               onChanged: (date) {
                 context.read<SampleFormBloc>().add(CollectionDateChanged(date));
               },
@@ -144,10 +144,10 @@
           builder: (context, state) {
             return BlocYesNoRadio(
               label: 'Preservative Added?',
-              value: state.preservativeAdded, // ← from BLoC state
+              value: state.preservativeAdded,
               icon: Icons.add_circle_outline,
               onChanged: (newValue) {
-                context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue)); // ← dispatch event
+                context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue));
               },
             );
           },
