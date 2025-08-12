@@ -1,17 +1,18 @@
+import '../../../Network/NetworkServiceApi.dart';
+import '../../../common/APIs/APIEndpoint.dart';
+import '../../../common/APIs/BaseUrl.dart';
+
 class ForgotPasswordRepository {
-  Future<bool> sendOtp(String mobileNumber) async {
+  final _api = NetworkServiceApi();
 
-
-    await Future.delayed(const Duration(seconds: 2));
-    
-
-    return true;
+  Future<dynamic> ForgotPassApi(dynamic data) async {
+    final ForgotPass = ApiBase.baseUrl + ApiEndpoints.ForgotPass;
+    final response = await _api.postApi(ForgotPass, data);
+    return response;
   }
-  
-  Future<bool> verifyOtp(String mobileNumber, String otp) async {
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    return true;
-  }
+  // Future<dynamic> ForgotPassApi(dynamic data) async {
+  //   final ForgotPass = ApiBase.baseUrl + ApiEndpoints.login;
+  //   final response = await _api.postApi(ForgotPass, data);
+  //   return response;
+  // }
 } 

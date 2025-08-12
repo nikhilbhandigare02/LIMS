@@ -32,7 +32,6 @@ Uint8List pkcs7Pad(Uint8List data, int blockSize) {
   return padded;
 }
 
-/// Remove PKCS7 padding
 Uint8List pkcs7Unpad(Uint8List padded) {
   final pad = padded.last;
   if (pad < 1 || pad > 16) {
@@ -41,7 +40,6 @@ Uint8List pkcs7Unpad(Uint8List padded) {
   return padded.sublist(0, padded.length - pad);
 }
 
-/// AES-CBC encrypt with PKCS7 padding
 Uint8List aesCbcEncrypt(Uint8List plainData, Uint8List key, Uint8List iv) {
   final cipher = CBCBlockCipher(AESFastEngine());
   final params = ParametersWithIV(KeyParameter(key), iv);

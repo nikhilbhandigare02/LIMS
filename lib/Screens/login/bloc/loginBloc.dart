@@ -69,11 +69,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
           print('Decrypted login response: $decrypted');
 
-          // Store full login data
           await secureStorage.write(key: 'loginData', value: decrypted);
           print('Login data stored securely.');
 
-          // Parse JSON and extract token
           final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
           final String? token = loginResponseMap['Token'];
 
