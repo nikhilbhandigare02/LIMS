@@ -192,21 +192,10 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
                               },
                             ),
+
                             const SizedBox(height: 16),
                             CustomTextField(
-                              label: 'New Password',
-                              icon: Icons.lock,
-                              obscureText: true,
-                              isPassword: true,
-                              value: state.NewPassword,
-                              validator: Validators.validatePassword,
-                              onChanged: (value) {
-                                context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            CustomTextField(
-                              label: 'Confirm Password',
+                              label: 'Old Password',
                               icon: Icons.lock_outline,
                               obscureText: true,
                               isPassword: true,
@@ -219,6 +208,18 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                               // },
                               onChanged: (value) {
                                 context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              label: 'New Password',
+                              icon: Icons.lock,
+                              obscureText: true,
+                              isPassword: true,
+                              value: state.NewPassword,
+                              validator: Validators.validatePassword,
+                              onChanged: (value) {
+                                context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
                               },
                             ),
                             const SizedBox(height: 25),
