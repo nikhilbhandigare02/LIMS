@@ -236,7 +236,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                   const SizedBox(height: 20),
                                   PasswordBoxInput(
                                     label: 'Enter OTP',
-                                    length: 4,
+                                    length: 6,
                                     obscureText: false,
                                     onChanged: (value) {
                                       _otpController.text = value;
