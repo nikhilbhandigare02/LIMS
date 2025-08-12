@@ -13,7 +13,7 @@ part 'loginState.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
-
+//login block
   LoginBloc({required this.loginRepository}) : super(const LoginState()) {
     on<UsernameEvent>(username);
     on<PasswordEvent>(password);
@@ -41,17 +41,57 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         'Password': state.password,
       };
 
-      final encryptedPayload = await encrypt(
+      // Use a session encryption that exposes AES key and IV so we can decrypt
+      // the server's response if it reuses the same AES key
+      final session = await encryptWithSession(
         data: loginData,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      final encryptedResponse = await loginRepository.loginApi(encryptedPayload);
+      final encryptedResponse = await loginRepository.loginApi(session.payloadForServer);
 
       if (encryptedResponse != null) {
         print('Encrypted response received: $encryptedResponse');
+        try {
+          // Primary attempt: server used the SAME AES key but its OWN IV for the response
+          final String encryptedDataBase64 =
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
+          final String decrypted = utf8.decode(
+            aesCbcDecrypt(
+              base64ToBytes(encryptedDataBase64),
+              session.aesKeyBytes,
+              base64ToBytes(serverIvBase64),
+            ),
+          );
 
+          print('Decrypted login response: $decrypted');
+
+          // Optionally parse to a model if needed in future
+          // final Map<String, dynamic> decryptedMap = jsonDecode(decrypted);
+          // final user = UserModel.fromJson(decryptedMap);
+        } catch (e) {
+          print('Failed to decrypt login response: $e');
+          // Fallback: try decrypting using RSA to recover AES key from server payload
+          try {
+            final String encryptedAESKey =
+            (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+            final String encryptedData =
+            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+            final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+            final String decryptedFallback = await decrypt(
+              encryptedAESKeyBase64: encryptedAESKey,
+              encryptedDataBase64: encryptedData,
+              ivBase64: iv,
+              rsaPrivateKeyPem: rsaPrivateKeyPem,
+            );
+            print('Decrypted (fallback) login response: $decryptedFallback');
+          } catch (e2) {
+            print('Fallback decryption also failed: $e2');
+          }
+        }
 
         emit(state.copyWith(
           message: 'Login request sent successfully (response is encrypted)',
@@ -70,4 +110,5 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ));
     }
   }
+
 }

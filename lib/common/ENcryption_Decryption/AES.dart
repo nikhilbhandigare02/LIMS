@@ -4,6 +4,18 @@ import 'dart:typed_data';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:pointycastle/export.dart';
 
+class HybridEncryptionResult {
+  final Map<String, String> payloadForServer;
+  final Uint8List aesKeyBytes;
+  final Uint8List ivBytes;
+
+  HybridEncryptionResult({
+    required this.payloadForServer,
+    required this.aesKeyBytes,
+    required this.ivBytes,
+  });
+}
+
 /// Convert Base64 to Uint8List
 Uint8List base64ToBytes(String base64Str) => base64.decode(base64Str);
 
@@ -121,6 +133,36 @@ Future<Map<String, String>> encrypt({
     'EncryptedData': bytesToBase64(encryptedData),
     'IV': bytesToBase64(iv),
   };
+}
+
+/// Same as encrypt(), but also returns the raw AES key and IV so the caller can
+/// decrypt a server response that is encrypted with the same AES key.
+Future<HybridEncryptionResult> encryptWithSession({
+  required dynamic data,
+  required String rsaPublicKeyPem,
+}) async {
+  final publicKey = CryptoUtils.rsaPublicKeyFromPem(rsaPublicKeyPem);
+
+  final aesKey = generateAESKey();
+  final iv = generateIV();
+
+  final plainBytes = utf8.encode(data is String ? data : jsonEncode(data));
+
+  final encryptedData = aesCbcEncrypt(Uint8List.fromList(plainBytes), aesKey, iv);
+
+  final encryptedAESKey = rsaOaepEncrypt(aesKey, publicKey);
+
+  final payload = <String, String>{
+    'EncryptedAESKey': bytesToBase64(encryptedAESKey),
+    'EncryptedData': bytesToBase64(encryptedData),
+    'IV': bytesToBase64(iv),
+  };
+
+  return HybridEncryptionResult(
+    payloadForServer: payload,
+    aesKeyBytes: aesKey,
+    ivBytes: iv,
+  );
 }
 
 /// Decrypt data using RSA + AES-CBC
