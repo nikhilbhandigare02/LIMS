@@ -13,7 +13,7 @@ part 'loginState.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
-
+//login block
   LoginBloc({required this.loginRepository}) : super(const LoginState()) {
     on<UsernameEvent>(username);
     on<PasswordEvent>(password);
