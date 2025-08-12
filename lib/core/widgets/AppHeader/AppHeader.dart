@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 import '../../../config/Themes/colors/colorsTheme.dart';
@@ -28,6 +30,24 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<String?> loadDisplayName() async {
+      try {
+        const storage = FlutterSecureStorage();
+        final String? jsonString = await storage.read(key: 'loginData');
+        if (jsonString == null || jsonString.isEmpty) return null;
+        final Map<String, dynamic> data = jsonDecode(jsonString) as Map<String, dynamic>;
+        // Prefer fullName/name, else username
+        final List<String> keys = ['fullName', 'FullName', 'name', 'Name', 'username', 'Username'];
+        for (final k in keys) {
+          final dynamic v = data[k];
+          if (v == null) continue;
+          final String s = v.toString().trim();
+          if (s.isNotEmpty) return s;
+        }
+      } catch (_) {}
+      return null;
+    }
+
     return Material(
       elevation: 6,
       shadowColor: customColors.black87.withOpacity(0.3),
@@ -92,12 +112,20 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        "$username • ID: $userId",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: customColors.white,
-                        ),
+                      FutureBuilder<String?>(
+                        future: loadDisplayName(),
+                        builder: (context, snapshot) {
+                          final displayName = (snapshot.connectionState == ConnectionState.done && (snapshot.data ?? '').isNotEmpty)
+                              ? snapshot.data!
+                              : username;
+                          return Text(
+                            displayName,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: customColors.white,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
