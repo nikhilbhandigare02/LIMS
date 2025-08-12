@@ -23,6 +23,7 @@ class BlocTextInput extends StatefulWidget {
   final String initialValue;
   final ValueChanged<String> onChanged;
   final IconData? icon;
+  final bool readOnly;
 
   const BlocTextInput({
     super.key,
@@ -30,6 +31,7 @@ class BlocTextInput extends StatefulWidget {
     required this.initialValue,
     required this.onChanged,
     this.icon,
+    this.readOnly = false,
   });
 
   @override
@@ -59,12 +61,13 @@ class _BlocTextInputState extends State<BlocTextInput> {
     return TextFormField(
       controller: _controller,
       onChanged: widget.onChanged,
+      readOnly: widget.readOnly,
       decoration: InputDecoration(
-        hintText: 'Select ${widget.label}',  // ✅ fix here
+        hintText: 'Select ${widget.label}',
         hintStyle: const TextStyle(fontSize: 16),
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: customColors.primary)
-            : null,  // ✅ fix here
+            : null,
         filled: true,
         fillColor: customColors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

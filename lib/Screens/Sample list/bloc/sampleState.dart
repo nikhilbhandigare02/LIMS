@@ -4,10 +4,10 @@ class getSampleListState extends Equatable{
   const getSampleListState({
 required this.fetchSampleList
 });
-final ApiResponse<UserModel> fetchSampleList;
+final ApiResponse<dynamic> fetchSampleList;
 
 getSampleListState copyWith({
-  final ApiResponse<UserModel>? fetchSampleList,
+  final ApiResponse<dynamic>? fetchSampleList,
 }){
 return getSampleListState(fetchSampleList: fetchSampleList ?? this.fetchSampleList);
 }

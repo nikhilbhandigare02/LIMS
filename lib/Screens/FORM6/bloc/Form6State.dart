@@ -5,6 +5,8 @@ class SampleFormState extends Equatable {
   final String DONumber;
   final String senderDesignation;
   final String district;
+  final String Lattitude;
+  final String Longitude;
   final String region;
   final String division;
   final String area;
@@ -34,6 +36,8 @@ class SampleFormState extends Equatable {
     this.DONumber = '',
     this.senderDesignation = '',
     this.district = '',
+    this.Longitude = '',
+    this.Lattitude = '',
     this.region = '',
     this.division = '',
     this.area = '',
@@ -65,6 +69,8 @@ class SampleFormState extends Equatable {
     String? DONumber,
     String? senderDesignation,
     String? district,
+    String? Lattitude,
+    String? Longitude,
     String? region,
     String? division,
     String? area,
@@ -94,6 +100,8 @@ class SampleFormState extends Equatable {
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
+      Longitude: Longitude ?? this.Longitude,
+      Lattitude: Lattitude ?? this.Lattitude,
       region: region ?? this.region,
       division: division ?? this.division,
       area: area ?? this.area,
@@ -126,6 +134,8 @@ class SampleFormState extends Equatable {
     senderDesignation,
     district,
     region,
+    Lattitude,
+    Longitude,
     division,
     area,
     sampleCodeData,

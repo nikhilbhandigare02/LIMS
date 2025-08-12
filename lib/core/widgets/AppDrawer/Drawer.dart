@@ -62,8 +62,8 @@ class CustomDrawer extends StatelessWidget {
               // SizedBox(height: 100,),
               Spacer(),
               const Divider(),
-              _buildMenuItem(context, Icons.logout, "Logout", onTap: () {
-                ExitConfirmation.show(
+              _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
+                final bool confirmed = await ExitConfirmation.show(
                   context,
                   title: "Logout",
                   description: "Are you sure you want to Logout?",
@@ -72,6 +72,15 @@ class CustomDrawer extends StatelessWidget {
                   confirmIcon: Icons.exit_to_app,
                   cancelIcon: Icons.cancel_outlined,
                 );
+
+                if (confirmed) {
+                  // Navigate to login screen and clear navigation history
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RouteName.loginScreen,
+                    (Route<dynamic> route) => false,
+                  );
+                }
               }),
               const SizedBox(height: 10),
             ],

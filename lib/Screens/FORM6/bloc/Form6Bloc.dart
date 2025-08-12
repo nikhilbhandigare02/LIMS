@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:food_inspector/Screens/login/bloc/loginBloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../../core/utils/enums.dart';
 import '../repository/form6Repository.dart';
@@ -132,6 +133,31 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<FormResetEvent>((event, emit) {
       emit(const SampleFormState());
     });
+    on<Lattitude>((event, emit) => emit(state.copyWith(Lattitude: event.value)));
+    on<Longitude>((event, emit) => emit(state.copyWith(Longitude: event.value)));
+    on<FetchLocationRequested>(_onFetchLocationRequested);
+  }
+
+
+  Future<void> _onFetchLocationRequested(FetchLocationRequested event, Emitter<SampleFormState> emit) async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      emit(state.copyWith(
+        Lattitude: position.latitude.toString(),
+        Longitude: position.longitude.toString(),
+      ));
+    } catch (e) {
+      // Handle error (optional)
+    }
   }
 
   Future<void> _onFormSubmit(
