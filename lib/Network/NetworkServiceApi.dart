@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:food_inspector/Network/ApiServices.dart';
@@ -25,7 +26,11 @@ class NetworkServiceApi extends ApiServices {
   Future<dynamic> postApi(String url, dynamic data) async {
     try {
       final response = await http
-          .post(Uri.parse(url), body: data)
+          .post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      )
           .timeout(const Duration(seconds: 10));
       return handleResponse(response);
     } on SocketException {

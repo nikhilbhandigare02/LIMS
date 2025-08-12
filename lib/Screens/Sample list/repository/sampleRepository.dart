@@ -10,6 +10,6 @@ class SampleRepository {
   Future<dynamic> getSampleData() async {
     final String sampleData = ApiBase.baseUrl + ApiEndpoints.login;
     final response = _api.getApi(sampleData);
-    return UserModel.fromJson(response);
+    return response;
   }
 }

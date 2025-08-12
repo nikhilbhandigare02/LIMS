@@ -27,6 +27,18 @@ class senderNameChanged extends SampleFormEvent {
   @override
   List<Object?> get props => [value];
 }
+class Lattitude extends SampleFormEvent {
+  final String value;
+  const Lattitude(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+class Longitude extends SampleFormEvent {
+  final String value;
+  const Longitude(this.value);
+  @override
+  List<Object?> get props => [value];
+}
 
 class DistrictChanged extends SampleFormEvent {
   final String? value;
@@ -199,3 +211,4 @@ class FoemVIWrapperChanged extends SampleFormEvent {
 
 class FormSubmit extends SampleFormEvent {}
 class FormResetEvent extends SampleFormEvent {}
+class FetchLocationRequested extends SampleFormEvent {}

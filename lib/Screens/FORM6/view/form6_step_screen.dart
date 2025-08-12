@@ -29,6 +29,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     stepFields = _generateStepFields(bloc.state);
     _loadSavedData();
     print("🔄 Form6StepScreen initialized for section: ${widget.section}");
+    context.read<SampleFormBloc>().add(FetchLocationRequested());
   }
 
   List<List<Widget>> _generateStepFields(SampleFormState state) {

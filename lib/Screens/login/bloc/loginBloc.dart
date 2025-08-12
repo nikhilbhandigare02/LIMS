@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../common/ENcryption_Decryption/AES.dart';
+import '../../../common/ENcryption_Decryption/key.dart';
 import '../../../core/utils/enums.dart';
+import '../model/UserModel.dart';
 import '../repository/loginRepository.dart';
 part 'loginEvent.dart';
 part 'loginState.dart';
@@ -16,10 +21,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   void username(UsernameEvent event, Emitter<LoginState> emit) {
+    print(state.username);
     emit(state.copyWith(username: event.username));
   }
 
   void password(PasswordEvent event, Emitter<LoginState> emit) {
+    print(state.password);
     emit(state.copyWith(password: event.password));
   }
 
@@ -29,26 +36,36 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       ) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
     try {
-      Map<String, dynamic> data = {
-        'username': state.username,
-        'password': state.password,
+      final loginData = {
+        'Username': state.username,
+        'Password': state.password,
       };
-      final response = await loginRepository.loginApi(data);
 
-      if (response.result == "success") {
+      final encryptedPayload = await encrypt(
+        data: loginData,
+        rsaPublicKeyPem: rsaPublicKeyPem,
+      );
+
+      final encryptedResponse = await loginRepository.loginApi(encryptedPayload);
+
+      if (encryptedResponse != null) {
+        print('Encrypted response received: $encryptedResponse');
+
+
+
         emit(state.copyWith(
-          message: response.remark ?? 'Login Successful',
+          message: 'Login request sent successfully (response is encrypted)',
           apiStatus: ApiStatus.success,
         ));
       } else {
         emit(state.copyWith(
-          message: response.remark ?? 'Invalid credentials',
+          message: 'No response from server',
           apiStatus: ApiStatus.error,
         ));
       }
     } catch (e) {
       emit(state.copyWith(
-        message: 'Something went wrong',
+        message: 'Something went wrong: $e',
         apiStatus: ApiStatus.error,
       ));
     }

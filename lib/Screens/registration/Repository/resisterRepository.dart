@@ -9,6 +9,6 @@ class registerRepository{
   Future<dynamic> registerApi(dynamic data)async{
     final String registerUrl = ApiBase.baseUrl + ApiEndpoints.login;
     final response = _api.postApi(registerUrl, data);
-    return UserModel.fromJson(response);
+    return response;
   }
 }
