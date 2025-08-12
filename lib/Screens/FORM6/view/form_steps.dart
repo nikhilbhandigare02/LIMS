@@ -139,33 +139,44 @@
         ),
       ],
       [
-
         BlocBuilder<SampleFormBloc, SampleFormState>(
           builder: (context, state) {
-            return BlocYesNoRadio(
-              label: 'Preservative Added?',
-              value: state.preservativeAdded, // ← from BLoC state
-              icon: Icons.add_circle_outline,
-              onChanged: (newValue) {
-                context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue)); // ← dispatch event
-              },
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BlocYesNoRadio(
+                  label: 'Preservative Added?',
+                  value: state.preservativeAdded, // ← from BLoC state
+                  icon: Icons.add_circle_outline,
+                  onChanged: (newValue) {
+                    context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue));
+
+                    // Optional: clear fields when "No" is selected
+                    if (newValue == false) {
+                      context.read<SampleFormBloc>().add(preservativeNameChanged(''));
+                      context.read<SampleFormBloc>().add(preservativeQuantityChanged(''));
+                    }
+                  },
+                ),
+                if (state.preservativeAdded == true) ...[
+                  SizedBox(height: 16),
+                  BlocTextInput(
+                    label: "If yes, mention the name of Preservative",
+                    icon: Icons.medication,
+                    initialValue: state.preservativeName,
+                    onChanged: (val) => context.read<SampleFormBloc>().add(preservativeNameChanged(val)),
+                  ),
+                  SizedBox(height: 16),
+                  BlocTextInput(
+                    label: "Quantity of Preservative",
+                    icon: Icons.scale,
+                    initialValue: state.preservativeQuantity,
+                    onChanged: (val) => context.read<SampleFormBloc>().add(preservativeQuantityChanged(val)),
+                  ),
+                ],
+              ],
             );
           },
-        ),
-
-        SizedBox(height: 16),
-        BlocTextInput(
-          label: "if yes, Mention the name of Preservative",
-          icon: Icons.medication,
-          initialValue: state.preservativeName,
-          onChanged: (val) => bloc.add(preservativeNameChanged(val)),
-        ),
-        SizedBox(height: 16),
-        BlocTextInput(
-          label: "Quantity of Preservative ",
-          icon: Icons.scale,
-          initialValue: state.preservativeQuantity,
-          onChanged: (val) => bloc.add(preservativeQuantityChanged(val)),
         ),
         SizedBox(height: 16),
 
@@ -173,10 +184,10 @@
           builder: (context, state) {
             return BlocYesNoRadio(
               label: 'Signature & thumb impression of the person/\nwitness from whom the sample \nhas been taken',
-              value: state.personSignature, // ← from BLoC state
+              value: state.personSignature,
               icon: Icons.fingerprint,
               onChanged: (newValue) {
-                context.read<SampleFormBloc>().add(personSignatureChanged(newValue)); // ← dispatch event
+                context.read<SampleFormBloc>().add(personSignatureChanged(newValue));
               },
             );
           },
@@ -197,12 +208,13 @@
               value: state.DOSignature, // ← from BLoC state
               icon: Icons.verified_user,
               onChanged: (newValue) {
-                context.read<SampleFormBloc>().add(DOSignatureChanged(newValue)); // ← dispatch event
+                context.read<SampleFormBloc>().add(DOSignatureChanged(newValue));
               },
             );
           },
         ),
       ],
+
       [
         BlocTextInput(
           label: "Code Number of sample on Wrapper",

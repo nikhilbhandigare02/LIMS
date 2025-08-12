@@ -23,15 +23,24 @@ class NetworkServiceApi extends ApiServices {
   }
 
   @override
-  Future<dynamic> postApi(String url, dynamic data) async {
+  Future<dynamic> postApi(String url, dynamic data, {Map<String, String>? headers}) async {
     try {
+      final requestHeaders = {
+        'Content-Type': 'application/json',
+        if (headers != null) ...headers,
+      };
+
       final response = await http
           .post(
         Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
+        headers: requestHeaders,
         body: jsonEncode(data),
       )
           .timeout(const Duration(seconds: 10));
+
+      print('HTTP Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       return handleResponse(response);
     } on SocketException {
       throw NoInternetException();

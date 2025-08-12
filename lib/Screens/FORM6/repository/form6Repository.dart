@@ -10,7 +10,6 @@ class Form6Repository {
   Future<dynamic> FormSixApi(dynamic data) async {
     final formSixUrl = ApiBase.baseUrl + ApiEndpoints.login;
     final response = await _api.postApi(formSixUrl, data);
-    // Return the raw response directly instead of parsing to UserModel
     return response;
   }
 }
