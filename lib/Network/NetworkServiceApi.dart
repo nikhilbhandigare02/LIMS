@@ -7,11 +7,15 @@ import 'package:food_inspector/Network/ApiExceptionHandler.dart';
 
 class NetworkServiceApi extends ApiServices {
   @override
-  Future<dynamic> getApi(String url) async {
+  Future<dynamic> getApi(String url, {Map<String, String>? headers}) async {
     try {
       final response = await http
-          .get(Uri.parse(url))
+          .get(Uri.parse(url), headers: headers)
           .timeout(const Duration(seconds: 10));
+
+      print('HTTP GET: $url');
+      print('HTTP Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       return handleResponse(response);
     } on SocketException {
       throw NoInternetException();

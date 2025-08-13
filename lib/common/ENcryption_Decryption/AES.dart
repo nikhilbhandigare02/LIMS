@@ -16,13 +16,11 @@ class HybridEncryptionResult {
   });
 }
 
-/// Convert Base64 to Uint8List
 Uint8List base64ToBytes(String base64Str) => base64.decode(base64Str);
 
-/// Convert Uint8List to Base64 string
 String bytesToBase64(Uint8List bytes) => base64.encode(bytes);
 
-/// PKCS7 padding
+
 Uint8List pkcs7Pad(Uint8List data, int blockSize) {
   final pad = blockSize - (data.length % blockSize);
   final padded = Uint8List(data.length + pad)..setAll(0, data);
@@ -54,7 +52,6 @@ Uint8List aesCbcEncrypt(Uint8List plainData, Uint8List key, Uint8List iv) {
   return output;
 }
 
-/// AES-CBC decrypt with PKCS7 unpadding
 Uint8List aesCbcDecrypt(Uint8List cipherData, Uint8List key, Uint8List iv) {
   final cipher = CBCBlockCipher(AESFastEngine());
   final params = ParametersWithIV(KeyParameter(key), iv);
@@ -83,11 +80,10 @@ Uint8List rsaOaepEncrypt(Uint8List data, RSAPublicKey publicKey) {
   return output.toBytes();
 }
 
-/// RSA-OAEP decrypt with SHA-1
 Uint8List rsaOaepDecrypt(Uint8List data, RSAPrivateKey privateKey) {
   final decryptor = OAEPEncoding(RSAEngine())..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
 
-  final keySize = (privateKey.n!.bitLength + 7) ~/ 8; // key size in bytes
+  final keySize = (privateKey.n!.bitLength + 7) ~/ 8;
   final output = BytesBuilder();
 
   for (int offset = 0; offset < data.length; offset += keySize) {
@@ -132,8 +128,7 @@ Future<Map<String, String>> encrypt({
   };
 }
 
-/// Same as encrypt(), but also returns the raw AES key and IV so the caller can
-/// decrypt a server response that is encrypted with the same AES key.
+
 Future<HybridEncryptionResult> encryptWithSession({
   required dynamic data,
   required String rsaPublicKeyPem,
@@ -162,7 +157,6 @@ Future<HybridEncryptionResult> encryptWithSession({
   );
 }
 
-/// Decrypt data using RSA + AES-CBC
 Future<String> decrypt({
   required String encryptedAESKeyBase64,
   required String encryptedDataBase64,

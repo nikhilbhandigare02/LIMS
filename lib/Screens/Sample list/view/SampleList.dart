@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/Screens/FORM6/bloc/Form6Bloc.dart';
+import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
+import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
-
+import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
 import '../../../core/widgets/SampleLIstWidgets/edit.dart';
+import '../bloc/sampleBloc.dart';
+import '../model/sampleData.dart';
 
 class SampleAnalysisScreen extends StatefulWidget {
   @override
@@ -15,42 +21,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   bool isCardView = true;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-
-  // Sample data
-  List<SampleData> sampleDataList = [
-    SampleData(
-      serialNo: "001",
-      sampleSentDate: "2024-01-15",
-      sampleResentDate: "",
-      sampleRequestedDate: "2024-01-12",
-      status: "re-requested",
-      labLocation: "Mumbai",
-    ),
-    SampleData(
-      serialNo: "002",
-      sampleSentDate: "2024-01-20",
-      sampleResentDate: "-",
-      sampleRequestedDate: "-",
-      status: "sample receive entry pending",
-      labLocation: "Nagpur",
-    ),
-    SampleData(
-      serialNo: "003",
-      sampleSentDate: "2024-01-25",
-      sampleResentDate: " ",
-      sampleRequestedDate: " ",
-      status: "sample receive entry pending",
-      labLocation: "Nashik",
-    ),
-    SampleData(
-      serialNo: "004",
-      sampleSentDate: "2024-02-01",
-      sampleResentDate: "-",
-      sampleRequestedDate: " ",
-      status: "send for codeing",
-      labLocation: "Mumbai",
-    ),
-  ];
+  late SampleBloc sampleBloc;
 
   @override
   void initState() {
@@ -63,11 +34,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
+
+    sampleBloc = SampleBloc(sampleRepository: SampleRepository());
+    sampleBloc.add(getSampleListEvent());
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    sampleBloc.close();
     super.dispose();
   }
 
@@ -79,85 +54,125 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     _animationController.forward();
   }
 
-  Color getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'send for codeing':
-        return Colors.green;
-      case 'sample receive entry pending':
-        return Colors.orange;
-      case 're-requested':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
+  Color getStatusColor(String? status) {
+    if (status == null) return Colors.grey;
+    final s = status.toLowerCase().trim();
+
+    // High-priority keywords
+    if (s.contains('tampered')) return Colors.red;
+    if (s.contains('decoded') && s.contains('report')) return Colors.indigo; // "Sample Decoded, Generate Report"
+    if (s.contains('decoded')) return Colors.deepPurple; // "Sample Decoded"
+    if (s.contains('dispatched') || s.contains('dispatch')) return Colors.teal; // "Report Dispatched", "Pending for Dispatch"
+    if (s.contains('generated') && s.contains('report')) return Colors.blueGrey; // "Report Generated"
+
+    // Workflow-specific
+    if (s.contains('verification')) return Colors.blue; // Sent/Pending for Verification
+    if (s.contains('coding') || s.contains('decode')) return Colors.cyan; // Sent for coding/decoding, Pending for Coding/Decoding
+    if (s.contains('assignment') || s.contains('allocated') || s.contains('allocation')) return Colors.orange; // sent for assignment/allocation
+    if (s.contains('analysis')) return Colors.green; // sent for analysis / analysis successful
+    if (s.contains('received')) return Colors.purple; // received by courier/physically / entry successful
+
+    // Generic fallbacks for common words
+    if (s.contains('pending')) return Colors.amber;
+    if (s.contains('sent')) return Colors.lightBlue;
+
+    // Specific edge cases
+    if (s == 're-requested' || s.contains('re-request')) return Colors.redAccent;
+
+    return Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppHeader(
-        screenTitle: 'Sample Analysis',
-        username: 'Username',
-        userId: 'UserID',
-        showBack: true,
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.white24, Colors.white12],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
+    return BlocProvider.value(
+      value: sampleBloc,
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppHeader(
+          screenTitle: 'Sample Analysis',
+          username: 'Username',
+          userId: 'UserID',
+          showBack: true,
+          actions: [
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
                 ),
-              ],
-            ),
-            child: IconButton(
-              icon: AnimatedSwitcher(
-                duration: Duration(milliseconds: 300),
-                child: Icon(
-                  isCardView ? Icons.table_chart : Icons.view_agenda,
-                  key: ValueKey(isCardView),
-                  color: Colors.white,
-                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
-              onPressed: toggleView,
-              tooltip: isCardView ? 'Switch to Table View' : 'Switch to Card View',
+              child: IconButton(
+                icon: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  child: Icon(
+                    isCardView ? Icons.table_chart : Icons.view_agenda,
+                    key: ValueKey(isCardView),
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: toggleView,
+                tooltip: isCardView ? 'Switch to Table View' : 'Switch to Card View',
+              ),
             ),
-          ),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.grey[50]!,
-              Colors.grey[100]!,
-            ],
-          ),
+          ],
         ),
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: isCardView ? _buildCardView() : _buildTableView(),
+        body: BlocBuilder<SampleBloc, getSampleListState>(
+          builder: (context, state) {
+            switch (state.fetchSampleList.status) {
+              case Status.loading:
+                return Center(child: const CircularProgressIndicator());
+              case Status.complete:
+                if (state.fetchSampleList.data == null || state.fetchSampleList.data.isEmpty) {
+                  return Center(child: Text('No Data Found'));
+                }
+                final sampleList = state.fetchSampleList.data as List<SampleData>;
+                final sampleDataList = sampleList
+                    .expand((sampleData) => sampleData.sampleList ?? [])
+                    .toList();
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.grey[50]!,
+                        Colors.grey[100]!,
+                      ],
+                    ),
+                  ),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: isCardView
+                        ? _buildCardView(sampleDataList.cast<SampleList>())
+                        : _buildTableView(sampleDataList.cast<SampleList>()),
+
+                  ),
+                );
+              case Status.error:
+                return Center(child: Text('Error: ${state.fetchSampleList.message}'));
+              default:
+                return Center(child: Text('Unexpected state'));
+            }
+          },
         ),
       ),
     );
   }
 
-  Widget _buildCardView() {
+  Widget _buildCardView(List<SampleList> sampleDataList) {
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Compact Header
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -227,7 +242,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  Widget _buildSampleCard(SampleData data, int index) {
+  Widget _buildSampleCard(SampleList data, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       child: Card(
@@ -253,7 +268,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Compact Header Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -278,12 +292,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [getStatusColor(data.status), getStatusColor(data.status).withOpacity(0.8)],
+                          colors: [getStatusColor(data.statusName), getStatusColor(data.statusName).withOpacity(0.8)],
                         ),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        data.status,
+                        data.statusName ?? 'Unknown',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -293,18 +307,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     ),
                   ],
                 ),
-
                 SizedBox(height: 12),
-
-                // Compact Info Grid
                 Row(
                   children: [
                     Expanded(
                       child: Column(
                         children: [
-                          _buildCompactInfoRow(Icons.location_on, data.labLocation),
+                          _buildCompactInfoRow(Icons.location_on, data.labLocation ?? 'N/A'),
                           SizedBox(height: 8),
-                          _buildCompactInfoRow(Icons.send, data.sampleSentDate),
+                          _buildCompactInfoRow(Icons.send, _formatDate(data.sampleSentDate)),
                         ],
                       ),
                     ),
@@ -312,38 +323,38 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     Expanded(
                       child: Column(
                         children: [
-                          _buildCompactInfoRow(Icons.refresh, data.sampleResentDate.isEmpty || data.sampleResentDate.trim() == '-' ? 'N/A' : data.sampleResentDate),
+                          _buildCompactInfoRow(Icons.refresh, _formatDate(data.sampleResentDate)),
                           SizedBox(height: 8),
-                          _buildCompactInfoRow(Icons.calendar_today, data.sampleRequestedDate.isEmpty || data.sampleRequestedDate.trim() == '-' ? 'N/A' : data.sampleRequestedDate),
+                          _buildCompactInfoRow(Icons.calendar_today, _formatDate(data.sampleReRequestedDate)),
                         ],
                       ),
                     ),
                   ],
                 ),
-
                 SizedBox(height: 12),
-
-                // Compact Action Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _buildCompactActionButton(
                       icon: Icons.visibility,
                       color: Colors.blue,
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => ViewSampleDialog(data: data),
-                      ),
+                      // onPressed: () => showDialog(
+                      //   context: context,
+                      //   builder: (context) => ViewSampleDialog(data: data),
+                      // ),
+                      onPressed: (){}
                     ),
-                    if (data.status.toLowerCase() == 're-requested') ...[
+                    if (data.statusName?.toLowerCase() == 're-requested') ...[
                       SizedBox(width: 8),
                       _buildCompactActionButton(
                         icon: Icons.edit,
                         color: Colors.green,
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => EditSampleDialog(data: data),
-                        ),
+                        // onPressed: () => showDialog(
+                        //   context: context,
+                        //   builder: (context) => EditSampleDialog(data: data),
+                        // ),
+                          onPressed: (){}
+
                       ),
                     ],
                   ],
@@ -409,13 +420,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  Widget _buildTableView() {
+  Widget _buildTableView(List<SampleList> sampleDataList) {
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Compact Header for Table
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -512,25 +522,25 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                data.serialNo,
+                                data.serialNo ?? 'N/A',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
-                          DataCell(Text(data.sampleSentDate)),
-                          DataCell(Text(data.sampleResentDate)),
-                          DataCell(Text(data.sampleRequestedDate)),
+                          DataCell(Text(_formatDate(data.sampleSentDate))),
+                          DataCell(Text(_formatDate(data.sampleResentDate))),
+                          DataCell(Text(_formatDate(data.sampleReRequestedDate))),
                           DataCell(
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [getStatusColor(data.status), getStatusColor(data.status).withOpacity(0.8)],
+                                  colors: [getStatusColor(data.statusName), getStatusColor(data.statusName).withOpacity(0.8)],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                data.status,
+                                data.statusName ?? 'Unknown',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -543,7 +553,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                             Container(
                               width: 120,
                               child: Text(
-                                data.labLocation,
+                                data.labLocation ?? 'N/A',
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -559,14 +569,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                   ),
                                   child: IconButton(
                                     icon: Icon(Icons.visibility, color: Colors.white),
-                                    onPressed: () => showDialog(
-                                      context: context,
-                                      builder: (context) => ViewSampleDialog(data: data),
-                                    ),
+                                    // onPressed: () => showDialog(
+                                    //   context: context,
+                                    //   builder: (context) => ViewSampleDialog(data: data),
+                                    // ),
+                                    onPressed: (){},
                                     iconSize: 18,
                                   ),
                                 ),
-                                if (data.status.toLowerCase() == 're-requested') ...[
+                                if (data.statusName?.toLowerCase() == 're-requested') ...[
                                   SizedBox(width: 4),
                                   Container(
                                     decoration: BoxDecoration(
@@ -575,10 +586,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                     ),
                                     child: IconButton(
                                       icon: Icon(Icons.edit, color: Colors.white),
-                                      onPressed: () => showDialog(
-                                        context: context,
-                                        builder: (context) => EditSampleDialog(data: data),
-                                      ),
+                                      // onPressed: () => showDialog(
+                                      //   context: context,
+                                      //   builder: (context) => EditSampleDialog(data: data),
+                                      // ),
+                                      onPressed: (){},
                                       iconSize: 18,
                                     ),
                                   ),
@@ -598,22 +610,14 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-}
 
-class SampleData {
-  final String serialNo;
-  final String sampleSentDate;
-  final String sampleResentDate;
-  final String sampleRequestedDate;
-  final String status;
-  final String labLocation;
-
-  SampleData({
-    required this.serialNo,
-    required this.sampleSentDate,
-    required this.sampleResentDate,
-    required this.sampleRequestedDate,
-    required this.status,
-    required this.labLocation,
-  });
+  String _formatDate(String? date) {
+    if (date == null || date == '0001-01-01T00:00:00') return 'N/A';
+    try {
+      final parsedDate = DateTime.parse(date);
+      return '${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'N/A';
+    }
+  }
 }

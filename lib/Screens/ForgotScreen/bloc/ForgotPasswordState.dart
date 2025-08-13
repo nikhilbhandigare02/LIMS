@@ -6,6 +6,8 @@ class ForgotPasswordState extends Equatable {
   final String message;
   final ApiStatus apiStatus;
   final bool isOtpSent;
+  final bool isOtpVerified; // new
+
 
   const ForgotPasswordState({
     this.email = '',
@@ -13,9 +15,11 @@ class ForgotPasswordState extends Equatable {
     this.message = '',
     this.apiStatus = ApiStatus.initial,
     this.isOtpSent = false,
+    this.isOtpVerified = false,
   });
 
   ForgotPasswordState copyWith({
+    bool? isOtpVerified, // new
     String? email,
     String? otp,
     String? message,
@@ -28,9 +32,11 @@ class ForgotPasswordState extends Equatable {
       message: message ?? this.message,
       apiStatus: apiStatus ?? this.apiStatus,
       isOtpSent: isOtpSent ?? this.isOtpSent,
+      isOtpVerified: isOtpVerified ?? this.isOtpVerified,
+
     );
   }
 
   @override
-  List<Object?> get props => [email, message, apiStatus, isOtpSent,otp];
+  List<Object?> get props => [email, message, apiStatus, isOtpSent,otp, isOtpVerified];
 }
