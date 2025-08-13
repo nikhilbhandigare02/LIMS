@@ -7,9 +7,7 @@ abstract class ForgotPasswordEvent extends Equatable {
 
 class EmailEvent extends ForgotPasswordEvent {
   final String email;
-
-  EmailEvent(this.email);
-
+   EmailEvent({required this.email});
   @override
   List<Object?> get props => [email];
 }

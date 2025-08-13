@@ -10,9 +10,9 @@ class ForgotPasswordRepository {
     final response = await _api.postApi(ForgotPass, data);
     return response;
   }
-  // Future<dynamic> ForgotPassApi(dynamic data) async {
-  //   final ForgotPass = ApiBase.baseUrl + ApiEndpoints.login;
-  //   final response = await _api.postApi(ForgotPass, data);
-  //   return response;
-  // }
+  Future<dynamic> VerifyOTPApi(dynamic data) async {
+    final verifyOTP = ApiBase.baseUrl + ApiEndpoints.verifyOTP;
+    final response = await _api.postApi(verifyOTP, data);
+    return response;
+  }
 } 

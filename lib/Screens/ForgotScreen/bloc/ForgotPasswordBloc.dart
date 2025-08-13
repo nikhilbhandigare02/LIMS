@@ -19,116 +19,112 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
   ForgotPasswordBloc({required this.forgotPasswordRepository}) : super(const ForgotPasswordState()) {
     on<EmailEvent>(email);
     on<sendOTPEvent>(sentOTP);
+    on<OTPEvent>(OTP);
     on<verifyOTPEvent>(VerifyOTP);
   }
   void email(EmailEvent event, Emitter<ForgotPasswordState> emit) {
     print(state.email);
     emit(state.copyWith(email: event.email));
   }
+  void OTP(OTPEvent event, Emitter<ForgotPasswordState> emit) {
+    print(state.otp);
+    emit(state.copyWith(otp: event.otp));
+  }
 
   Future<void> sentOTP(
       sendOTPEvent event,
       Emitter<ForgotPasswordState> emit,
       ) async {
-    // Start loading
     emit(state.copyWith(apiStatus: ApiStatus.loading, message: ''));
 
     try {
-      final loginData = {
+      final sendOTPData = {
         'UserMailId': state.email,
       };
 
       final session = await encryptWithSession(
-        data: loginData,
+        data: sendOTPData,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
       // Call API
       final encryptedResponse = await forgotPasswordRepository.ForgotPassApi(session.payloadForServer);
 
-      if (encryptedResponse != null) {
-        print('Encrypted response received: $encryptedResponse');
-
-        try {
-          // Extract and decrypt encrypted data from response
-          final String encryptedDataBase64 =
-          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-          final String serverIvBase64 =
-          (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
-
-          final String decrypted = utf8.decode(
-            aesCbcDecrypt(
-              base64ToBytes(encryptedDataBase64),
-              session.aesKeyBytes,
-              base64ToBytes(serverIvBase64),
-            ),
-          );
-
-          print('Decrypted response: $decrypted');
-
-          // Save login data securely
-          await secureStorage.write(key: 'loginData', value: decrypted);
-
-          final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
-          final String? token = loginResponseMap['Token'];
-
-          if (token != null && token.isNotEmpty) {
-            await secureStorage.write(key: 'authToken', value: token);
-            print('Auth token stored securely.');
-          } else {
-            print('Token not found in login response.');
-          }
-        } catch (e) {
-          print('Failed to decrypt response: $e');
-          try {
-            final String encryptedAESKey =
-            (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
-            final String encryptedData =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-            final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
-
-            final String decryptedFallback = await decrypt(
-              encryptedAESKeyBase64: encryptedAESKey,
-              encryptedDataBase64: encryptedData,
-              ivBase64: iv,
-              rsaPrivateKeyPem: rsaPrivateKeyPem,
-            );
-
-            print('Decrypted fallback response: $decryptedFallback');
-
-            await secureStorage.write(key: 'loginData', value: decryptedFallback);
-
-            final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
-            final String? fallbackToken = fallbackMap['Token'];
-
-            if (fallbackToken != null && fallbackToken.isNotEmpty) {
-              await secureStorage.write(key: 'authToken', value: fallbackToken);
-              print('Fallback auth token stored securely.');
-            } else {
-              print('Token not found in fallback response.');
-            }
-          } catch (e2) {
-            print('Fallback decryption failed: $e2');
-            emit(state.copyWith(
-              apiStatus: ApiStatus.error,
-              message: 'Failed to decrypt server response.',
-            ));
-            return;
-          }
-        }
-
-        // If everything successful, emit success with isOtpSent = true
-        emit(state.copyWith(
-          apiStatus: ApiStatus.success,
-          message: 'OTP sent successfully',
-          isOtpSent: true,
-        ));
-      } else {
+      if (encryptedResponse == null) {
         emit(state.copyWith(
           apiStatus: ApiStatus.error,
           message: 'No response from server',
         ));
+        return;
       }
+
+      print('Encrypted response received: $encryptedResponse');
+
+      String? decryptedString;
+
+      try {
+        // Primary decryption method (AES session key)
+        final String encryptedDataBase64 =
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        final String serverIvBase64 =
+        (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+        decryptedString = utf8.decode(
+          aesCbcDecrypt(
+            base64ToBytes(encryptedDataBase64),
+            session.aesKeyBytes,
+            base64ToBytes(serverIvBase64),
+          ),
+        );
+
+        print('Decrypted response: $decryptedString');
+      } catch (e) {
+        print('Primary decryption failed: $e');
+
+        // Fallback decryption method
+        try {
+          final String encryptedAESKey =
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          final String encryptedData =
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+          decryptedString = await decrypt(
+            encryptedAESKeyBase64: encryptedAESKey,
+            encryptedDataBase64: encryptedData,
+            ivBase64: iv,
+            rsaPrivateKeyPem: rsaPrivateKeyPem,
+          );
+
+          print('Decrypted fallback response: $decryptedString');
+        } catch (e2) {
+          print('Fallback decryption failed: $e2');
+          emit(state.copyWith(
+            apiStatus: ApiStatus.error,
+            message: 'Failed to decrypt server response.',
+          ));
+          return;
+        }
+      }
+
+      // If decryption was successful, store in secure storage
+      if (decryptedString != null) {
+        final Map<String, dynamic> otpResponse = jsonDecode(decryptedString);
+
+        print('OTP Verification Code: ${otpResponse['verificationCode']}');
+        print('OTP Email: ${otpResponse['Email']}');
+        print('OTP UserId: ${otpResponse['UserId']}');
+
+        await secureStorage.write(key: 'otpVerificationCode', value: otpResponse['verificationCode'] ?? '');
+        await secureStorage.write(key: 'otpEmail', value: otpResponse['Email'] ?? '');
+        await secureStorage.write(key: 'otpUserId', value: otpResponse['UserId']?.toString() ?? '');
+      }
+
+      emit(state.copyWith(
+        apiStatus: ApiStatus.success,
+        message: 'OTP sent successfully',
+        isOtpSent: true,
+      ));
     } catch (e) {
       emit(state.copyWith(
         apiStatus: ApiStatus.error,
@@ -138,115 +134,113 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
   }
 
   Future<void> VerifyOTP(
-      verifyOTPEvent event,
-      Emitter<ForgotPasswordState> emit,
-      ) async {
-    // Start loading
-    emit(state.copyWith(apiStatus: ApiStatus.loading, message: ''));
-
-    try {
-      final loginData = {
-        'UserMailId': state.email,
-      };
-
-      final session = await encryptWithSession(
-        data: loginData,
-        rsaPublicKeyPem: rsaPublicKeyPem,
-      );
-
-      // Call API
-      final encryptedResponse = await forgotPasswordRepository.ForgotPassApi(session.payloadForServer);
-
-      if (encryptedResponse != null) {
-        print('Encrypted response received: $encryptedResponse');
+          verifyOTPEvent event,
+          Emitter<ForgotPasswordState> emit,
+          ) async {
+        // Start loading
+        emit(state.copyWith(apiStatus: ApiStatus.loading, message: '', ));
 
         try {
-          // Extract and decrypt encrypted data from response
-          final String encryptedDataBase64 =
-          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-          final String serverIvBase64 =
-          (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
-          final String decrypted = utf8.decode(
-            aesCbcDecrypt(
-              base64ToBytes(encryptedDataBase64),
-              session.aesKeyBytes,
-              base64ToBytes(serverIvBase64),
-            ),
-          );
+          final storedUserId = await secureStorage.read(key: 'otpUserId');
 
-          print('Decrypted response: $decrypted');
-
-          // Save login data securely
-          await secureStorage.write(key: 'loginData', value: decrypted);
-
-          final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
-          final String? token = loginResponseMap['Token'];
-
-          if (token != null && token.isNotEmpty) {
-            await secureStorage.write(key: 'authToken', value: token);
-            print('Auth token stored securely.');
-          } else {
-            print('Token not found in login response.');
-          }
-        } catch (e) {
-          print('Failed to decrypt response: $e');
-          try {
-            final String encryptedAESKey =
-            (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
-            final String encryptedData =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-            final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
-
-            final String decryptedFallback = await decrypt(
-              encryptedAESKeyBase64: encryptedAESKey,
-              encryptedDataBase64: encryptedData,
-              ivBase64: iv,
-              rsaPrivateKeyPem: rsaPrivateKeyPem,
-            );
-
-            print('Decrypted fallback response: $decryptedFallback');
-
-            await secureStorage.write(key: 'loginData', value: decryptedFallback);
-
-            final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
-            final String? fallbackToken = fallbackMap['Token'];
-
-            if (fallbackToken != null && fallbackToken.isNotEmpty) {
-              await secureStorage.write(key: 'authToken', value: fallbackToken);
-              print('Fallback auth token stored securely.');
-            } else {
-              print('Token not found in fallback response.');
-            }
-          } catch (e2) {
-            print('Fallback decryption failed: $e2');
+          if (storedUserId == null || storedUserId.isEmpty) {
             emit(state.copyWith(
               apiStatus: ApiStatus.error,
-              message: 'Failed to decrypt server response.',
+              message: 'User ID not found in secure storage.',
             ));
             return;
           }
+          final verifyOTPData = {
+            'verificationCode': state.otp,
+            'Email': state.email,
+            'UserId': storedUserId,
+          };
+
+          final session = await encryptWithSession(
+            data: verifyOTPData,
+            rsaPublicKeyPem: rsaPublicKeyPem,
+          );
+
+          // Call API
+          final encryptedResponse = await forgotPasswordRepository.VerifyOTPApi(session.payloadForServer);
+
+          if (encryptedResponse != null) {
+            print('Encrypted response received: $encryptedResponse');
+
+            try {
+              final String encryptedDataBase64 =
+              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+              final String serverIvBase64 =
+              (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+              final String decrypted = utf8.decode(
+                aesCbcDecrypt(
+                  base64ToBytes(encryptedDataBase64),
+                  session.aesKeyBytes,
+                  base64ToBytes(serverIvBase64),
+                ),
+              );
+
+              print('Decrypted response: $decrypted');
+
+            } catch (e) {
+              print('Failed to decrypt response: $e');
+              try {
+                final String encryptedAESKey =
+                (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+                final String encryptedData =
+                (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+                final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+                final String decryptedFallback = await decrypt(
+                  encryptedAESKeyBase64: encryptedAESKey,
+                  encryptedDataBase64: encryptedData,
+                  ivBase64: iv,
+                  rsaPrivateKeyPem: rsaPrivateKeyPem,
+                );
+
+                print('Decrypted fallback response: $decryptedFallback');
+
+                await secureStorage.write(key: 'loginData', value: decryptedFallback);
+
+                final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
+                final String? fallbackToken = fallbackMap['Token'];
+
+                if (fallbackToken != null && fallbackToken.isNotEmpty) {
+                  await secureStorage.write(key: 'authToken', value: fallbackToken);
+                  print('Fallback auth token stored securely.');
+                } else {
+                  print('Token not found in fallback response.');
+                }
+              } catch (e2) {
+                print('Fallback decryption failed: $e2');
+                emit(state.copyWith(
+                  apiStatus: ApiStatus.error,
+                  message: 'Failed to decrypt server response.',
+                ));
+                return;
+              }
+            }
+
+            emit(state.copyWith(
+              apiStatus: ApiStatus.success,
+              message: state.message,
+              isOtpVerified: true,
+            ));
+          } else {
+            emit(state.copyWith(
+              apiStatus: ApiStatus.error,
+              message: state.message,
+            ));
+          }
+        } catch (e) {
+          emit(state.copyWith(
+            apiStatus: ApiStatus.error,
+            message: 'Something went wrong: $e',
+          ));
         }
-
-        // If everything successful, emit success with isOtpSent = true
-        emit(state.copyWith(
-          apiStatus: ApiStatus.success,
-          message: 'OTP sent successfully',
-          isOtpSent: true,
-        ));
-      } else {
-        emit(state.copyWith(
-          apiStatus: ApiStatus.error,
-          message: 'No response from server',
-        ));
       }
-    } catch (e) {
-      emit(state.copyWith(
-        apiStatus: ApiStatus.error,
-        message: 'Something went wrong: $e',
-      ));
+
+
     }
-  }
-
-
-}

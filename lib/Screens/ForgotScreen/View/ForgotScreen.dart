@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
+import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
 import '../../../core/widgets/RegistrationInput/PasswordBoxInput.dart';
@@ -13,12 +14,14 @@ import '../repository/ForgotPasswordRepository.dart';
 class ForgotScreen extends StatelessWidget {
   ForgotScreen({super.key});
 
-  final _otpController = TextEditingController();
-
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ForgotPasswordBloc(forgotPasswordRepository: ForgotPasswordRepository()),
+      create: (_) => ForgotPasswordBloc(
+        forgotPasswordRepository: ForgotPasswordRepository(),
+      ),
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         body: SafeArea(
@@ -79,31 +82,45 @@ class ForgotScreen extends StatelessWidget {
                 const SizedBox(height: 35),
                 Expanded(
                   child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-                    // Only listen when apiStatus changes to success with OTP sent, or changes to error
                     listenWhen: (previous, current) {
-                      return previous.apiStatus != current.apiStatus &&
-                          ( (current.apiStatus == ApiStatus.success && current.isOtpSent) || current.apiStatus == ApiStatus.error );
+                      // Trigger only when apiStatus changes
+                      return previous.apiStatus != current.apiStatus;
                     },
                     listener: (context, state) {
-                      if (state.apiStatus == ApiStatus.success && state.isOtpSent) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message.isNotEmpty ? state.message : 'OTP sent successfully'),
-                            backgroundColor: Colors.green,
-                          ),
+                      // OTP send success
+                      if (state.apiStatus == ApiStatus.success && state.isOtpSent && !state.isOtpVerified) {
+                        Message.showTopRightOverlay(
+                          context,
+                          state.message,
+                          MessageType.success,
                         );
-                      } else if (state.apiStatus == ApiStatus.error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message.isNotEmpty ? state.message : 'An error occurred'),
-                            backgroundColor: Colors.red,
-                          ),
+                      }
+
+                      // OTP verify success
+                      else if (state.apiStatus == ApiStatus.success && state.isOtpVerified) {
+                        Message.showTopRightOverlay(
+                          context,
+                          state.message,
+                          MessageType.success,
+                        );
+
+                        Future.delayed(const Duration(seconds: 2), () {
+                          Navigator.pushNamed(context, RouteName.resetPasswordScreen);
+                        });
+                      }
+
+                      // Error handling
+                      else if (state.apiStatus == ApiStatus.error) {
+                        Message.showTopRightOverlay(
+                          context,
+                          state.message,
+                          MessageType.error,
                         );
                       }
                     },
                     child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
                       buildWhen: (current, previous) =>
-                      current.email != previous.email ||
+                          current.email != previous.email ||
                           current.apiStatus != previous.apiStatus ||
                           current.isOtpSent != previous.isOtpSent,
                       builder: (context, state) {
@@ -133,9 +150,10 @@ class ForgotScreen extends StatelessWidget {
                                       icon: Icons.email,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: Validators.validateEmail,
-                                      value: state.email, // current email from bloc state
+                                      value: state
+                                          .email, // current email from bloc state
                                       onChanged: (value) {
-                                        bloc.add(EmailEvent(value));
+                                        context.read<ForgotPasswordBloc>().add(EmailEvent(email:value));
                                       },
                                     ),
                                     const SizedBox(height: 16),
@@ -147,46 +165,60 @@ class ForgotScreen extends StatelessWidget {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: customColors.primary,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(vertical: 18),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 18,
+                                          ),
                                           elevation: 0,
                                         ),
-                                        onPressed: (state.apiStatus == ApiStatus.loading ||
-                                            state.email.isEmpty ||
-                                            Validators.validateEmail(state.email) != null)
+                                        onPressed:
+                                            (state.apiStatus ==
+                                                    ApiStatus.loading ||
+                                                state.email.isEmpty ||
+                                                Validators.validateEmail(
+                                                      state.email,
+                                                    ) !=
+                                                    null)
                                             ? null
                                             : () {
-                                          bloc.add(sendOTPEvent());
-                                        },
-                                        child: state.apiStatus == ApiStatus.loading && !state.isOtpSent
+                                                bloc.add(sendOTPEvent());
+                                              },
+                                        child:
+                                            state.apiStatus ==
+                                                    ApiStatus.loading &&
+                                                !state.isOtpSent
                                             ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: Colors.white,
+                                                      strokeWidth: 2,
+                                                    ),
+                                              )
                                             : const Text(
-                                          'Send OTP',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                                'Send OTP',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                       ),
                                     ),
 
-                                    if (state.apiStatus == ApiStatus.success && state.isOtpSent) ...[
+                                    if (state.apiStatus == ApiStatus.success &&
+                                        state.isOtpSent) ...[
                                       const SizedBox(height: 20),
                                       AnimatedOtpInput(
                                         length: 6,
                                         obscureText: false,
-                                        value: state.email,
+                                        value: state.otp,
                                         onChanged: (value) {
-                                          bloc.add(EmailEvent(value));
+                                          bloc.add(OTPEvent(value));
                                         },
                                       ),
                                       const SizedBox(height: 16),
@@ -194,34 +226,62 @@ class ForgotScreen extends StatelessWidget {
                                         width: double.infinity,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: customColors.primary,
+                                            backgroundColor:
+                                                customColors.primary,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
-                                            padding: const EdgeInsets.symmetric(vertical: 18),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 18,
+                                            ),
                                             elevation: 0,
                                           ),
-                                          onPressed: () {
-                                            // TODO: Add verify OTP event here
-                                          },
-                                          child: const Text(
-                                            'Verify OTP',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
+                                          onPressed:
+                                              state.apiStatus ==
+                                                  ApiStatus.loading
+                                              ? null
+                                              : () {
+                                                  context
+                                                      .read<
+                                                        ForgotPasswordBloc
+                                                      >()
+                                                      .add(verifyOTPEvent());
+                                                },
+                                          child:
+                                              state.apiStatus ==
+                                                      ApiStatus.loading &&
+                                                  !state.isOtpSent
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                        strokeWidth: 2,
+                                                      ),
+                                                )
+                                              : const Text(
+                                                  'Verify OTP',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
                                         ),
                                       ),
                                     ],
                                     const SizedBox(height: 25),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Remember your password? ",
-                                          style: TextStyle(color: customColors.black87),
+                                          style: TextStyle(
+                                            color: customColors.black87,
+                                          ),
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -229,7 +289,9 @@ class ForgotScreen extends StatelessWidget {
                                           },
                                           child: Text(
                                             'Login',
-                                            style: TextStyle(color: customColors.primary),
+                                            style: TextStyle(
+                                              color: customColors.primary,
+                                            ),
                                           ),
                                         ),
                                       ],
