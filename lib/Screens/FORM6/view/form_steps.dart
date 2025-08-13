@@ -31,58 +31,125 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
     SizedBox(height: 16),
     BlocBuilder<SampleFormBloc, SampleFormState>(
       builder: (context, s) {
-        final items = s.districtOptions.isNotEmpty ? s.districtOptions : ["Loading..."];
-        final selected = s.district.isNotEmpty ? s.district : (items.first);
+        const placeholder = "Select District";
+        final items = s.districtOptions.isNotEmpty ? [placeholder, ...s.districtOptions] : ["Loading..."];
+        final selected = s.district.isNotEmpty ? s.district : items.first;
+        final enabled = s.districtOptions.isNotEmpty;
+        return Opacity(
+          opacity: enabled ? 1.0 : 0.7,
+          child: IgnorePointer(
+            ignoring: !enabled,
+            child: BlocDropdown(
+              label: "District",
+              icon: Icons.location_city,
+              value: selected,
+              items: items,
+              onChanged: (val) {
+                if (val == placeholder) return;
+                bloc.add(DistrictChanged(val));
+              },
+            ),
+          ),
+        );
+      },
+    ),
+    SizedBox(height: 16),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, s) {
+        if (s.district.isEmpty) {
+          const blockMsg = "Select district first";
+          return Opacity(
+            opacity: 0.7,
+            child: IgnorePointer(
+              ignoring: true,
+              child: BlocDropdown(
+                label: "Region",
+                icon: Icons.map,
+                value: blockMsg,
+                items: const [blockMsg],
+                onChanged: (_) {},
+              ),
+            ),
+          );
+        }
+        if (s.regionOptions.isEmpty) {
+          const loading = "Loading...";
+          return Opacity(
+            opacity: 0.7,
+            child: IgnorePointer(
+              ignoring: true,
+              child: BlocDropdown(
+                label: "Region",
+                icon: Icons.map,
+                value: loading,
+                items: const [loading],
+                onChanged: (_) {},
+              ),
+            ),
+          );
+        }
+        const placeholder = "Select Region";
+        final items = [placeholder, ...s.regionOptions];
+        final selected = s.region.isNotEmpty ? s.region : items.first;
         return BlocDropdown(
-          label: "District",
-          icon: Icons.location_city,
+          label: "Region",
+          icon: Icons.map,
           value: selected,
           items: items,
-          onChanged: (val) => bloc.add(DistrictChanged(val)),
+          onChanged: (val) {
+            if (val == placeholder) return;
+            bloc.add(RegionChanged(val));
+          },
         );
       },
     ),
     SizedBox(height: 16),
     BlocBuilder<SampleFormBloc, SampleFormState>(
       builder: (context, s) {
-        final placeholder = s.district.isEmpty ? "Select district first" : (s.regionOptions.isEmpty ? "Loading..." : "");
-        final items = s.regionOptions.isNotEmpty ? s.regionOptions : [placeholder];
-        final selected = s.region.isNotEmpty ? s.region : items.first;
-        final enabled = s.regionOptions.isNotEmpty;
-        return Opacity(
-          opacity: enabled ? 1.0 : 0.7,
-          child: IgnorePointer(
-            ignoring: !enabled,
-            child: BlocDropdown(
-              label: "Region",
-              icon: Icons.map,
-              value: selected,
-              items: items,
-              onChanged: (val) => bloc.add(RegionChanged(val)),
+        if (s.region.isEmpty) {
+          const blockMsg = "Select region first";
+          return Opacity(
+            opacity: 0.7,
+            child: IgnorePointer(
+              ignoring: true,
+              child: BlocDropdown(
+                label: "Division",
+                icon: Icons.apartment,
+                value: blockMsg,
+                items: const [blockMsg],
+                onChanged: (_) {},
+              ),
             ),
-          ),
-        );
-      },
-    ),
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, s) {
-        final placeholder = s.region.isEmpty ? "Select region first" : (s.divisionOptions.isEmpty ? "Loading..." : "");
-        final items = s.divisionOptions.isNotEmpty ? s.divisionOptions : [placeholder];
+          );
+        }
+        if (s.divisionOptions.isEmpty) {
+          const loading = "Loading...";
+          return Opacity(
+            opacity: 0.7,
+            child: IgnorePointer(
+              ignoring: true,
+              child: BlocDropdown(
+                label: "Division",
+                icon: Icons.apartment,
+                value: loading,
+                items: const [loading],
+                onChanged: (_) {},
+              ),
+            ),
+          );
+        }
+        const placeholder = "Select Division";
+        final items = [placeholder, ...s.divisionOptions];
         final selected = s.division.isNotEmpty ? s.division : items.first;
-        final enabled = s.divisionOptions.isNotEmpty;
-        return Opacity(
-          opacity: enabled ? 1.0 : 0.7,
-          child: IgnorePointer(
-            ignoring: !enabled,
-            child: BlocDropdown(
-              label: "Division",
-              icon: Icons.apartment,
-              value: selected,
-              items: items,
-              onChanged: (val) => bloc.add(DivisionChanged(val)),
-            ),
-          ),
+        return BlocDropdown(
+          label: "Division",
+          icon: Icons.apartment,
+          value: selected,
+          items: items,
+          onChanged: (val) {
+            if (val == placeholder) return;
+            bloc.add(DivisionChanged(val));
+          },
         );
       },
     ),
@@ -166,14 +233,34 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
-          final items = s.natureOptions.isNotEmpty ? s.natureOptions : ["Loading..."];
+          if (s.natureOptions.isEmpty) {
+            const loading = "Loading...";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Nature of Sample",
+                  icon: Icons.category,
+                  value: loading,
+                  items: const [loading],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          const placeholder = "Select Nature of Sample";
+          final items = [placeholder, ...s.natureOptions];
           final selected = s.article.isNotEmpty ? s.article : items.first;
           return BlocDropdown(
             label: "Nature of Sample",
             icon: Icons.category,
             value: selected,
             items: items,
-            onChanged: (val) => bloc.add(articleChanged(val)),
+            onChanged: (val) {
+              if (val == placeholder) return;
+              bloc.add(articleChanged(val));
+            },
           );
         },
       ),
