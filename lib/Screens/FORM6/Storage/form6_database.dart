@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 2, // incremented version to trigger onUpgrade
+      version: 2,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );

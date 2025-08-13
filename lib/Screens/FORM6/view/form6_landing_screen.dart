@@ -42,28 +42,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   Future<void> handleSubmit() async {
     if (isOtherComplete && isSampleComplete) {
-      await storage.clearFormData();
-      setState(() {
-        isOtherComplete = false;
-        isSampleComplete = false;
-      });
-
-      Message.showTopRightOverlay(
-        context,
-        '✅ Form submitted successfully.',
-        MessageType.success,
-      );
-      await Future.delayed(Duration(milliseconds: 300));
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-            child: Form6LandingScreen(),
-          ),
-        ),
-            (route) => false,
-      );
+      context.read<SampleFormBloc>().add(FormSubmit());
     } else {
       Message.showTopRightOverlay(
         context,
@@ -76,17 +55,47 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SampleFormBloc, SampleFormState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         // Update completion status whenever state changes
         final newOtherComplete = state.isOtherInfoComplete;
         final newSampleComplete = state.isSampleInfoComplete;
-        
+
         if (newOtherComplete != isOtherComplete || newSampleComplete != isSampleComplete) {
           print("🔄 State changed - Other: $newOtherComplete, Sample: $newSampleComplete");
           setState(() {
             isOtherComplete = newOtherComplete;
             isSampleComplete = newSampleComplete;
           });
+        }
+
+        // Handle submit states
+        if (state.apiStatus == ApiStatus.loading) {
+          Message.showTopRightOverlay(context, 'Submitting...', MessageType.info);
+        } else if (state.apiStatus == ApiStatus.success) {
+          // Clear saved form only on success
+          await storage.clearFormData();
+          setState(() {
+            isOtherComplete = false;
+            isSampleComplete = false;
+          });
+
+          final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form submitted successfully.';
+          Message.showTopRightOverlay(context, successMsg, MessageType.success);
+
+          await Future.delayed(const Duration(milliseconds: 300));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                child: Form6LandingScreen(),
+              ),
+            ),
+                (route) => false,
+          );
+        } else if (state.apiStatus == ApiStatus.error) {
+          final errMsg = state.message.isNotEmpty ? state.message : 'Form submission failed.';
+          Message.showTopRightOverlay(context, errMsg, MessageType.error);
         }
       },
       child: Scaffold(

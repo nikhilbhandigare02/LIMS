@@ -53,16 +53,19 @@ class SampleBloc extends Bloc<getSampleListEvent, getSampleListState> {
       };
 
       // 4️⃣ Encrypt request payload
+      // 4️⃣ Encrypt request payload
       final encryptedRequest = await encryptWithSession(
         data: requestData,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      final String encryptedData = encryptedRequest.payloadForServer;
+// Extract the actual encrypted string to send
+      final String encryptedData = encryptedRequest.payloadForServer['EncryptedData']!;
 
-      // 5️⃣ Call repository with encryptedData and token
+// 5️⃣ Call repository with encryptedData and token
       final encryptedResponse =
       await sampleRepository.getSampleData(encryptedData, token);
+
 
       if (encryptedResponse == null) {
         emit(state.copyWith(

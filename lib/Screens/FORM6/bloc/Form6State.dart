@@ -5,10 +5,16 @@ class SampleFormState extends Equatable {
   final String DONumber;
   final String senderDesignation;
   final String district;
+  final List<String> districtOptions;
+  final Map<String, int> districtIdByName;
   final String Lattitude;
   final String Longitude;
   final String region;
+  final List<String> regionOptions;
+  final Map<String, int> regionIdByName;
   final String division;
+  final List<String> divisionOptions;
+  final Map<String, int> divisionIdByName;
   final String area;
   final String sampleCodeData;
   final DateTime? collectionDate;
@@ -16,6 +22,8 @@ class SampleFormState extends Equatable {
   final String SampleName;
   final String QuantitySample;
   final String article;
+  final List<String> natureOptions;
+  final Map<String, int> natureIdByName;
   final bool? preservativeAdded;
   final String preservativeName;
   final String preservativeQuantity;
@@ -36,10 +44,16 @@ class SampleFormState extends Equatable {
     this.DONumber = '',
     this.senderDesignation = '',
     this.district = '',
+    this.districtOptions = const [],
+    this.districtIdByName = const {},
     this.Longitude = '',
     this.Lattitude = '',
     this.region = '',
+    this.regionOptions = const [],
+    this.regionIdByName = const {},
     this.division = '',
+    this.divisionOptions = const [],
+    this.divisionIdByName = const {},
     this.area = '',
     this.sampleCodeData = '',
     this.collectionDate,
@@ -47,6 +61,8 @@ class SampleFormState extends Equatable {
     this.SampleName = '',
     this.QuantitySample = '',
     this.article = '',
+    this.natureOptions = const [],
+    this.natureIdByName = const {},
     this.preservativeAdded, // default null
     this.preservativeName = '',
     this.preservativeQuantity = '',
@@ -69,16 +85,24 @@ class SampleFormState extends Equatable {
     String? DONumber,
     String? senderDesignation,
     String? district,
+    List<String>? districtOptions,
+    Map<String, int>? districtIdByName,
     String? Lattitude,
     String? Longitude,
     String? region,
+    List<String>? regionOptions,
+    Map<String, int>? regionIdByName,
     String? division,
+    List<String>? divisionOptions,
+    Map<String, int>? divisionIdByName,
     String? area,
     DateTime? collectionDate,
     String? placeOfCollection,
     String? SampleName,
     String? QuantitySample,
     String? article,
+    List<String>? natureOptions,
+    Map<String, int>? natureIdByName,
     bool? preservativeAdded,
     String? preservativeName,
     String? preservativeQuantity,
@@ -100,16 +124,24 @@ class SampleFormState extends Equatable {
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
+      districtOptions: districtOptions ?? this.districtOptions,
+      districtIdByName: districtIdByName ?? this.districtIdByName,
       Longitude: Longitude ?? this.Longitude,
       Lattitude: Lattitude ?? this.Lattitude,
       region: region ?? this.region,
+      regionOptions: regionOptions ?? this.regionOptions,
+      regionIdByName: regionIdByName ?? this.regionIdByName,
       division: division ?? this.division,
+      divisionOptions: divisionOptions ?? this.divisionOptions,
+      divisionIdByName: divisionIdByName ?? this.divisionIdByName,
       area: area ?? this.area,
       collectionDate: collectionDate ?? this.collectionDate,
       placeOfCollection: placeOfCollection ?? this.placeOfCollection,
       SampleName: SampleName ?? this.SampleName,
       QuantitySample: QuantitySample ?? this.QuantitySample,
       article: article ?? this.article,
+      natureOptions: natureOptions ?? this.natureOptions,
+      natureIdByName: natureIdByName ?? this.natureIdByName,
       preservativeAdded: preservativeAdded ?? this.preservativeAdded,
       preservativeName: preservativeName ?? this.preservativeName,
       preservativeQuantity: preservativeQuantity ?? this.preservativeQuantity,
@@ -133,10 +165,16 @@ class SampleFormState extends Equatable {
     DONumber,
     senderDesignation,
     district,
+    districtOptions,
+    districtIdByName,
     region,
+    regionOptions,
+    regionIdByName,
     Lattitude,
     Longitude,
     division,
+    divisionOptions,
+    divisionIdByName,
     area,
     sampleCodeData,
     collectionDate,
@@ -144,6 +182,8 @@ class SampleFormState extends Equatable {
     SampleName,
     QuantitySample,
     article,
+    natureOptions,
+    natureIdByName,
     preservativeAdded,
     preservativeName,
     preservativeQuantity,

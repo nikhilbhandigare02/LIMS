@@ -30,6 +30,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     _loadSavedData();
     print("🔄 Form6StepScreen initialized for section: ${widget.section}");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
+    // Fetch districts for StateId=1 on init
+    context.read<SampleFormBloc>().add(const FetchDistrictsRequested(1));
+    // Load Nature of Sample on init
+    context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
   }
 
   List<List<Widget>> _generateStepFields(SampleFormState state) {

@@ -103,6 +103,13 @@ class articleChanged extends SampleFormEvent {
   List<Object?> get props => [value];
 }
 
+class FetchNatureOfSampleRequested extends SampleFormEvent {
+  final int? categoryId; // optional filter if backend supports
+  const FetchNatureOfSampleRequested({this.categoryId});
+  @override
+  List<Object?> get props => [categoryId];
+}
+
 class PreservativeAddedChanged extends SampleFormEvent {
   final bool? value;
   const PreservativeAddedChanged(this.value);
@@ -212,3 +219,24 @@ class FoemVIWrapperChanged extends SampleFormEvent {
 class FormSubmit extends SampleFormEvent {}
 class FormResetEvent extends SampleFormEvent {}
 class FetchLocationRequested extends SampleFormEvent {}
+
+class FetchDistrictsRequested extends SampleFormEvent {
+  final int stateId;
+  const FetchDistrictsRequested(this.stateId);
+  @override
+  List<Object?> get props => [stateId];
+}
+
+class FetchRegionsRequested extends SampleFormEvent {
+  final int districtId;
+  const FetchRegionsRequested(this.districtId);
+  @override
+  List<Object?> get props => [districtId];
+}
+
+class FetchDivisionsRequested extends SampleFormEvent {
+  final int regionId;
+  const FetchDivisionsRequested(this.regionId);
+  @override
+  List<Object?> get props => [regionId];
+}
