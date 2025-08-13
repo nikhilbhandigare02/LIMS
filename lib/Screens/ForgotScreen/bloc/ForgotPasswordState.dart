@@ -1,33 +1,36 @@
-import '../../../core/utils/enums.dart';
+part of 'ForgotPasswordBloc.dart';
 
-abstract class ForgotPasswordState {
+class ForgotPasswordState extends Equatable {
+  final String email;
+  final String otp;
+  final String message;
+  final ApiStatus apiStatus;
   final bool isOtpSent;
-  final bool isOtpVerified;
-  final String? errorMessage;
-  
+
   const ForgotPasswordState({
+    this.email = '',
+    this.otp = '',
+    this.message = '',
+    this.apiStatus = ApiStatus.initial,
     this.isOtpSent = false,
-    this.isOtpVerified = false,
-    this.errorMessage,
   });
-}
 
-class ForgotPasswordInitial extends ForgotPasswordState {
-  const ForgotPasswordInitial() : super();
-}
+  ForgotPasswordState copyWith({
+    String? email,
+    String? otp,
+    String? message,
+    ApiStatus? apiStatus,
+    bool? isOtpSent,
+  }) {
+    return ForgotPasswordState(
+      email: email ?? this.email,
+      otp: otp ?? this.otp,
+      message: message ?? this.message,
+      apiStatus: apiStatus ?? this.apiStatus,
+      isOtpSent: isOtpSent ?? this.isOtpSent,
+    );
+  }
 
-class ForgotPasswordLoading extends ForgotPasswordState {
-  const ForgotPasswordLoading() : super();
+  @override
+  List<Object?> get props => [email, message, apiStatus, isOtpSent,otp];
 }
-
-class OtpSentSuccess extends ForgotPasswordState {
-  const OtpSentSuccess() : super(isOtpSent: true);
-}
-
-class OtpVerifiedSuccess extends ForgotPasswordState {
-  const OtpVerifiedSuccess() : super(isOtpSent: true, isOtpVerified: true);
-}
-
-class ForgotPasswordError extends ForgotPasswordState {
-  const ForgotPasswordError(String errorMessage) : super(errorMessage: errorMessage);
-} 

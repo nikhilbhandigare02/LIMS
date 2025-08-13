@@ -29,37 +29,71 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
 
     ),
     SizedBox(height: 16),
-    BlocDropdown(
-      label: "District",
-      icon: Icons.location_city,
-      value: state.district ?? '',
-      items: ["Kolhapur", "Thane", "Pune", "Mumbai"],
-      onChanged: (val) => bloc.add(DistrictChanged(val)),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, s) {
+        final items = s.districtOptions.isNotEmpty ? s.districtOptions : ["Loading..."];
+        final selected = s.district.isNotEmpty ? s.district : (items.first);
+        return BlocDropdown(
+          label: "District",
+          icon: Icons.location_city,
+          value: selected,
+          items: items,
+          onChanged: (val) => bloc.add(DistrictChanged(val)),
+        );
+      },
     ),
     SizedBox(height: 16),
-    BlocDropdown(
-      label: "Region",
-      icon: Icons.map,
-      value: state.region,
-      items: ["East", "West"],
-      onChanged: (val) => bloc.add(RegionChanged(val)),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, s) {
+        final placeholder = s.district.isEmpty ? "Select district first" : (s.regionOptions.isEmpty ? "Loading..." : "");
+        final items = s.regionOptions.isNotEmpty ? s.regionOptions : [placeholder];
+        final selected = s.region.isNotEmpty ? s.region : items.first;
+        final enabled = s.regionOptions.isNotEmpty;
+        return Opacity(
+          opacity: enabled ? 1.0 : 0.7,
+          child: IgnorePointer(
+            ignoring: !enabled,
+            child: BlocDropdown(
+              label: "Region",
+              icon: Icons.map,
+              value: selected,
+              items: items,
+              onChanged: (val) => bloc.add(RegionChanged(val)),
+            ),
+          ),
+        );
+      },
     ),
     SizedBox(height: 16),
-    BlocDropdown(
-      label: "Division",
-      icon: Icons.apartment,
-      value: state.division,
-      items: ["Div1", "Div2"],
-      onChanged: (val) => bloc.add(DivisionChanged(val)),
+    BlocBuilder<SampleFormBloc, SampleFormState>(
+      builder: (context, s) {
+        final placeholder = s.region.isEmpty ? "Select region first" : (s.divisionOptions.isEmpty ? "Loading..." : "");
+        final items = s.divisionOptions.isNotEmpty ? s.divisionOptions : [placeholder];
+        final selected = s.division.isNotEmpty ? s.division : items.first;
+        final enabled = s.divisionOptions.isNotEmpty;
+        return Opacity(
+          opacity: enabled ? 1.0 : 0.7,
+          child: IgnorePointer(
+            ignoring: !enabled,
+            child: BlocDropdown(
+              label: "Division",
+              icon: Icons.apartment,
+              value: selected,
+              items: items,
+              onChanged: (val) => bloc.add(DivisionChanged(val)),
+            ),
+          ),
+        );
+      },
     ),
     SizedBox(height: 16),
-    BlocDropdown(
+    BlocTextInput(
       label: "Area",
-      icon: Icons.area_chart,
-      value: state.area,
-      items: ["Urban", "Rural"],
+      icon: Icons.home,
+      initialValue: state.area,
       onChanged: (val) => bloc.add(AreaChanged(val)),
     ),
+
     SizedBox(height: 16),
     BlocBuilder<SampleFormBloc, SampleFormState>(
       builder: (context, state) {
@@ -130,12 +164,18 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
         onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
       ),
       SizedBox(height: 16),
-      BlocDropdown(
-        label: "Nature of Sample/Article",
-        icon: Icons.fastfood,
-        value: state.article,
-        items: ["Milk", "Water"],
-        onChanged: (val) => bloc.add(articleChanged(val)),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          final items = s.natureOptions.isNotEmpty ? s.natureOptions : ["Loading..."];
+          final selected = s.article.isNotEmpty ? s.article : items.first;
+          return BlocDropdown(
+            label: "Nature of Sample",
+            icon: Icons.category,
+            value: selected,
+            items: items,
+            onChanged: (val) => bloc.add(articleChanged(val)),
+          );
+        },
       ),
     ],
     [

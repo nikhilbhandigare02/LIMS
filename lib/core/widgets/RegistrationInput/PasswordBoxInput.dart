@@ -14,7 +14,7 @@ class PasswordBoxInput extends StatefulWidget {
     required this.label,
     this.validator,
     this.onChanged,
-    this.length = 4,
+    this.length = 6, // default 6 digits for OTP
     this.obscureText = true,
   });
 
@@ -52,6 +52,8 @@ class _PasswordBoxInputState extends State<PasswordBoxInput> {
       // Move to next box
       if (index < widget.length - 1) {
         _focusNodes[index + 1].requestFocus();
+      } else {
+        _focusNodes[index].unfocus();
       }
     } else if (value.isEmpty && index > 0) {
       // Move to previous box on backspace
@@ -95,17 +97,18 @@ class _PasswordBoxInputState extends State<PasswordBoxInput> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(widget.length, (index) {
                 return Container(
-                  width: 50,
-                  height: 50,
+                  width: 40, // smaller width
+                  height: 40, // smaller height
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _focusNodes[index].hasFocus 
-                          ? customColors.primary 
-                          : Colors.grey[300]!,
-                      width: 2,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: _focusNodes[index].hasFocus
+                            ? customColors.primary
+                            : Colors.grey[400]!,
+                        width: 2,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[50],
+                    color: Colors.transparent,
                   ),
                   child: TextField(
                     controller: _controllers[index],
@@ -136,4 +139,4 @@ class _PasswordBoxInputState extends State<PasswordBoxInput> {
       ),
     );
   }
-} 
+}

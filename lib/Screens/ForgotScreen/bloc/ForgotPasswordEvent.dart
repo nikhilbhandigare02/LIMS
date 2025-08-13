@@ -1,16 +1,29 @@
-abstract class ForgotPasswordEvent {}
+part of 'ForgotPasswordBloc.dart';
 
-class SendOtpEvent extends ForgotPasswordEvent {
-  final String mobileNumber;
-  
-  SendOtpEvent(this.mobileNumber);
+abstract class ForgotPasswordEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
 }
 
-class VerifyOtpEvent extends ForgotPasswordEvent {
-  final String mobileNumber;
+class EmailEvent extends ForgotPasswordEvent {
+  final String email;
+
+  EmailEvent(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+class OTPEvent extends ForgotPasswordEvent {
   final String otp;
-  
-  VerifyOtpEvent(this.mobileNumber, this.otp);
+
+  OTPEvent(this.otp);
+
+  @override
+  List<Object?> get props => [otp];
 }
 
-class ResetForgotPasswordState extends ForgotPasswordEvent {} 
+class sendOTPEvent extends ForgotPasswordEvent {}
+
+class verifyOTPEvent extends ForgotPasswordEvent {}
+
+class ResetForgotPasswordState extends ForgotPasswordEvent {}
