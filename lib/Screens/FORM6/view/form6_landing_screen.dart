@@ -27,6 +27,15 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   void initState() {
     super.initState();
     loadCompletionStatus();
+    _loadSavedStateToBloc();
+  }
+
+  Future<void> _loadSavedStateToBloc() async {
+    final savedState = await storage.fetchStoredState();
+    if (savedState != null) {
+      context.read<SampleFormBloc>().add(LoadSavedFormData(savedState));
+      print("🔄 Loaded saved state to BLoC");
+    }
   }
 
   Future<void> loadCompletionStatus() async {
@@ -104,6 +113,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
           final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form submitted successfully.';
           Message.showTopRightOverlay(context, successMsg, MessageType.success);
+
+          // Reset the BLoC state
+          context.read<SampleFormBloc>().add(FormResetEvent());
 
           await Future.delayed(const Duration(milliseconds: 300));
           Navigator.pushAndRemoveUntil(

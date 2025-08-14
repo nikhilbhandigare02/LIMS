@@ -25,6 +25,37 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     });
     on<LoadSavedFormData>((event, emit) {
       emit(event.savedState); // Replace current state with saved state
+      
+      // If dropdown options are missing, load them
+      if (event.savedState.districtOptions.isEmpty) {
+        add(const FetchDistrictsRequested(1));
+      }
+      if (event.savedState.natureOptions.isEmpty) {
+        add(const FetchNatureOfSampleRequested());
+      }
+      
+      // Load dependent dropdowns if parent selections exist but options are missing
+      if (event.savedState.district.isNotEmpty && event.savedState.regionOptions.isEmpty) {
+        // We need to wait for districts to load first, then load regions
+        Future.delayed(const Duration(milliseconds: 500), () {
+          final currentState = state;
+          final districtId = currentState.districtIdByName[event.savedState.district];
+          if (districtId != null) {
+            add(FetchRegionsRequested(districtId));
+          }
+        });
+      }
+      
+      if (event.savedState.region.isNotEmpty && event.savedState.divisionOptions.isEmpty) {
+        // We need to wait for regions to load first, then load divisions
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          final currentState = state;
+          final regionId = currentState.regionIdByName[event.savedState.region];
+          if (regionId != null) {
+            add(FetchDivisionsRequested(regionId));
+          }
+        });
+      }
     });
     on<senderNameChanged>((event, emit) {
       print(state.senderName);
@@ -634,26 +665,88 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         } catch (_) {}
       }
 
+      // Load dropdown options if they're not already loaded
+      if (state.districtOptions.isEmpty) {
+        print("🔄 Loading districts...");
+        await _onFetchDistrictsRequested(const FetchDistrictsRequested(1), emit);
+      }
+      
+      if (state.regionOptions.isEmpty && state.district.isNotEmpty) {
+        final districtId = state.districtIdByName[state.district];
+        if (districtId != null) {
+          print("🔄 Loading regions for district $districtId...");
+          await _onFetchRegionsRequested(FetchRegionsRequested(districtId), emit);
+        }
+      }
+      
+      if (state.divisionOptions.isEmpty && state.region.isNotEmpty) {
+        final regionId = state.regionIdByName[state.region];
+        if (regionId != null) {
+          print("🔄 Loading divisions for region $regionId...");
+          await _onFetchDivisionsRequested(FetchDivisionsRequested(regionId), emit);
+        }
+      }
+      
+      if (state.natureOptions.isEmpty) {
+        print("🔄 Loading nature of sample options...");
+        await _onFetchNatureOfSampleRequested(const FetchNatureOfSampleRequested(), emit);
+      }
+
       final int? districtId = state.districtIdByName[state.district];
       final int? regionId = state.regionIdByName[state.region];
       final int? divisionId = state.divisionIdByName[state.division];
       final int? sampleId = state.natureIdByName[state.article];
 
+      // Debug logging
+      print("🔍 Submit validation - District: '${state.district}' -> ID: $districtId");
+      print("🔍 Submit validation - Region: '${state.region}' -> ID: $regionId");
+      print("🔍 Submit validation - Division: '${state.division}' -> ID: $divisionId");
+      print("🔍 Submit validation - Article: '${state.article}' -> ID: $sampleId");
+      print("🔍 Available district IDs: ${state.districtIdByName}");
+      print("🔍 Available region IDs: ${state.regionIdByName}");
+      print("🔍 Available division IDs: ${state.divisionIdByName}");
+      print("🔍 Available nature IDs: ${state.natureIdByName}");
+
+      // If any ID is still null after loading, try one more time with a delay
+      if (districtId == null || regionId == null || divisionId == null || sampleId == null) {
+        print("⚠️ Some IDs are still null, waiting a bit more for options to load...");
+        await Future.delayed(const Duration(milliseconds: 1000));
+        
+        // Re-check the IDs after the delay
+        final retryDistrictId = state.districtIdByName[state.district];
+        final retryRegionId = state.regionIdByName[state.region];
+        final retryDivisionId = state.divisionIdByName[state.division];
+        final retrySampleId = state.natureIdByName[state.article];
+        
+        print("🔍 Retry validation - District: '${state.district}' -> ID: $retryDistrictId");
+        print("🔍 Retry validation - Region: '${state.region}' -> ID: $retryRegionId");
+        print("🔍 Retry validation - Division: '${state.division}' -> ID: $retryDivisionId");
+        print("🔍 Retry validation - Article: '${state.article}' -> ID: $retrySampleId");
+      }
+
       // Validate required IDs before submitting
       if (districtId == null) {
-        emit(state.copyWith(message: 'Please select District', apiStatus: ApiStatus.error));
+        final errorMsg = 'District not found. Please re-select District. Available: ${state.districtOptions.join(", ")}';
+        print("❌ $errorMsg");
+        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
       if (regionId == null) {
-        emit(state.copyWith(message: 'Please select Region', apiStatus: ApiStatus.error));
+        final errorMsg = 'Region not found. Please re-select Region. Available: ${state.regionOptions.join(", ")}';
+        print("❌ $errorMsg");
+        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
       if (divisionId == null) {
-        emit(state.copyWith(message: 'Please select Division', apiStatus: ApiStatus.error));
+        final errorMsg = 'Division not found. Please re-select Division. Available: ${state.divisionOptions.join(", ")}';
+        print("❌ $errorMsg");
+        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
       if (sampleId == null) {
-        emit(state.copyWith(message: 'Please select Nature of Sample', apiStatus: ApiStatus.error));
+        final errorMsg = 'Nature of Sample not found. Please re-select Nature of Sample. Available: ${state.natureOptions.join(", ")}';
+        print("❌ $errorMsg");
+        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
 
