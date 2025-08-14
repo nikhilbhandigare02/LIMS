@@ -98,24 +98,21 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
               child: SlideTransition(
                 position: _slideAnimation,
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    const SizedBox(height: 20),
-
-
                     const SizedBox(height: 30),
 
                     // Main Login Card
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.15),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            blurRadius: 15,
+                            offset: const Offset(5, 5),
                           ),
                         ],
                       ),
@@ -123,9 +120,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
 
-                          // Welcome text
                           const Text(
                             "Login Here",
                             style: TextStyle(
@@ -144,51 +140,23 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                           ),
 
-                          const SizedBox(height: 30),
+                          // const SizedBox(height: 10),
 
                           Center(
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
-                                Container(
-                                  height: 90,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16), // Rounded rectangle
-                                    boxShadow: [
-                                      // BoxShadow(
-                                      //   color: Colors.black.withOpacity(0.1),
-                                      //   blurRadius: 15,
-                                      //   offset: const Offset(0, 5),
-                                      //   spreadRadius: 2,
-                                      //  ),
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                    border: Border.all(
-                                      color: Colors.grey.withOpacity(0.1),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(1),
-                                    child: Image.asset(
-                                      'assets/img.png',
-                                      height: 90,
-                                      width: 60,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
+                                Image.asset(
+                                  'assets/img.png',
+                                  height: 150,
+                                  // width: 60,
+                                  fit: BoxFit.contain,
                                 ),
                                ],
                             ),
                           ),
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
 
                           // Form with updated styling
                           Form(
@@ -249,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
 
                           Center(
                             child: TextButton(

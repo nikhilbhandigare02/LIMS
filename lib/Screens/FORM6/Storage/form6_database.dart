@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -54,7 +54,15 @@ class Form6Database {
       formVI INTEGER,
       FoemVIWrapper INTEGER,
       isOtherInfoComplete INTEGER,
-      isSampleInfoComplete INTEGER
+      isSampleInfoComplete INTEGER,
+      districtOptions TEXT,
+      districtIdByName TEXT,
+      regionOptions TEXT,
+      regionIdByName TEXT,
+      divisionOptions TEXT,
+      divisionIdByName TEXT,
+      natureOptions TEXT,
+      natureIdByName TEXT
     )
     ''');
   }
@@ -67,6 +75,16 @@ class Form6Database {
       await db.execute('ALTER TABLE form6 ADD COLUMN isPreservativeInfoComplete INTEGER');
       await db.execute('ALTER TABLE form6 ADD COLUMN isSealInfoComplete INTEGER');
       await db.execute('ALTER TABLE form6 ADD COLUMN isFinalReviewComplete INTEGER');
+    }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE form6 ADD COLUMN districtOptions TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN districtIdByName TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN regionOptions TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN regionIdByName TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN divisionOptions TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN divisionIdByName TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN natureOptions TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN natureIdByName TEXT');
     }
   }
 

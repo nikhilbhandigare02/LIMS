@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../bloc/Form6Bloc.dart';
 import 'form6_database.dart';
 
@@ -32,6 +33,15 @@ class Form6Storage {
       'FoemVIWrapper': state.FoemVIWrapper == null ? null : (state.FoemVIWrapper! ? 1 : 0),
       'isOtherInfoComplete': state.isOtherInfoComplete ? 1 : 0,
       'isSampleInfoComplete': state.isSampleInfoComplete ? 1 : 0,
+      // Store dropdown options as JSON strings
+      'districtOptions': jsonEncode(state.districtOptions),
+      'districtIdByName': jsonEncode(state.districtIdByName),
+      'regionOptions': jsonEncode(state.regionOptions),
+      'regionIdByName': jsonEncode(state.regionIdByName),
+      'divisionOptions': jsonEncode(state.divisionOptions),
+      'divisionIdByName': jsonEncode(state.divisionIdByName),
+      'natureOptions': jsonEncode(state.natureOptions),
+      'natureIdByName': jsonEncode(state.natureIdByName),
     };
 
     await db.insertForm6Data(data);
@@ -45,6 +55,27 @@ class Form6Storage {
     bool? toBool(dynamic val) {
       if (val == null) return null;
       return val == 1;
+    }
+
+    // Parse dropdown options from JSON strings
+    List<String> parseStringList(String? jsonStr) {
+      if (jsonStr == null || jsonStr.isEmpty) return [];
+      try {
+        final List<dynamic> parsed = jsonDecode(jsonStr);
+        return parsed.cast<String>();
+      } catch (_) {
+        return [];
+      }
+    }
+
+    Map<String, int> parseStringIntMap(String? jsonStr) {
+      if (jsonStr == null || jsonStr.isEmpty) return {};
+      try {
+        final Map<String, dynamic> parsed = jsonDecode(jsonStr);
+        return parsed.map((key, value) => MapEntry(key, value as int));
+      } catch (_) {
+        return {};
+      }
     }
 
     return SampleFormState(
@@ -74,6 +105,15 @@ class Form6Storage {
       numberofSeal: data['numberofSeal'] ?? '',
       formVI: toBool(data['formVI']),
       FoemVIWrapper: toBool(data['FoemVIWrapper']),
+      // Restore dropdown options
+      districtOptions: parseStringList(data['districtOptions']),
+      districtIdByName: parseStringIntMap(data['districtIdByName']),
+      regionOptions: parseStringList(data['regionOptions']),
+      regionIdByName: parseStringIntMap(data['regionIdByName']),
+      divisionOptions: parseStringList(data['divisionOptions']),
+      divisionIdByName: parseStringIntMap(data['divisionIdByName']),
+      natureOptions: parseStringList(data['natureOptions']),
+      natureIdByName: parseStringIntMap(data['natureIdByName']),
     );
   }
 
