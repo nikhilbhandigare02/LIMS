@@ -52,6 +52,29 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     }
   }
 
+  // Future<void> handleSubmit() async {
+  //   if (isOtherComplete && isSampleComplete) {
+  //     context.read<SampleFormBloc>().add(FormSubmit());
+  //
+  //     await storage.clearFormData();
+  //
+  //     context.read<SampleFormBloc>().add(FormResetEvent());
+  //
+  //     Message.showTopRightOverlay(
+  //       context,
+  //       '✅ Form submitted and cleared successfully.',
+  //       MessageType.success,
+  //     );
+  //   } else {
+  //     Message.showTopRightOverlay(
+  //       context,
+  //       '⚠️ Form not filled. Please fill the form.',
+  //       MessageType.error,
+  //     );
+  //   }
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SampleFormBloc, SampleFormState>(
@@ -393,26 +416,26 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 12.0, horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.warning_amber_rounded, color: Colors.red),
-              SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  'Form not filled. Please fill the form.',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // child: Padding(
+        //   padding: const EdgeInsets.symmetric(
+        //       vertical: 12.0, horizontal: 16.0),
+        //   // child: Row(
+        //   //   mainAxisAlignment: MainAxisAlignment.center,
+        //   //   children: const [
+        //   //     Icon(Icons.warning_amber_rounded, color: Colors.red),
+        //   //     SizedBox(width: 8),
+        //   //     Flexible(
+        //   //       child: Text(
+        //   //         'Form not filled. Please fill the form.',
+        //   //         style: TextStyle(
+        //   //           color: Colors.red,
+        //   //           fontWeight: FontWeight.bold,
+        //   //         ),
+        //   //       ),
+        //   //     ),
+        //   //   ],
+        //   // ),
+        // ),
       ),
     );
   }

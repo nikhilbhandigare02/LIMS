@@ -174,22 +174,17 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       width: 1,
                                     ),
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Image.asset(
-                                        'assets/logo.png',
-                                        height: 70,
-                                        width: 60,
-                                        fit: BoxFit.contain,
-                                      ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: Image.asset(
+                                      'assets/img.png',
+                                      height: 90,
+                                      width: 60,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),
-
-
-                              ],
+                               ],
                             ),
                           ),
 
@@ -281,10 +276,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 30),
-
-                  ],
+                  ]
                 ),
               ),
             ),

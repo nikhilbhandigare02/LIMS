@@ -82,6 +82,234 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     return Colors.grey;
   }
 
+  bool _isTampered(String? status) {
+    if (status == null) return false;
+    final s = status.toLowerCase();
+    return s.contains('tampered') || s.contains('resubmit');
+  }
+
+  void _showSampleDetailsDialog(BuildContext context, SampleList data) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 8,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.white, Colors.grey[50]!],
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: customColors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.science,
+                        color: customColors.primary,
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sample Details',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: customColors.primary,
+                            ),
+                          ),
+                          Text(
+                            'Serial: ${data.serialNo ?? 'N/A'}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: Icon(Icons.close, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+                Divider(height: 32, thickness: 1),
+
+                // Details
+                _buildDetailRow(
+                  icon: Icons.send,
+                  label: 'Sent Date',
+                  value: _formatDate(data.sampleSentDate),
+                  color: Colors.blue,
+                ),
+                SizedBox(height: 16),
+                _buildDetailRow(
+                  icon: Icons.refresh,
+                  label: 'Resent Date',
+                  value: _formatDate(data.sampleResentDate),
+                  color: Colors.orange,
+                ),
+                SizedBox(height: 16),
+                _buildDetailRow(
+                  icon: Icons.calendar_today,
+                  label: 'Re-requested Date',
+                  value: _formatDate(data.sampleReRequestedDate),
+                  color: Colors.purple,
+                ),
+                SizedBox(height: 16),
+                _buildDetailRow(
+                  icon: Icons.info,
+                  label: 'Status',
+                  value: data.statusName ?? 'N/A',
+                  color: getStatusColor(data.statusName),
+                ),
+                SizedBox(height: 16),
+                _buildDetailRow(
+                  icon: Icons.location_on,
+                  label: 'Lab Location',
+                  value: data.labLocation ?? 'N/A',
+                  color: Colors.green,
+                ),
+
+                SizedBox(height: 24),
+
+                // Action Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_isTampered(data.statusName)) ...[
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                          _showEditDialog(context, data);
+                        },
+                        icon: Icon(Icons.edit, size: 16),
+                        label: Text('Edit'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                    ],
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: Text('Close'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: customColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, size: 16, color: color),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showEditDialog(BuildContext context, SampleList data) {
+    // This is a placeholder for the edit functionality
+    // You can implement your edit dialog here
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text('Edit Sample'),
+          content: Text('Edit functionality for sample ${data.serialNo} will be implemented here.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(width: 130, child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600))),
+        const SizedBox(width: 8),
+        Expanded(child: Text(value)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -338,23 +566,14 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     _buildCompactActionButton(
                       icon: Icons.visibility,
                       color: Colors.blue,
-                      // onPressed: () => showDialog(
-                      //   context: context,
-                      //   builder: (context) => ViewSampleDialog(data: data),
-                      // ),
-                      onPressed: (){}
+                      onPressed: () => _showSampleDetailsDialog(context, data),
                     ),
-                    if (data.statusName?.toLowerCase() == 're-requested') ...[
+                    if (_isTampered(data.statusName)) ...[
                       SizedBox(width: 8),
                       _buildCompactActionButton(
                         icon: Icons.edit,
                         color: Colors.green,
-                        // onPressed: () => showDialog(
-                        //   context: context,
-                        //   builder: (context) => EditSampleDialog(data: data),
-                        // ),
-                          onPressed: (){}
-
+                        onPressed: () => _showEditDialog(context, data),
                       ),
                     ],
                   ],
@@ -569,15 +788,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                   ),
                                   child: IconButton(
                                     icon: Icon(Icons.visibility, color: Colors.white),
-                                    // onPressed: () => showDialog(
-                                    //   context: context,
-                                    //   builder: (context) => ViewSampleDialog(data: data),
-                                    // ),
-                                    onPressed: (){},
+                                    onPressed: () => _showSampleDetailsDialog(context, data),
                                     iconSize: 18,
                                   ),
                                 ),
-                                if (data.statusName?.toLowerCase() == 're-requested') ...[
+                                if (_isTampered(data.statusName)) ...[
                                   SizedBox(width: 4),
                                   Container(
                                     decoration: BoxDecoration(
@@ -586,11 +801,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                     ),
                                     child: IconButton(
                                       icon: Icon(Icons.edit, color: Colors.white),
-                                      // onPressed: () => showDialog(
-                                      //   context: context,
-                                      //   builder: (context) => EditSampleDialog(data: data),
-                                      // ),
-                                      onPressed: (){},
+                                      onPressed: () => _showEditDialog(context, data),
                                       iconSize: 18,
                                     ),
                                   ),
@@ -620,4 +831,4 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return 'N/A';
     }
   }
-}
+  }
