@@ -46,19 +46,15 @@ class SampleBloc extends Bloc<getSampleListEvent, getSampleListState> {
         return;
       }
 
-      // 3️⃣ Build request payload
       final Map<String, dynamic> requestData = {
         "UserID": userId,
       };
 
-      // 4️⃣ Encrypt request payload
-      // 4️⃣ Encrypt request payload
       final encryptedRequest = await encryptWithSession(
         data: requestData,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      // Use POST to /api/mobile/get_samples with encrypted body
       final Map<String, String> body = {
         'encryptedData': encryptedRequest.payloadForServer['EncryptedData']!,
         'encryptedAESKey': encryptedRequest.payloadForServer['EncryptedAESKey']!,

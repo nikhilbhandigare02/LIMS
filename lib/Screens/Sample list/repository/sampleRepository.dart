@@ -18,4 +18,17 @@ class SampleRepository {
     final response = await _api.postApi(url, encryptedBody, headers: headers);
     return response;
   }
+
+  Future<dynamic> getFormData(Map<String, String> encryptedBody) async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'authToken');
+    final String url = '${ApiBase.baseUrl}${ApiEndpoints.getFormVIData}';
+
+    final headers = <String, String>{
+      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await _api.postApi(url, encryptedBody, headers: headers);
+    return response;
+  }
 }

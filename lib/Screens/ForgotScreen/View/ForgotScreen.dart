@@ -101,7 +101,7 @@ class ForgotScreen extends StatelessWidget {
                       else if (state.apiStatus == ApiStatus.success && state.isOtpVerified) {
                         Message.showTopRightOverlay(
                           context,
-                          state.message,
+                          'OTP sent to your register email',
                           MessageType.success,
                         );
 
@@ -145,14 +145,13 @@ class ForgotScreen extends StatelessWidget {
                               child: Form(
                                 child: Column(
                                   children: [
-                                    // Email Input
                                     CustomTextField(
                                       label: 'Enter Email',
                                       icon: Icons.email,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: Validators.validateEmail,
                                       value: state
-                                          .email, // current email from bloc state
+                                          .email,
                                       onChanged: (value) {
                                         context.read<ForgotPasswordBloc>().add(EmailEvent(email:value));
                                       },

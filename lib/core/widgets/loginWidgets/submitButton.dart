@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
@@ -9,6 +12,7 @@ import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has M
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
+import '../../../Screens/update_password/view/UpdatePassword.dart';
 
 class LoginButton extends StatelessWidget {
   final GlobalKey<FormState> formkey;
@@ -20,7 +24,7 @@ class LoginButton extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listenWhen: (current, previous) =>
       current.apiStatus != previous.apiStatus,
-      listener: (context, state) {
+      listener: (context, state) async {
         switch (state.apiStatus) {
           case ApiStatus.loading:
             Message.showTopRightOverlay(
@@ -36,17 +40,38 @@ class LoginButton extends StatelessWidget {
               state.message,
               MessageType.success,
             );
-            Future.delayed(const Duration(seconds: 2), () {
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            final secureStorage = FlutterSecureStorage();
+            final loginDataStr = await secureStorage.read(key: 'loginData');
+
+            String loginFlag = '';
+            if (loginDataStr != null) {
+              final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
+              loginFlag = (loginDataMap['LoginFlag'] ?? '') as String;
+            }
+
+            if (loginFlag == 'firstlogin') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
+              );
+            } else if (loginFlag == 'secondlogin') {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (_) => BlocProvider(
-                    create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                    create: (_) =>
+                        SampleFormBloc(form6repository: Form6Repository()),
                     child: Form6LandingScreen(),
                   ),
                 ),
               );
-            });
+            } else {
+              // Fallback → go to login screen
+              Navigator.pushReplacementNamed(context, RouteName.loginScreen);
+            }
 
             break;
 
@@ -105,7 +130,7 @@ class LoginButton extends StatelessWidget {
           );
         },
       ),
-
     );
+
   }
 }

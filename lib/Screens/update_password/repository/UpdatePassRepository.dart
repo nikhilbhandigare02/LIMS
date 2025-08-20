@@ -10,7 +10,7 @@ class UpdatePassRepository {
   Future<Map<String, dynamic>> UpdatePassApi(dynamic data) async {
     final String updatePassUrl = ApiBase.baseUrl + ApiEndpoints.ChangePassword;
 
-    // Read token from secure storage
+
     final token = await _secureStorage.read(key: 'authToken');
     if (token == null) {
       throw Exception('No auth token found. Please log in.');

@@ -46,7 +46,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => AboutUsScreen());
 
 
-
+  // case RouteName.UpdatesampleScreen:
+    //   return  MaterialPageRoute(builder: (context) => Updatesample(),);
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);
     case RouteName.SampleAnalysisScreen:
