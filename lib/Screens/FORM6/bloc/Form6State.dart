@@ -205,8 +205,8 @@ class SampleFormState extends Equatable {
         senderDesignation.isNotEmpty &&
         DONumber.isNotEmpty &&
         district.isNotEmpty &&
-        region.isNotEmpty &&
-        division.isNotEmpty &&
+        division.isNotEmpty && // Changed order
+        region.isNotEmpty && // Changed order
         area.isNotEmpty;
   }
 
@@ -256,6 +256,11 @@ class SampleFormState extends Equatable {
       'FoemVIWrapper': FoemVIWrapper == null ? null : (FoemVIWrapper! ? 1 : 0),
       'message': message,
       'apiStatus': apiStatus.name,
+      'StateId': 1,   // defaulting to the active state; replace with selected StateId when available
+      'DistrictId': districtIdByName[district],
+      'DivisionId': divisionIdByName[division],
+      'RegionId': regionIdByName[region],
+      'Area': area,
     };
   }
 

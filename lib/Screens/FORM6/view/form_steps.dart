@@ -3,189 +3,257 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
 import '../bloc/Form6Bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:async';
+import 'dart:convert';
 
-List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBloc bloc) => [
-  [
-    BlocTextInput(
-      label: "Name of Sender",
-      icon: Icons.person,
-      initialValue: state.senderName,
+// Helper to load user name from secure storage and update the bloc
+Future<void> loadSenderNameIfNeeded(SampleFormState state, SampleFormBloc bloc) async {
+  if (state.senderName.isEmpty) {
+    const storage = FlutterSecureStorage();
+    final String? jsonString = await storage.read(key: 'loginData');
+    if (jsonString != null && jsonString.isNotEmpty) {
+      try {
+        final Map<String, dynamic> data = jsonDecode(jsonString) as Map<String, dynamic>;
+        String? name;
+        for (final k in ['fullName', 'FullName', 'name', 'Name', 'username', 'Username']) {
+          final v = data[k];
+          if (v != null && v.toString().trim().isNotEmpty) {
+            name = v.toString().trim();
+            break;
+          }
+        }
+        if (name != null && name.isNotEmpty) {
+          bloc.add(senderNameChanged(name));
+        }
+      } catch (_) {}
+    }
+  }
+}
 
-      onChanged: (val) => bloc.add(senderNameChanged(val)),
-    ),
-    SizedBox(height: 16),
-    BlocTextInput(
-      label: "Sender Official Designation",
-      icon: Icons.badge,
-      initialValue: state.senderDesignation,
-      onChanged: (val) => bloc.add(senderDesignationChanged(val)),
-    ),
-    SizedBox(height: 16),
-    BlocTextInput(
-      label: "DO Number",
-      icon: Icons.numbers,
-      initialValue: state.DONumber,
-      onChanged: (val) => bloc.add(DONumberChanged(val)),
+// Helper to set designation if not set
+void setDesignationIfNeeded(SampleFormState state, SampleFormBloc bloc) {
+  if (state.senderDesignation.isEmpty) {
+    bloc.add(senderDesignationChanged('Food Safety Officer'));
+  }
+}
 
-    ),
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, s) {
-        const placeholder = "Select District";
-        final items = s.districtOptions.isNotEmpty ? [placeholder, ...s.districtOptions] : ["Loading..."];
-        final selected = s.district.isNotEmpty ? s.district : items.first;
-        final enabled = s.districtOptions.isNotEmpty;
-        return Opacity(
-          opacity: enabled ? 1.0 : 0.7,
-          child: IgnorePointer(
-            ignoring: !enabled,
-            child: BlocDropdown(
-              label: "District",
-              icon: Icons.location_city,
-              value: selected,
-              items: items,
-              onChanged: (val) {
-                if (val == placeholder) return;
-                bloc.add(DistrictChanged(val));
-              },
-            ),
-          ),
-        );
-      },
-    ),
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, s) {
-        if (s.district.isEmpty) {
-          const blockMsg = "Select district first";
-          return Opacity(
-            opacity: 0.7,
-            child: IgnorePointer(
-              ignoring: true,
+// Helper to set collection date if not set
+void setCollectionDateIfNeeded(SampleFormState state, SampleFormBloc bloc) {
+  if (state.collectionDate == null) {
+    bloc.add(CollectionDateChanged(DateTime.now()));
+  }
+}
+
+List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBloc bloc) {
+  // Trigger auto-population when this is built
+  loadSenderNameIfNeeded(state, bloc);
+  setDesignationIfNeeded(state, bloc);
+  setCollectionDateIfNeeded(state, bloc);
+  return [
+    [
+      BlocTextInput(
+        label: "Name of Sender",
+        icon: Icons.person,
+        initialValue: state.senderName,
+        onChanged: (val) => bloc.add(senderNameChanged(val)),
+      ),
+      SizedBox(height: 16),
+      BlocTextInput(
+        label: "Sender Official Designation",
+        icon: Icons.badge,
+        initialValue: state.senderDesignation,
+        onChanged: (val) => bloc.add(senderDesignationChanged(val)),
+      ),
+      SizedBox(height: 16),
+      BlocTextInput(
+        label: "DO Number",
+        icon: Icons.numbers,
+        initialValue: state.DONumber,
+        onChanged: (val) => bloc.add(DONumberChanged(val)),
+      ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          final selected = s.district;
+          final items = s.districtOptions;
+          const placeholder = "Select District";
+          return AbsorbPointer(
+            absorbing: items.isEmpty,
+            child: Opacity(
+              opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
-                label: "Region",
-                icon: Icons.map,
-                value: blockMsg,
-                items: const [blockMsg],
-                onChanged: (_) {},
+                label: "District",
+                icon: Icons.location_on,
+                value: selected.isEmpty ? placeholder : selected,
+                items: items.isEmpty ? [placeholder] : items,
+                onChanged: (val) {
+                  if (val == placeholder) return;
+                  bloc.add(DistrictChanged(val));
+                  // When district changes, fetch divisions for that district
+                  final districtId = bloc.state.districtIdByName[val];
+                  if (districtId != null) {
+                    bloc.add(FetchDivisionsRequested(districtId));
+                  }
+                },
               ),
             ),
           );
-        }
-        if (s.regionOptions.isEmpty) {
-          const loading = "Loading...";
-          return Opacity(
-            opacity: 0.7,
-            child: IgnorePointer(
-              ignoring: true,
-              child: BlocDropdown(
-                label: "Region",
-                icon: Icons.map,
-                value: loading,
-                items: const [loading],
-                onChanged: (_) {},
+        },
+      ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          if (s.district.isEmpty) {
+            const blockMsg = "Select district first";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Division",
+                  icon: Icons.apartment,
+                  value: blockMsg,
+                  items: const [blockMsg],
+                  onChanged: (_) {},
+                ),
               ),
-            ),
-          );
-        }
-        const placeholder = "Select Region";
-        final items = [placeholder, ...s.regionOptions];
-        final selected = s.region.isNotEmpty ? s.region : items.first;
-        return BlocDropdown(
-          label: "Region",
-          icon: Icons.map,
-          value: selected,
-          items: items,
-          onChanged: (val) {
-            if (val == placeholder) return;
-            bloc.add(RegionChanged(val));
-          },
-        );
-      },
-    ),
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, s) {
-        if (s.region.isEmpty) {
-          const blockMsg = "Select region first";
-          return Opacity(
-            opacity: 0.7,
-            child: IgnorePointer(
-              ignoring: true,
+            );
+          }
+          if (s.divisionOptions.isEmpty) {
+            const loading = "Loading...";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Division",
+                  icon: Icons.apartment,
+                  value: loading,
+                  items: const [loading],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          final selected = s.division;
+          final items = s.divisionOptions;
+          const placeholder = "Select Division";
+
+          return AbsorbPointer(
+            absorbing: items.isEmpty,
+            child: Opacity(
+              opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
                 label: "Division",
                 icon: Icons.apartment,
-                value: blockMsg,
-                items: const [blockMsg],
-                onChanged: (_) {},
+                value: selected.isEmpty ? placeholder : selected,
+                items: items.isEmpty ? [placeholder] : items,
+                onChanged: (val) {
+                  if (val == placeholder) return;
+                  bloc.add(DivisionChanged(val));
+                  // When division changes, fetch regions for that division
+                  final divisionId = bloc.state.divisionIdByName[val];
+                  if (divisionId != null) {
+                    bloc.add(FetchRegionsRequested(divisionId));
+                  }
+                },
               ),
             ),
           );
-        }
-        if (s.divisionOptions.isEmpty) {
-          const loading = "Loading...";
-          return Opacity(
-            opacity: 0.7,
-            child: IgnorePointer(
-              ignoring: true,
+        },
+      ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          if (s.division.isEmpty) { // Changed dependency from district to division
+            const blockMsg = "Select division first";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Region",
+                  icon: Icons.map,
+                  value: blockMsg,
+                  items: const [blockMsg],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          if (s.regionOptions.isEmpty) {
+            const loading = "Loading...";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Region",
+                  icon: Icons.map,
+                  value: loading,
+                  items: const [loading],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          final selected = s.region;
+          final items = s.regionOptions;
+          const placeholder = "Select Region";
+
+          return AbsorbPointer(
+            absorbing: items.isEmpty,
+            child: Opacity(
+              opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
-                label: "Division",
-                icon: Icons.apartment,
-                value: loading,
-                items: const [loading],
-                onChanged: (_) {},
+                label: "Region",
+                icon: Icons.map,
+                value: selected.isEmpty ? placeholder : selected,
+                items: items.isEmpty ? [placeholder] : items,
+                onChanged: (val) {
+                  if (val == placeholder) return;
+                  bloc.add(RegionChanged(val));
+                },
               ),
             ),
           );
-        }
-        const placeholder = "Select Division";
-        final items = [placeholder, ...s.divisionOptions];
-        final selected = s.division.isNotEmpty ? s.division : items.first;
-        return BlocDropdown(
-          label: "Division",
-          icon: Icons.apartment,
-          value: selected,
-          items: items,
-          onChanged: (val) {
-            if (val == placeholder) return;
-            bloc.add(DivisionChanged(val));
-          },
-        );
-      },
-    ),
-    SizedBox(height: 16),
-    BlocTextInput(
-      label: "Area",
-      icon: Icons.home,
-      initialValue: state.area,
-      onChanged: (val) => bloc.add(AreaChanged(val)),
-    ),
+        },
+      ),
+      SizedBox(height: 16),
+      BlocTextInput(
+        label: "Area",
+        icon: Icons.home,
+        initialValue: state.area,
+        onChanged: (val) => bloc.add(AreaChanged(val)),
+      ),
 
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, state) {
-        return BlocTextInput(
-          label: "Latitude",
-          icon: Icons.explore,
-          initialValue: state.Lattitude,
-          onChanged: (val) => context.read<SampleFormBloc>().add(Lattitude(val)),
-        );
-      },
-    ),
-    SizedBox(height: 16),
-    BlocBuilder<SampleFormBloc, SampleFormState>(
-      builder: (context, state) {
-        return BlocTextInput(
-          label: "Longitude",
-          icon: Icons.navigation_outlined,
-          initialValue: state.Longitude,
-          onChanged: (val) => context.read<SampleFormBloc>().add(Longitude(val)),
-        );
-      },
-    ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, state) {
+          return BlocTextInput(
+            label: "Latitude",
+            icon: Icons.explore,
+            initialValue: state.Lattitude,
+            onChanged: (val) => context.read<SampleFormBloc>().add(Lattitude(val)),
+          );
+        },
+      ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, state) {
+          return BlocTextInput(
+            label: "Longitude",
+            icon: Icons.navigation_outlined,
+            initialValue: state.Longitude,
+            onChanged: (val) => context.read<SampleFormBloc>().add(Longitude(val)),
+          );
+        },
+      ),
 
-  ],
-];
+    ],
+  ];
+}
 
 List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc bloc) {
   return [

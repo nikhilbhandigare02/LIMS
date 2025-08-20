@@ -24,8 +24,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(sampleCodeData: event.value));
     });
     on<LoadSavedFormData>((event, emit) {
-      emit(event.savedState);
+      emit(event.savedState); // Replace current state with saved state
       
+      // If dropdown options are missing, load them
       if (event.savedState.districtOptions.isEmpty) {
         add(const FetchDistrictsRequested(1));
       }
@@ -33,7 +34,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         add(const FetchNatureOfSampleRequested());
       }
       
+      // Load dependent dropdowns if parent selections exist but options are missing
       if (event.savedState.district.isNotEmpty && event.savedState.regionOptions.isEmpty) {
+        // We need to wait for districts to load first, then load regions
         Future.delayed(const Duration(milliseconds: 500), () {
           final currentState = state;
           final districtId = currentState.districtIdByName[event.savedState.district];
@@ -44,6 +47,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       
       if (event.savedState.region.isNotEmpty && event.savedState.divisionOptions.isEmpty) {
+        // We need to wait for regions to load first, then load divisions
         Future.delayed(const Duration(milliseconds: 1000), () {
           final currentState = state;
           final regionId = currentState.regionIdByName[event.savedState.region];
@@ -60,11 +64,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<DistrictChanged>((event, emit) {
       print(state.district);
       emit(state.copyWith(district: event.value));
-
+      // When district changes, fetch divisions for that district
       final districtId = _extractIdFromSelectedDistrict(event.value);
       if (districtId != null) {
-        add(FetchRegionsRequested(districtId));
+        add(FetchDivisionsRequested(districtId)); // Corrected to FetchDivisionsRequested
       }
+      // Clear dependent dropdowns
+      emit(state.copyWith(division: '', region: '', divisionOptions: [], regionOptions: [], divisionIdByName: {}, regionIdByName: {}));
     });
     on<CollectionDateChanged>((event, emit) {
         print(state.collectionDate);
@@ -148,10 +154,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<RegionChanged>((event, emit) {
       print(state.region);
       emit(state.copyWith(region: event.value));
-      final regionId = state.regionIdByName[event.value ?? ''];
-      if (regionId != null) {
-        add(FetchDivisionsRequested(regionId));
-      }
+      // No dependent dropdowns to clear for Region (it's the last in the chain)
     });
     on<senderDesignationChanged>((event, emit) {
       print(state.senderDesignation);
@@ -163,8 +166,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     });
     on<DivisionChanged>((event, emit) {
       print(state.division);
-
       emit(state.copyWith(division: event.value));
+      // When division changes, fetch regions for that division
+      final divisionId = _extractIdFromSelectedDivision(event.value);
+      if (divisionId != null) {
+        add(FetchRegionsRequested(divisionId)); // Corrected to FetchRegionsRequested
+      }
+      // Clear dependent dropdowns
+      emit(state.copyWith(region: '', regionOptions: [], regionIdByName: {}));
     });
     on<AreaChanged>((event, emit) {
       print(state.area);
@@ -259,14 +268,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ) async {
     try {
       final request = {
-        'DistrictId': event.districtId,
+        'DivisionId': event.divisionId, // Changed from DistrictId to DivisionId
       };
-
+      print('🔍 getRegionsByDivisionId decrypted request: ' + request.toString());
       final session = await encryptWithSession(
         data: request,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
-
+      print('🔒 getRegionsByDivisionId encrypted payload: ' + session.payloadForServer.toString());
       final encryptedResponse = await form6repository.getRegionsByDistrictId(session.payloadForServer);
       if (encryptedResponse == null) return;
 
@@ -320,14 +329,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ) async {
     try {
       final request = {
-        'RegionId': event.regionId,
+        'DistrictId': event.districtId, // Changed from RegionId to DistrictId
       };
-
+      print('🔍 getDivisionsByDistrictId decrypted request: ' + request.toString());
       final session = await encryptWithSession(
         data: request,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
-
+      print('🔒 getDivisionsByDistrictId encrypted payload: ' + session.payloadForServer.toString());
       final encryptedResponse = await form6repository.getDivisionsByRegionId(session.payloadForServer);
       if (encryptedResponse == null) return;
 
@@ -520,6 +529,18 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     return id;
   }
 
+  int? _extractIdFromSelectedRegion(String? selected) {
+    if (selected == null) return null;
+    final id = state.regionIdByName[selected];
+    return id;
+  }
+
+  int? _extractIdFromSelectedDivision(String? selected) {
+    if (selected == null) return null;
+    final id = state.divisionIdByName[selected];
+    return id;
+  }
+
   _ParsedList _parseIdNameList(String decryptedJson, {required List<String> idKeys, required List<String> nameKeys}) {
     try {
       final dynamic parsed = jsonDecode(decryptedJson);
@@ -648,6 +669,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
     try {
+      // Read user id from secure storage
       final String? loginDataJson = await _secureStorage.read(key: 'loginData');
       int? userId;
       if (loginDataJson != null && loginDataJson.isNotEmpty) {
@@ -724,14 +746,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
-      if (regionId == null) {
-        final errorMsg = 'Region not found. Please re-select Region. Available: ${state.regionOptions.join(", ")}';
+      if (divisionId == null) {
+        final errorMsg = 'Division not found. Please re-select Division. Available: ${state.divisionOptions.join(", ")}';
         print("❌ $errorMsg");
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
-      if (divisionId == null) {
-        final errorMsg = 'Division not found. Please re-select Division. Available: ${state.divisionOptions.join(", ")}';
+      if (regionId == null) {
+        final errorMsg = 'Region not found. Please re-select Region. Available: ${state.regionOptions.join(", ")}';
         print("❌ $errorMsg");
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
@@ -883,6 +905,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith( 
           message: successMessage,
           apiStatus: ApiStatus.success,
+          Lattitude: state.Lattitude, // Preserve current Latitude
+          Longitude: state.Longitude, // Preserve current Longitude
         ));
       } else {
         emit(state.copyWith(
