@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
 import '../../../core/utils/enums.dart';
-import '../model/UserModel.dart';
 import '../repository/loginRepository.dart';
 part 'loginEvent.dart';
 part 'loginState.dart';
@@ -74,12 +73,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
           final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
           final String? token = loginResponseMap['Token'];
+          final String? senderFullName = loginResponseMap['FullName'];
 
           if (token != null && token.isNotEmpty) {
             await secureStorage.write(key: 'authToken', value: token);
-            print('Auth token stored securely.');
+            await secureStorage.write(key: 'sender name', value: senderFullName);
+            print('Auth token & sender Name stored securely.');
           } else {
-            print('Token not found in login response.');
+            print('Token & sender Name not found in login response.');
           }
         } catch (e) {
           print('Failed to decrypt login response: $e');
@@ -98,7 +99,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             );
             print('Decrypted (fallback) login response: $decryptedFallback');
 
-            // Store fallback data similarly
+
             await secureStorage.write(key: 'loginData', value: decryptedFallback);
 
             final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
@@ -113,7 +114,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             print('Fallback decryption also failed: $e2');
           }
         }
-
         emit(state.copyWith(
           message: 'You have Logged in successfully',
           apiStatus: ApiStatus.success,

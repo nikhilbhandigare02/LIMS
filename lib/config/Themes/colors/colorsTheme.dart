@@ -14,6 +14,7 @@ class customColors{
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
   static const Color orange = Colors.orange;
+  static const Color red = Colors.red;
 }
 
 

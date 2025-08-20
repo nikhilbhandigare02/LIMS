@@ -24,9 +24,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(sampleCodeData: event.value));
     });
     on<LoadSavedFormData>((event, emit) {
-      emit(event.savedState); // Replace current state with saved state
+      emit(event.savedState);
       
-      // If dropdown options are missing, load them
       if (event.savedState.districtOptions.isEmpty) {
         add(const FetchDistrictsRequested(1));
       }
@@ -34,9 +33,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         add(const FetchNatureOfSampleRequested());
       }
       
-      // Load dependent dropdowns if parent selections exist but options are missing
       if (event.savedState.district.isNotEmpty && event.savedState.regionOptions.isEmpty) {
-        // We need to wait for districts to load first, then load regions
         Future.delayed(const Duration(milliseconds: 500), () {
           final currentState = state;
           final districtId = currentState.districtIdByName[event.savedState.district];
@@ -47,7 +44,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       
       if (event.savedState.region.isNotEmpty && event.savedState.divisionOptions.isEmpty) {
-        // We need to wait for regions to load first, then load divisions
         Future.delayed(const Duration(milliseconds: 1000), () {
           final currentState = state;
           final regionId = currentState.regionIdByName[event.savedState.region];
@@ -64,9 +60,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<DistrictChanged>((event, emit) {
       print(state.district);
       emit(state.copyWith(district: event.value));
-      // When district changes, fetch regions for that district if we can map it to an ID
-      // Assuming the districtOptions list aligns with server ordering and response contains id-name pairs,
-      // we need an ID. If future we store id-name pairs, use that. For now, trigger fetch with a best-effort parse.
+
       final districtId = _extractIdFromSelectedDistrict(event.value);
       if (districtId != null) {
         add(FetchRegionsRequested(districtId));
@@ -654,7 +648,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
     try {
-      // Read user id from secure storage
       final String? loginDataJson = await _secureStorage.read(key: 'loginData');
       int? userId;
       if (loginDataJson != null && loginDataJson.isNotEmpty) {

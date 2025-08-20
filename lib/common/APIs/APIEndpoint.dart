@@ -11,5 +11,7 @@ class ApiEndpoints {
   static const String getNatureOfSample = 'mobile/GetNatureOfSample';
   static const String insertSample = 'Sample/Insert';
   static const String getUserWiseSampleData = 'Sample/GetUserWiseSampleData';
+  static const String getFormVIData = 'mobile/GetForm6Data';
+  static const String resetPassword = 'mobile/ForgotPassword';
 
 }

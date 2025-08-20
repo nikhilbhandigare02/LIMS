@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_inspector/Screens/FORM6/bloc/Form6Bloc.dart';
-import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
 import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
-import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
-import '../../../core/widgets/SampleLIstWidgets/edit.dart';
 import '../bloc/sampleBloc.dart';
 import '../model/sampleData.dart';
 
@@ -60,24 +56,36 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
     // High-priority keywords
     if (s.contains('tampered')) return Colors.red;
-    if (s.contains('decoded') && s.contains('report')) return Colors.indigo; // "Sample Decoded, Generate Report"
+    if (s.contains('decoded') && s.contains('report'))
+      return Colors.indigo; // "Sample Decoded, Generate Report"
     if (s.contains('decoded')) return Colors.deepPurple; // "Sample Decoded"
-    if (s.contains('dispatched') || s.contains('dispatch')) return Colors.teal; // "Report Dispatched", "Pending for Dispatch"
-    if (s.contains('generated') && s.contains('report')) return Colors.blueGrey; // "Report Generated"
+    if (s.contains('dispatched') || s.contains('dispatch'))
+      return Colors.teal; // "Report Dispatched", "Pending for Dispatch"
+    if (s.contains('generated') && s.contains('report'))
+      return Colors.blueGrey; // "Report Generated"
 
     // Workflow-specific
-    if (s.contains('verification')) return Colors.blue; // Sent/Pending for Verification
-    if (s.contains('coding') || s.contains('decode')) return Colors.cyan; // Sent for coding/decoding, Pending for Coding/Decoding
-    if (s.contains('assignment') || s.contains('allocated') || s.contains('allocation')) return Colors.orange; // sent for assignment/allocation
-    if (s.contains('analysis')) return Colors.green; // sent for analysis / analysis successful
-    if (s.contains('received')) return Colors.purple; // received by courier/physically / entry successful
+    if (s.contains('verification'))
+      return Colors.blue; // Sent/Pending for Verification
+    if (s.contains('coding') || s.contains('decode'))
+      return Colors
+          .cyan; // Sent for coding/decoding, Pending for Coding/Decoding
+    if (s.contains('assignment') ||
+        s.contains('allocated') ||
+        s.contains('allocation'))
+      return Colors.orange; // sent for assignment/allocation
+    if (s.contains('analysis'))
+      return Colors.green; // sent for analysis / analysis successful
+    if (s.contains('received'))
+      return Colors.purple; // received by courier/physically / entry successful
 
     // Generic fallbacks for common words
     if (s.contains('pending')) return Colors.amber;
     if (s.contains('sent')) return Colors.lightBlue;
 
     // Specific edge cases
-    if (s == 're-requested' || s.contains('re-request')) return Colors.redAccent;
+    if (s == 're-requested' || s.contains('re-request'))
+      return Colors.redAccent;
 
     return Colors.grey;
   }
@@ -94,7 +102,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       barrierDismissible: true,
       builder: (ctx) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 8,
           child: Container(
             padding: EdgeInsets.all(20),
@@ -287,7 +297,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       builder: (ctx) {
         return AlertDialog(
           title: Text('Edit Sample'),
-          content: Text('Edit functionality for sample ${data.serialNo} will be implemented here.'),
+          content: Text(
+            'Edit functionality for sample ${data.serialNo} will be implemented here.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -303,7 +315,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(width: 130, child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600))),
+        SizedBox(
+          width: 130,
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
         const SizedBox(width: 8),
         Expanded(child: Text(value)),
       ],
@@ -347,7 +365,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   ),
                 ),
                 onPressed: toggleView,
-                tooltip: isCardView ? 'Switch to Table View' : 'Switch to Card View',
+                tooltip: isCardView
+                    ? 'Switch to Table View'
+                    : 'Switch to Card View',
               ),
             ),
           ],
@@ -358,10 +378,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               case Status.loading:
                 return Center(child: const CircularProgressIndicator());
               case Status.complete:
-                if (state.fetchSampleList.data == null || state.fetchSampleList.data.isEmpty) {
+                if (state.fetchSampleList.data == null ||
+                    state.fetchSampleList.data.isEmpty) {
                   return Center(child: Text('No Data Found'));
                 }
-                final sampleList = state.fetchSampleList.data as List<SampleData>;
+                final sampleList =
+                    state.fetchSampleList.data as List<SampleData>;
                 final sampleDataList = sampleList
                     .expand((sampleData) => sampleData.sampleList ?? [])
                     .toList();
@@ -370,10 +392,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.grey[50]!,
-                        Colors.grey[100]!,
-                      ],
+                      colors: [Colors.grey[50]!, Colors.grey[100]!],
                     ),
                   ),
                   child: FadeTransition(
@@ -381,11 +400,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     child: isCardView
                         ? _buildCardView(sampleDataList.cast<SampleList>())
                         : _buildTableView(sampleDataList.cast<SampleList>()),
-
                   ),
                 );
               case Status.error:
-                return Center(child: Text('Error: ${state.fetchSampleList.message}'));
+                return Center(
+                  child: Text('Error: ${state.fetchSampleList.message}'),
+                );
               default:
                 return Center(child: Text('Unexpected state'));
             }
@@ -423,11 +443,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.science,
-                  color: customColors.primary,
-                  size: 22,
-                ),
+                Icon(Icons.science, color: customColors.primary, size: 22),
                 SizedBox(width: 12),
                 Text(
                   'Sample Records',
@@ -476,19 +492,14 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       child: Card(
         elevation: 6,
         shadowColor: customColors.primary.withOpacity(0.15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                Colors.grey[50]!,
-              ],
+              colors: [Colors.white, Colors.grey[50]!],
             ),
           ),
           child: Padding(
@@ -500,10 +511,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [customColors.primary, customColors.primary.withOpacity(0.8)],
+                          colors: [
+                            customColors.primary,
+                            customColors.primary.withOpacity(0.8),
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -517,10 +534,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [getStatusColor(data.statusName), getStatusColor(data.statusName).withOpacity(0.8)],
+                          colors: [
+                            getStatusColor(data.statusName),
+                            getStatusColor(data.statusName).withOpacity(0.8),
+                          ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -541,9 +564,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     Expanded(
                       child: Column(
                         children: [
-                          _buildCompactInfoRow(Icons.location_on, data.labLocation ?? 'N/A'),
+                          _buildCompactInfoRow(
+                            Icons.location_on,
+                            data.labLocation ?? 'N/A',
+                          ),
                           SizedBox(height: 8),
-                          _buildCompactInfoRow(Icons.send, _formatDate(data.sampleSentDate)),
+                          _buildCompactInfoRow(
+                            Icons.send,
+                            _formatDate(data.sampleSentDate),
+                          ),
                         ],
                       ),
                     ),
@@ -551,9 +580,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     Expanded(
                       child: Column(
                         children: [
-                          _buildCompactInfoRow(Icons.refresh, _formatDate(data.sampleResentDate)),
+                          _buildCompactInfoRow(
+                            Icons.refresh,
+                            _formatDate(data.sampleResentDate),
+                          ),
                           SizedBox(height: 8),
-                          _buildCompactInfoRow(Icons.calendar_today, _formatDate(data.sampleReRequestedDate)),
+                          _buildCompactInfoRow(
+                            Icons.calendar_today,
+                            _formatDate(data.sampleReRequestedDate),
+                          ),
                         ],
                       ),
                     ),
@@ -613,9 +648,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   }) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.8)],
-        ),
+        gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -667,11 +700,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.table_chart,
-                  color: customColors.primary,
-                  size: 22,
-                ),
+                Icon(Icons.table_chart, color: customColors.primary, size: 22),
                 SizedBox(width: 12),
                 Text(
                   'Sample Records - Table View',
@@ -691,10 +720,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white,
-                    Colors.grey[50]!,
-                  ],
+                  colors: [Colors.white, Colors.grey[50]!],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
@@ -711,7 +737,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    headingRowColor: MaterialStateProperty.all(customColors.primary),
+                    headingRowColor: MaterialStateProperty.all(
+                      customColors.primary,
+                    ),
                     headingTextStyle: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -733,10 +761,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         cells: [
                           DataCell(
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [customColors.primary.withOpacity(0.1), customColors.primary.withOpacity(0.2)],
+                                  colors: [
+                                    customColors.primary.withOpacity(0.1),
+                                    customColors.primary.withOpacity(0.2),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -748,13 +782,23 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                           ),
                           DataCell(Text(_formatDate(data.sampleSentDate))),
                           DataCell(Text(_formatDate(data.sampleResentDate))),
-                          DataCell(Text(_formatDate(data.sampleReRequestedDate))),
+                          DataCell(
+                            Text(_formatDate(data.sampleReRequestedDate)),
+                          ),
                           DataCell(
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [getStatusColor(data.statusName), getStatusColor(data.statusName).withOpacity(0.8)],
+                                  colors: [
+                                    getStatusColor(data.statusName),
+                                    getStatusColor(
+                                      data.statusName,
+                                    ).withOpacity(0.8),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -783,12 +827,21 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(colors: [Colors.blue, Colors.blue.withOpacity(0.8)]),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.blue,
+                                        Colors.blue.withOpacity(0.8),
+                                      ],
+                                    ),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: IconButton(
-                                    icon: Icon(Icons.visibility, color: Colors.white),
-                                    onPressed: () => _showSampleDetailsDialog(context, data),
+                                    icon: Icon(
+                                      Icons.visibility,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () =>
+                                        _showSampleDetailsDialog(context, data),
                                     iconSize: 18,
                                   ),
                                 ),
@@ -796,12 +849,21 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                   SizedBox(width: 4),
                                   Container(
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(colors: [Colors.green, Colors.green.withOpacity(0.8)]),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.green,
+                                          Colors.green.withOpacity(0.8),
+                                        ],
+                                      ),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: IconButton(
-                                      icon: Icon(Icons.edit, color: Colors.white),
-                                      onPressed: () => _showEditDialog(context, data),
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () =>
+                                          _showEditDialog(context, data),
                                       iconSize: 18,
                                     ),
                                   ),
@@ -831,4 +893,4 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return 'N/A';
     }
   }
-  }
+}

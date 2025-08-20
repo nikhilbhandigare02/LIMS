@@ -15,4 +15,10 @@ class ForgotPasswordRepository {
     final response = await _api.postApi(verifyOTP, data);
     return response;
   }
-} 
+
+  Future<dynamic> resetPassApi(dynamic data) async {
+    final resetPass = ApiBase.baseUrl + ApiEndpoints.resetPassword;
+    final response = await _api.postApi(resetPass, data);
+    return response;
+  }
+}
