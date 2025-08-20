@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
+ import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
-
-
-
-
 
 import '../../Screens/ForgotScreen/View/ForgotScreen.dart';
 import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
