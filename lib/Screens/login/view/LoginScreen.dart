@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/login/repository/loginRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
+import '../../../core/utils/footer.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 import '../../../core/widgets/loginWidgets/CaptchaWidget.dart';
 import '../../../core/widgets/loginWidgets/EmailInputWidget.dart';
@@ -221,26 +222,27 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           const SizedBox(height: 10),
 
                           Center(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, RouteName.registerScreen);
-                              },
-                              child: const Text.rich(
-                                TextSpan(
-                                  text: "Don't have an account? ",
-                                  style: TextStyle(color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text: "Create one",
-                                      style: TextStyle(
-                                        color: customColors.primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            // child: TextButton(
+                            //   onPressed: () {
+                            //     Navigator.pushNamed(context, RouteName.registerScreen);
+                            //   },
+                            //   child: const Text.rich(
+                            //     TextSpan(
+                            //       text: "Don't have an account? ",
+                            //       style: TextStyle(color: Colors.black),
+                            //       children: [
+                            //         TextSpan(
+                            //           text: "Create one",
+                            //           style: TextStyle(
+                            //             color: customColors.primary,
+                            //             fontWeight: FontWeight.bold,
+                            //           ),
+                            //         )
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            child: const Footer(),
                           ),
                         ],
                       ),

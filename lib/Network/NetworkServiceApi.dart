@@ -34,6 +34,10 @@ class NetworkServiceApi extends ApiServices {
         if (headers != null) ...headers,
       };
 
+      print('HTTP POST: $url');
+      print('Request Headers: $requestHeaders');
+      print('Request Body (unencrypted): ${jsonEncode(data)}');
+
       final response = await http
           .post(
         Uri.parse(url),

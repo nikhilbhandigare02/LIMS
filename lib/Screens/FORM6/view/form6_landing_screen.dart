@@ -111,11 +111,11 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             isSampleComplete = false;
           });
 
-          final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form submitted successfully.';
+          final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form VI submitted successfully.';
           Message.showTopRightOverlay(context, successMsg, MessageType.success);
 
           // Reset the BLoC state
-          context.read<SampleFormBloc>().add(FormResetEvent());
+          // context.read<SampleFormBloc>().add(FormResetEvent());
 
           await Future.delayed(const Duration(milliseconds: 300));
           Navigator.pushAndRemoveUntil(
@@ -141,22 +141,20 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           userId: 'S1234',
         ),
         drawer: CustomDrawer(),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    'Form Sections',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 30),
-                  _buildVerticalStepProgress(),
-                  const SizedBox(height: 15),
-                  _buildSubmitButton(),
-                ],
-              ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 100),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  'Form VI Sections',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 30),
+                _buildVerticalStepProgress(),
+                const SizedBox(height: 15),
+                _buildSubmitButton(),
+              ],
             ),
           ),
         ),

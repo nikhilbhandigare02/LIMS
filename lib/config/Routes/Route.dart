@@ -7,7 +7,7 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 
 
 
-import '../../Screens/FORM6/view/Form6Screen.dart';
+
 
 import '../../Screens/ForgotScreen/View/ForgotScreen.dart';
 import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
@@ -46,8 +46,7 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => AboutUsScreen());
 
 
-  // case RouteName.UpdatesampleScreen:
-    //   return  MaterialPageRoute(builder: (context) => Updatesample(),);
+
     case RouteName.profileScreen:
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);
     case RouteName.SampleAnalysisScreen:

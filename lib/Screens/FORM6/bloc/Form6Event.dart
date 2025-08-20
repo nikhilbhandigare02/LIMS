@@ -228,15 +228,15 @@ class FetchDistrictsRequested extends SampleFormEvent {
 }
 
 class FetchRegionsRequested extends SampleFormEvent {
-  final int districtId;
-  const FetchRegionsRequested(this.districtId);
+  final int divisionId;
+  const FetchRegionsRequested(this.divisionId);
   @override
-  List<Object?> get props => [districtId];
+  List<Object?> get props => [divisionId];
 }
 
 class FetchDivisionsRequested extends SampleFormEvent {
-  final int regionId;
-  const FetchDivisionsRequested(this.regionId);
+  final int districtId;
+  const FetchDivisionsRequested(this.districtId);
   @override
-  List<Object?> get props => [regionId];
+  List<Object?> get props => [districtId];
 }

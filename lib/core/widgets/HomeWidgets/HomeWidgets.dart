@@ -63,7 +63,7 @@ class _BlocTextInputState extends State<BlocTextInput> {
       onChanged: widget.onChanged,
       readOnly: widget.readOnly,
       decoration: InputDecoration(
-        hintText: 'Select ${widget.label}',
+        hintText: 'Enter ${widget.label}',
         hintStyle: const TextStyle(fontSize: 16),
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: customColors.primary)

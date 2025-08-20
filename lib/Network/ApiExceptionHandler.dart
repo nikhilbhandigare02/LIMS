@@ -45,6 +45,7 @@ class NoInternetException extends AppException {
 }
 
 dynamic handleResponse(http.Response response) {
+  print('Raw Response Body: ${response.body}');
   switch (response.statusCode) {
     case 200:
       return jsonDecode(response.body);

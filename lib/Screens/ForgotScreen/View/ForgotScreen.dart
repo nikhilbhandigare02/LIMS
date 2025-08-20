@@ -5,6 +5,7 @@ import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
+import '../../../core/utils/footer.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
 import '../../../core/widgets/RegistrationInput/PasswordBoxInput.dart';
 import '../../../core/utils/validators.dart';
@@ -297,14 +298,7 @@ class ForgotScreen extends StatelessWidget {
                                       ],
                                     ),
                                     const SizedBox(height: 10),
-                                    Text(
-                                      '© 2024 Food Safety Organization',
-                                      style: TextStyle(
-                                        color: Colors.grey.withOpacity(0.6),
-                                        fontSize: 12,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                    const Footer(),
                                   ],
                                 ),
                               ),
