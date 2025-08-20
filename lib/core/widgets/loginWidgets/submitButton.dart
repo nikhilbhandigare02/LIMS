@@ -46,32 +46,34 @@ class LoginButton extends StatelessWidget {
             final secureStorage = FlutterSecureStorage();
             final loginDataStr = await secureStorage.read(key: 'loginData');
 
-            String loginFlag = '';
+            int passResetFlag = 0;
             if (loginDataStr != null) {
               final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
-              loginFlag = (loginDataMap['LoginFlag'] ?? '') as String;
+              final passResetStr = loginDataMap['PassResetFlag'] ?? '0'; // default to '0'
+              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0; // safely parse to int
             }
 
-            if (loginFlag == 'firstlogin') {
+            if (passResetFlag == 0) {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
               );
-            } else if (loginFlag == 'secondlogin') {
+            } else if (passResetFlag == 1) {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) =>
-                        SampleFormBloc(form6repository: Form6Repository()),
-                    child: Form6LandingScreen(),
-                  ),
+                  builder: (_) =>
+                      BlocProvider(
+                        create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                        child: Form6LandingScreen(),
+                      ),
                 ),
               );
             } else {
               // Fallback → go to login screen
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }
+
 
             break;
 

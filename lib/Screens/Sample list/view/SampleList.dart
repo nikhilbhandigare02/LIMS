@@ -4,6 +4,7 @@ import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
 import '../bloc/sampleBloc.dart';
 import '../model/sampleData.dart';
 
@@ -69,15 +70,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return Colors.blue; // Sent/Pending for Verification
     if (s.contains('coding') || s.contains('decode'))
       return Colors
-          .cyan; // Sent for coding/decoding, Pending for Coding/Decoding
+          .cyan;
     if (s.contains('assignment') ||
         s.contains('allocated') ||
         s.contains('allocation'))
-      return Colors.orange; // sent for assignment/allocation
+      return Colors.orange;
     if (s.contains('analysis'))
-      return Colors.green; // sent for analysis / analysis successful
+      return Colors.green;
     if (s.contains('received'))
-      return Colors.purple; // received by courier/physically / entry successful
+      return Colors.purple;
 
     // Generic fallbacks for common words
     if (s.contains('pending')) return Colors.amber;
@@ -96,198 +97,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     return s.contains('tampered') || s.contains('resubmit');
   }
 
-  void _showSampleDetailsDialog(BuildContext context, SampleList data) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (ctx) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 8,
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, Colors.grey[50]!],
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: customColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.science,
-                        color: customColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sample Details',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: customColors.primary,
-                            ),
-                          ),
-                          Text(
-                            'Serial: ${data.serialNo ?? 'N/A'}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      icon: Icon(Icons.close, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                Divider(height: 32, thickness: 1),
 
-                // Details
-                _buildDetailRow(
-                  icon: Icons.send,
-                  label: 'Sent Date',
-                  value: _formatDate(data.sampleSentDate),
-                  color: Colors.blue,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.refresh,
-                  label: 'Resent Date',
-                  value: _formatDate(data.sampleResentDate),
-                  color: Colors.orange,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.calendar_today,
-                  label: 'Re-requested Date',
-                  value: _formatDate(data.sampleReRequestedDate),
-                  color: Colors.purple,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.info,
-                  label: 'Status',
-                  value: data.statusName ?? 'N/A',
-                  color: getStatusColor(data.statusName),
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.location_on,
-                  label: 'Lab Location',
-                  value: data.labLocation ?? 'N/A',
-                  color: Colors.green,
-                ),
-
-                SizedBox(height: 24),
-
-                // Action Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (_isTampered(data.statusName)) ...[
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                          _showEditDialog(context, data);
-                        },
-                        icon: Icon(Icons.edit, size: 16),
-                        label: Text('Edit'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                    ],
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: Text('Close'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: customColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(icon, size: 16, color: color),
-        ),
-        SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   void _showEditDialog(BuildContext context, SampleList data) {
     // This is a placeholder for the edit functionality
@@ -601,7 +411,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     _buildCompactActionButton(
                       icon: Icons.visibility,
                       color: Colors.blue,
-                      onPressed: () => _showSampleDetailsDialog(context, data),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: sampleBloc,
+                            child: SampleDetailsScreen(serialNo: data.serialNo ?? ''),
+                          ),
+                        ),
+                      ),
+
                     ),
                     if (_isTampered(data.statusName)) ...[
                       SizedBox(width: 8),
@@ -841,7 +660,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                       color: Colors.white,
                                     ),
                                     onPressed: () =>
-                                        _showSampleDetailsDialog(context, data),
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => BlocProvider.value(
+                                              value: sampleBloc,
+                                              child: SampleDetailsScreen(serialNo: data.serialNo ?? ''),
+                                            ),
+                                          ),
+                                        ),
                                     iconSize: 18,
                                   ),
                                 ),

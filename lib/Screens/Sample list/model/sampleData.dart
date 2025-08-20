@@ -67,12 +67,12 @@ SampleData copyWith({  List<SampleList>? sampleList,
 
 class SampleList {
   SampleList({
-      String? serialNo, 
-      String? sampleSentDate, 
-      String? sampleResentDate, 
-      String? sampleReRequestedDate, 
-      String? labLocation, 
-      dynamic statusName, 
+      String? serialNo,
+      String? sampleSentDate,
+      String? sampleResentDate,
+      String? sampleReRequestedDate,
+      String? labLocation,
+      String? statusName,
       num? userID,}){
     _serialNo = serialNo;
     _sampleSentDate = sampleSentDate;
@@ -84,27 +84,52 @@ class SampleList {
 }
 
   SampleList.fromJson(dynamic json) {
-    _serialNo = json['serial_no'];
-    _sampleSentDate = json['sample_sent_date'];
-    _sampleResentDate = json['sample_resent_date'];
-    _sampleReRequestedDate = json['sample_re_requested_date'];
-    _labLocation = json['lab_location'];
-    _statusName = json['status_name'];
-    _userID = json['userID'];
+    // Handle multiple possible API key casings/aliases
+    String? pickString(List<String> candidateKeys) {
+      // direct fast path
+      for (final key in candidateKeys) {
+        final dynamic value = (json as Map<String, dynamic>)[key];
+        if (value != null) return value.toString();
+      }
+      // case-insensitive/underscore-insensitive
+      String normalize(String s) => s.replaceAll(RegExp(r'[\s_]'), '').toLowerCase();
+      final Map<String, dynamic> normalizedMap = {};
+      (json as Map<String, dynamic>).forEach((k, v) {
+        normalizedMap[normalize(k.toString())] = v;
+      });
+      for (final key in candidateKeys) {
+        final dynamic value = normalizedMap[normalize(key)];
+        if (value != null) return value.toString();
+      }
+      return null;
+    }
+
+    _serialNo = pickString(['serial_no', 'serialNo', 'SerialNo', 'Serial_No']);
+    _sampleSentDate = pickString(['sample_sent_date', 'sampleSentDate', 'SampleSentDate']);
+    _sampleResentDate = pickString(['sample_resent_date', 'sampleResentDate', 'SampleResentDate']);
+    _sampleReRequestedDate = pickString(['sample_re_requested_date', 'sampleReRequestedDate', 'SampleReRequestedDate']);
+    _labLocation = pickString(['lab_location', 'labLocation', 'LabLocation']);
+    _statusName = pickString([
+      'status_name']);
+    _userID = json['userID'] ?? json['UserID'] ?? json['userId'] ?? json['UserId'];
+    if (_userID is String) {
+      final parsed = num.tryParse(_userID as String);
+      _userID = parsed ?? _userID;
+    }
   }
   String? _serialNo;
   String? _sampleSentDate;
   String? _sampleResentDate;
   String? _sampleReRequestedDate;
   String? _labLocation;
-  dynamic _statusName;
+  String? _statusName;
   num? _userID;
 SampleList copyWith({  String? serialNo,
   String? sampleSentDate,
   String? sampleResentDate,
   String? sampleReRequestedDate,
   String? labLocation,
-  dynamic statusName,
+  String? statusName,
   num? userID,
 }) => SampleList(  serialNo: serialNo ?? _serialNo,
   sampleSentDate: sampleSentDate ?? _sampleSentDate,
@@ -119,7 +144,7 @@ SampleList copyWith({  String? serialNo,
   String? get sampleResentDate => _sampleResentDate;
   String? get sampleReRequestedDate => _sampleReRequestedDate;
   String? get labLocation => _labLocation;
-  dynamic get statusName => _statusName;
+  String? get statusName => _statusName;
   num? get userID => _userID;
 
   Map<String, dynamic> toJson() {
