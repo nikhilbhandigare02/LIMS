@@ -100,7 +100,7 @@ class LoginButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
                 shadowColor: Colors.transparent,
               ),
@@ -121,10 +121,10 @@ class LoginButton extends StatelessWidget {
                 ),
               )
                   : const Text(
-                'Sign in',
+                'SIGN IN',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),

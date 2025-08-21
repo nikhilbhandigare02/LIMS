@@ -17,6 +17,7 @@ class ForgotScreen extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -84,7 +85,6 @@ class ForgotScreen extends StatelessWidget {
                 Expanded(
                   child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
                     listenWhen: (previous, current) {
-                      // Trigger only when apiStatus changes
                       return previous.apiStatus != current.apiStatus;
                     },
                     listener: (context, state) {
@@ -101,7 +101,7 @@ class ForgotScreen extends StatelessWidget {
                       else if (state.apiStatus == ApiStatus.success && state.isOtpVerified) {
                         Message.showTopRightOverlay(
                           context,
-                          'OTP sent to your register email',
+                          'OTP Verified Succesfully',
                           MessageType.success,
                         );
 
@@ -114,7 +114,7 @@ class ForgotScreen extends StatelessWidget {
                       else if (state.apiStatus == ApiStatus.error) {
                         Message.showTopRightOverlay(
                           context,
-                          state.message,
+                          'Wrong OTP, please enter correct otp',
                           MessageType.error,
                         );
                       }
@@ -123,7 +123,8 @@ class ForgotScreen extends StatelessWidget {
                       buildWhen: (current, previous) =>
                           current.email != previous.email ||
                           current.apiStatus != previous.apiStatus ||
-                          current.isOtpSent != previous.isOtpSent,
+                          current.isOtpSent != previous.isOtpSent ||
+                          current.otp != previous.otp,
                       builder: (context, state) {
                         final bloc = context.read<ForgotPasswordBloc>();
 
@@ -152,8 +153,11 @@ class ForgotScreen extends StatelessWidget {
                                       validator: Validators.validateEmail,
                                       value: state
                                           .email,
+                                      enabled: !(state.isOtpSent), // 🔒 disable once OTP is sent
                                       onChanged: (value) {
-                                        context.read<ForgotPasswordBloc>().add(EmailEvent(email:value));
+                                        if (!state.isOtpSent) { // 🔐 block changes if OTP sent
+                                          context.read<ForgotPasswordBloc>().add(EmailEvent(email: value));
+                                        }
                                       },
                                     ),
                                     const SizedBox(height: 16),
@@ -200,23 +204,24 @@ class ForgotScreen extends StatelessWidget {
                                                     ),
                                               )
                                             : const Text(
-                                                'Send OTP',
+                                                'SEND OTP',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                       ),
                                     ),
 
-                                    if (state.apiStatus == ApiStatus.success &&
+                                    if (
                                         state.isOtpSent) ...[
                                       const SizedBox(height: 20),
                                       AnimatedOtpInput(
                                         length: 6,
                                         obscureText: false,
                                         value: state.otp,
+                                        validator: (value) => Validators.validateOTP(value, length: 6),
                                         onChanged: (value) {
                                           bloc.add(OTPEvent(value));
                                         },
@@ -237,15 +242,12 @@ class ForgotScreen extends StatelessWidget {
                                             ),
                                             elevation: 0,
                                           ),
-                                          onPressed:
-                                              state.apiStatus ==
-                                                  ApiStatus.loading
+                                          onPressed: (state.apiStatus == ApiStatus.loading ||
+                                                  Validators.validateOTP(state.otp, length: 6) != null)
                                               ? null
                                               : () {
                                                   context
-                                                      .read<
-                                                        ForgotPasswordBloc
-                                                      >()
+                                                      .read<ForgotPasswordBloc>()
                                                       .add(verifyOTPEvent());
                                                 },
                                           child:
@@ -262,7 +264,7 @@ class ForgotScreen extends StatelessWidget {
                                                       ),
                                                 )
                                               : const Text(
-                                                  'Verify OTP',
+                                                  'VERIFY OTP',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 16,

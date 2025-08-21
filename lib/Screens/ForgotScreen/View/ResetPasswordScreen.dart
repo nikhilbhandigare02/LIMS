@@ -20,6 +20,7 @@ class ResetPasswordScreen extends StatelessWidget {
     );
   }
 }
+final _formKey = GlobalKey<FormState>();
 
 class _ResetPasswordView extends StatelessWidget {
   const _ResetPasswordView({super.key});
@@ -27,27 +28,15 @@ class _ResetPasswordView extends StatelessWidget {
   void _onSubmit(BuildContext context) {
     final state = context.read<ForgotPasswordBloc>().state;
 
-    if (state.newPassword.isEmpty || state.confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please fill all fields"),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+
 
     if (state.newPassword != state.confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Passwords do not match"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      Message.showTopRightOverlay(context, 'New Password & Confirm Password do not match', MessageType.error);
       return;
     }
-
-    context.read<ForgotPasswordBloc>().add(SubmitResetPasswordEvent());
+    if (_formKey.currentState!.validate()) {
+      context.read<ForgotPasswordBloc>().add(SubmitResetPasswordEvent());
+    }
   }
 
   @override
@@ -129,122 +118,124 @@ class _ResetPasswordView extends StatelessWidget {
               ),
               const SizedBox(height: 35),
 
-              // Card with form fields
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.08),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
-                  builder: (context, state) {
-                    return Column(
-                      children: [
-                        // New Password
-                        CustomTextField(
-                          label: 'New Password',
-                          icon: Icons.lock,
-                          obscureText: true,
-                          isPassword: true,
-                          validator: Validators.validatePassword,
-                          onChanged: (value) {
-                            context.read<ForgotPasswordBloc>().add(
-                              NewForgotPassEvent(newPassword: value),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
+              Form(
+                key: _formKey,
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+                    builder: (context, state) {
+                      return Column(
+                        children: [
+                          // New Password
+                          CustomTextField(
+                            label: 'New Password',
+                            icon: Icons.lock,
+                            obscureText: true,
+                            isPassword: true,
+                            validator: Validators.validatePassword,
+                            onChanged: (value) {
+                              context.read<ForgotPasswordBloc>().add(
+                                NewForgotPassEvent(newPassword: value),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
 
-                        // Confirm Password
-                        CustomTextField(
-                          label: 'Confirm Password',
-                          icon: Icons.lock_outline,
-                          obscureText: true,
-                          isPassword: true,
-                          validator: (value) =>
-                              Validators.validateConfirmPassword(
-                                  value, state.newPassword),
-                          onChanged: (value) {
-                            context.read<ForgotPasswordBloc>().add(
-                              ConfirmForgotPassEvent(
-                                  confirmPassword: value),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 25),
+                          // Confirm Password
+                          CustomTextField(
+                            label: 'Confirm Password',
+                            icon: Icons.lock_outline,
+                            obscureText: true,
+                            isPassword: true,
+                            validator: (value) =>
+                                Validators.validateConfirmPassword(
+                                    value, state.newPassword),
+                            onChanged: (value) {
+                              context.read<ForgotPasswordBloc>().add(
+                                ConfirmForgotPassEvent(
+                                    confirmPassword: value),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 25),
 
-                        // Submit Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: customColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                          // Submit Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: customColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 18),
+                                elevation: 0,
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 18),
-                              elevation: 0,
-                            ),
-                            onPressed: () => _onSubmit(context),
-                            child: state.apiStatus == ApiStatus.loading
-                                ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                                : const Text(
-                              'Reset Password',
-                              style: TextStyle(
+                              onPressed: () => _onSubmit(context),
+                              child: state.apiStatus == ApiStatus.loading
+                                  ? const CircularProgressIndicator(
                                 color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              )
+                                  : const Text(
+                                'Reset Password',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 25),
+                          const SizedBox(height: 25),
 
-                        // Back to login
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Remember your password? ",
-                              style: TextStyle(color: customColors.black87),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  RouteName.loginScreen,
-                                      (route) => false,
-                                );
-                              },
-                              child: Text(
-                                'Login',
-                                style: TextStyle(color: customColors.primary),
+                          // Back to login
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Remember your password? ",
+                                style: TextStyle(color: customColors.black87),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '© 2024 Food Safety Organization',
-                          style: TextStyle(
-                            color: Colors.grey.withOpacity(0.6),
-                            fontSize: 12,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    RouteName.loginScreen,
+                                        (route) => false,
+                                  );
+                                },
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(color: customColors.primary),
+                                ),
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    );
-                  },
+                          const SizedBox(height: 10),
+                          Text(
+                            '© 2024 Food Safety Organization',
+                            style: TextStyle(
+                              color: Colors.grey.withOpacity(0.6),
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 25),
