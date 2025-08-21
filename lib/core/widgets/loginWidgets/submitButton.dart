@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
+import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
@@ -50,27 +51,14 @@ class LoginButton extends StatelessWidget {
             if (loginDataStr != null) {
               final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
               final passResetStr = loginDataMap['PassResetFlag'] ?? '0'; // default to '0'
-              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0; // safely parse to int
+              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
             }
 
             if (passResetFlag == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
-              );
+              Navigator.pushReplacementNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      BlocProvider(
-                        create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-                        child: Form6LandingScreen(),
-                      ),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
             } else {
-              // Fallback → go to login screen
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }
 

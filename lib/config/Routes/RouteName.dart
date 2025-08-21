@@ -12,4 +12,5 @@ class RouteName{
   static const String forgotPasswordScreen = 'forgotPasswordScreen';
   static const String resetPasswordScreen = 'resetPasswordScreen';
   static const String AboutUsScreen = 'AboutUsScreen';
+  static const String OTPVerificationScreen = 'OTPVerificationScreen';
 }
