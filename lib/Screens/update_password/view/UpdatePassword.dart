@@ -32,6 +32,8 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  bool _obscureOldPassword = true;
+  bool _obscureNewPassword = true;
 
   @override
   void initState() {
@@ -197,30 +199,47 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                             CustomTextField(
                               label: 'Old Password',
                               icon: Icons.lock_outline,
-                              obscureText: true,
+                              obscureText: _obscureOldPassword,
                               isPassword: true,
                               value: state.confirmPassword,
-                              // validator: (val) {
-                              //   if (val != state.NewPassword) {
-                              //     return 'Passwords do not match';
-                              //   }
-                              //   return null;
-                              // },
+                              validator: Validators.validateOldPassword,
                               onChanged: (value) {
                                 context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
                               },
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureOldPassword = !_obscureOldPassword;
+                                  });
+                                },
+                              ),
                             ),
                             const SizedBox(height: 16),
                             CustomTextField(
                               label: 'New Password',
                               icon: Icons.lock,
-                              obscureText: true,
+                              obscureText: _obscureNewPassword,
                               isPassword: true,
                               value: state.NewPassword,
                               validator: Validators.validatePassword,
                               onChanged: (value) {
                                 context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
                               },
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureNewPassword = !_obscureNewPassword;
+                                  });
+                                },
+                              ),
                             ),
                             const SizedBox(height: 25),
                             SizedBox(
@@ -244,11 +263,11 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 child: state.apiStatus == ApiStatus.loading
                                     ? const CircularProgressIndicator(color: Colors.white)
                                     : const Text(
-                                  'Update Password',
+                                  'UPDATE PASSWORD',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),

@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/enums.dart';
+import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
 import '../bloc/sampleBloc.dart';
 import '../model/sampleData.dart';
 
@@ -69,15 +71,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return Colors.blue; // Sent/Pending for Verification
     if (s.contains('coding') || s.contains('decode'))
       return Colors
-          .cyan; // Sent for coding/decoding, Pending for Coding/Decoding
+          .cyan;
     if (s.contains('assignment') ||
         s.contains('allocated') ||
         s.contains('allocation'))
-      return Colors.orange; // sent for assignment/allocation
+      return Colors.orange;
     if (s.contains('analysis'))
-      return Colors.green; // sent for analysis / analysis successful
+      return Colors.green;
     if (s.contains('received'))
-      return Colors.purple; // received by courier/physically / entry successful
+      return Colors.purple;
 
     // Generic fallbacks for common words
     if (s.contains('pending')) return Colors.amber;
@@ -96,198 +98,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     return s.contains('tampered') || s.contains('resubmit');
   }
 
-  void _showSampleDetailsDialog(BuildContext context, SampleList data) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (ctx) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 8,
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, Colors.grey[50]!],
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: customColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.science,
-                        color: customColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sample Details',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: customColors.primary,
-                            ),
-                          ),
-                          Text(
-                            'Serial: ${data.serialNo ?? 'N/A'}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      icon: Icon(Icons.close, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                Divider(height: 32, thickness: 1),
 
-                // Details
-                _buildDetailRow(
-                  icon: Icons.send,
-                  label: 'Sent Date',
-                  value: _formatDate(data.sampleSentDate),
-                  color: Colors.blue,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.refresh,
-                  label: 'Resent Date',
-                  value: _formatDate(data.sampleResentDate),
-                  color: Colors.orange,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.calendar_today,
-                  label: 'Re-requested Date',
-                  value: _formatDate(data.sampleReRequestedDate),
-                  color: Colors.purple,
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.info,
-                  label: 'Status',
-                  value: data.statusName ?? 'N/A',
-                  color: getStatusColor(data.statusName),
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.location_on,
-                  label: 'Lab Location',
-                  value: data.labLocation ?? 'N/A',
-                  color: Colors.green,
-                ),
-
-                SizedBox(height: 24),
-
-                // Action Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (_isTampered(data.statusName)) ...[
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                          _showEditDialog(context, data);
-                        },
-                        icon: Icon(Icons.edit, size: 16),
-                        label: Text('Edit'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                    ],
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: Text('Close'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: customColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(icon, size: 16, color: color),
-        ),
-        SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   void _showEditDialog(BuildContext context, SampleList data) {
     // This is a placeholder for the edit functionality
@@ -338,7 +149,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           screenTitle: 'Sample Analysis',
           username: 'Username',
           userId: 'UserID',
-          showBack: true,
+          showBack: false,
           actions: [
             Container(
               margin: EdgeInsets.only(right: 8),
@@ -371,7 +182,10 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ),
             ),
           ],
+
         ),
+
+        drawer: CustomDrawer(),
         body: BlocBuilder<SampleBloc, getSampleListState>(
           builder: (context, state) {
             switch (state.fetchSampleList.status) {
@@ -601,16 +415,25 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     _buildCompactActionButton(
                       icon: Icons.visibility,
                       color: Colors.blue,
-                      onPressed: () => _showSampleDetailsDialog(context, data),
-                    ),
-                    if (_isTampered(data.statusName)) ...[
-                      SizedBox(width: 8),
-                      _buildCompactActionButton(
-                        icon: Icons.edit,
-                        color: Colors.green,
-                        onPressed: () => _showEditDialog(context, data),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: sampleBloc,
+                            child: SampleDetailsScreen(serialNo: data.serialNo ?? ''),
+                          ),
+                        ),
                       ),
-                    ],
+
+                    ),
+                    // if (_isTampered(data.statusName)) ...[
+                    //   SizedBox(width: 8),
+                    //   _buildCompactActionButton(
+                    //     icon: Icons.edit,
+                    //     color: Colors.green,
+                    //     onPressed: () => _showEditDialog(context, data),
+                    //   ),
+                    // ],
                   ],
                 ),
               ],
@@ -641,11 +464,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  Widget _buildCompactActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-  }) {
+  Widget _buildCompactActionButton({ required IconData icon, required Color color, required VoidCallback onPressed,}) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
@@ -735,145 +554,157 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    headingRowColor: MaterialStateProperty.all(
-                      customColors.primary,
-                    ),
-                    headingTextStyle: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    dataRowHeight: 60,
-                    headingRowHeight: 50,
-                    columnSpacing: 20,
-                    columns: [
-                      DataColumn(label: Text('Serial No.')),
-                      DataColumn(label: Text('Sent Date')),
-                      DataColumn(label: Text('Resent Date')),
-                      DataColumn(label: Text('Requested Date')),
-                      DataColumn(label: Text('Status')),
-                      DataColumn(label: Text('Lab Location')),
-                      DataColumn(label: Text('Actions')),
-                    ],
-                    rows: sampleDataList.map((data) {
-                      return DataRow(
-                        cells: [
-                          DataCell(
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    customColors.primary.withOpacity(0.1),
-                                    customColors.primary.withOpacity(0.2),
-                                  ],
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      headingRowColor: MaterialStateProperty.all(
+                        customColors.primary,
+                      ),
+                      headingTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      dataRowHeight: 60,
+                      headingRowHeight: 50,
+                      columnSpacing: 20,
+                      columns: [
+                        DataColumn(label: Text('Serial No.')),
+                        DataColumn(label: Text('Sent Date')),
+                        DataColumn(label: Text('Resent Date')),
+                        DataColumn(label: Text('Requested Date')),
+                        DataColumn(label: Text('Status')),
+                        DataColumn(label: Text('Lab Location')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows: sampleDataList.map((data) {
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                data.serialNo ?? 'N/A',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          DataCell(Text(_formatDate(data.sampleSentDate))),
-                          DataCell(Text(_formatDate(data.sampleResentDate))),
-                          DataCell(
-                            Text(_formatDate(data.sampleReRequestedDate)),
-                          ),
-                          DataCell(
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    getStatusColor(data.statusName),
-                                    getStatusColor(
-                                      data.statusName,
-                                    ).withOpacity(0.8),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                data.statusName ?? 'Unknown',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            Container(
-                              width: 120,
-                              child: Text(
-                                data.labLocation ?? 'N/A',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.blue,
-                                        Colors.blue.withOpacity(0.8),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(6),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      customColors.primary.withOpacity(0.1),
+                                      customColors.primary.withOpacity(0.2),
+                                    ],
                                   ),
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.visibility,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () =>
-                                        _showSampleDetailsDialog(context, data),
-                                    iconSize: 18,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  data.serialNo ?? 'N/A',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            DataCell(Text(_formatDate(data.sampleSentDate))),
+                            DataCell(Text(_formatDate(data.sampleResentDate))),
+                            DataCell(
+                              Text(_formatDate(data.sampleReRequestedDate)),
+                            ),
+                            DataCell(
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      getStatusColor(data.statusName),
+                                      getStatusColor(
+                                        data.statusName,
+                                      ).withOpacity(0.8),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  data.statusName ?? 'Unknown',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                   ),
                                 ),
-                                if (_isTampered(data.statusName)) ...[
-                                  SizedBox(width: 4),
+                              ),
+                            ),
+                            DataCell(
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  data.labLocation ?? 'N/A',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   Container(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          Colors.green,
-                                          Colors.green.withOpacity(0.8),
+                                          Colors.blue,
+                                          Colors.blue.withOpacity(0.8),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: IconButton(
                                       icon: Icon(
-                                        Icons.edit,
+                                        Icons.visibility,
                                         color: Colors.white,
                                       ),
                                       onPressed: () =>
-                                          _showEditDialog(context, data),
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => BlocProvider.value(
+                                                value: sampleBloc,
+                                                child: SampleDetailsScreen(serialNo: data.serialNo ?? ''),
+                                              ),
+                                            ),
+                                          ),
                                       iconSize: 18,
                                     ),
                                   ),
+                                  if (_isTampered(data.statusName)) ...[
+                                    SizedBox(width: 4),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.green,
+                                            Colors.green.withOpacity(0.8),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () =>
+                                            _showEditDialog(context, data),
+                                        iconSize: 18,
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),

@@ -42,6 +42,10 @@ class Form6Storage {
       'divisionIdByName': jsonEncode(state.divisionIdByName),
       'natureOptions': jsonEncode(state.natureOptions),
       'natureIdByName': jsonEncode(state.natureIdByName),
+      'lab': state.lab,
+      'labOptions': jsonEncode(state.labOptions),
+      'labIdByName': jsonEncode(state.labIdByName),
+      'sendingSampleLocation': state.sendingSampleLocation,
     };
 
     await db.insertForm6Data(data);
@@ -114,6 +118,11 @@ class Form6Storage {
       divisionIdByName: parseStringIntMap(data['divisionIdByName']),
       natureOptions: parseStringList(data['natureOptions']),
       natureIdByName: parseStringIntMap(data['natureIdByName']),
+      // Add missing fields
+      lab: data['lab'] ?? '',
+      labOptions: parseStringList(data['labOptions']),
+      labIdByName: parseStringIntMap(data['labIdByName']),
+      sendingSampleLocation: data['sendingSampleLocation'] ?? '',
     );
   }
 

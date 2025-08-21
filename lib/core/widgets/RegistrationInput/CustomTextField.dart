@@ -11,9 +11,11 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final TextInputType? keyboardType;
-  final bool isPassword;
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
+  final Widget? suffixIcon;
+  final bool isPassword;
+  final bool enabled; // <-- add enabled
 
   const CustomTextField({
     super.key,
@@ -21,12 +23,14 @@ class CustomTextField extends StatelessWidget {
     required this.icon,
     this.obscureText = false,
     this.value = '',
+    this.isPassword = false,
     this.validator,
     this.onChanged,
     this.keyboardType,
-    this.isPassword = false,
     this.maxLength,
     this.inputFormatters,
+    this.suffixIcon,
+    this.enabled = true, // default: true
   });
 
   @override
@@ -34,11 +38,13 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       initialValue: value,
       obscureText: obscureText,
+      enabled: enabled, // 🔑 now field can be disabled
       style: const TextStyle(fontSize: 16, color: customColors.black87),
       decoration: InputDecoration(
         hintText: label,
         hintStyle: const TextStyle(fontSize: 16, color: Colors.grey),
         prefixIcon: Icon(icon, color: customColors.primary),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: const Color(0xFFF7F8F9),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -75,17 +81,21 @@ class CustomTextField extends StatelessWidget {
 
 
 
+
 class AnimatedOtpInput extends StatefulWidget {
   final int length;
   final bool obscureText;
   final String value;
   final ValueChanged<String> onChanged;
+  final String? Function(String?)? validator; // <-- add validator
 
   const AnimatedOtpInput({
     Key? key,
     this.length = 6,
     this.obscureText = false,
-    required this.onChanged, this.value = '',
+    required this.onChanged,
+    this.value = '',
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -95,19 +105,31 @@ class AnimatedOtpInput extends StatefulWidget {
 class _AnimatedOtpInputState extends State<AnimatedOtpInput> {
   late List<FocusNode> _focusNodes;
   late List<TextEditingController> _controllers;
+  String? _errorText;
 
   @override
   void initState() {
     super.initState();
     _focusNodes = List.generate(widget.length, (_) => FocusNode());
-    _controllers = List.generate(widget.length, (_) => TextEditingController());
+    _controllers = List.generate(widget.length, (i) {
+      final controller = TextEditingController();
+      if (i < widget.value.length) {
+        controller.text = widget.value[i]; // prefill value if passed
+      }
+      controller.addListener(_onTextChanged);
+      return controller;
+    });
+    _errorText = widget.validator?.call(widget.value);
+  }
 
-    for (int i = 0; i < widget.length; i++) {
-      _controllers[i].addListener(() {
-        final currentText = _controllers.map((c) => c.text).join();
-        widget.onChanged(currentText);
+  void _onTextChanged() {
+    final currentText = _controllers.map((c) => c.text).join();
+    if (mounted) {
+      setState(() {
+        _errorText = widget.validator?.call(currentText);
       });
     }
+    widget.onChanged(currentText);
   }
 
   @override
@@ -163,11 +185,33 @@ class _AnimatedOtpInputState extends State<AnimatedOtpInput> {
     );
   }
 
+  /// Call this to validate the OTP
+  String? validate() {
+    if (widget.validator != null) {
+      final currentText = _controllers.map((c) => c.text).join();
+      return widget.validator!(currentText);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(widget.length, (index) => _buildOtpBox(index)),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(widget.length, (index) => _buildOtpBox(index)),
+        ),
+        if (_errorText != null && _errorText!.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              _errorText!,
+              style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+            ),
+          ),
+      ],
     );
   }
 }

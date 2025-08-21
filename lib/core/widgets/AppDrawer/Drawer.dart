@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
+import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
+import '../../../Screens/FORM6/repository/form6Repository.dart';
+import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../utils/ExitCOnfirmtionWidget.dart';
 
@@ -13,84 +17,94 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.white,
-      child: Column(
-        children: [
-          _buildDrawerHeader(context),
-          Expanded(
-            child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              _buildSectionTitle("Wallets & Earnings"),
-              _buildMenuItem (
-                context,
-                Icons.account_balance_wallet,
-                "Home",
-                onTap: () => Navigator.pushNamed(context, RouteName.homeScreen),
-              ),
-              _buildMenuItem(
-                context,
-                Icons.money,
-                "Form VI",
-                // onTap: () => Navigator.pushNamed(context, RouteName.earningsScreen),
-              ),
-
-              _buildMenuItem(
-                context,
-                Icons.library_books,
-                "Sample List Records",
-                onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
-              ),
-              const Divider(),
-              _buildSectionTitle("Others"),
-
-              _buildMenuItem(
-                context,
-                Icons.settings,
-                "Settings",
-                onTap: () => Navigator.pushNamed(context, RouteName.settingScreen),
-              ),
-              _buildMenuItem(
-                context,
-                Icons.support_agent_outlined,
-                "Help & Support",
-                onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
-              ),
-              _buildMenuItem(
-                context,
-                Icons.info_outline_rounded,
-                "About Us",
-                onTap: () => Navigator.pushNamed(context, RouteName.AboutUsScreen),
-              ),
-              // SizedBox(height: 100,),
-              Spacer(),
-              const Divider(),
-              _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
-                final bool confirmed = await ExitConfirmation.show(
-                  context,
-                  title: "Logout",
-                  description: "Are you sure you want to Logout?",
-                  confirmText: "Yes",
-                  cancelText: "No",
-                  confirmIcon: Icons.exit_to_app,
-                  cancelIcon: Icons.cancel_outlined,
-                );
-
-                if (confirmed) {
-                  // Navigate to login screen and clear navigation history
-                  Navigator.pushNamedAndRemoveUntil(
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            _buildDrawerHeader(context),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  // _buildSectionTitle("Wallets & Earnings"),
+                  // _buildMenuItem (
+                  //   context,
+                  //   Icons.account_balance_wallet,
+                  //   "Home",
+                  //   onTap: () => Navigator.pushNamed(context, RouteName.homeScreen),
+                  // ),
+                  _buildMenuItem(
                     context,
-                    RouteName.loginScreen,
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              }),
-              const SizedBox(height: 10),
-            ],
-          ),
+                    Icons.money,
+                    "Form VI",
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                          child: Form6LandingScreen(),
+                        ),
+                      ),
+                    ),
 
-    ),
 
-        ],
+
+                  ),
+
+                  _buildMenuItem(
+                    context,
+                    Icons.library_books,
+                    "Sample List Records",
+                    onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
+                  ),
+                  const Divider(),
+                  _buildSectionTitle("Others"),
+
+                  _buildMenuItem(
+                    context,
+                    Icons.settings,
+                    "Settings",
+                    onTap: () => Navigator.pushNamed(context, RouteName.settingScreen),
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.support_agent_outlined,
+                    "Help & Support",
+                    onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.info_outline_rounded,
+                    "About Us",
+                    onTap: () => Navigator.pushNamed(context, RouteName.AboutUsScreen),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
+              final bool confirmed = await ExitConfirmation.show(
+                context,
+                title: "Logout",
+                description: "Are you sure you want to Logout?",
+                confirmText: "Yes",
+                cancelText: "No",
+                confirmIcon: Icons.exit_to_app,
+                cancelIcon: Icons.cancel_outlined,
+              );
+
+              if (confirmed) {
+                // Navigate to login screen and clear navigation history
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.loginScreen,
+                  (Route<dynamic> route) => false,
+                );
+              }
+            }),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }

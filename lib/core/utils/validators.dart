@@ -8,6 +8,15 @@ class Validators {
 
     return null;
   }
+
+  static String? validateOldPassword(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Old password is required';
+    }
+
+    return null;
+  }
+
   static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Name is required';
@@ -15,12 +24,22 @@ class Validators {
 
     return null;
   }
+  static String? validateOTP(String? value, {int length = 6}) {
+    if (value == null || value.trim().isEmpty) {
+      return 'OTP is required';
+    } else if (value.trim().length != length) {
+      return 'OTP must be $length digits';
+    } else if (!RegExp(r'^\d+$').hasMatch(value.trim())) {
+      return 'OTP must contain only digits';
+    }
+    return null; // valid
+  }
 
   static String? validateCaptcha(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Captcha is required';
     }
-
+    // Captcha correctness is validated inside CaptchaWidget where the generated code is available
     return null;
   }
   static String? validateCountry(String? value) {
@@ -49,8 +68,8 @@ class Validators {
       return 'Password is required';
     }
 
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
     }
 
     return null;
@@ -92,9 +111,7 @@ class Validators {
       return 'OTP is required';
     }
     
-    if (value.length < 4) {
-      return 'OTP must be at least 4 digits';
-    }
+
     
     if (value.length > 6) {
       return 'OTP cannot be more than 6 digits';

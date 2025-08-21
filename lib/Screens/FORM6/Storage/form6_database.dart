@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -62,7 +62,11 @@ class Form6Database {
       divisionOptions TEXT,
       divisionIdByName TEXT,
       natureOptions TEXT,
-      natureIdByName TEXT
+      natureIdByName TEXT,
+      lab TEXT,
+      labOptions TEXT,
+      labIdByName TEXT,
+      sendingSampleLocation TEXT
     )
     ''');
   }
@@ -85,6 +89,12 @@ class Form6Database {
       await db.execute('ALTER TABLE form6 ADD COLUMN divisionIdByName TEXT');
       await db.execute('ALTER TABLE form6 ADD COLUMN natureOptions TEXT');
       await db.execute('ALTER TABLE form6 ADD COLUMN natureIdByName TEXT');
+    }
+    if (oldVersion < 4) {
+      await db.execute('ALTER TABLE form6 ADD COLUMN lab TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN labOptions TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN labIdByName TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN sendingSampleLocation TEXT');
     }
   }
 

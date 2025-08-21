@@ -139,8 +139,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           screenTitle: 'Form VI',
           username: 'Rajan',
           userId: 'S1234',
+          showBack: true,
+
         ),
-        drawer: CustomDrawer(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 100),
           child: SingleChildScrollView(

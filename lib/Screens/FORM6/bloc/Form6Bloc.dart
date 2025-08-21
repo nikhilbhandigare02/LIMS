@@ -69,8 +69,18 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       if (districtId != null) {
         add(FetchDivisionsRequested(districtId)); // Corrected to FetchDivisionsRequested
       }
-      // Clear dependent dropdowns
-      emit(state.copyWith(division: '', region: '', divisionOptions: [], regionOptions: [], divisionIdByName: {}, regionIdByName: {}));
+      // Clear dependent dropdowns but preserve independent fields
+      emit(state.copyWith(
+        division: '', 
+        region: '', 
+        divisionOptions: [], 
+        regionOptions: [], 
+        divisionIdByName: {}, 
+        regionIdByName: {},
+        // Keep lab and sendingSampleLocation unchanged
+        lab: state.lab,
+        sendingSampleLocation: state.sendingSampleLocation,
+      ));
     });
     on<CollectionDateChanged>((event, emit) {
         print(state.collectionDate);
@@ -172,8 +182,15 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       if (divisionId != null) {
         add(FetchRegionsRequested(divisionId)); // Corrected to FetchRegionsRequested
       }
-      // Clear dependent dropdowns
-      emit(state.copyWith(region: '', regionOptions: [], regionIdByName: {}));
+      // Clear dependent dropdowns but preserve independent fields
+      emit(state.copyWith(
+        region: '', 
+        regionOptions: [], 
+        regionIdByName: {},
+        // Keep lab and sendingSampleLocation unchanged
+        lab: state.lab,
+        sendingSampleLocation: state.sendingSampleLocation,
+      ));
     });
     on<AreaChanged>((event, emit) {
       print(state.area);
@@ -277,7 +294,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           districtOptions: parsed.names,
           districtIdByName: parsed.nameToId,
-          district: state.district.isEmpty && parsed.names.isNotEmpty ? parsed.names.first : state.district,
+          // keep user's current selection; do not auto-select the first option
+          district: state.district,
         ));
       } catch (e) {
         try {
@@ -297,7 +315,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           emit(state.copyWith(
             districtOptions: parsed.names,
             districtIdByName: parsed.nameToId,
-            district: state.district.isEmpty && parsed.names.isNotEmpty ? parsed.names.first : state.district,
+            // keep user's current selection; do not auto-select the first option
+            district: state.district,
           ));
         } catch (_) {
           // swallow; keep current options
@@ -342,7 +361,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           regionOptions: parsed.names,
           regionIdByName: parsed.nameToId,
-          region: state.region.isEmpty && parsed.names.isNotEmpty ? parsed.names.first : state.region,
+          // keep user's current selection; do not auto-select the first option
+          region: state.region,
         ));
       } catch (e) {
         try {
@@ -362,7 +382,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           emit(state.copyWith(
             regionOptions: parsed.names,
             regionIdByName: parsed.nameToId,
-            region: state.region.isEmpty && parsed.names.isNotEmpty ? parsed.names.first : state.region,
+            // keep user's current selection; do not auto-select the first option
+            region: state.region,
           ));
         } catch (_) {}
       }
@@ -403,7 +424,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           divisionOptions: parsed.names,
           divisionIdByName: parsed.nameToId,
-          division: state.division.isNotEmpty && parsed.names.contains(state.division) ? state.division : (parsed.names.isNotEmpty ? parsed.names.first : ''),
+          // keep user's current selection; do not auto-select the first option
+          division: state.division,
         ));
       } catch (e) {
         try {
@@ -423,7 +445,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           emit(state.copyWith(
             divisionOptions: parsed.names,
             divisionIdByName: parsed.nameToId,
-            division: state.division.isNotEmpty && parsed.names.contains(state.division) ? state.division : (parsed.names.isNotEmpty ? parsed.names.first : ''),
+            // keep user's current selection; do not auto-select the first option
+            division: state.division,
           ));
         } catch (_) {}
       }
@@ -467,7 +490,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           natureOptions: parsed.names,
           natureIdByName: parsed.nameToId,
-          article: state.article.isNotEmpty && parsed.names.contains(state.article) ? state.article : (parsed.names.isNotEmpty ? parsed.names.first : ''),
+          // keep user's current selection; do not auto-select the first option
+          article: state.article,
         ));
       } catch (e) {
         try {
@@ -491,7 +515,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           emit(state.copyWith(
             natureOptions: parsed.names,
             natureIdByName: parsed.nameToId,
-            article: state.article.isNotEmpty && parsed.names.contains(state.article) ? state.article : (parsed.names.isNotEmpty ? parsed.names.first : ''),
+            // keep user's current selection; do not auto-select the first option
+            article: state.article,
           ));
         } catch (_) {}
       }

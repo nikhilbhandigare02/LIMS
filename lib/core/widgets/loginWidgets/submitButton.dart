@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
+import 'package:food_inspector/Screens/Sample%20list/view/SampleList.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
-import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has MessageType enum and showTopRightOverlay
-
+import 'package:food_inspector/core/utils/Message.dart';
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
@@ -46,23 +46,27 @@ class LoginButton extends StatelessWidget {
             final secureStorage = FlutterSecureStorage();
             final loginDataStr = await secureStorage.read(key: 'loginData');
 
-            String loginFlag = '';
+            int passResetFlag = 0;
             if (loginDataStr != null) {
               final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
-              loginFlag = (loginDataMap['LoginFlag'] ?? '') as String;
+              final passResetStr = loginDataMap['PassResetFlag'] ?? '0'; // default to '0'
+              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0; // safely parse to int
             }
 
-
+            if (passResetFlag == 0) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) =>
-                        SampleFormBloc(form6repository: Form6Repository()),
-                    child: Form6LandingScreen(),
-                  ),
-                ),
+                MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
               );
+            } else if (passResetFlag == 1) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SampleAnalysisScreen()),
+              );
+            } else {
+              // Fallback → go to login screen
+              Navigator.pushReplacementNamed(context, RouteName.loginScreen);
+            }
 
 
             break;
@@ -90,7 +94,7 @@ class LoginButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
                 shadowColor: Colors.transparent,
               ),
@@ -111,10 +115,10 @@ class LoginButton extends StatelessWidget {
                 ),
               )
                   : const Text(
-                'Sign in',
+                'Log IN',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),

@@ -170,9 +170,9 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppHeader(
-        screenTitle: widget.section == 'other' ? 'Form IV' : 'Form IV',
-        username: 'Rajan',
-        userId: 'S0001',
+        screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
+        username: ' ',
+        userId: ' ',
         showBack: true,
       ),
       body: Padding(

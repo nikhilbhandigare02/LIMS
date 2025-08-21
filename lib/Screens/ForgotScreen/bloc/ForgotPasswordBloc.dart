@@ -147,6 +147,14 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
       Emitter<ForgotPasswordState> emit,
       ) async {
     // Start loading
+    // Guard: require 6-digit OTP before proceeding
+    if (state.otp.isEmpty || state.otp.length != 6 || !RegExp(r'^\d{6}$').hasMatch(state.otp)) {
+      emit(state.copyWith(
+        apiStatus: ApiStatus.error,
+        message: 'OTP is required and must be 6 digits.',
+      ));
+      return;
+    }
     emit(state.copyWith(apiStatus: ApiStatus.loading, message: '', ));
 
     try {

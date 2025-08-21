@@ -6,6 +6,12 @@ abstract class SampleEvent extends Equatable{
 
 }
 
-class getSampleListEvent extends SampleEvent{
+class getSampleListEvent extends SampleEvent{}
 
+class getFormEvent extends SampleEvent{
+  final String serialNo;
+  const getFormEvent({required this.serialNo});
+
+  @override
+  List<Object> get props => [serialNo];
 }

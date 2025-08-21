@@ -16,12 +16,13 @@ class ViewForm6Model {
 }
 
   ViewForm6Model.fromJson(dynamic json) {
-    _success = json['success'];
-    _message = json['message'];
-    _statusCode = json['statusCode'];
-    if (json['form6Details'] != null) {
+    _success = json['success'] ?? json['Success'] ?? json['SUCCESS'];
+    _message = (json['message'] ?? json['Message'])?.toString();
+    _statusCode = json['statusCode'] ?? json['StatusCode'] ?? json['status_code'];
+    final dynamic detailsNode = json['form6Details'] ?? json['Form6Details'] ?? json['form_6_details'];
+    if (detailsNode is List) {
       _form6Details = [];
-      json['form6Details'].forEach((v) {
+      detailsNode.forEach((v) {
         _form6Details?.add(Form6Details.fromJson(v));
       });
     }
@@ -162,39 +163,39 @@ class Form6Details {
 }
 
   Form6Details.fromJson(dynamic json) {
-    _success = json['success'];
-    _message = json['message'];
-    _statusCode = json['statusCode'];
-    _serialNo = json['serialNo'];
-    _sampleCodeNumber = json['sampleCodeNumber'];
-    _collectionDate = json['collectionDate'];
-    _placeOfCollection = json['placeOfCollection'];
-    _sampleName = json['sampleName'];
-    _quantityOfSample = json['quantityOfSample'];
-    _sampleId = json['sampleId'];
-    _preservativeAdded = json['preservativeAdded'];
-    _preservativeName = json['preservativeName'];
-    _quantityOfPreservative = json['quantityOfPreservative'];
-    _witnessSignature = json['witnessSignature'];
-    _paperSlipNumber = json['paperSlipNumber'];
-    _signatureOfDO = json['signatureOfDO'];
-    _wrapperCodeNumber = json['wrapperCodeNumber'];
-    _sealImpression = json['sealImpression'];
-    _sealNumber = json['sealNumber'];
-    _memoFormVI = json['memoFormVI'];
-    _wrapperFormVI = json['wrapperFormVI'];
-    _latitude = json['latitude'];
-    _longitude = json['longitude'];
-    _status = json['status'];
-    _senderName = json['senderName'];
-    _senderDesignation = json['senderDesignation'];
-    _doNumber = json['doNumber'];
-    _country = json['country'];
-    _state = json['state'];
-    _district = json['district'];
-    _division = json['division'];
-    _region = json['region'];
-    _area = json['area'];
+    _success = json['success'] ?? json['Success'];
+    _message = (json['message'] ?? json['Message'])?.toString();
+    _statusCode = json['statusCode'] ?? json['StatusCode'];
+    _serialNo = (json['serialNo'] ?? json['SerialNo'] ?? json['serial_no'])?.toString();
+    _sampleCodeNumber = (json['sampleCodeNumber'] ?? json['SampleCodeNumber'] ?? json['sampleCode'] ?? json['SampleCode'])?.toString();
+    _collectionDate = (json['collectionDate'] ?? json['CollectionDate'] ?? json['collection_date'])?.toString();
+    _placeOfCollection = (json['placeOfCollection'] ?? json['PlaceOfCollection'] ?? json['place_of_collection'])?.toString();
+    _sampleName = (json['sampleName'] ?? json['SampleName'])?.toString();
+    _quantityOfSample = (json['quantityOfSample'] ?? json['QuantityOfSample'] ?? json['quantity'])?.toString();
+    _sampleId = (json['sampleId'] ?? json['SampleId'] ?? json['sample_id'])?.toString();
+    _preservativeAdded = (json['preservativeAdded'] ?? json['PreservativeAdded'])?.toString();
+    _preservativeName = (json['preservativeName'] ?? json['PreservativeName'])?.toString();
+    _quantityOfPreservative = (json['quantityOfPreservative'] ?? json['QuantityOfPreservative'])?.toString();
+    _witnessSignature = (json['witnessSignature'] ?? json['WitnessSignature'])?.toString();
+    _paperSlipNumber = (json['paperSlipNumber'] ?? json['PaperSlipNumber'])?.toString();
+    _signatureOfDO = (json['signatureOfDO'] ?? json['SignatureOfDO'] ?? json['signatureOfDo'])?.toString();
+    _wrapperCodeNumber = (json['wrapperCodeNumber'] ?? json['WrapperCodeNumber'])?.toString();
+    _sealImpression = (json['sealImpression'] ?? json['SealImpression'])?.toString();
+    _sealNumber = (json['sealNumber'] ?? json['SealNumber'])?.toString();
+    _memoFormVI = (json['memoFormVI'] ?? json['MemoFormVI'])?.toString();
+    _wrapperFormVI = (json['wrapperFormVI'] ?? json['WrapperFormVI'])?.toString();
+    _latitude = (json['latitude'] ?? json['Latitude'])?.toString();
+    _longitude = (json['longitude'] ?? json['Longitude'])?.toString();
+    _status = (json['status'] ?? json['Status'])?.toString();
+    _senderName = (json['senderName'] ?? json['SenderName'])?.toString();
+    _senderDesignation = (json['senderDesignation'] ?? json['SenderDesignation'])?.toString();
+    _doNumber = (json['doNumber'] ?? json['DoNumber'] ?? json['DONumber'])?.toString();
+    _country = (json['country'] ?? json['Country'])?.toString();
+    _state = (json['state'] ?? json['State'])?.toString();
+    _district = (json['district'] ?? json['District'])?.toString();
+    _division = (json['division'] ?? json['Division'])?.toString();
+    _region = (json['region'] ?? json['Region'])?.toString();
+    _area = (json['area'] ?? json['Area'])?.toString();
   }
   num? _success;
   String? _message;

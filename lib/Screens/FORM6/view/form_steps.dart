@@ -57,6 +57,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         icon: Icons.person,
         initialValue: state.senderName,
         onChanged: (val) => bloc.add(senderNameChanged(val)),
+        readOnly: true,
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -64,6 +65,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         icon: Icons.badge,
         initialValue: state.senderDesignation,
         onChanged: (val) => bloc.add(senderDesignationChanged(val)),
+        readOnly: true,
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -77,7 +79,6 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         builder: (context, s) {
           final selected = s.district;
           final items = s.districtOptions;
-          const placeholder = "Select District";
           return AbsorbPointer(
             absorbing: items.isEmpty,
             child: Opacity(
@@ -85,13 +86,12 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               child: BlocDropdown(
                 label: "District",
                 icon: Icons.location_on,
-                value: selected.isEmpty ? placeholder : selected,
-                items: items.isEmpty ? [placeholder] : items,
+                value: selected.isEmpty ? null : selected,
+                items: items.isEmpty ? [] : items,
                 onChanged: (val) {
-                  if (val == placeholder) return;
+                  if (val == null) return;
                   bloc.add(DistrictChanged(val));
-                  // When district changes, fetch divisions for that district
-                  final districtId = bloc.state.districtIdByName[val];
+                   final districtId = bloc.state.districtIdByName[val];
                   if (districtId != null) {
                     bloc.add(FetchDivisionsRequested(districtId));
                   }
@@ -138,7 +138,6 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
           }
           final selected = s.division;
           final items = s.divisionOptions;
-          const placeholder = "Select Division";
 
           return AbsorbPointer(
             absorbing: items.isEmpty,
@@ -147,10 +146,10 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               child: BlocDropdown(
                 label: "Division",
                 icon: Icons.apartment,
-                value: selected.isEmpty ? placeholder : selected,
-                items: items.isEmpty ? [placeholder] : items,
+                value: selected.isEmpty ? null : selected,
+                items: items.isEmpty ? [] : items,
                 onChanged: (val) {
-                  if (val == placeholder) return;
+                  if (val == null) return;
                   bloc.add(DivisionChanged(val));
                   // When division changes, fetch regions for that division
                   final divisionId = bloc.state.divisionIdByName[val];
@@ -166,7 +165,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
-          if (s.division.isEmpty) { // Changed dependency from district to division
+          if (s.division.isEmpty) {
             const blockMsg = "Select division first";
             return Opacity(
               opacity: 0.7,
@@ -200,7 +199,6 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
           }
           final selected = s.region;
           final items = s.regionOptions;
-          const placeholder = "Select Region";
 
           return AbsorbPointer(
             absorbing: items.isEmpty,
@@ -209,10 +207,10 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               child: BlocDropdown(
                 label: "Region",
                 icon: Icons.map,
-                value: selected.isEmpty ? placeholder : selected,
-                items: items.isEmpty ? [placeholder] : items,
+                value: selected.isEmpty ? null : selected,
+                items: items.isEmpty ? [] : items,
                 onChanged: (val) {
-                  if (val == placeholder) return;
+                  if (val == null) return;
                   bloc.add(RegionChanged(val));
                 },
               ),
@@ -255,16 +253,15 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               ),
             );
           }
-          const placeholder = "Select Lab";
-          final items = [placeholder, ...s.labOptions];
-          final selected = s.lab.isNotEmpty ? s.lab : items.first;
+          final selected = s.lab;
+          final items = s.labOptions;
           return BlocDropdown(
-            label: "Lab Master",
+            label: "Lab  ",
             icon: Icons.science,
-            value: selected,
+            value: selected.isEmpty ? null : selected,
             items: items,
             onChanged: (val) {
-              if (val == placeholder) return;
+              if (val == null) return;
               bloc.add(LabChanged(val));
             },
           );
@@ -279,6 +276,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
             icon: Icons.explore,
             initialValue: state.Lattitude,
             onChanged: (val) => context.read<SampleFormBloc>().add(Lattitude(val)),
+            readOnly: true,
           );
         },
       ),
@@ -290,6 +288,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
             icon: Icons.navigation_outlined,
             initialValue: state.Longitude,
             onChanged: (val) => context.read<SampleFormBloc>().add(Longitude(val)),
+            readOnly: true,
           );
         },
       ),
@@ -310,12 +309,18 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
-          return BlocDatePicker(
-            label: "Date of Collection",
-            selectedDate: state.collectionDate,
-            onChanged: (date) {
-              context.read<SampleFormBloc>().add(CollectionDateChanged(date));
-            },
+          return Opacity(
+            opacity: 0.8,
+            child: IgnorePointer(
+              ignoring: true,
+              child: BlocDatePicker(
+                label: "Date of Collection",
+                selectedDate: state.collectionDate,
+                onChanged: (date) {
+                  context.read<SampleFormBloc>().add(CollectionDateChanged(date));
+                },
+              ),
+            ),
           );
         },
       ),
@@ -360,16 +365,15 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
               ),
             );
           }
-          const placeholder = "Select Nature of Sample";
-          final items = [placeholder, ...s.natureOptions];
-          final selected = s.article.isNotEmpty ? s.article : items.first;
+          final items = s.natureOptions;
+          final selected = (s.article.isNotEmpty && items.contains(s.article)) ? s.article : null;
           return BlocDropdown(
             label: "Nature of Sample",
             icon: Icons.category,
             value: selected,
             items: items,
             onChanged: (val) {
-              if (val == placeholder) return;
+              if (val == null) return;
               bloc.add(articleChanged(val));
             },
           );
@@ -465,15 +469,16 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Impression of seal of the sender ',
-            value: state.sealImpression, // ← from BLoC state
-            icon: Icons.verified,
+            label: 'Form VI is inside the sample Wrapper? ',
+            value: state.FoemVIWrapper,
+            icon: Icons.inventory,
             onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(sealImpressionChanged(newValue)); // ← dispatch event
+              context.read<SampleFormBloc>().add(FoemVIWrapperChanged(newValue)); // ← dispatch event
             },
           );
         },
       ),
+
       SizedBox(height: 16),
       BlocTextInput(
         label: "Number of Seal",
@@ -486,7 +491,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Memorandum in Form VI (Sealed packed & \nSpecimen of the seal) ',
+            label: 'Memorandum of Form VI and Specimen Impression \n of the Sealed packet',
             value: state.formVI, // ← from BLoC state
             icon: Icons.description,
             onChanged: (newValue) {
@@ -495,16 +500,18 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           );
         },
       ),
+
+
       SizedBox(height: 16),
 
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Form VI is inside the sample Wrapper? ',
-            value: state.FoemVIWrapper,
-            icon: Icons.inventory,
+            label: 'Impression of seal of the sender ',
+            value: state.sealImpression, // ← from BLoC state
+            icon: Icons.verified,
             onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(FoemVIWrapperChanged(newValue)); // ← dispatch event
+              context.read<SampleFormBloc>().add(sealImpressionChanged(newValue)); // ← dispatch event
             },
           );
         },
