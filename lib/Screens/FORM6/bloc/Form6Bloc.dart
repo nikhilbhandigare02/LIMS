@@ -184,6 +184,49 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<FetchRegionsRequested>(_onFetchRegionsRequested);
     on<FetchDivisionsRequested>(_onFetchDivisionsRequested);
     on<FormSubmit>(_onFormSubmit);
+    on<FetchLabMasterRequested>((event, emit) async {
+      emit(state.copyWith(labOptions: [], labIdByName: {}, lab: ''));
+      try {
+        final session = await encryptWithSession(
+          data: {},
+          rsaPublicKeyPem: rsaPublicKeyPem,
+        );
+        final encryptedPayload = {
+          'encryptedData': session.payloadForServer['EncryptedData']!,
+          'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
+          'iv': session.payloadForServer['IV']!,
+        };
+        final response = await form6repository.getLabMaster(encryptedPayload);
+        print('LabMaster API response (encrypted):');
+        print(response);
+        // Try to decrypt and print the response for debugging
+        try {
+          final String encryptedDataBase64 =
+              (response['encryptedData'] ?? response['EncryptedData']) as String;
+          final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
+          final String decrypted = utf8.decode(
+            aesCbcDecrypt(
+              base64ToBytes(encryptedDataBase64),
+              session.aesKeyBytes,
+              base64ToBytes(serverIvBase64),
+            ),
+          );
+          print('LabMaster API response (decrypted):');
+          print(decrypted);
+          final parsed = _parseIdNameList(decrypted, idKeys: ['labId', 'LabId', 'id', 'Id'], nameKeys: ['labName', 'LabName', 'name', 'Name', 'text', 'Text', 'label', 'Label']);
+          emit(state.copyWith(labOptions: parsed.names, labIdByName: parsed.nameToId));
+        } catch (e) {
+          print('Failed to decrypt LabMaster response: $e');
+          emit(state.copyWith(labOptions: [], labIdByName: {}, lab: ''));
+        }
+      } catch (e) {
+        emit(state.copyWith(labOptions: [], labIdByName: {}, lab: ''));
+      }
+    });
+
+    on<LabChanged>((event, emit) {
+      emit(state.copyWith(lab: event.value ?? ''));
+    });
 
     on<FormResetEvent>((event, emit) {
       emit(const SampleFormState());
@@ -191,6 +234,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<Lattitude>((event, emit) => emit(state.copyWith(Lattitude: event.value)));
     on<Longitude>((event, emit) => emit(state.copyWith(Longitude: event.value)));
     on<FetchLocationRequested>(_onFetchLocationRequested);
+    on<SendingSampleLocationChanged>((event, emit) {
+      emit(state.copyWith(sendingSampleLocation: event.value));
+    });
   }
     
 
@@ -776,6 +822,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'RegionId': regionId,
         'DivisionId': divisionId,
         'Area': state.area,
+        'SampleSendLocation': state.sendingSampleLocation,
+        'LabMastId': state.labIdByName[state.lab],
 
         // sample_details inputs
         'SampleCodeNumber': state.sampleCodeNumber.isNotEmpty ? state.sampleCodeNumber : state.sampleCodeData,

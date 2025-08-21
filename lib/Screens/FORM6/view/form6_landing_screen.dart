@@ -236,6 +236,10 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 if (result == 'completed') {
                   print("🔄 Form section completed, reloading status");
                   await loadCompletionStatus();
+                  final savedState = await storage.fetchStoredState();
+                  if (savedState != null) {
+                    context.read<SampleFormBloc>().add(LoadSavedFormData(savedState));
+                  }
                 }
               },
               child: Row(

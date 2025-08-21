@@ -84,7 +84,21 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       // Validate completion based on section
       bool isComplete = false;
       String errorMessage = "";
-      
+
+      // Debug print for FSO Info validation
+      if (widget.section == 'other') {
+        print('Validation fields:');
+        print('senderName: \'${state.senderName}\'');
+        print('senderDesignation: \'${state.senderDesignation}\'');
+        print('DONumber: \'${state.DONumber}\'');
+        print('district: \'${state.district}\'');
+        print('division: \'${state.division}\'');
+        print('region: \'${state.region}\'');
+        print('area: \'${state.area}\'');
+        print('lab: \'${state.lab}\'');
+        print('sendingSampleLocation: \'${state.sendingSampleLocation}\'');
+      }
+
       if (widget.section == 'other') {
         isComplete = state.isOtherInfoComplete;
         errorMessage = "⚠️ Please complete all required fields.";

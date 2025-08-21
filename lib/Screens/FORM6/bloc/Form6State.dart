@@ -38,6 +38,10 @@ class SampleFormState extends Equatable {
   final String message;
   final ApiStatus apiStatus;
   final Map<String, String?> fieldErrors;
+  final String lab;
+  final List<String> labOptions;
+  final Map<String, int> labIdByName;
+  final String sendingSampleLocation;
 
   const SampleFormState({
     this.senderName = '',
@@ -77,6 +81,10 @@ class SampleFormState extends Equatable {
     this.message = '',
     this.apiStatus = ApiStatus.initial,
     this.fieldErrors = const {},
+    this.lab = '',
+    this.labOptions = const [],
+    this.labIdByName = const {},
+    this.sendingSampleLocation = '',
   });
 
   SampleFormState copyWith({
@@ -117,6 +125,10 @@ class SampleFormState extends Equatable {
     final String? message,
     final ApiStatus? apiStatus,
     Map<String, String?>? fieldErrors,
+    String? lab,
+    List<String>? labOptions,
+    Map<String, int>? labIdByName,
+    String? sendingSampleLocation,
   }) {
     return SampleFormState(
       senderName: senderName ?? this.senderName,
@@ -156,6 +168,10 @@ class SampleFormState extends Equatable {
       message: message ?? this.message,
       apiStatus: apiStatus ?? this.apiStatus,
       fieldErrors: fieldErrors ?? this.fieldErrors,
+      lab: lab ?? this.lab,
+      labOptions: labOptions ?? this.labOptions,
+      labIdByName: labIdByName ?? this.labIdByName,
+      sendingSampleLocation: sendingSampleLocation ?? this.sendingSampleLocation,
     );
   }
 
@@ -198,6 +214,10 @@ class SampleFormState extends Equatable {
     message,
     apiStatus,
     fieldErrors,
+    lab,
+    labOptions,
+    labIdByName,
+    sendingSampleLocation,
   ];
 
   bool get isOtherInfoComplete {
@@ -207,7 +227,9 @@ class SampleFormState extends Equatable {
         district.isNotEmpty &&
         division.isNotEmpty && // Changed order
         region.isNotEmpty && // Changed order
-        area.isNotEmpty;
+        area.isNotEmpty &&
+        lab.isNotEmpty &&
+        sendingSampleLocation.isNotEmpty;
   }
 
   bool get isSampleInfoComplete {
@@ -261,6 +283,9 @@ class SampleFormState extends Equatable {
       'DivisionId': divisionIdByName[division],
       'RegionId': regionIdByName[region],
       'Area': area,
+      'lab': lab,
+      'LabId': labIdByName[lab],
+      'sendingSampleLocation': sendingSampleLocation,
     };
   }
 
@@ -307,6 +332,10 @@ class SampleFormState extends Equatable {
             (e) => e.name == map['apiStatus'],
         orElse: () => ApiStatus.initial,
       ),
+      lab: map['lab'] ?? '',
+      labOptions: map['labOptions'] != null ? List<String>.from(map['labOptions']) : const [],
+      labIdByName: map['labIdByName'] != null ? Map<String, int>.from(map['labIdByName']) : const {},
+      sendingSampleLocation: map['sendingSampleLocation'] ?? '',
     );
   }
 }

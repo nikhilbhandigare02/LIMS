@@ -52,12 +52,7 @@ class LoginButton extends StatelessWidget {
               loginFlag = (loginDataMap['LoginFlag'] ?? '') as String;
             }
 
-            if (loginFlag == 'firstlogin') {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
-              );
-            } else if (loginFlag == 'secondlogin') {
+
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -68,10 +63,7 @@ class LoginButton extends StatelessWidget {
                   ),
                 ),
               );
-            } else {
-              // Fallback → go to login screen
-              Navigator.pushReplacementNamed(context, RouteName.loginScreen);
-            }
+
 
             break;
 

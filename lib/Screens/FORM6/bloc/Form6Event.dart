@@ -240,3 +240,21 @@ class FetchDivisionsRequested extends SampleFormEvent {
   @override
   List<Object?> get props => [districtId];
 }
+
+class FetchLabMasterRequested extends SampleFormEvent {
+  const FetchLabMasterRequested();
+}
+
+class LabChanged extends SampleFormEvent {
+  final String? value;
+  const LabChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class SendingSampleLocationChanged extends SampleFormEvent {
+  final String value;
+  const SendingSampleLocationChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}

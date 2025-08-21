@@ -52,4 +52,13 @@ class Form6Repository {
     final response = await _api.postApi(url, data, headers: headers);
     return response;
   }
+
+  Future<dynamic> getLabMaster(dynamic data) async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'authToken');
+    final url = ApiBase.baseUrl + ApiEndpoints.getLabMaster;
+    final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
+    final response = await _api.postApi(url, data, headers: headers);
+    return response;
+  }
 }

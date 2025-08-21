@@ -227,6 +227,49 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         initialValue: state.area,
         onChanged: (val) => bloc.add(AreaChanged(val)),
       ),
+      SizedBox(height: 16),
+      BlocTextInput(
+        label: "Sending Sample Location",
+        icon: Icons.location_city,
+        initialValue: state.sendingSampleLocation ?? '',
+        onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
+      ),
+      SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          if (s.labOptions.isEmpty) {
+            // Trigger fetch if not already fetched
+            bloc.add(FetchLabMasterRequested());
+            const loading = "Loading labs...";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Lab Master",
+                  icon: Icons.science,
+                  value: loading,
+                  items: const [loading],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          const placeholder = "Select Lab";
+          final items = [placeholder, ...s.labOptions];
+          final selected = s.lab.isNotEmpty ? s.lab : items.first;
+          return BlocDropdown(
+            label: "Lab Master",
+            icon: Icons.science,
+            value: selected,
+            items: items,
+            onChanged: (val) {
+              if (val == placeholder) return;
+              bloc.add(LabChanged(val));
+            },
+          );
+        },
+      ),
 
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -269,7 +312,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
         builder: (context, state) {
           return BlocDatePicker(
             label: "Date of Collection",
-            selectedDate: state.collectionDate, // coming from BLoC
+            selectedDate: state.collectionDate,
             onChanged: (date) {
               context.read<SampleFormBloc>().add(CollectionDateChanged(date));
             },
