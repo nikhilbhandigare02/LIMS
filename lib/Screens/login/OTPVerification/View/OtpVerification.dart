@@ -106,7 +106,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           elevation: 0,
                         ),
                         onPressed: (state.apiStatus == ApiStatus.loading)
