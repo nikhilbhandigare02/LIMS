@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import '../../Screens/FORM6/bloc/Form6Bloc.dart';
 
 class Validators {
@@ -24,6 +25,7 @@ class Validators {
 
     return null;
   }
+
   static String? validateOTP(String? value, {int length = 6}) {
     if (value == null || value.trim().isEmpty) {
       return 'OTP is required';
@@ -42,6 +44,7 @@ class Validators {
     // Captcha correctness is validated inside CaptchaWidget where the generated code is available
     return null;
   }
+
   static String? validateCountry(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Country is required';
@@ -49,6 +52,7 @@ class Validators {
 
     return null;
   }
+
   static String? validateState(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'State is required';
@@ -56,6 +60,7 @@ class Validators {
 
     return null;
   }
+
   static String? validateDistrict(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'District is required';
@@ -63,6 +68,21 @@ class Validators {
 
     return null;
   }
+
+  static String? validateDivision(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Division is required';
+    }
+    return null;
+  }
+
+  static String? validateRegion(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Region is required';
+    }
+    return null;
+  }
+
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
@@ -93,11 +113,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Mobile number is required';
     }
-    
+
     if (value.length != 10) {
       return 'Mobile number must be exactly 10 digits';
     }
-    
+
     // Check if it contains only digits
     if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
       return 'Mobile number must contain only digits';
@@ -110,13 +130,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'OTP is required';
     }
-    
 
-    
     if (value.length > 6) {
       return 'OTP cannot be more than 6 digits';
     }
-    
+
     // Check if it contains only digits
     if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
       return 'OTP must contain only digits';
@@ -129,7 +147,7 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Confirm password is required';
     }
-    
+
     if (newPassword != null && value != newPassword) {
       return 'Passwords do not match';
     }
@@ -143,6 +161,88 @@ class Validators {
     }
     return null;
   }
+
+  // New number-only validators for specific fields
+  static String? validateDONumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'DO Number is required';
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'DO Number must contain only numbers';
+    }
+
+    return null;
+  }
+
+  static String? validateSampleCodeNumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Sample Code Number is required';
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'Sample Code Number must contain only numbers';
+    }
+
+    return null;
+  }
+
+  static String? validateSlipNumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Slip Number is required';
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'Slip Number must contain only numbers';
+    }
+
+    return null;
+  }
+
+  static String? validateNumberOfSeals(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Number of Seals is required';
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'Number of Seals must contain only numbers';
+    }
+
+    int? number = int.tryParse(value.trim());
+    if (number != null && number <= 0) {
+      return 'Number of Seals must be greater than 0';
+    }
+
+    return null;
+  }
+
+  static String? validateCodeNumberOnWrapper(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Code Number on Wrapper is required';
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
+      return 'Code Number must contain only numbers';
+    }
+
+    return null;
+  }
+
+  // Input formatter to allow only numbers
+  static List<TextInputFormatter> getNumberOnlyInputFormatters() {
+    return [
+      FilteringTextInputFormatter.digitsOnly,
+      LengthLimitingTextInputFormatter(20), // Adjust max length as needed
+    ];
+  }
+
+  // Input formatter for specific field length limits
+  static List<TextInputFormatter> getNumberInputFormatters({int? maxLength}) {
+    return [
+      FilteringTextInputFormatter.digitsOnly,
+      if (maxLength != null) LengthLimitingTextInputFormatter(maxLength),
+    ];
+  }
 }
 
 class Form6Validators {
@@ -155,7 +255,7 @@ class Form6Validators {
           errors[field] = state.senderName.isEmpty ? 'Sender Name is required' : null;
           break;
         case 'DONumber':
-          errors[field] = state.DONumber.isEmpty ? 'DO Number is required' : null;
+          errors[field] = Validators.validateDONumber(state.DONumber);
           break;
         case 'senderDesignation':
           errors[field] = state.senderDesignation.isEmpty ? 'Sender Designation is required' : null;
@@ -205,19 +305,19 @@ class Form6Validators {
           errors[field] = state.personSignature == null ? 'Signature confirmation required' : null;
           break;
         case 'slipNumber':
-          errors[field] = state.slipNumber.isEmpty ? 'Slip Number is required' : null;
+          errors[field] = Validators.validateSlipNumber(state.slipNumber);
           break;
         case 'DOSignature':
           errors[field] = state.DOSignature == null ? 'DO Signature required' : null;
           break;
         case 'sampleCodeNumber':
-          errors[field] = state.sampleCodeNumber.isEmpty ? 'Sample Code Number is required' : null;
+          errors[field] = Validators.validateSampleCodeNumber(state.sampleCodeNumber);
           break;
         case 'sealImpression':
           errors[field] = state.sealImpression == null ? 'Seal Impression is required' : null;
           break;
         case 'numberofSeal':
-          errors[field] = state.numberofSeal.isEmpty ? 'Number of Seals is required' : null;
+          errors[field] = Validators.validateNumberOfSeals(state.numberofSeal);
           break;
         case 'formVI':
           errors[field] = state.formVI == null ? 'Form VI check required' : null;
@@ -233,4 +333,3 @@ class Form6Validators {
     return errors;
   }
 }
-

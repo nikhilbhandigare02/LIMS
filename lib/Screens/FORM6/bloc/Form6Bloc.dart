@@ -490,8 +490,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           natureOptions: parsed.names,
           natureIdByName: parsed.nameToId,
-          // keep user's current selection; do not auto-select the first option
-          article: state.article,
+           article: state.article,
         ));
       } catch (e) {
         try {

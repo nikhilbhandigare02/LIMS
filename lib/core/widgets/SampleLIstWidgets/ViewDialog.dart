@@ -162,36 +162,37 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Basic Information",
-            icon: Icons.info_outline,
+
             color: const Color(0xFF3B82F6),
             fields: [
               {
                 "label": "Serial No:",
                 "value": details.serialNo,
-                "icon": Icons.tag,
+
               },
               {
                 "label": "Sender Name:",
                 "value": details.senderName,
-                "icon": Icons.person,
+
               },
               {
                 "label": "Sender Designation:",
                 "value": details.senderDesignation,
-                "icon": Icons.work,
+
               },
               {
                 "label": "DO Number:",
                 "value": details.doNumber,
-                "icon": Icons.numbers,
+
               },
             ],
           ),
 
           _buildSection(
             title: "Location Details",
-            icon: Icons.location_on_outlined,
-            color: const Color(0xFF10B981),
+
+            color: const Color(0xFF3B82F6),
+
             fields: [
               {
                 "label": "District:",
@@ -219,8 +220,9 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Sample Information",
-            icon: Icons.science_outlined,
-            color: const Color(0xFFF59E0B),
+
+            color: const Color(0xFF3B82F6),
+
             fields: [
               {
                 "label": "Sample Code:",
@@ -252,8 +254,8 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Preservative Details",
-            icon: Icons.medical_services_outlined,
-            color: const Color(0xFF8B5CF6),
+            color: const Color(0xFF3B82F6),
+
             fields: [
               {
                 "label": "Preservative Added:",
@@ -275,18 +277,19 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Verification & Security",
-            icon: Icons.verified_user_outlined,
-            color: const Color(0xFF059669),
+
+            color: const Color(0xFF3B82F6),
+
             fields: [
               {
                 "label": "Witness Signature:",
                 "value": formatYesNo(details.witnessSignature),
-                "icon": Icons.edit,
+
               },
               {
                 "label": "Paper Slip No:",
                 "value": details.paperSlipNumber,
-                "icon": Icons.receipt,
+
               },
               {
                 "label": "DO Signature:",
@@ -308,25 +311,26 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Form VI Details",
-            icon: Icons.description_outlined,
-            color: primaryColor,
+            // icon: Icons.description_outlined,
+            color: const Color(0xFF3B82F6),
+
             fields: [
               {
                 "label": "Memo Form VI",
                 "value": formatYesNo(details.memoFormVI),
-                "icon": Icons.note,
+
               },
               {
                 "label": "Inside Wrapper",
                 "value": formatYesNo(details.wrapperFormVI),
-                "icon": Icons.wrap_text,
+
               },
               {
                 "label": "Wrapper Code",
                 "value": details.wrapperCodeNumber,
-                "icon": Icons.code,
+
               },
-              {"label": "Status", "value": details.status, "icon": Icons.flag},
+              {"label": "Status", "value": details.status,  },
             ],
           ),
 
@@ -398,7 +402,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   /// ✅ Enhanced Section Card with icons and colors
   Widget _buildSection({
     required String title,
-    required IconData icon,
+    // required IconData icon,
     required Color color,
     required List<Map<String, dynamic>> fields,
   }) {
@@ -430,7 +434,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
             ),
             child: Row(
               children: [
-                Icon(icon, color: color, size: 20),
+
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -456,7 +460,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                     _buildDetailRow(
                       field["label"]!,
                       field["value"],
-                      field["icon"] ?? Icons.info,
+
                     ),
                     if (index < fields.length - 1)
                       const Divider(
@@ -474,7 +478,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, dynamic value, IconData iconData) {
+  Widget _buildDetailRow(String label, dynamic value, ) {
     final valueStr = value?.toString() ?? "N/A";
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,7 +489,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
             color: backgroundColor,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Icon(iconData, size: 16, color: textSecondary),
+
         ),
         const SizedBox(width: 12),
         Expanded(

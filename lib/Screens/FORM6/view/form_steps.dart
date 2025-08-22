@@ -54,7 +54,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
     [
       BlocTextInput(
         label: "Name of Sender",
-        icon: Icons.person,
+        //icon: Icons.person,
         initialValue: state.senderName,
         onChanged: (val) => bloc.add(senderNameChanged(val)),
         readOnly: true,
@@ -62,7 +62,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
       SizedBox(height: 16),
       BlocTextInput(
         label: "Sender Official Designation",
-        icon: Icons.badge,
+       // icon: Icons.badge,
         initialValue: state.senderDesignation,
         onChanged: (val) => bloc.add(senderDesignationChanged(val)),
         readOnly: true,
@@ -70,9 +70,13 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
       SizedBox(height: 16),
       BlocTextInput(
         label: "DO Number",
-        icon: Icons.numbers,
+        //icon: Icons.numbers,
         initialValue: state.DONumber,
         onChanged: (val) => bloc.add(DONumberChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'DO Number'),
+       // validator: Validators.validateDONumber,
+        inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        keyboardType: TextInputType.number,
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -85,7 +89,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
                 label: "District",
-                icon: Icons.location_on,
+                //icon: Icons.location_on,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
                 onChanged: (val) {
@@ -96,6 +100,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                     bloc.add(FetchDivisionsRequested(districtId));
                   }
                 },
+                validator: Validators.validateDistrict,
               ),
             ),
           );
@@ -112,7 +117,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Division",
-                  icon: Icons.apartment,
+                 // icon: Icons.apartment,
                   value: blockMsg,
                   items: const [blockMsg],
                   onChanged: (_) {},
@@ -128,7 +133,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Division",
-                  icon: Icons.apartment,
+                 // icon: Icons.apartment,
                   value: loading,
                   items: const [loading],
                   onChanged: (_) {},
@@ -145,7 +150,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
                 label: "Division",
-                icon: Icons.apartment,
+               // icon: Icons.apartment,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
                 onChanged: (val) {
@@ -157,6 +162,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                     bloc.add(FetchRegionsRequested(divisionId));
                   }
                 },
+                validator: Validators.validateDivision,
               ),
             ),
           );
@@ -173,7 +179,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Region",
-                  icon: Icons.map,
+                 // icon: Icons.map,
                   value: blockMsg,
                   items: const [blockMsg],
                   onChanged: (_) {},
@@ -189,7 +195,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Region",
-                  icon: Icons.map,
+                 // icon: Icons.map,
                   value: loading,
                   items: const [loading],
                   onChanged: (_) {},
@@ -206,13 +212,14 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocDropdown(
                 label: "Region",
-                icon: Icons.map,
+               // icon: Icons.map,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
                 onChanged: (val) {
                   if (val == null) return;
                   bloc.add(RegionChanged(val));
                 },
+                validator: Validators.validateRegion,
               ),
             ),
           );
@@ -221,16 +228,18 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
       SizedBox(height: 16),
       BlocTextInput(
         label: "Area",
-        icon: Icons.home,
+        //icon: Icons.home,
         initialValue: state.area,
         onChanged: (val) => bloc.add(AreaChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Area'),
       ),
       SizedBox(height: 16),
       BlocTextInput(
         label: "Sending Sample Location",
-        icon: Icons.location_city,
+      //  icon: Icons.location_city,
         initialValue: state.sendingSampleLocation ?? '',
         onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Sending Sample Location'),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -245,7 +254,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Lab Master",
-                  icon: Icons.science,
+                 // icon: Icons.science,
                   value: loading,
                   items: const [loading],
                   onChanged: (_) {},
@@ -257,13 +266,14 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
           final items = s.labOptions;
           return BlocDropdown(
             label: "Lab  ",
-            icon: Icons.science,
+          //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
             items: items,
             onChanged: (val) {
               if (val == null) return;
               bloc.add(LabChanged(val));
             },
+            validator: (v) => Validators.validateEmptyField(v, 'Lab'),
           );
         },
       ),
@@ -273,7 +283,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         builder: (context, state) {
           return BlocTextInput(
             label: "Latitude",
-            icon: Icons.explore,
+           // icon: Icons.explore,
             initialValue: state.Lattitude,
             onChanged: (val) => context.read<SampleFormBloc>().add(Lattitude(val)),
             readOnly: true,
@@ -285,7 +295,7 @@ List<List<Widget>> getOtherInformationSteps(SampleFormState state, SampleFormBlo
         builder: (context, state) {
           return BlocTextInput(
             label: "Longitude",
-            icon: Icons.navigation_outlined,
+           // icon: Icons.navigation_outlined,
             initialValue: state.Longitude,
             onChanged: (val) => context.read<SampleFormBloc>().add(Longitude(val)),
             readOnly: true,
@@ -302,9 +312,12 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
     [
       BlocTextInput(
         label: "Sample Code Number",
-        icon: Icons.qr_code,
+       // icon: Icons.qr_code,
         initialValue: state.sampleCodeData,
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
+
+        inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        keyboardType: TextInputType.number,
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -328,23 +341,26 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       SizedBox(height: 16),
       BlocTextInput(
         label: "Place of Collection",
-        icon: Icons.place,
+       // icon: Icons.place,
         initialValue: state.placeOfCollection,
         onChanged: (val) => bloc.add(PlaceChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Place of Collection'),
       ),
       SizedBox(height: 16),
       BlocTextInput(
         label: "Sample Name",
-        icon: Icons.label,
+       // icon: Icons.label,
         initialValue: state.SampleName,
         onChanged: (val) => bloc.add(SampleNameChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Sample Name'),
       ),
       SizedBox(height: 16),
       BlocTextInput(
         label: "Quantity of Sample",
-        icon: Icons.scale,
+        //icon: Icons.scale,
         initialValue: state.QuantitySample,
         onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Quantity of Sample'),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -357,7 +373,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
                 ignoring: true,
                 child: BlocDropdown(
                   label: "Nature of Sample",
-                  icon: Icons.category,
+                 // icon: Icons.category,
                   value: loading,
                   items: const [loading],
                   onChanged: (_) {},
@@ -369,13 +385,14 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           final selected = (s.article.isNotEmpty && items.contains(s.article)) ? s.article : null;
           return BlocDropdown(
             label: "Nature of Sample",
-            icon: Icons.category,
+           // icon: Icons.category,
             value: selected,
             items: items,
             onChanged: (val) {
               if (val == null) return;
               bloc.add(articleChanged(val));
             },
+            validator: (v) => Validators.validateEmptyField(v, 'Nature of Sample'),
           );
         },
       ),
@@ -389,7 +406,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
               BlocYesNoRadio(
                 label: 'Preservative Added?',
                 value: state.preservativeAdded, // ← from BLoC state
-                icon: Icons.add_circle_outline,
+               // icon: Icons.add_circle_outline,
                 onChanged: (newValue) {
                   context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue));
 
@@ -404,16 +421,22 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
                 SizedBox(height: 16),
                 BlocTextInput(
                   label: "If yes, mention the name of Preservative",
-                  icon: Icons.medication,
+                 // icon: Icons.medication,
                   initialValue: state.preservativeName,
                   onChanged: (val) => context.read<SampleFormBloc>().add(preservativeNameChanged(val)),
+                  validator: (v) => state.preservativeAdded == true
+                      ? Validators.validateEmptyField(v, 'Preservative Name')
+                      : null,
                 ),
                 SizedBox(height: 16),
                 BlocTextInput(
                   label: "Quantity of Preservative",
-                  icon: Icons.scale,
+                //  icon: Icons.scale,
                   initialValue: state.preservativeQuantity,
                   onChanged: (val) => context.read<SampleFormBloc>().add(preservativeQuantityChanged(val)),
+                  validator: (v) => state.preservativeAdded == true
+                      ? Validators.validateEmptyField(v, 'Preservative Quantity')
+                      : null,
                 ),
               ],
             ],
@@ -427,7 +450,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Signature & thumb impression of the person/\nwitness from whom the sample \nhas been taken',
             value: state.personSignature,
-            icon: Icons.fingerprint,
+            //icon: Icons.fingerprint,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(personSignatureChanged(newValue));
             },
@@ -437,9 +460,13 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       SizedBox(height: 16),
       BlocTextInput(
         label: "Paper Slip Number",
-        icon: Icons.sticky_note_2,
+       // icon: Icons.sticky_note_2,
         initialValue: state.slipNumber,
         onChanged: (val) => bloc.add(slipNumberChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Paper Slip Number'),
+
+        inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        keyboardType: TextInputType.number,
       ),
       SizedBox(height: 16),
 
@@ -448,7 +475,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Signature of DO OR any officer authorized by \nFSO',
             value: state.DOSignature, // ← from BLoC state
-            icon: Icons.verified_user,
+           // icon: Icons.verified_user,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(DOSignatureChanged(newValue));
             },
@@ -460,9 +487,14 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
     [
       BlocTextInput(
         label: "Code Number of sample on Wrapper",
-        icon: Icons.code,
+       // icon: Icons.code,
         initialValue: state.sampleCodeNumber,
+
         onChanged: (val) => bloc.add(sampleCodeNumberChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Code Number on Wrapper'),
+
+        inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        keyboardType: TextInputType.number,
       ),
       SizedBox(height: 16),
 
@@ -471,7 +503,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Form VI is inside the sample Wrapper? ',
             value: state.FoemVIWrapper,
-            icon: Icons.inventory,
+           // icon: Icons.inventory,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(FoemVIWrapperChanged(newValue)); // ← dispatch event
             },
@@ -482,9 +514,13 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
       SizedBox(height: 16),
       BlocTextInput(
         label: "Number of Seal",
-        icon: Icons.lock,
+       // icon: Icons.lock,
         initialValue: state.numberofSeal,
         onChanged: (val) => bloc.add(numberofSealChanged(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Number of Seal'),
+
+        inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        keyboardType: TextInputType.number,
       ),
       SizedBox(height: 16),
 
@@ -493,7 +529,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Memorandum of Form VI and Specimen Impression \n of the Sealed packet',
             value: state.formVI, // ← from BLoC state
-            icon: Icons.description,
+            //icon: Icons.description,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(formVIChanged(newValue)); // ← dispatch event
             },
@@ -509,7 +545,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Impression of seal of the sender ',
             value: state.sealImpression, // ← from BLoC state
-            icon: Icons.verified,
+           // icon: Icons.verified,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(sealImpressionChanged(newValue)); // ← dispatch event
             },

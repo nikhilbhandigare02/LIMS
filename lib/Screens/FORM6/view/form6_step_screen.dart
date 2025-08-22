@@ -19,6 +19,7 @@ class Form6StepScreen extends StatefulWidget {
 class _Form6StepScreenState extends State<Form6StepScreen> {
   int currentStep = 0;
   late List<List<Widget>> stepFields;
+  late List<GlobalKey<FormState>> _formKeys;
 
   final Form6Storage storage = Form6Storage();
 
@@ -27,6 +28,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     super.initState();
     final bloc = context.read<SampleFormBloc>();
     stepFields = _generateStepFields(bloc.state);
+    _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
     _loadSavedData();
     print("🔄 Form6StepScreen initialized for section: ${widget.section}");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
@@ -60,10 +62,22 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     await Future.delayed(const Duration(milliseconds: 50));
     setState(() {
       stepFields = _generateStepFields(bloc.state);
+      _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
     });
   }
 
   void _goToNextStep() async {
+    // Validate current step before proceeding
+    final currentFormKey = _formKeys[currentStep];
+    final isValid = currentFormKey.currentState?.validate() ?? true;
+    if (!isValid) {
+      // Show a brief message and stop
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please correct the highlighted fields')),
+      );
+      return;
+    }
+
     final bloc = context.read<SampleFormBloc>();
     final state = bloc.state;
 
@@ -78,6 +92,9 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       setState(() {
         currentStep++;
         stepFields = _generateStepFields(state);
+        if (_formKeys.length != stepFields.length) {
+          _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
+        }
       });
       print("🔄 Moved to step: $currentStep");
     } else {
@@ -187,8 +204,11 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                       ? getOtherInformationSteps(state, context.read<SampleFormBloc>())
                       : getSampleDetailsSteps(state, context.read<SampleFormBloc>());
 
-                  return ListView(
-                    children: steps[currentStep],
+                  return Form(
+                    key: _formKeys[currentStep],
+                    child: ListView(
+                      children: steps[currentStep],
+                    ),
                   );
                 },
               ),

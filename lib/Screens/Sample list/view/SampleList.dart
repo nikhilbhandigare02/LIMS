@@ -257,7 +257,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
             child: Row(
               children: [
-                Icon(Icons.science, color: customColors.primary, size: 22),
+              //  Icon(Icons.science, color: customColors.primary, size: 22),
                 SizedBox(width: 12),
                 Text(
                   'Sample Records',

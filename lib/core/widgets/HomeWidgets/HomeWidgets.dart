@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../utils/validators.dart';
 
@@ -18,12 +19,17 @@ BoxDecoration fieldBoxDecoration = BoxDecoration(
 
 
 
+
+
 class BlocTextInput extends StatefulWidget {
   final String label;
   final String initialValue;
   final ValueChanged<String> onChanged;
   final IconData? icon;
   final bool readOnly;
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   const BlocTextInput({
     super.key,
@@ -32,6 +38,9 @@ class BlocTextInput extends StatefulWidget {
     required this.onChanged,
     this.icon,
     this.readOnly = false,
+    this.validator,
+    this.inputFormatters,
+    this.keyboardType,
   });
 
   @override
@@ -62,9 +71,18 @@ class _BlocTextInputState extends State<BlocTextInput> {
       controller: _controller,
       onChanged: widget.onChanged,
       readOnly: widget.readOnly,
+      validator: widget.validator,
+      inputFormatters: widget.inputFormatters,
+      keyboardType: widget.keyboardType,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'Enter ${widget.label}',
-        hintStyle: const TextStyle(fontSize: 16),
+        hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: customColors.primary)
             : null,
@@ -100,7 +118,7 @@ class BlocDropdown extends StatelessWidget {
   final List<String> items;
   final void Function(String?) onChanged;
   final IconData? icon;
-
+  final String? Function(String?)? validator;
 
   const BlocDropdown({
     super.key,
@@ -109,15 +127,22 @@ class BlocDropdown extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.icon,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       value: value != null && items.contains(value) ? value : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'Select $label',
-        hintStyle: const TextStyle(fontSize: 16),
+        hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
         prefixIcon: icon != null ? Icon(icon, color: customColors.primary) : null,
         filled: true,
         fillColor: customColors.white,
@@ -135,9 +160,19 @@ class BlocDropdown extends StatelessWidget {
           borderSide: BorderSide(color: customColors.primary,width: 0.5),
         ),
       ),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      items: items.map((item) => DropdownMenuItem(
+          value: item,
+          child: Text(
+            item,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal, // Changed from w500 to normal
+              color: Colors.black,
+            ),
+          )
+      )).toList(),
       onChanged: onChanged,
-      validator: (val) => val == null || val.isEmpty ? '$label is required' : null,
+      validator: validator ?? ((val) => val == null || val.isEmpty ? '$label is required' : null),
     );
   }
 }
@@ -197,7 +232,11 @@ class BlocDatePicker extends StatelessWidget {
           selectedDate != null
               ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
               : "Select Date",
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
       ),
     );
@@ -240,7 +279,7 @@ class BlocYesNoRadio extends StatelessWidget {
               if (icon != null) const SizedBox(width: 4),
               Text(
                 label,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal,color: Colors.black87),
                 softWrap: true,
               ),
             ],
