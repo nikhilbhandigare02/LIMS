@@ -86,7 +86,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       validator: Validators.validateOTP,
                     ),
 
-                    // ✅ Show validation error below OTP input
                     if (_otpError != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0),
