@@ -11,7 +11,7 @@ import '../../../../core/utils/enums.dart';
 import '../../../../core/widgets/RegistrationInput/CustomTextField.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({Key? key}) : super(key: key);
+   OtpVerificationScreen({Key? key}) : super(key: key);
 
   @override
   _OtpVerificationScreenState createState() => _OtpVerificationScreenState();
@@ -61,79 +61,146 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             });
 
             return Scaffold(
-              appBar: AppHeader(
-                screenTitle: 'Verify OTP',
-                username: 'username',
-                userId: 'userId',
-                showBack: false,
-              ),
+                    backgroundColor: Colors.grey[100],
               body: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding:  EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 50),
-                    const Text(
-                      "Enter the 6-digit OTP sent to your mobile number",
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
+                     SizedBox(height: 18),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Row(
+                            children:  [
+                              Icon(
+                                Icons.arrow_back_ios,
+                                color: customColors.primary,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "Forgot Password",
+                                style: TextStyle(
+                                  color: customColors.primary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 40),
-
-                    AnimatedOtpInput(
-                      length: _otpLength,
-                      value: _otpValue,
-                      onChanged: _onOtpChanged,
-                      validator: Validators.validateOTP,
-                    ),
-
-                    if (_otpError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          _otpError!,
-                          style: const TextStyle(color: Colors.red, fontSize: 14),
-                        ),
-                      ),
-
-                    const SizedBox(height: 50),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: customColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                     SizedBox(height: 30),
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                           CircleAvatar(
+                            radius: 70,
+                            backgroundColor: Color(0xFFF2F2F2),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          elevation: 0,
-                        ),
-                        onPressed: (state.apiStatus == ApiStatus.loading)
-                            ? null
-                            : () {
-                          context.read<OTPVerificationBloc>().add(LoginOTPEvent(_otpValue));
-                          context.read<OTPVerificationBloc>().add(verifyLoginOTPEvent());
-                        },
-                        child: state.apiStatus == ApiStatus.loading
-                            ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
+                          Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: customColors.primary.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child:  Icon(
+                              Icons.lock_reset,
+                              color: customColors.primary,
+                              size: 50,
+                            ),
                           ),
-                        )
-                            : const Text(
-                          'VERIFY OTP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        ],
                       ),
                     ),
+                     SizedBox(height: 50),
+
+                    Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.08),
+                            blurRadius: 16,
+                            offset:  Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding:  EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                             Text(
+                              "Enter the 6-digit OTP sent to your register email id",
+                              style: TextStyle(fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+
+                            AnimatedOtpInput(
+                              length: _otpLength,
+                              value: _otpValue,
+                              onChanged: _onOtpChanged,
+                              validator: Validators.validateOTP,
+                            ),
+
+                            if (_otpError != null)
+                              Padding(
+                                padding:  EdgeInsets.only(top: 16.0),
+                                child: Text(
+                                  _otpError!,
+                                  style:  TextStyle(color: Colors.red, fontSize: 14),
+                                ),
+                              ),
+
+                             SizedBox(height: 50),
+
+                            SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: customColors.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding:  EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0,
+                                ),
+                                onPressed: (state.apiStatus == ApiStatus.loading)
+                                    ? null
+                                    : () {
+                                  context.read<OTPVerificationBloc>().add(LoginOTPEvent(_otpValue));
+                                  context.read<OTPVerificationBloc>().add(verifyLoginOTPEvent());
+                                },
+                                child: state.apiStatus == ApiStatus.loading
+                                    ?  SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                    :  Text(
+                                  'VERIFY OTP',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   ],
                 ),
               ),
