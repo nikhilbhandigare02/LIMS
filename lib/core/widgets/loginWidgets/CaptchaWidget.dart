@@ -9,10 +9,10 @@ class CaptchaWidget extends StatefulWidget {
   const CaptchaWidget({super.key, required this.controller});
 
   @override
-  State<CaptchaWidget> createState() => _CaptchaWidgetState();
+  State<CaptchaWidget> createState() => CaptchaWidgetState();
 }
 
-class _CaptchaWidgetState extends State<CaptchaWidget> {
+class CaptchaWidgetState extends State<CaptchaWidget> {
   late String _captchaCode;
 
   @override
@@ -27,6 +27,10 @@ class _CaptchaWidgetState extends State<CaptchaWidget> {
     });
     // Clear input so user re-enters for new captcha
     widget.controller.clear();
+  }
+
+  void refreshCaptcha() {
+    _generateCaptcha();
   }
 
   String _generateRandomCode(int length) {

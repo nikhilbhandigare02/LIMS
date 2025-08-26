@@ -16,10 +16,14 @@ class SampleAnalysisScreen extends StatefulWidget {
 
 class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     with SingleTickerProviderStateMixin {
-  bool isCardView = true;
+  int currentPage = 0;
+  int itemsPerPage = 10;
+  bool isCardView = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late SampleBloc sampleBloc;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -35,12 +39,28 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
     sampleBloc = SampleBloc(sampleRepository: SampleRepository());
     sampleBloc.add(getSampleListEvent());
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
+  }
+  // Calculate total pages
+  int getTotalPages(int totalItems) {
+    return (totalItems / itemsPerPage).ceil();
+  }
+  List<SampleList> getPaginatedData(List<SampleList> allData) {
+    int startIndex = currentPage * itemsPerPage;
+    int endIndex = (startIndex + itemsPerPage).clamp(0, allData.length);
+    return allData.sublist(startIndex, endIndex);
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     sampleBloc.close();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -138,7 +158,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ],
     );
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -151,6 +171,36 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           userId: 'UserID',
           showBack: false,
           actions: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Search Sample by Serial No...',
+                      hintStyle: TextStyle(color: Colors.white70),
+                      prefixIcon: Icon(Icons.search, color: Colors.white70),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onChanged: (value) {},
+                  ),
+                ),
+              ),
+            ),
             Container(
               margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
@@ -197,10 +247,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   return Center(child: Text('No Data Found'));
                 }
                 final sampleList =
-                    state.fetchSampleList.data as List<SampleData>;
+                state.fetchSampleList.data as List<SampleData>;
                 final sampleDataList = sampleList
                     .expand((sampleData) => sampleData.sampleList ?? [])
                     .toList();
+
+                final filteredSampleDataList = _searchQuery.isEmpty
+                    ? sampleDataList
+                    : sampleDataList.where((sample) =>
+                    sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
+
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -212,8 +268,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: isCardView
-                        ? _buildCardView(sampleDataList.cast<SampleList>())
-                        : _buildTableView(sampleDataList.cast<SampleList>()),
+                        ? _buildCardView(filteredSampleDataList.cast<SampleList>())
+                        : _buildTableView(filteredSampleDataList.cast<SampleList>()),
                   ),
                 );
               case Status.error:
@@ -492,6 +548,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   }
 
   Widget _buildTableView(List<SampleList> sampleDataList) {
+    List<SampleList> paginatedData = getPaginatedData(sampleDataList);
+    int totalPages = getTotalPages(sampleDataList.length);
+
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -522,11 +581,28 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 Icon(Icons.table_chart, color: customColors.primary, size: 22),
                 SizedBox(width: 12),
                 Text(
-                  'Sample Records - Table View',
+                  ' Table View',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: customColors.primary,
+                  ),
+                ),
+                Spacer(),
+                // Page info
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: customColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: customColors.primary,
+                    ),
                   ),
                 ),
               ],
@@ -556,7 +632,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: SingleChildScrollView(
-
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       headingRowColor: MaterialStateProperty.all(
@@ -578,7 +653,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Actions')),
                       ],
-                      rows: sampleDataList.map((data) {
+                      rows: paginatedData.map((data) {
                         return DataRow(
                           cells: [
                             DataCell(
@@ -662,16 +737,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                         Icons.visibility,
                                         color: Colors.white,
                                       ),
-                                      onPressed: () =>
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => BlocProvider.value(
-                                                value: sampleBloc,
-                                                child: SampleDetailsScreen(serialNo: data.serialNo ?? ''),
-                                              ),
-                                            ),
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider.value(
+                                            value: sampleBloc,
+                                            child: SampleDetailsScreen(
+                                                serialNo: data.serialNo ?? ''),
                                           ),
+                                        ),
+                                      ),
                                       iconSize: 18,
                                     ),
                                   ),
@@ -710,6 +785,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ),
             ),
           ),
+          SizedBox(height: 16),
+          // Pagination Controls
+          _buildPaginationControls(sampleDataList.length, totalPages),
         ],
       ),
     );
@@ -723,5 +801,222 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     } catch (e) {
       return 'N/A';
     }
+  }
+
+  Widget _buildPaginationControls(int totalItems, int totalPages) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.9),
+            Colors.white.withOpacity(0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Records info (moved to top)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  'Showing ${(currentPage * itemsPerPage) + 1}-${((currentPage + 1) * itemsPerPage).clamp(0, totalItems)} of $totalItems records',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          // Navigation buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Previous button
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: currentPage > 0
+                          ? [customColors.primary, customColors.primary.withOpacity(0.8)]
+                          : [Colors.grey[300]!, Colors.grey[400]!],
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: currentPage > 0
+                          ? () {
+                        setState(() {
+                          currentPage--;
+                        });
+                      }
+                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_back_ios,
+                              size: 14,
+                              color: currentPage > 0 ? Colors.white : Colors.grey[600],
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Prev',
+                              style: TextStyle(
+                                color: currentPage > 0 ? Colors.white : Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Page numbers (simplified for small screens)
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(totalPages, (index) {
+                        bool isCurrentPage = index == currentPage;
+                        // Show fewer pages on small screens
+                        bool shouldShow = (index >= currentPage - 1 && index <= currentPage + 1) ||
+                            index == 0 ||
+                            index == totalPages - 1;
+
+                        if (!shouldShow && totalPages > 5) {
+                          if (index == currentPage - 2 || index == currentPage + 2) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Text('...', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        }
+
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 1),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: isCurrentPage
+                                    ? [customColors.primary, customColors.primary.withOpacity(0.8)]
+                                    : [Colors.transparent, Colors.transparent],
+                              ),
+                              borderRadius: BorderRadius.circular(4),
+                              border: isCurrentPage
+                                  ? null
+                                  : Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    currentPage = index;
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(4),
+                                child: Container(
+                                  width: 28,
+                                  height: 28,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                      color: isCurrentPage ? Colors.white : customColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ),
+              // Next button
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: currentPage < totalPages - 1
+                          ? [customColors.primary, customColors.primary.withOpacity(0.8)]
+                          : [Colors.grey[300]!, Colors.grey[400]!],
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: currentPage < totalPages - 1
+                          ? () {
+                        setState(() {
+                          currentPage++;
+                        });
+                      }
+                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Next',
+                              style: TextStyle(
+                                color: currentPage < totalPages - 1 ? Colors.white : Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: currentPage < totalPages - 1 ? Colors.white : Colors.grey[600],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

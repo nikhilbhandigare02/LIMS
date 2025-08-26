@@ -61,29 +61,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     }
   }
 
-  // Future<void> handleSubmit() async {
-  //   if (isOtherComplete && isSampleComplete) {
-  //     context.read<SampleFormBloc>().add(FormSubmit());
-  //
-  //     await storage.clearFormData();
-  //
-  //     context.read<SampleFormBloc>().add(FormResetEvent());
-  //
-  //     Message.showTopRightOverlay(
-  //       context,
-  //       '✅ Form submitted and cleared successfully.',
-  //       MessageType.success,
-  //     );
-  //   } else {
-  //     Message.showTopRightOverlay(
-  //       context,
-  //       '⚠️ Form not filled. Please fill the form.',
-  //       MessageType.error,
-  //     );
-  //   }
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<SampleFormBloc, SampleFormState>(
@@ -114,9 +91,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form VI submitted successfully.';
           Message.showTopRightOverlay(context, successMsg, MessageType.success);
 
-          // Reset the BLoC state
-          // context.read<SampleFormBloc>().add(FormResetEvent());
-
           await Future.delayed(const Duration(milliseconds: 300));
           Navigator.pushAndRemoveUntil(
             context,
@@ -140,7 +114,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           username: 'Rajan',
           userId: 'S1234',
           showBack: true,
-
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 100),
@@ -172,7 +145,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'isComplete': isOtherComplete,
         'color': Colors.blue,
         'section': 'other',
-        'isSub': false,
       },
       {
         'title': 'Sample Info',
@@ -181,7 +153,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'isComplete': isSampleComplete,
         'color': Colors.green,
         'section': 'sample',
-        'isSub': false,
       },
       {
         'title': 'Preservative Info',
@@ -190,7 +161,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'isComplete': isSampleComplete,
         'color': Colors.purple,
         'section': 'sample',
-        'isSub': true,
       },
       {
         'title': 'Seal Details',
@@ -199,7 +169,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'isComplete': isSampleComplete,
         'color': Colors.orange,
         'section': 'sample',
-        'isSub': true,
       },
       {
         'title': 'Review & Submit',
@@ -208,7 +177,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'isComplete': isOtherComplete && isSampleComplete,
         'color': Colors.indigo,
         'section': 'sample',
-        'isSub': false,
       },
     ];
 
@@ -219,7 +187,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           children: List.generate(steps.length, (index) {
             final step = steps[index];
             final isLast = index == steps.length - 1;
-            final isSub = step['isSub'] == true;
 
             return InkWell(
               onTap: () async {
@@ -246,36 +213,14 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Indicator + line
+                  // Indicator + line - NOW UNIFORM FOR ALL STEPS
                   Column(
                     children: [
                       SizedBox(
                         width: 40,
                         height: 40,
                         child: Center(
-                          child: isSub
-                              ? Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.grey.shade500,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Center(
-                              child: Container(
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.shade800,
-                                ),
-                              ),
-                            ),
-                          )
-                              : Container(
+                          child: Container(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
@@ -286,8 +231,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                               boxShadow: step['isComplete']
                                   ? [
                                 BoxShadow(
-                                  color: step['color']
-                                      .withOpacity(0.3),
+                                  color: step['color'].withOpacity(0.3),
                                   blurRadius: 6,
                                   offset: Offset(0, 3),
                                 ),
@@ -345,7 +289,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                               Text(
                                 step['title'],
                                 style: TextStyle(
-                                  fontSize: isSub ? 14 : 16,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: step['isComplete']
                                       ? step['color']
@@ -370,7 +314,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                                 ? step['color']
                                 : Colors.grey.shade400,
                           ),
-
                         ],
                       ),
                     ),
@@ -383,7 +326,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       ],
     );
   }
-  
+
   Widget _buildSubmitButton() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 500),
@@ -431,26 +374,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        // child: Padding(
-        //   padding: const EdgeInsets.symmetric(
-        //       vertical: 12.0, horizontal: 16.0),
-        //   // child: Row(
-        //   //   mainAxisAlignment: MainAxisAlignment.center,
-        //   //   children: const [
-        //   //     Icon(Icons.warning_amber_rounded, color: Colors.red),
-        //   //     SizedBox(width: 8),
-        //   //     Flexible(
-        //   //       child: Text(
-        //   //         'Form not filled. Please fill the form.',
-        //   //         style: TextStyle(
-        //   //           color: Colors.red,
-        //   //           fontWeight: FontWeight.bold,
-        //   //         ),
-        //   //       ),
-        //   //     ),
-        //   //   ],
-        //   // ),
-        // ),
       ),
     );
   }

@@ -243,11 +243,13 @@ class BlocDatePicker extends StatelessWidget {
   }
 }
 
-class BlocYesNoRadio extends StatelessWidget {
+class BlocYesNoRadio extends StatefulWidget {
   final String label;
   final bool? value;
   final ValueChanged<bool> onChanged;
   final IconData? icon;
+  final String? Function(bool?)? validator;
+  final bool autovalidate;
 
   const BlocYesNoRadio({
     super.key,
@@ -255,61 +257,111 @@ class BlocYesNoRadio extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.icon,
+    this.validator,
+    this.autovalidate = false,
   });
 
   @override
+  State<BlocYesNoRadio> createState() => _BlocYesNoRadioState();
+}
+
+class _BlocYesNoRadioState extends State<BlocYesNoRadio> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: customColors.white,
-        border: Border.all(color: customColors.primary, width: 0.5),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              if (icon != null)
-                Icon(
-                  icon,
-                  color: value != null ? customColors.primary : customColors.primary,
+    return FormField<bool>(
+      initialValue: widget.value,
+      validator: widget.validator,
+
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      builder: (FormFieldState<bool> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: customColors.white,
+                border: Border.all(
+                    color: state.hasError
+                        ? Colors.red
+                        : customColors.primary,
+                    width: 0.5
                 ),
-              if (icon != null) const SizedBox(width: 4),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal,color: Colors.black87),
-                softWrap: true,
+                borderRadius: BorderRadius.circular(5),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Radio<bool>(
-                value: true,
-                groupValue: value,
-                visualDensity: VisualDensity.compact,
-                onChanged: (val) {
-                  if (val != null) onChanged(val);
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      if (widget.icon != null)
+                        Icon(
+                          widget.icon,
+                          color: widget.value != null ? customColors.primary : customColors.primary,
+                        ),
+                      if (widget.icon != null) const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.label,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black87
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Radio<bool>(
+                        value: true,
+                        groupValue: widget.value,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: customColors.primary,
+                        onChanged: (val) {
+                          if (val != null) {
+                            widget.onChanged(val);
+                            state.didChange(val);
+                          }
+                        },
+                      ),
+                      const Text("Yes", style: TextStyle(fontSize: 14)),
+                      const SizedBox(width: 100),
+                      Radio<bool>(
+                        value: false,
+                        groupValue: widget.value,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: customColors.primary,
+                        onChanged: (val) {
+                          if (val != null) {
+                            widget.onChanged(val);
+                            state.didChange(val);
+                          }
+                        },
+                      ),
+                      const Text("No", style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                ],
               ),
-              const Text("Yes", style: TextStyle(fontSize: 14)),
-              const SizedBox(width: 100),
-              Radio<bool>(
-                value: false,
-                groupValue: value,
-                visualDensity: VisualDensity.compact,
-                onChanged: (val) {
-                  if (val != null) onChanged(val);
-                },
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(left: 12, top: 4),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-              const Text("No", style: TextStyle(fontSize: 14)),
-            ],
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

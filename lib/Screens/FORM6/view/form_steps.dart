@@ -315,7 +315,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
        // icon: Icons.qr_code,
         initialValue: state.sampleCodeData,
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
-
+        validator: (v) => Validators.validateEmptyField(v, 'Place of Collection'),
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
       ),
@@ -405,7 +405,15 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
             children: [
               BlocYesNoRadio(
                 label: 'Preservative Added?',
-                value: state.preservativeAdded, // ← from BLoC state
+                value: state.preservativeAdded,
+                autovalidate: true, // Enable auto-validation
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select Yes or No';
+                  }
+
+                  return null; // Valid
+                },// ← from BLoC state
                // icon: Icons.add_circle_outline,
                 onChanged: (newValue) {
                   context.read<SampleFormBloc>().add(PreservativeAddedChanged(newValue));
@@ -416,6 +424,7 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
                     context.read<SampleFormBloc>().add(preservativeQuantityChanged(''));
                   }
                 },
+
               ),
               if (state.preservativeAdded == true) ...[
                 SizedBox(height: 16),
@@ -450,12 +459,22 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           return BlocYesNoRadio(
             label: 'Signature & thumb impression of the person/\nwitness from whom the sample \nhas been taken',
             value: state.personSignature,
+            autovalidate: true, // Enable auto-validation
+            validator: (value) {
+              if (value == null) {
+                return 'Please select Yes or No';
+              }
+
+              return null; // Valid
+            },
             //icon: Icons.fingerprint,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(personSignatureChanged(newValue));
+
             },
           );
         },
+
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -474,7 +493,15 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
         builder: (context, state) {
           return BlocYesNoRadio(
             label: 'Signature of DO OR any officer authorized by \nFSO',
-            value: state.DOSignature, // ← from BLoC state
+            value: state.DOSignature,
+            autovalidate: true, // Enable auto-validation
+            validator: (value) {
+              if (value == null) {
+                return 'Please select Yes or No';
+              }
+
+              return null; // Valid
+            },// ← from BLoC state
            // icon: Icons.verified_user,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(DOSignatureChanged(newValue));
@@ -504,6 +531,14 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
             label: 'Form VI is inside the sample Wrapper? ',
             value: state.FoemVIWrapper,
            // icon: Icons.inventory,
+            autovalidate: true, // Enable auto-validation
+            validator: (value) {
+              if (value == null) {
+                return 'Please select Yes or No';
+              }
+
+              return null; // Valid
+            },
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(FoemVIWrapperChanged(newValue)); // ← dispatch event
             },
@@ -528,7 +563,15 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
         builder: (context, state) {
           return BlocYesNoRadio(
             label: 'Memorandum of Form VI and Specimen Impression \n of the Sealed packet',
-            value: state.formVI, // ← from BLoC state
+            value: state.formVI,
+            autovalidate: true, // Enable auto-validation
+            validator: (value) {
+              if (value == null) {
+                return 'Please select Yes or No';
+              }
+
+              return null; // Valid
+            },// ← from BLoC state
             //icon: Icons.description,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(formVIChanged(newValue)); // ← dispatch event
@@ -544,7 +587,15 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
         builder: (context, state) {
           return BlocYesNoRadio(
             label: 'Impression of seal of the sender ',
-            value: state.sealImpression, // ← from BLoC state
+            value: state.sealImpression,
+            autovalidate: true, // Enable auto-validation
+            validator: (value) {
+              if (value == null) {
+                return 'Please select Yes or No';
+              }
+
+              return null; // Valid
+            },// ← from BLoC state
            // icon: Icons.verified,
             onChanged: (newValue) {
               context.read<SampleFormBloc>().add(sealImpressionChanged(newValue)); // ← dispatch event

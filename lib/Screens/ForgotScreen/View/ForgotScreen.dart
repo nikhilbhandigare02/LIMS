@@ -28,16 +28,16 @@ class ForgotScreen extends StatelessWidget {
         backgroundColor: Colors.grey[100],
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding:  EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                 SizedBox(height: 20),
                 Row(
                   children: [
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Row(
-                        children: const [
+                        children:  [
                           Icon(
                             Icons.arrow_back_ios,
                             color: customColors.primary,
@@ -56,12 +56,12 @@ class ForgotScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 15),
+                 SizedBox(height: 15),
                 Center(
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      const CircleAvatar(
+                       CircleAvatar(
                         radius: 70,
                         backgroundColor: Color(0xFFF2F2F2),
                       ),
@@ -72,7 +72,7 @@ class ForgotScreen extends StatelessWidget {
                           color: customColors.primary.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.lock_reset,
                           color: customColors.primary,
                           size: 50,
@@ -81,7 +81,7 @@ class ForgotScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 35),
+                 SizedBox(height: 35),
                 Expanded(
                   child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
                     listenWhen: (previous, current) {
@@ -105,7 +105,7 @@ class ForgotScreen extends StatelessWidget {
                           MessageType.success,
                         );
 
-                        Future.delayed(const Duration(seconds: 2), () {
+                        Future.delayed( Duration(seconds: 2), () {
                           Navigator.pushNamed(context, RouteName.resetPasswordScreen);
                         });
                       }
@@ -131,7 +131,7 @@ class ForgotScreen extends StatelessWidget {
                         return ListView(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(24),
+                              padding:  EdgeInsets.all(24),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(18),
@@ -139,7 +139,7 @@ class ForgotScreen extends StatelessWidget {
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.08),
                                     blurRadius: 16,
-                                    offset: const Offset(0, 8),
+                                    offset:  Offset(0, 8),
                                   ),
                                 ],
                               ),
@@ -160,7 +160,7 @@ class ForgotScreen extends StatelessWidget {
                                         }
                                       },
                                     ),
-                                    const SizedBox(height: 16),
+                                     SizedBox(height: 16),
 
                                     // Send OTP Button
                                     SizedBox(
@@ -173,7 +173,7 @@ class ForgotScreen extends StatelessWidget {
                                               12,
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
+                                          padding:  EdgeInsets.symmetric(
                                             vertical: 18,
                                           ),
                                           elevation: 0,
@@ -194,7 +194,7 @@ class ForgotScreen extends StatelessWidget {
                                             state.apiStatus ==
                                                     ApiStatus.loading &&
                                                 !state.isOtpSent
-                                            ? const SizedBox(
+                                            ?  SizedBox(
                                                 width: 20,
                                                 height: 20,
                                                 child:
@@ -203,7 +203,7 @@ class ForgotScreen extends StatelessWidget {
                                                       strokeWidth: 2,
                                                     ),
                                               )
-                                            : const Text(
+                                            :  Text(
                                                 'SEND OTP',
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -216,7 +216,7 @@ class ForgotScreen extends StatelessWidget {
 
                                     if (
                                         state.isOtpSent) ...[
-                                      const SizedBox(height: 20),
+                                       SizedBox(height: 20),
                                       AnimatedOtpInput(
                                         length: 6,
                                         obscureText: false,
@@ -226,7 +226,7 @@ class ForgotScreen extends StatelessWidget {
                                           bloc.add(OTPEvent(value));
                                         },
                                       ),
-                                      const SizedBox(height: 16),
+                                       SizedBox(height: 16),
                                       SizedBox(
                                         width: double.infinity,
                                         child: ElevatedButton(
@@ -237,7 +237,7 @@ class ForgotScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
-                                            padding: const EdgeInsets.symmetric(
+                                            padding:  EdgeInsets.symmetric(
                                               vertical: 18,
                                             ),
                                             elevation: 0,
@@ -254,7 +254,7 @@ class ForgotScreen extends StatelessWidget {
                                               state.apiStatus ==
                                                       ApiStatus.loading &&
                                                   !state.isOtpSent
-                                              ? const SizedBox(
+                                              ?  SizedBox(
                                                   width: 20,
                                                   height: 20,
                                                   child:
@@ -263,7 +263,7 @@ class ForgotScreen extends StatelessWidget {
                                                         strokeWidth: 2,
                                                       ),
                                                 )
-                                              : const Text(
+                                              :  Text(
                                                   'VERIFY OTP',
                                                   style: TextStyle(
                                                     color: Colors.white,
@@ -274,7 +274,7 @@ class ForgotScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ],
-                                    const SizedBox(height: 25),
+                                     SizedBox(height: 25),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -298,8 +298,8 @@ class ForgotScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    const Footer(),
+                                     SizedBox(height: 10),
+                                     Footer(),
                                   ],
                                 ),
                               ),
@@ -310,7 +310,7 @@ class ForgotScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 25),
+                 SizedBox(height: 25),
               ],
             ),
           ),

@@ -12,7 +12,7 @@ import '../bloc/loginBloc.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+   LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   final FocusNode passFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   final _captchaController = TextEditingController();
+  final GlobalKey<CaptchaWidgetState> _captchaKey = GlobalKey<CaptchaWidgetState>();
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -37,12 +38,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
     // Initialize animations
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration:  Duration(milliseconds: 1000),
       vsync: this,
     );
 
     _slideController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration:  Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -55,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     ));
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin:  Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _slideController,
@@ -99,13 +100,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
               child: SlideTransition(
                 position: _slideAnimation,
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding:  EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    const SizedBox(height: 30),
+                     SizedBox(height: 30),
 
                     // Main Login Card
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding:  EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           BoxShadow(
                             color: Colors.black.withOpacity(0.15),
                             blurRadius: 15,
-                            offset: const Offset(5, 5),
+                            offset:  Offset(5, 5),
                           ),
                         ],
                       ),
@@ -121,9 +122,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
 
-                          const SizedBox(height: 10),
+                           SizedBox(height: 10),
 
-                          const Text(
+                           Text(
                             "Login Here",
                             style: TextStyle(
                               fontSize: 28,
@@ -131,8 +132,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               color: Color(0xFF130160),
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
+                           SizedBox(height: 8),
+                           Text(
                             "Authorized Personnel Only",
                             style: TextStyle(
                               fontSize: 14,
@@ -141,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                           ),
 
-                          // const SizedBox(height: 10),
+                          //  SizedBox(height: 10),
 
                           Center(
                             child: Stack(
@@ -158,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                           SizedBox(height: 10),
 
                           // Form with updated styling
                           Form(
@@ -172,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     emailFocusNode: emailFocusNode,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                 SizedBox(height: 16),
 
                                 Container(
                                   child: PasswordInput(
@@ -180,19 +181,19 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     passwordFocusNode: passFocusNode,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                 SizedBox(height: 16),
 
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF7F8F9),
+                                    color:  Color(0xFFF7F8F9),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                                      color:  Color(0xFF1E3A8A).withOpacity(0.1),
                                     ),
                                   ),
-                                  child: CaptchaWidget(controller: _captchaController),
+                                  child: CaptchaWidget(controller: _captchaController, key: _captchaKey),
                                 ),
-                                const SizedBox(height: 6),
+                                 SizedBox(height: 6),
 
                                 Align(
                                   alignment: Alignment.centerRight,
@@ -201,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       Navigator.pushNamed(
                                           context, RouteName.forgotPasswordScreen);
                                     },
-                                    child: const Text(
+                                    child:  Text(
                                       "Forgot Password?",
                                       style: TextStyle(
                                         color: customColors.primary,
@@ -212,21 +213,27 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                   ),
                                 ),
 
-                                const SizedBox(height: 6),
+                                 SizedBox(height: 6),
 
-                                LoginButton(formkey: _formKey),
+                                LoginButton(
+                                  formkey: _formKey,
+                                  onLoginSuccess: () {
+                                    _captchaController.clear();
+                                    _captchaKey.currentState?.refreshCaptcha();
+                                  },
+                                ),
                               ],
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                           SizedBox(height: 10),
 
                           Center(
                             // child: TextButton(
                             //   onPressed: () {
                             //     Navigator.pushNamed(context, RouteName.registerScreen);
                             //   },
-                            //   child: const Text.rich(
+                            //   child:  Text.rich(
                             //     TextSpan(
                             //       text: "Don't have an account? ",
                             //       style: TextStyle(color: Colors.black),
@@ -242,12 +249,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             //     ),
                             //   ),
                             // ),
-                            child: const Footer(),
+                            child:  Footer(),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                     SizedBox(height: 30),
                   ]
                 ),
               ),

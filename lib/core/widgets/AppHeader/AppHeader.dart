@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
-import '../../../Screens/Sample list/view/SampleList.dart' as RouteName;
+import '../../../Screens/Sample list/view/SampleList.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -91,7 +91,9 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     onPressed: onBackTap ?? () {
                       // Navigate to SampleAnalysisScreen instead of just popping
-                      Navigator.of(context).pushReplacementNamed(RouteName.SampleAnalysisScreen as String);
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => SampleAnalysisScreen()),
+                      );
                     },
                   )
                 else

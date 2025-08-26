@@ -1,24 +1,22 @@
-import 'dart:convert';
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
-import 'package:food_inspector/Screens/Sample%20list/view/SampleList.dart';
+import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
-import 'package:food_inspector/core/utils/Message.dart';
+import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has MessageType enum and showTopRightOverlay
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
 import '../../../Screens/update_password/view/UpdatePassword.dart';
-
 class LoginButton extends StatelessWidget {
   final GlobalKey<FormState> formkey;
-
-  const LoginButton({super.key, required this.formkey});
-
+  final VoidCallback? onLoginSuccess;
+  const LoginButton({super.key, required this.formkey, this.onLoginSuccess});
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
@@ -33,44 +31,31 @@ class LoginButton extends StatelessWidget {
               MessageType.info,
             );
             break;
-
           case ApiStatus.success:
             Message.showTopRightOverlay(
               context,
               state.message,
               MessageType.success,
             );
-
-            await Future.delayed(const Duration(seconds: 2));
-
+            await Future.delayed(const Duration(seconds: 1));
             final secureStorage = FlutterSecureStorage();
             final loginDataStr = await secureStorage.read(key: 'loginData');
-
             int passResetFlag = 0;
             if (loginDataStr != null) {
               final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
-              final passResetStr = loginDataMap['PassResetFlag'] ?? '0'; // default to '0'
-              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0; // safely parse to int
+              final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
+              passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
             }
-
             if (passResetFlag == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
-              );
+              Navigator.pushReplacementNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SampleAnalysisScreen()),
-              );
+              Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
+             // Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
             } else {
-              // Fallback → go to login screen
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }
 
-
             break;
-
           case ApiStatus.error:
             Message.showTopRightOverlay(
               context,
@@ -78,7 +63,6 @@ class LoginButton extends StatelessWidget {
               MessageType.error,
             );
             break;
-
           default:
             break;
         }
@@ -104,6 +88,7 @@ class LoginButton extends StatelessWidget {
                 if (formkey.currentState!.validate()) {
                   context.read<LoginBloc>().add(LoginButtonEvent());
                 }
+                onLoginSuccess?.call();
               },
               child: state.apiStatus == ApiStatus.loading
                   ? const SizedBox(
@@ -115,7 +100,8 @@ class LoginButton extends StatelessWidget {
                 ),
               )
                   : const Text(
-                'Log IN',
+
+                'SIGN IN',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -127,6 +113,5 @@ class LoginButton extends StatelessWidget {
         },
       ),
     );
-
   }
 }
