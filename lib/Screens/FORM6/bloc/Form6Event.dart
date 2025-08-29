@@ -191,9 +191,15 @@ class numberofSealChanged extends SampleFormEvent {
   @override
   List<Object?> get props => [value];
 }
-class documentEvent extends SampleFormEvent {
+class documentNameChangedEvent extends SampleFormEvent {
   final String value;
-  const documentEvent(this.value);
+  const documentNameChangedEvent(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+class UploadDocumentEvent extends SampleFormEvent {
+  final String value;
+  const UploadDocumentEvent(this.value);
   @override
   List<Object?> get props => [value];
 }

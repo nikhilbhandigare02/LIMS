@@ -23,6 +23,18 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print(state.sampleCodeData);
       emit(state.copyWith(sampleCodeData: event.value));
     });
+    on<UploadDocumentEvent>((event, emit) {
+      emit(state.copyWith(
+        uploadedDocument: event.value,
+      ));
+    });
+    on<documentNameChangedEvent>((event, emit) {
+      print(state.documentName);
+      emit(state.copyWith(
+        documentName: event.value,
+      ));
+    });
+
     on<LoadSavedFormData>((event, emit) {
       emit(event.savedState); // Replace current state with saved state
       

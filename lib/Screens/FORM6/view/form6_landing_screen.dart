@@ -116,7 +116,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           showBack: true,
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 100),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 50),
           child: SingleChildScrollView(
             child: Column(
               children: [

@@ -5,6 +5,7 @@ class SampleFormState extends Equatable {
   final String DONumber;
   final String senderDesignation;
   final String district;
+
   final List<String> districtOptions;
   final Map<String, int> districtIdByName;
   final String Lattitude;
@@ -34,6 +35,7 @@ class SampleFormState extends Equatable {
   final bool? sealImpression;
   final String numberofSeal;
   final String documentName;
+  final String uploadedDocument;
   final bool? formVI;
   final bool? FoemVIWrapper;
   final String message;
@@ -65,6 +67,7 @@ class SampleFormState extends Equatable {
     this.placeOfCollection = '',
     this.SampleName = '',
     this.documentName = '',
+    this.uploadedDocument = '',
     this.QuantitySample = '',
     this.article = '',
     this.natureOptions = const [],
@@ -96,6 +99,7 @@ class SampleFormState extends Equatable {
     String? senderDesignation,
     String? district,
     String? documentName,
+    String? uploadedDocument,
     List<String>? districtOptions,
     Map<String, int>? districtIdByName,
     String? Lattitude,
@@ -140,6 +144,7 @@ class SampleFormState extends Equatable {
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
       documentName: documentName ?? this.documentName,
+      uploadedDocument: uploadedDocument ?? this.uploadedDocument,
       districtOptions: districtOptions ?? this.districtOptions,
       districtIdByName: districtIdByName ?? this.districtIdByName,
       Longitude: Longitude ?? this.Longitude,
@@ -191,6 +196,7 @@ class SampleFormState extends Equatable {
     regionOptions,
     regionIdByName,
     Lattitude,
+    uploadedDocument,
     documentName,
     Longitude,
     division,
@@ -253,7 +259,8 @@ class SampleFormState extends Equatable {
         numberofSeal.isNotEmpty &&
         formVI != null &&
         FoemVIWrapper != null &&
-        documentName != null;
+        documentName != null &&
+        uploadedDocument != null;
   }
 
   Map<String, dynamic> toMap() {
