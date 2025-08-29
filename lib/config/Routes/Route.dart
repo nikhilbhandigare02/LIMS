@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:food_inspector/Screens/RequestSealNumber/requestSealNumber.dart';
 import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
  import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';
@@ -51,6 +52,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => Setting(),);
     case RouteName.OTPVerificationScreen:
       return  MaterialPageRoute(builder: (context) => OtpVerificationScreen(),);
+    case RouteName.requestForSeal:
+      return  MaterialPageRoute(builder: (context) => Requestsealnumber(),);
     default:
       return MaterialPageRoute(builder: (context) {
         return Scaffold(

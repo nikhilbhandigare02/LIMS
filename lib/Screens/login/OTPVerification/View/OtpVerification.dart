@@ -47,7 +47,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         },
         child:BlocBuilder<OTPVerificationBloc, VerifyOTPState>(
           builder: (context, state) {
-            // Update _otpError from Bloc state
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (state.apiStatus == ApiStatus.error && state.message.isNotEmpty) {
                 setState(() {

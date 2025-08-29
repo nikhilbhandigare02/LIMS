@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:food_inspector/config/Routes/RouteName.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
+import '../../FORM6/bloc/Form6Bloc.dart';
+import '../../FORM6/repository/form6Repository.dart';
+import '../../FORM6/view/form6_landing_screen.dart';
 import '../bloc/sampleBloc.dart';
 import '../model/sampleData.dart';
 
@@ -24,6 +28,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   late SampleBloc sampleBloc;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  
 
   @override
   void initState() {
@@ -54,6 +59,32 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     int startIndex = currentPage * itemsPerPage;
     int endIndex = (startIndex + itemsPerPage).clamp(0, allData.length);
     return allData.sublist(startIndex, endIndex);
+  }
+
+  Widget _buildBodySearchField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.search, color: customColors.primary),
+          hintText: 'Search Sample by Serial No...',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        ),
+      ),
+    );
   }
 
   @override
@@ -171,32 +202,32 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           userId: 'UserID',
           showBack: false,
           actions: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
                   ),
-                  child: TextField(
-                    controller: _searchController,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Search Sample by Serial No...',
-                      hintStyle: TextStyle(color: Colors.white70),
-                      prefixIcon: Icon(Icons.search, color: Colors.white70),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.add, color: Colors.white),
+                tooltip: 'Go to Home',
+                onPressed: () =>Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                      child: Form6LandingScreen(),
                     ),
-                    onChanged: (value) {},
                   ),
                 ),
               ),
@@ -342,7 +373,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ],
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 4),
+          _buildBodySearchField(),
+          SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
               itemCount: sampleDataList.length,
@@ -547,6 +580,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
+  
+
   Widget _buildTableView(List<SampleList> sampleDataList) {
     List<SampleList> paginatedData = getPaginatedData(sampleDataList);
     int totalPages = getTotalPages(sampleDataList.length);
@@ -608,7 +643,10 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ],
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 4),
+          // Search bar below table header card
+          _buildBodySearchField(),
+          SizedBox(height: 12),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -793,11 +831,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
+  
+
   String _formatDate(String? date) {
     if (date == null || date == '0001-01-01T00:00:00') return 'N/A';
     try {
       final parsedDate = DateTime.parse(date);
-      return '${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}';
+      final day = parsedDate.day.toString().padLeft(2, '0');
+      final month = parsedDate.month.toString().padLeft(2, '0');
+      final year = parsedDate.year.toString();
+      return '$day/$month/$year';
     } catch (e) {
       return 'N/A';
     }

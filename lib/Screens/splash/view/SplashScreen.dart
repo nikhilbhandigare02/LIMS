@@ -69,7 +69,7 @@ class _SplashscreenState extends State<Splashscreen>
     _startAnimations();
     
     // Call splash service
-    splashService.isLodin(BuildContext, context);
+    splashService.isLogin(context);
   }
 
   void _startAnimations() async {

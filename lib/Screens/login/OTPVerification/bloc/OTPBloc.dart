@@ -107,7 +107,7 @@ class OTPVerificationBloc
           );
 
           print('✅ Decrypted server response: $decrypted');
-
+          await secureStorage.write(key: 'isVerify', value: '1');
         } catch (e) {
           print('⚠️ Decryption failed: $e');
           decrypted = '{}'; // fallback

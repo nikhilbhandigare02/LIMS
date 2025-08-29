@@ -57,6 +57,12 @@ class CustomDrawer extends StatelessWidget {
                     "Sample List Records",
                     onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
                   ),
+                  _buildMenuItem(
+                    context,
+                    Icons.assignment_turned_in,
+                    "Request for seal number",
+                    onTap: () => Navigator.pushNamed(context, RouteName.requestForSeal),
+                  ),
                   const Divider(),
                   _buildSectionTitle("Others"),
 
@@ -94,6 +100,9 @@ class CustomDrawer extends StatelessWidget {
               );
 
               if (confirmed) {
+                // Set login flag = 0 on logout
+                const storage = FlutterSecureStorage();
+                await storage.write(key: 'isLogin', value: '0');
                 // Navigate to login screen and clear navigation history
                 Navigator.pushNamedAndRemoveUntil(
                   context,
