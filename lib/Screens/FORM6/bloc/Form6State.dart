@@ -33,6 +33,7 @@ class SampleFormState extends Equatable {
   final String sampleCodeNumber;
   final bool? sealImpression;
   final String numberofSeal;
+  final String documentName;
   final bool? formVI;
   final bool? FoemVIWrapper;
   final String message;
@@ -63,6 +64,7 @@ class SampleFormState extends Equatable {
     this.collectionDate,
     this.placeOfCollection = '',
     this.SampleName = '',
+    this.documentName = '',
     this.QuantitySample = '',
     this.article = '',
     this.natureOptions = const [],
@@ -93,6 +95,7 @@ class SampleFormState extends Equatable {
     String? DONumber,
     String? senderDesignation,
     String? district,
+    String? documentName,
     List<String>? districtOptions,
     Map<String, int>? districtIdByName,
     String? Lattitude,
@@ -136,6 +139,7 @@ class SampleFormState extends Equatable {
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
+      documentName: documentName ?? this.documentName,
       districtOptions: districtOptions ?? this.districtOptions,
       districtIdByName: districtIdByName ?? this.districtIdByName,
       Longitude: Longitude ?? this.Longitude,
@@ -187,6 +191,7 @@ class SampleFormState extends Equatable {
     regionOptions,
     regionIdByName,
     Lattitude,
+    documentName,
     Longitude,
     division,
     divisionOptions,
@@ -247,7 +252,8 @@ class SampleFormState extends Equatable {
         sealImpression != null &&
         numberofSeal.isNotEmpty &&
         formVI != null &&
-        FoemVIWrapper != null;
+        FoemVIWrapper != null &&
+        documentName != null;
   }
 
   Map<String, dynamic> toMap() {

@@ -103,7 +103,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             );
             print('Decrypted (fallback) login response: $decryptedFallback');
 
-            await secureStorage.write(key: 'loginData', value: decryptedFallback);
+              await secureStorage.write(key: 'loginData', value: decryptedFallback);
 
             final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
             final String? fallbackToken = fallbackMap['Token'];

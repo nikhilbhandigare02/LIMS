@@ -603,6 +603,17 @@ List<List<Widget>> getSampleDetailsSteps(SampleFormState state, SampleFormBloc b
           );
         },
       ),
+      SizedBox(height: 16),
+      BlocTextInput(
+        label: "Mention any other documents",
+        // icon: Icons.lock,
+        initialValue: state.numberofSeal,
+        onChanged: (val) => bloc.add(documentEvent(val)),
+        validator: (v) => Validators.validateEmptyField(v, 'Mention the document name'),
+
+        keyboardType: TextInputType.text,
+      ),
+
     ],
   ];
 }

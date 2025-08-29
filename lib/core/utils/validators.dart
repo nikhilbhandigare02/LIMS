@@ -162,7 +162,6 @@ class Validators {
     return null;
   }
 
-  // New number-only validators for specific fields
   static String? validateDONumber(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'DO Number is required';
