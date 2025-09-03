@@ -16,5 +16,6 @@ class ApiEndpoints {
   static const String resetPassword = 'mobile/ForgotPassword';
   static const String VerifyLoginOTP = 'mobile/VerifyLoginOtp';
   static const String requestforseal = 'SealRequest/seal_request';
+  static const String sealNumber = 'SealRequest/getseal';
 
 }

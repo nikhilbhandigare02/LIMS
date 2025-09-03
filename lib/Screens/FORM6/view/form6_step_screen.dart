@@ -83,8 +83,9 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
     print("🔄 Going to next step. Current step: $currentStep, Total steps: ${stepFields.length}");
     print("🔄 Current completion status - Other: ${state.isOtherInfoComplete}, Sample: ${state.isSampleInfoComplete}");
+    print("🔄 Documents to save: ${state.uploadedDocs.length} documents");
 
-    // Save current state
+    // Save current state including documents
     await storage.saveForm6Data(state);
     await Future.delayed(const Duration(milliseconds: 50));
 
@@ -184,79 +185,85 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppHeader(
-        screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
-        username: ' ',
-        userId: ' ',
-        showBack: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            Expanded(
-              child: BlocBuilder<SampleFormBloc, SampleFormState>(
-                builder: (context, state) {
-                  final steps = widget.section == 'other'
-                      ? getOtherInformationSteps(state, context.read<SampleFormBloc>())
-                      : getSampleDetailsSteps(state, context.read<SampleFormBloc>());
+    return BlocListener<SampleFormBloc, SampleFormState>(
+      listenWhen: (prev, curr) => prev.documentName != curr.documentName,
+      listener: (context, state) async {
+        await storage.saveForm6Data(state);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppHeader(
+          screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
+          username: ' ',
+          userId: ' ',
+          showBack: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              Expanded(
+                child: BlocBuilder<SampleFormBloc, SampleFormState>(
+                  builder: (context, state) {
+                    final steps = widget.section == 'other'
+                        ? getOtherInformationSteps(state, context.read<SampleFormBloc>())
+                        : getSampleDetailsSteps(state, context.read<SampleFormBloc>());
 
-                  return Form(
-                    key: _formKeys[currentStep],
-                    child: ListView(
-                      children: steps[currentStep],
-                    ),
-                  );
-                },
+                    return Form(
+                      key: _formKeys[currentStep],
+                      child: ListView(
+                        children: steps[currentStep],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: _goToPreviousStep,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: customColors.grey,
-                      foregroundColor: customColors.black87,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _goToPreviousStep,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: customColors.grey,
+                        foregroundColor: customColors.black87,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(CupertinoIcons.left_chevron, color: customColors.white),
+                          const SizedBox(width: 6),
+                          Text("Previous", style: TextStyle(color: customColors.white)),
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(CupertinoIcons.left_chevron, color: customColors.white),
-                        const SizedBox(width: 6),
-                        Text("Previous", style: TextStyle(color: customColors.white)),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _goToNextStep,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: customColors.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          currentStep < stepFields.length - 1
-                              ? "SAVE & NEXT"
-                              : widget.section == 'other'
-                              ? "SAVE & NEXT"
-                              : "SUBMIT",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 6),
-                        const Icon(CupertinoIcons.right_chevron, color: Colors.white),
-                      ],
-                    ),
-                  )
-                ],
+                    ElevatedButton(
+                      onPressed: _goToNextStep,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: customColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            currentStep < stepFields.length - 1
+                                ? "SAVE & NEXT"
+                                : widget.section == 'other'
+                                ? "SAVE & NEXT"
+                                : "SUBMIT",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(CupertinoIcons.right_chevron, color: Colors.white),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

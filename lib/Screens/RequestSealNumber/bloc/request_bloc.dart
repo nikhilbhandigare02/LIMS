@@ -21,11 +21,16 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
   RequestStateBloc({required this.requestedSealRepository}):super(const RequestSealState()){
     on<RequestDateEvent>(requestDate);
     on<SubmitRequestEvent>(submitRequest);
+    on<sealNumberEvent>(sealNumber);
   }
 
   void requestDate(RequestDateEvent event, Emitter<RequestSealState> emit){
     print(state.selectedDate);
     emit(state.copyWith(selectedDate: event.selectedDate));
+  }
+  void sealNumber(sealNumberEvent event, Emitter<RequestSealState> emit){
+    print(state.sealNumber);
+    emit(state.copyWith(sealNumber: event.sealNumber));
   }
 
   Future<void> submitRequest(
@@ -53,13 +58,14 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
       print('UserID: $userId');
 
 
-      final verifyOTPData = {
+      final RequestData = {
         'RequestedDate': state.selectedDate,
         'UserId': userId,
+        'SealNumbers': state.sealNumber,
       };
 
       final session = await encryptWithSession(
-        data: verifyOTPData,
+        data: RequestData,
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 

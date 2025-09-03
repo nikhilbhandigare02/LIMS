@@ -6,6 +6,14 @@ class Form6Storage {
   final db = Form6Database.instance;
 
   Future<void> saveForm6Data(SampleFormState state) async {
+    // Convert uploaded documents to JSON-serializable format
+    final List<Map<String, dynamic>> documentsJson = state.uploadedDocs.map((doc) => {
+      'name': doc.name,
+      'base64Data': doc.base64Data,
+      'mimeType': doc.mimeType,
+      'extension': doc.extension,
+    }).toList();
+
     final data = {
       'senderName': state.senderName,
       'DONumber': state.DONumber,
@@ -46,10 +54,14 @@ class Form6Storage {
       'labOptions': jsonEncode(state.labOptions),
       'labIdByName': jsonEncode(state.labIdByName),
       'sendingSampleLocation': state.sendingSampleLocation,
+      // Store uploaded documents and names
+      'uploadedDocuments': jsonEncode(documentsJson),
+      'documentNames': jsonEncode(state.uploadedDocs.map((doc) => doc.name).toList()),
+      'documentName': state.documentName,
     };
 
     await db.insertForm6Data(data);
-    print("✅ Saved Form6 data to SQLite");
+    print("✅ Saved Form6 data to SQLite including ${state.uploadedDocs.length} documents");
   }
 
   Future<SampleFormState?> fetchStoredState() async {
@@ -79,6 +91,17 @@ class Form6Storage {
         return parsed.map((key, value) => MapEntry(key, value as int));
       } catch (_) {
         return {};
+      }
+    }
+
+    // Parse uploaded documents from JSON string
+    List<UploadedDoc> parseDocuments(String? jsonStr) {
+      if (jsonStr == null || jsonStr.isEmpty) return [];
+      try {
+        final List<dynamic> parsed = jsonDecode(jsonStr);
+        return parsed.map((docMap) => UploadedDoc.fromMap(docMap)).toList();
+      } catch (_) {
+        return [];
       }
     }
 
@@ -123,6 +146,10 @@ class Form6Storage {
       labOptions: parseStringList(data['labOptions']),
       labIdByName: parseStringIntMap(data['labIdByName']),
       sendingSampleLocation: data['sendingSampleLocation'] ?? '',
+      // Restore uploaded documents
+      uploadedDocs: parseDocuments(data['uploadedDocuments']),
+      documentNames: parseStringList(data['documentNames']),
+      documentName: data['documentName'] ?? '',
     );
   }
 
@@ -134,7 +161,27 @@ class Form6Storage {
       print('📦 Form6 Stored Data:');
       for (var row in result) {
         row.forEach((key, value) {
-          print('🔑 $key => $value');
+          if (key == 'uploadedDocuments' && value != null) {
+            try {
+              final docs = jsonDecode(value as String) as List;
+              print('🔑 $key => ${docs.length} documents stored');
+              for (int i = 0; i < docs.length; i++) {
+                final doc = docs[i] as Map<String, dynamic>;
+                print('   📄 Document ${i + 1}: ${doc['name']} (${doc['extension'] ?? 'no ext'}) - ${(doc['base64Data'] as String).length} chars base64');
+              }
+            } catch (e) {
+              print('🔑 $key => Error parsing documents: $e');
+            }
+          } else if (key == 'documentNames' && value != null) {
+            try {
+              final names = jsonDecode(value as String) as List;
+              print('🔑 $key => ${names.join(', ')}');
+            } catch (e) {
+              print('🔑 $key => Error parsing names: $e');
+            }
+          } else {
+            print('🔑 $key => $value');
+          }
         });
       }
     }
@@ -165,5 +212,44 @@ class Form6Storage {
   Future<void> clearFormData() async {
     await db.clearForm6Data();
     print('🧹 Cleared all form6 data from SQLite');
+  }
+
+  Future<void> testDocumentStorage() async {
+    print('🧪 Testing document storage...');
+    
+    // Create a test document
+    final testDoc = UploadedDoc(
+      name: 'test_document.pdf',
+      base64Data: 'dGVzdCBjb250ZW50', // base64 for "test content"
+      mimeType: 'application/pdf',
+      extension: 'pdf',
+    );
+    
+    // Create a test state
+    final testState = SampleFormState(
+      senderName: 'Test User',
+      uploadedDocs: [testDoc],
+      documentNames: [testDoc.name],
+    );
+    
+    // Save the test state
+    await saveForm6Data(testState);
+    print('✅ Test document saved');
+    
+    // Retrieve and verify
+    final retrievedState = await fetchStoredState();
+    if (retrievedState != null && retrievedState.uploadedDocs.isNotEmpty) {
+      final retrievedDoc = retrievedState.uploadedDocs.first;
+      print('✅ Document retrieved: ${retrievedDoc.name}');
+      print('✅ Base64 data length: ${retrievedDoc.base64Data.length}');
+      print('✅ Extension: ${retrievedDoc.extension}');
+      print('✅ MIME type: ${retrievedDoc.mimeType}');
+    } else {
+      print('❌ Failed to retrieve test document');
+    }
+    
+    // Clean up
+    await clearFormData();
+    print('🧹 Test data cleaned up');
   }
 }

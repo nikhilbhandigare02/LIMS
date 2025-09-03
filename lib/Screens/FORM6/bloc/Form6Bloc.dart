@@ -15,6 +15,36 @@ import '../repository/form6Repository.dart';
 part 'Form6Event.dart';
 part 'Form6State.dart';
 
+class UploadedDoc extends Equatable {
+  final String name;
+  final String base64Data;
+  final String? mimeType;
+  final String? extension;
+
+  const UploadedDoc({required this.name, required this.base64Data, this.mimeType, this.extension});
+
+  @override
+  List<Object?> get props => [name, base64Data, mimeType, extension];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'base64Data': base64Data,
+      'mimeType': mimeType,
+      'extension': extension,
+    };
+  }
+
+  factory UploadedDoc.fromMap(Map<String, dynamic> map) {
+    return UploadedDoc(
+      name: map['name'] ?? '',
+      base64Data: map['base64Data'] ?? '',
+      mimeType: map['mimeType'],
+      extension: map['extension'],
+    );
+  }
+}
+
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
@@ -24,8 +54,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(sampleCodeData: event.value));
     });
     on<UploadDocumentEvent>((event, emit) {
+      // Backward compatibility: still support single upload field
+      final String generatedName = state.documentName.isNotEmpty ? state.documentName : 'Document ${state.uploadedDocs.length + 1}';
+      final UploadedDoc doc = UploadedDoc(name: generatedName, base64Data: event.value);
+      final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)..add(doc);
       emit(state.copyWith(
         uploadedDocument: event.value,
+        uploadedDocs: updated,
       ));
     });
     on<documentNameChangedEvent>((event, emit) {
@@ -33,6 +68,19 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(
         documentName: event.value,
       ));
+    });
+
+    on<AddUploadedDocuments>((event, emit) {
+      final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)..addAll(event.documents);
+      emit(state.copyWith(uploadedDocs: updated));
+    });
+
+    on<RemoveUploadedDocument>((event, emit) {
+      if (event.index >= 0 && event.index < state.uploadedDocs.length) {
+        final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)
+          ..removeAt(event.index);
+        emit(state.copyWith(uploadedDocs: updated));
+      }
     });
 
     on<LoadSavedFormData>((event, emit) {
@@ -44,6 +92,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       if (event.savedState.natureOptions.isEmpty) {
         add(const FetchNatureOfSampleRequested());
+      }
+      if (event.savedState.sealNumberOptions.isEmpty) {
+        add(const FetchSealNumberChanged());
       }
       
       // Load dependent dropdowns if parent selections exist but options are missing
@@ -213,6 +264,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<FetchRegionsRequested>(_onFetchRegionsRequested);
     on<FetchDivisionsRequested>(_onFetchDivisionsRequested);
     on<FormSubmit>(_onFormSubmit);
+
     on<FetchLabMasterRequested>((event, emit) async {
       emit(state.copyWith(labOptions: [], labIdByName: {}, lab: ''));
       try {
@@ -253,8 +305,52 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
     });
 
+    on<FetchSealNumberChanged>((event, emit) async {
+      emit(state.copyWith(sealNumberOptions: [], sealNumber: ''));
+      try {
+        final session = await encryptWithSession(
+          data: {},
+          rsaPublicKeyPem: rsaPublicKeyPem,
+        );
+        final encryptedPayload = {
+          'encryptedData': session.payloadForServer['EncryptedData']!,
+          'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
+          'iv': session.payloadForServer['IV']!,
+        };
+        final response = await form6repository.getSealNumber(encryptedPayload);
+        print('SealNumbers API response (encrypted):');
+        print(response);
+        // Try to decrypt and print the response for debugging
+        try {
+          final String encryptedDataBase64 =
+              (response['encryptedData'] ?? response['EncryptedData']) as String;
+          final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
+          final String decrypted = utf8.decode(
+            aesCbcDecrypt(
+              base64ToBytes(encryptedDataBase64),
+              session.aesKeyBytes,
+              base64ToBytes(serverIvBase64),
+            ),
+          );
+          print('SealNumbers API response (decrypted):');
+          print(decrypted);
+          final parsed = _parseIdNameList(decrypted, idKeys: ['sealId', 'SealId', 'id', 'Id'], nameKeys: ['sealNumber', 'SealNumber', 'name', 'Name', 'text', 'Text', 'label', 'Label']);
+          emit(state.copyWith(sealNumberOptions: parsed.names));
+        } catch (e) {
+          print('Failed to decrypt SealNumbers response: $e');
+          emit(state.copyWith(sealNumberOptions: []));
+        }
+      } catch (e) {
+        emit(state.copyWith(sealNumberOptions: []));
+      }
+    });
+
     on<LabChanged>((event, emit) {
       emit(state.copyWith(lab: event.value ?? ''));
+    });
+
+    on<SealNumberChanged>((event, emit) {
+      emit(state.copyWith(sealNumber: event.value ?? ''));
     });
 
     on<FormResetEvent>((event, emit) {
@@ -459,6 +555,73 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
             divisionIdByName: parsed.nameToId,
             // keep user's current selection; do not auto-select the first option
             division: state.division,
+          ));
+        } catch (_) {}
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _onFetchSealNumberChanged(
+      FetchSealNumberChanged event,
+      Emitter<SampleFormState> emit,
+      ) async {
+    try {
+      final request = <String, dynamic>{};
+
+      final session = await encryptWithSession(
+        data: request,
+        rsaPublicKeyPem: rsaPublicKeyPem,
+      );
+
+      final encryptedResponse = await form6repository.getSealNumber(session.payloadForServer);
+      if (encryptedResponse == null) return;
+
+      try {
+        final String encryptedDataBase64 =
+            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+        final String decrypted = utf8.decode(
+          aesCbcDecrypt(
+            base64ToBytes(encryptedDataBase64),
+            session.aesKeyBytes,
+            base64ToBytes(serverIvBase64),
+          ),
+        );
+
+        final parsed = _parseIdNameList(
+          decrypted,
+          idKeys: ['sealId', 'SealId', 'Id', 'id'],
+          nameKeys: ['sealNumber', 'SealNumber', 'name', 'Name', 'text', 'Text', 'label', 'Label'],
+        );
+        emit(state.copyWith(
+          sealNumberOptions: parsed.names,
+          // keep user's current selection; do not auto-select the first option
+          sealNumber: state.sealNumber,
+        ));
+      } catch (e) {
+        try {
+          final String encryptedAESKey =
+              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          final String encryptedData =
+              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
+
+          final String decryptedFallback = await decrypt(
+            encryptedAESKeyBase64: encryptedAESKey,
+            encryptedDataBase64: encryptedData,
+            ivBase64: iv,
+            rsaPrivateKeyPem: rsaPrivateKeyPem,
+          );
+          final parsed = _parseIdNameList(
+            decryptedFallback,
+            idKeys: ['sealId', 'SealId', 'Id', 'id'],
+            nameKeys: ['sealNumber', 'SealNumber', 'name', 'Name', 'text', 'Text', 'label', 'Label'],
+          );
+          emit(state.copyWith(
+            sealNumberOptions: parsed.names,
+            // keep user's current selection; do not auto-select the first option
+            sealNumber: state.sealNumber,
           ));
         } catch (_) {}
       }
@@ -788,6 +951,11 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         print("🔄 Loading nature of sample options...");
         await _onFetchNatureOfSampleRequested(const FetchNatureOfSampleRequested(), emit);
       }
+      
+      if (state.sealNumberOptions.isEmpty) {
+        print("🔄 Loading seal number options...");
+        await _onFetchSealNumberChanged(const FetchSealNumberChanged(), emit);
+      }
 
       final int? districtId = state.districtIdByName[state.district];
       final int? regionId = state.regionIdByName[state.region];
@@ -799,12 +967,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print("🔍 Submit validation - Region: '${state.region}' -> ID: $regionId");
       print("🔍 Submit validation - Division: '${state.division}' -> ID: $divisionId");
       print("🔍 Submit validation - Article: '${state.article}' -> ID: $sampleId");
+      print("🔍 Submit validation - Seal Number: '${state.sealNumber}'");
       print("🔍 Available district IDs: ${state.districtIdByName}");
       print("🔍 Available region IDs: ${state.regionIdByName}");
       print("🔍 Available division IDs: ${state.divisionIdByName}");
       print("🔍 Available nature IDs: ${state.natureIdByName}");
+      print("🔍 Available seal numbers: ${state.sealNumberOptions}");
 
-      // If any ID is still null after loading, try one more time with a delay
       if (districtId == null || regionId == null || divisionId == null || sampleId == null) {
         print("⚠️ Some IDs are still null, waiting a bit more for options to load...");
         await Future.delayed(const Duration(milliseconds: 1000));
@@ -846,6 +1015,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
+      
+      if (state.sealNumber.isEmpty) {
+        final errorMsg = 'Seal Number is required. Please select a Seal Number.';
+        print("❌ $errorMsg");
+        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
+        return;
+      }
 
       final formData = <String, dynamic>{
         // sample_location_master inputs
@@ -877,6 +1053,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'WrapperCodeNumber': state.sampleCodeNumber,
         'SealImpression': state.sealImpression == true,
         'SealNumber': state.numberofSeal,
+        'SelectedSealNumber': state.sealNumber.isNotEmpty ? state.sealNumber : null,
         'MemoFormVI': state.formVI == true,
         'WrapperFormVI': state.FoemVIWrapper == true,
         'Latitude': state.Lattitude.isNotEmpty ? double.tryParse(state.Lattitude) : null,
@@ -884,6 +1061,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'SampleIsActive': true,
         'insertedBy': userId,
         'sampleInsertedBy': userId,
+        'UploadedDocuments': state.uploadedDocs
+            .map((e) => {
+                  'FileName': e.name,
+                  'FileDataBase64': e.base64Data,
+                  'MimeType': e.mimeType,
+                  'Extension': e.extension,
+                })
+            .toList(),
       };
 
       // Log the exact decrypted request we are about to send

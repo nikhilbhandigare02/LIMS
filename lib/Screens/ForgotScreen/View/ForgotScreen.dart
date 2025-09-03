@@ -110,11 +110,10 @@ class ForgotScreen extends StatelessWidget {
                         });
                       }
 
-                      // Error handling
                       else if (state.apiStatus == ApiStatus.error) {
                         Message.showTopRightOverlay(
                           context,
-                          'Wrong OTP, please enter correct otp',
+                          state.message,
                           MessageType.error,
                         );
                       }

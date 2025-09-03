@@ -3,14 +3,16 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
 import '../bloc/Form6Bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 
-// Helper to load user name from secure storage and update the bloc
 Future<void> loadSenderNameIfNeeded(
   SampleFormState state,
   SampleFormBloc bloc,
@@ -332,48 +334,48 @@ List<List<Widget>> getSampleDetailsSteps(
 ) {
   return [
     [
-      // BlocBuilder<SampleFormBloc, SampleFormState>(
-      //   builder: (context, s) {
-      //     if (s.labOptions.isEmpty) {
-      //       bloc.add(FetchLabMasterRequested());
-      //       const loading = "Loading Seal Number...";
-      //       return Opacity(
-      //         opacity: 0.7,
-      //         child: IgnorePointer(
-      //           ignoring: true,
-      //           child: BlocDropdown(
-      //             label: "Seal Numbers",
-      //             // icon: Icons.science,
-      //             value: loading,
-      //             items: const [loading],
-      //             onChanged: (_) {},
-      //           ),
-      //         ),
-      //       );
-      //     }
-      //     final selected = s.lab;
-      //     final items = s.labOptions;
-      //     return BlocDropdown(
-      //       label: "Seal Number  ",
-      //       //  icon: Icons.science,
-      //       value: selected.isEmpty ? null : selected,
-      //       items: items,
-      //       onChanged: (val) {
-      //         if (val == null) return;
-      //         bloc.add(LabChanged(val));
-      //       },
-      //       validator: (v) => Validators.validateEmptyField(v, 'Seal Number'),
-      //     );
-      //   },
-      // ),
-      // SizedBox(height: 16),
+      BlocBuilder<SampleFormBloc, SampleFormState>(
+        builder: (context, s) {
+          if (s.sealNumberOptions.isEmpty) {
+            bloc.add(FetchSealNumberChanged());
+            const loading = "Loading Seal Number...";
+            return Opacity(
+              opacity: 0.7,
+              child: IgnorePointer(
+                ignoring: true,
+                child: BlocDropdown(
+                  label: "Seal Numbers",
+                  // icon: Icons.science,
+                  value: loading,
+                  items: const [loading],
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          }
+          final selected = s.sealNumber;
+          final items = s.sealNumberOptions;
+          return BlocDropdown(
+            label: "Seal Number  ",
+            //  icon: Icons.science,
+            value: selected.isEmpty ? null : selected,
+            items: items,
+            onChanged: (val) {
+              if (val == null) return;
+              bloc.add(SealNumberChanged(val));
+            },
+            validator: (v) => Validators.validateEmptyField(v, 'Seal Number'),
+          );
+        },
+      ),
+      SizedBox(height: 16),
       BlocTextInput(
         label: "Sample Code Number",
         // icon: Icons.qr_code,
         initialValue: state.sampleCodeData,
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Place of Collection'),
+            Validators.validateEmptyField(v, 'Sample Code Number'),
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
       ),
@@ -701,34 +703,110 @@ List<List<Widget>> getSampleDetailsSteps(
                 initialValue: state.documentName,
                 readOnly: false,
                 onChanged: (val) => bloc.add(documentNameChangedEvent(val)),
-
+                validator: (v) => Validators.validateEmptyField(v, 'Document Description'),
               ),
+              SizedBox(height: 8),
+
               SizedBox(height: 16),
               ElevatedButton.icon(
                 icon: Icon(Icons.upload_file),
-                label: Text("Upload Document"),
+                label: Text("Upload Document(s)"),
                 onPressed: () async {
                   final result = await FilePicker.platform.pickFiles(
                     type: FileType.any,
+                    allowMultiple: true,
+                    withData: false,
                   );
 
-                  if (result != null && result.files.single.path != null) {
-                    final file = File(result.files.single.path!);
-                    final bytes = await file.readAsBytes();
-                    final base64String = base64Encode(bytes);
-
-
-
-                    context.read<SampleFormBloc>().add(
-                      UploadDocumentEvent(base64String),
-                    );
+                  if (result != null && result.files.isNotEmpty) {
+                    final List<UploadedDoc> docs = [];
+                    for (final f in result.files) {
+                      final String? path = f.path;
+                      if (path == null) continue;
+                      final file = File(path);
+                      final bytes = await file.readAsBytes();
+                      final base64String = base64Encode(bytes);
+                      final String name = (f.name.isNotEmpty ? f.name : file.path.split('/').last);
+                      final String? ext = f.extension;
+                      final String? mime = null;
+                      docs.add(UploadedDoc(name: name, base64Data: base64String, mimeType: mime, extension: ext));
+                    }
+                    if (docs.isNotEmpty) {
+                      context.read<SampleFormBloc>().add(AddUploadedDocuments(docs));
+                    }
                   }
                 },
               ),
+              SizedBox(height: 12),
+
+              Row(
+                children: [
+                  Icon(
+                    state.uploadedDocs.isNotEmpty ? Icons.check_circle : Icons.circle_outlined,
+                    color: state.uploadedDocs.isNotEmpty ? Colors.green : Colors.grey,
+                    size: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    "File uploads: ${state.uploadedDocs.isNotEmpty ? '${state.uploadedDocs.length} file(s) uploaded' : 'Required'}",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: state.uploadedDocs.isNotEmpty ? Colors.green : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              if (state.uploadedDocs.isNotEmpty) ...[
+                Text("Uploaded Files:", style: Theme.of(context).textTheme.titleMedium),
+                SizedBox(height: 8),
+                ...List.generate(state.uploadedDocs.length, (index) {
+                  final doc = state.uploadedDocs[index];
+                  return Card(
+                    color: customColors.white,
+                    child: ListTile(
+                      leading: Icon(Icons.insert_drive_file, color: customColors.primary),
+                      title: Text(doc.name, style: TextStyle(color: customColors.primary),),
+                      subtitle: Text(doc.extension != null && doc.extension!.isNotEmpty ? '.${doc.extension}' : '', style: TextStyle(color: customColors.primary),),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.open_in_new, color: customColors.primary),
+                            tooltip: 'Open',
+                            onPressed: () async {
+                              await _openUploadedDoc(doc);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete_outline, color: customColors.primary,),
+                            tooltip: 'Remove',
+                            onPressed: () {
+                              context.read<SampleFormBloc>().add(RemoveUploadedDocument(index));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ],
           );
         },
       ),
     ],
   ];
+}
+
+Future<void> _openUploadedDoc(UploadedDoc doc) async {
+  try {
+    final Directory dir = await getTemporaryDirectory();
+    final String safeName = doc.name.isNotEmpty ? doc.name : 'document';
+    final String ext = (doc.extension != null && doc.extension!.isNotEmpty) ? '.${doc.extension}' : '';
+    final File out = File('${dir.path}/$safeName$ext');
+    final List<int> bytes = base64Decode(doc.base64Data);
+    await out.writeAsBytes(bytes, flush: true);
+    await OpenFilex.open(out.path);
+  } catch (_) {}
 }

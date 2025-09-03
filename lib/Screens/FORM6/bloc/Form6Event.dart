@@ -203,6 +203,20 @@ class UploadDocumentEvent extends SampleFormEvent {
   @override
   List<Object?> get props => [value];
 }
+
+class AddUploadedDocuments extends SampleFormEvent {
+  final List<UploadedDoc> documents;
+  const AddUploadedDocuments(this.documents);
+  @override
+  List<Object?> get props => [documents];
+}
+
+class RemoveUploadedDocument extends SampleFormEvent {
+  final int index;
+  const RemoveUploadedDocument(this.index);
+  @override
+  List<Object?> get props => [index];
+}
 class UpdateFormField extends SampleFormEvent {
   final String field;
   final dynamic value;
@@ -268,4 +282,13 @@ class SendingSampleLocationChanged extends SampleFormEvent {
   const SendingSampleLocationChanged(this.value);
   @override
   List<Object?> get props => [value];
+}
+class SealNumberChanged extends SampleFormEvent {
+  final String? value;
+  const SealNumberChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+class FetchSealNumberChanged extends SampleFormEvent {
+  const FetchSealNumberChanged();
 }

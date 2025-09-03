@@ -11,5 +11,12 @@ class RequestDateEvent extends RequestSealEvent{
   @override
   List<Object> get props => [selectedDate];
 }
+class sealNumberEvent extends RequestSealEvent{
+  final String sealNumber;
+  sealNumberEvent(this.sealNumber);
+  @override
+  List<Object> get props => [sealNumber];
+}
+
 
 class SubmitRequestEvent extends RequestSealEvent{}

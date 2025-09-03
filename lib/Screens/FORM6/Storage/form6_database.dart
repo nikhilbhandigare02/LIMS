@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 6,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -66,7 +66,10 @@ class Form6Database {
       lab TEXT,
       labOptions TEXT,
       labIdByName TEXT,
-      sendingSampleLocation TEXT
+      sendingSampleLocation TEXT,
+      uploadedDocuments TEXT,
+      documentNames TEXT,
+      documentName TEXT
     )
     ''');
   }
@@ -95,6 +98,13 @@ class Form6Database {
       await db.execute('ALTER TABLE form6 ADD COLUMN labOptions TEXT');
       await db.execute('ALTER TABLE form6 ADD COLUMN labIdByName TEXT');
       await db.execute('ALTER TABLE form6 ADD COLUMN sendingSampleLocation TEXT');
+    }
+    if (oldVersion < 5) {
+      await db.execute('ALTER TABLE form6 ADD COLUMN uploadedDocuments TEXT');
+      await db.execute('ALTER TABLE form6 ADD COLUMN documentNames TEXT');
+    }
+    if (oldVersion < 6) {
+      await db.execute('ALTER TABLE form6 ADD COLUMN documentName TEXT');
     }
   }
 

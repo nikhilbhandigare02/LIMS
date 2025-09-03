@@ -11,6 +11,7 @@ import '../Storage/form6_storage.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form6_step_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 
 class Form6LandingScreen extends StatefulWidget {
   @override
@@ -128,6 +129,8 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 _buildVerticalStepProgress(),
                 const SizedBox(height: 15),
                 _buildSubmitButton(),
+                const SizedBox(height: 15),
+
               ],
             ),
           ),
