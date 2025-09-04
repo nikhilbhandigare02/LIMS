@@ -28,7 +28,7 @@ class SplashService {
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            RouteName.requestForSeal,
+            RouteName.loginScreen,
                 (route) => false,
           );
 
