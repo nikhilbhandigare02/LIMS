@@ -63,6 +63,12 @@ class CustomDrawer extends StatelessWidget {
                     "Request for seal number",
                     onTap: () => Navigator.pushNamed(context, RouteName.requestForSeal),
                   ),
+                  _buildMenuItem(
+                    context,
+                    Icons.info,
+                    "  seal number Info",
+                    onTap: () => Navigator.pushNamed(context, RouteName.SealRequestDetailsScreen),
+                  ),
                   const Divider(),
                   _buildSectionTitle("Others"),
 

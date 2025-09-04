@@ -8,6 +8,7 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 import '../FORM6/bloc/Form6Bloc.dart';
 import '../FORM6/repository/form6Repository.dart';
 import '../FORM6/view/form6_landing_screen.dart';
+import '../login/view/LoginScreen.dart';
 
 class SplashService {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
@@ -28,7 +29,7 @@ class SplashService {
         } else {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            RouteName.requestForSeal,
+            RouteName.loginScreen,
                 (route) => false,
           );
 

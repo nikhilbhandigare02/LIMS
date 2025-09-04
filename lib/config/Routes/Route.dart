@@ -13,6 +13,7 @@ import '../../Screens/FORM6/view/form6_landing_screen.dart';
 
 import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
+import '../../Screens/SealRequestDetails/SealRequestDetailsScreen.dart';
 import '../../Screens/Setting/view/Setting.dart';
 import '../../Screens/UpdateSample/view/UpdateSample.dart';
 import '../../Screens/about_us/view/aboutUS.dart';
@@ -54,6 +55,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => OtpVerificationScreen(),);
     case RouteName.requestForSeal:
       return  MaterialPageRoute(builder: (context) => Requestsealnumber(),);
+    case RouteName.SealRequestDetailsScreen:
+      return  MaterialPageRoute(builder: (context) => SealRequestDetailsScreen(),);
     default:
       return MaterialPageRoute(builder: (context) {
         return Scaffold(

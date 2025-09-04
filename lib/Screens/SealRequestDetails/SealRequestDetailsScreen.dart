@@ -1,4 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../../core/widgets/AppHeader/AppHeader.dart';
 
 class SealRequestDetailsScreen extends StatefulWidget {
   const SealRequestDetailsScreen({super.key});
@@ -10,6 +13,13 @@ class SealRequestDetailsScreen extends StatefulWidget {
 class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+   return Scaffold(
+     appBar: AppHeader(
+       screenTitle: 'seal number info',
+       username: '',
+       userId: '',
+       showBack: true,
+     ),
+   );
   }
 }

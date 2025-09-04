@@ -14,4 +14,5 @@ class RouteName{
   static const String AboutUsScreen = 'AboutUsScreen';
   static const String OTPVerificationScreen = 'OTPVerificationScreen';
   static const String requestForSeal = 'requestForSeal';
+  static const String SealRequestDetailsScreen = 'SealRequestDetailsScreen';
 }
