@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -10,6 +12,7 @@ import '../../core/utils/Message.dart';
 import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
+import 'package:intl/intl.dart';
 
 class Requestsealnumber extends StatefulWidget {
   const Requestsealnumber({super.key});
@@ -25,13 +28,17 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
   String? _dateError;
   static const int _maxDaysAhead = 30;
 
+
+
   Future<void> _pickDate(BuildContext context) async {
     final DateTime today = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? today,
       firstDate: DateTime(today.year, today.month, today.day),
-      lastDate: DateTime(today.year, today.month, today.day).add(const Duration(days: _maxDaysAhead)),
+      lastDate: DateTime(today.year, today.month, today.day).add(
+        const Duration(days: _maxDaysAhead),
+      ),
     );
 
     if (picked != null && picked != selectedDate) {
@@ -39,6 +46,14 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
         selectedDate = picked;
         _dateError = null;
       });
+
+      // ✅ Format as dd/MM/yyyy HH:mm:ss
+      final String apiDate = DateFormat("dd/MM/yyyy HH:mm:ss").format(
+        DateTime(picked.year, picked.month, picked.day, 0, 0, 0),
+      );
+
+      // ✅ Send formatted string to bloc (not raw DateTime)
+      context.read<RequestStateBloc>().add(RequestDateEvent(picked));
     }
   }
 

@@ -49,6 +49,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   SampleFormBloc({required this.form6repository}) : super(const SampleFormState()) {
+    // Handlers are registered below. Initial fetch events are scheduled
+    // at the end of the constructor to ensure handlers are ready.
     on<SampleCodeDataChanged>((event, emit) {
       print(state.sampleCodeData);
       emit(state.copyWith(sampleCodeData: event.value));
@@ -308,8 +310,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<FetchSealNumberChanged>((event, emit) async {
       emit(state.copyWith(sealNumberOptions: [], sealNumber: ''));
       try {
+        final Map<String, dynamic> request = {
+
+          'RequestId':  2,
+        };
         final session = await encryptWithSession(
-          data: {},
+          data: request,
           rsaPublicKeyPem: rsaPublicKeyPem,
         );
         final encryptedPayload = {
@@ -361,6 +367,15 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<FetchLocationRequested>(_onFetchLocationRequested);
     on<SendingSampleLocationChanged>((event, emit) {
       emit(state.copyWith(sendingSampleLocation: event.value));
+    });
+
+    // Schedule initial fetches after all handlers are registered
+    Future.microtask(() {
+      add(const FetchDistrictsRequested(1));
+      add(const FetchNatureOfSampleRequested());
+      add(const FetchLabMasterRequested());
+      add(const FetchSealNumberChanged());
+      add(FetchLocationRequested());
     });
   }
     
@@ -566,7 +581,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       Emitter<SampleFormState> emit,
       ) async {
     try {
-      final request = <String, dynamic>{};
+      // Bind seal numbers to a specific request id
+      final request = <String, dynamic>{
+        // Send both common casings to be compatible with backend expectations
+        'Request_id': state.requestId ?? 2,
+        'RequestId': state.requestId ?? 2,
+      };
 
       final session = await encryptWithSession(
         data: request,

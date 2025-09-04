@@ -53,6 +53,8 @@ class Form6Storage {
       'lab': state.lab,
       'labOptions': jsonEncode(state.labOptions),
       'labIdByName': jsonEncode(state.labIdByName),
+      'sealNumber': state.sealNumber,
+      'sealNumberOptions': jsonEncode(state.sealNumberOptions),
       'sendingSampleLocation': state.sendingSampleLocation,
       // Store uploaded documents and names
       'uploadedDocuments': jsonEncode(documentsJson),
@@ -145,6 +147,8 @@ class Form6Storage {
       lab: data['lab'] ?? '',
       labOptions: parseStringList(data['labOptions']),
       labIdByName: parseStringIntMap(data['labIdByName']),
+      sealNumber: data['sealNumber'] ?? '',
+      sealNumberOptions: parseStringList(data['sealNumberOptions']),
       sendingSampleLocation: data['sendingSampleLocation'] ?? '',
       // Restore uploaded documents
       uploadedDocs: parseDocuments(data['uploadedDocuments']),
