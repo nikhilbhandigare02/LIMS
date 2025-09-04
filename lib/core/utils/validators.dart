@@ -242,6 +242,32 @@ class Validators {
       if (maxLength != null) LengthLimitingTextInputFormatter(maxLength),
     ];
   }
+
+  static String? validateDateInRange(
+    DateTime? value, {
+    int minDaysFromToday = 0,
+    int maxDaysFromToday = 30,
+  }) {
+    if (value == null) {
+      return 'Date is required';
+    }
+
+    final DateTime today = DateTime.now();
+    final DateTime start = DateTime(today.year, today.month, today.day).add(Duration(days: minDaysFromToday));
+    final DateTime end = DateTime(today.year, today.month, today.day).add(Duration(days: maxDaysFromToday));
+
+    final DateTime candidate = DateTime(value.year, value.month, value.day);
+
+    if (candidate.isBefore(start)) {
+      return 'Date cannot be before today';
+    }
+
+    if (candidate.isAfter(end)) {
+      return 'Date must be within the next $maxDaysFromToday days';
+    }
+
+    return null;
+  }
 }
 
 class Form6Validators {

@@ -65,7 +65,7 @@ class Form6Repository {
   Future<dynamic> getSealNumber(dynamic data) async {
     const storage = FlutterSecureStorage();
     final String? token = await storage.read(key: 'authToken');
-    final url = ApiBase.baseUrl + ApiEndpoints.sealNumber;
+    final url = ApiBase.baseUrl + ApiEndpoints.sealNumberdropdown;
     final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
     final response = await _api.postApi(url, data, headers: headers);
     return response;

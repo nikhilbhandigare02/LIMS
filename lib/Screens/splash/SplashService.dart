@@ -26,21 +26,21 @@ class SplashService {
                 (route) => false,
           );
         } else {
-          // Navigator.pushNamedAndRemoveUntil(
-          //   context,
-          //   RouteName.loginScreen,
-          //       (route) => false,
-          // );
-
-          Navigator.push(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider(
-                create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-                child: Form6LandingScreen(),
-              ),
-            ),
+            RouteName.requestForSeal,
+                (route) => false,
           );
+
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => BlocProvider(
+          //       create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+          //       child: Form6LandingScreen(),
+          //     ),
+          //   ),
+          // );
         }
       },
     );

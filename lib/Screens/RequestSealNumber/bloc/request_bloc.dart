@@ -21,7 +21,7 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
   RequestStateBloc({required this.requestedSealRepository}):super(const RequestSealState()){
     on<RequestDateEvent>(requestDate);
     on<SubmitRequestEvent>(submitRequest);
-    on<sealNumberEvent>(sealNumber);
+    on<RequestCountEvent>(RequestCount);
   }
 
   void requestDate(RequestDateEvent event, Emitter<RequestSealState> emit){
@@ -31,6 +31,10 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
   void sealNumber(sealNumberEvent event, Emitter<RequestSealState> emit){
     print(state.sealNumber);
     emit(state.copyWith(sealNumber: event.sealNumber));
+  }
+  void RequestCount(RequestCountEvent event, Emitter<RequestSealState> emit){
+    print(state.sealNumberCount);
+    emit(state.copyWith(sealNumberCount: event.sealNumberCount));
   }
 
   Future<void> submitRequest(

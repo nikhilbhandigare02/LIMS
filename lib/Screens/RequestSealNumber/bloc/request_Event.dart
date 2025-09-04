@@ -17,6 +17,12 @@ class sealNumberEvent extends RequestSealEvent{
   @override
   List<Object> get props => [sealNumber];
 }
+class RequestCountEvent extends RequestSealEvent{
+  final String sealNumberCount;
+  RequestCountEvent(this.sealNumberCount);
+  @override
+  List<Object> get props => [sealNumberCount];
+}
 
 
 class SubmitRequestEvent extends RequestSealEvent{}

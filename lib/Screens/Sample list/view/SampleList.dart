@@ -19,7 +19,7 @@ class SampleAnalysisScreen extends StatefulWidget {
 }
 
 class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin {
   int currentPage = 0;
   int itemsPerPage = 10;
   bool isCardView = false;
@@ -28,7 +28,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   late SampleBloc sampleBloc;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  
 
   @override
   void initState() {
@@ -51,7 +50,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       });
     });
   }
-  // Calculate total pages
   int getTotalPages(int totalItems) {
     return (totalItems / itemsPerPage).ceil();
   }
@@ -106,23 +104,19 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   Color getStatusColor(String? status) {
     if (status == null) return Colors.grey;
     final s = status.toLowerCase().trim();
-
-    // High-priority keywords
     if (s.contains('tampered')) return Colors.red;
     if (s.contains('decoded') && s.contains('report'))
-      return Colors.indigo; // "Sample Decoded, Generate Report"
-    if (s.contains('decoded')) return Colors.deepPurple; // "Sample Decoded"
+      return Colors.indigo;
+    if (s.contains('decoded')) return Colors.deepPurple;
     if (s.contains('dispatched') || s.contains('dispatch'))
-      return Colors.teal; // "Report Dispatched", "Pending for Dispatch"
+      return Colors.teal;
     if (s.contains('generated') && s.contains('report'))
-      return Colors.blueGrey; // "Report Generated"
+      return Colors.blueGrey;
 
-    // Workflow-specific
     if (s.contains('verification'))
-      return Colors.blue; // Sent/Pending for Verification
+      return Colors.blue;
     if (s.contains('coding') || s.contains('decode'))
-      return Colors
-          .cyan;
+      return Colors.cyan;
     if (s.contains('assignment') ||
         s.contains('allocated') ||
         s.contains('allocation'))
@@ -132,11 +126,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     if (s.contains('received'))
       return Colors.purple;
 
-    // Generic fallbacks for common words
     if (s.contains('pending')) return Colors.amber;
     if (s.contains('sent')) return Colors.lightBlue;
 
-    // Specific edge cases
     if (s == 're-requested' || s.contains('re-request'))
       return Colors.redAccent;
 
@@ -152,8 +144,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
 
   void _showEditDialog(BuildContext context, SampleList data) {
-    // This is a placeholder for the edit functionality
-    // You can implement your edit dialog here
     showDialog(
       context: context,
       builder: (ctx) {

@@ -19,6 +19,7 @@ class PasswordEvent extends LoginEvent {
   List<Object> get props => [];
 }
 
+
 class LoginButtonEvent extends LoginEvent{}
 
 class EmailFocusEvent extends LoginEvent{}
