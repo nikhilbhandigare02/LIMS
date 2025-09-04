@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/RequestSealNumber/repository/requestRepository.dart';
+import 'package:intl/intl.dart';
 
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
@@ -62,10 +63,21 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
       print('UserID: $userId');
 
 
+      final String requestedDateStr = DateFormat("dd/MM/yyyy HH:mm:ss").format(
+        DateTime(
+          state.selectedDate!.year,
+          state.selectedDate!.month,
+          state.selectedDate!.day,
+          0,
+          0,
+          0,
+        ),
+      );
+
       final RequestData = {
-        'RequestedDate': state.selectedDate,
+        'RequestedDate': requestedDateStr,
         'UserId': userId,
-        'SealNumbers': state.sealNumber,
+        'SealNumbers': state.sealNumberCount,
       };
 
       final session = await encryptWithSession(

@@ -17,6 +17,6 @@ class ApiEndpoints {
   static const String VerifyLoginOTP = 'mobile/VerifyLoginOtp';
   static const String requestforseal = 'SealRequest/seal_request';
   static const String getRequestData = 'SealRequest/GetSealRequestDetails';
-  static const String sealNumberdropdown = 'mobile/GetSealRequest';
+  static const String sealNumberdropdown = 'mobile/GetSealNumber';
 
 }

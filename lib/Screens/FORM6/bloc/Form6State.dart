@@ -5,6 +5,7 @@ class SampleFormState extends Equatable {
   final String DONumber;
   final String senderDesignation;
   final String district;
+  final int? requestId;
 
   final List<String> districtOptions;
   final Map<String, int> districtIdByName;
@@ -55,6 +56,7 @@ class SampleFormState extends Equatable {
     this.DONumber = '',
     this.senderDesignation = '',
     this.district = '',
+    this.requestId = 2,
     this.districtOptions = const [],
     this.districtIdByName = const {},
     this.Longitude = '',
@@ -106,6 +108,7 @@ class SampleFormState extends Equatable {
     String? DONumber,
     String? senderDesignation,
     String? district,
+    int? requestId,
     String? documentName,
     String? uploadedDocument,
     List<String>? districtOptions,
@@ -155,6 +158,7 @@ class SampleFormState extends Equatable {
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
+      requestId: requestId ?? this.requestId,
       documentName: documentName ?? this.documentName,
       uploadedDocument: uploadedDocument ?? this.uploadedDocument,
       districtOptions: districtOptions ?? this.districtOptions,
@@ -206,6 +210,7 @@ class SampleFormState extends Equatable {
     DONumber,
     senderDesignation,
     district,
+    requestId,
     districtOptions,
     districtIdByName,
     region,
@@ -286,6 +291,7 @@ class SampleFormState extends Equatable {
   Map<String, dynamic> toMap() {
     return {
       'senderName': senderName,
+      'requestId': requestId,
       'sampleCodeData': sampleCodeData,
       'DONumber': DONumber,
       'senderDesignation': senderDesignation,
@@ -327,6 +333,9 @@ class SampleFormState extends Equatable {
   factory SampleFormState.fromMap(Map<String, dynamic> map) {
     return SampleFormState(
       senderName: map['senderName'] ?? '',
+      requestId: map['requestId'] is int
+          ? map['requestId'] as int
+          : (map['requestId'] != null ? int.tryParse(map['requestId'].toString()) : null),
       sampleCodeData: map['sampleCodeData'] ?? '',
       DONumber: map['DONumber'] ?? '',
       senderDesignation: map['senderDesignation'] ?? '',

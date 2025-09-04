@@ -146,8 +146,7 @@ class SampleBloc extends Bloc<SampleEvent, getSampleListState> {
       final dynamic serialValue = int.tryParse(serialNo) ?? serialNo;
 
       final Map<String, dynamic> requestData = {
-        "UserId": serialValue,
-
+        "SerialNo": serialValue,
       };
 
       final encryptedRequest = await encryptWithSession(
