@@ -112,44 +112,27 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
+
                       const Text(
                         'Select Date',
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
-
                       TextFormField(
                         keyboardType: TextInputType.text,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Enter seal number count',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: customColors.primary,
-                              width: 1.5,
-                            ),
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide:  BorderSide(color: customColors.primary), // default
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide:  BorderSide(color: customColors.primary, width: 0.8), // blue when not focused
                           ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.redAccent,
-                              width: 1.0,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Colors.redAccent,
-                              width: 1.5,
-                            ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide:  BorderSide(color: customColors.primary, width: 0.8), // blue when focused
                           ),
                         ),
                         validator: (value) => Validators.validateNumberOfSeals(value),
@@ -158,7 +141,11 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
                         },
                       ),
                       const SizedBox(height: 8),
-
+                      const Text(
+                        'Select Date',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => _pickDate(context),
                         child: Container(
