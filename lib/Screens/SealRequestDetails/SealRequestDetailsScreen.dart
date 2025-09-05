@@ -26,6 +26,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text('Update Count - Request ID: $requestId'),
           content: SizedBox(
@@ -50,7 +51,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text('Cancel',style: TextStyle(color: Colors.blue),),
             ),
             ElevatedButton(
               onPressed: () {
@@ -68,7 +69,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.blue,
                 textStyle: const TextStyle(color: Colors.blue),
                 shape: RoundedRectangleBorder(
