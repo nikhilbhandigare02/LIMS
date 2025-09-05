@@ -33,25 +33,26 @@ class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
     emit(state.copyWith(fetchRequestData: ApiResponse.loading()));
 
     try {
-      final String? loginData = await secureStorage.read(key: 'loginData');
+      final String? loginData = await _secureStorage.read(key: 'loginData');
 
-      if (loginData == null) {
-        print('Login data not found in secure storage');
+      if (loginData == null || loginData.isEmpty) {
+        emit(state.copyWith(fetchRequestData: ApiResponse.error('Login not found')));
         return;
       }
 
       final Map<String, dynamic> loginMap = jsonDecode(loginData);
-      final String? userId = loginMap['UserId']?.toString();
-
-      if (userId == null) {
-        print('UserID not found in login data');
+      String? userId = loginMap['UserId']?.toString();
+      userId ??= loginMap['userId']?.toString();
+      userId ??= loginMap['user_id']?.toString();
+      if (userId == null || userId.isEmpty) {
+        emit(state.copyWith(fetchRequestData: ApiResponse.error('UserId missing in login')));
         return;
       }
 
       print('UserID: $userId');
 
       final Map<String, dynamic> requestData = {
-        "UserID": userId,
+        "UserId": userId,
       };
 
       final encryptedRequest = await encryptWithSession(
@@ -65,7 +66,7 @@ class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
         'iv': encryptedRequest.payloadForServer['IV']!,
       };
 
-      final encryptedResponse = await requestedSealRepository.requestSealApi(body);
+      final encryptedResponse = await _repository.getRequestData(body);
 
       if (encryptedResponse == null) {
         emit(state.copyWith(
@@ -99,6 +100,9 @@ class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
         );
       }
 
+      // Debug: inspect decrypted payload shape
+      // ignore: avoid_print
+      print('SealRequest decrypted: ' + decryptedJson);
       final decodedObj = jsonDecode(decryptedJson);
       final SealRequestModel model = decodedObj is Map<String, dynamic>
           ? SealRequestModel.fromJson(decodedObj)
