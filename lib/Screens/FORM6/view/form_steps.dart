@@ -334,17 +334,52 @@ List<List<Widget>> getSampleDetailsSteps(
 ) {
   return [
     [
+      // BlocBuilder<SampleFormBloc, SampleFormState>(
+      //   builder: (context, s) {
+      //     if (s.sealNumberOptions.isEmpty) {
+      //       bloc.add(FetchSealNumberChanged());
+      //       const loading = "Loading slip Number...";
+      //       return Opacity(
+      //         opacity: 0.7,
+      //         child: IgnorePointer(
+      //           ignoring: true,
+      //           child: BlocDropdown(
+      //             label: "Slip Numbers",
+      //             // icon: Icons.science,
+      //             value: loading,
+      //             items: const [loading],
+      //             onChanged: (_) {},
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //     final selected = s.sealNumber;
+      //     final items = s.sealNumberOptions;
+      //     return BlocDropdown(
+      //       label: "Slip Number  ",
+      //       //  icon: Icons.science,
+      //       value: selected.isEmpty ? null : selected,
+      //       items: items,
+      //       onChanged: (val) {
+      //         if (val == null) return;
+      //         bloc.add(SealNumberChanged(val));
+      //       },
+      //       validator: (v) => Validators.validateEmptyField(v, 'Slip Number'),
+      //     );
+      //   },
+      // ),
+      SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
-          if (s.sealNumberOptions.isEmpty) {
-            bloc.add(FetchSealNumberChanged());
-            const loading = "Loading Seal Number...";
+          if (s.doSealNumbersOptions.isEmpty) {
+            bloc.add(FetchDoSealNumbersRequested());
+            const loading = "Loading DO Seal Numbers...";
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Seal Numbers",
+                  label: "DO Seal Numbers",
                   // icon: Icons.science,
                   value: loading,
                   items: const [loading],
@@ -353,18 +388,18 @@ List<List<Widget>> getSampleDetailsSteps(
               ),
             );
           }
-          final selected = s.sealNumber;
-          final items = s.sealNumberOptions;
+          final selected = s.doSealNumbers;
+          final items = s.doSealNumbersOptions;
           return BlocDropdown(
-            label: "Seal Number  ",
+            label: "DO Seal Numbers  ",
             //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
             items: items,
             onChanged: (val) {
               if (val == null) return;
-              bloc.add(SealNumberChanged(val));
+              bloc.add(DoSealNumbersChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, 'Seal Number'),
+            validator: (v) => Validators.validateEmptyField(v, 'DO Seal Numbers'),
           );
         },
       ),

@@ -11,7 +11,7 @@ class NetworkServiceApi extends ApiServices {
     try {
       final response = await http
           .get(Uri.parse(url), headers: headers)
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 25));
 
       print('HTTP GET: $url');
       print('HTTP Status: ${response.statusCode}');
@@ -44,7 +44,7 @@ class NetworkServiceApi extends ApiServices {
         headers: requestHeaders,
         body: jsonEncode(data),
       )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 25));
 
       print('HTTP Status: ${response.statusCode}');
       print('Response body: ${response.body}');

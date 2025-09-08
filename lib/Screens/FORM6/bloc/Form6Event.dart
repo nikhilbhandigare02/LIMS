@@ -292,3 +292,20 @@ class SealNumberChanged extends SampleFormEvent {
 class FetchSealNumberChanged extends SampleFormEvent {
   const FetchSealNumberChanged();
 }
+
+class DoSealNumbersChanged extends SampleFormEvent {
+  final String? value;
+  const DoSealNumbersChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+class DocumentNameChanged extends SampleFormEvent {
+  final String? value;
+  const DocumentNameChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class FetchDoSealNumbersRequested extends SampleFormEvent {
+  const FetchDoSealNumbersRequested();
+}

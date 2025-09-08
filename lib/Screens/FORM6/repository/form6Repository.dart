@@ -13,6 +13,23 @@ class Form6Repository {
     final String? token = await storage.read(key: 'authToken');
     final formSixUrl = ApiBase.baseUrl + ApiEndpoints.insertSample;
     final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
+    
+    // Debug: Print what we're sending to the API
+    print('FormSixApi - URL: $formSixUrl');
+    print('FormSixApi - Data type: ${data.runtimeType}');
+    print('FormSixApi - Data keys: ${data is Map ? data.keys : 'Not a Map'}');
+    print('FormSixApi - Data: $data');
+    print('FormSixApi - Headers: $headers');
+    
+    // Additional debugging for the payload structure
+    if (data is Map) {
+      final mapData = data as Map;
+      print('FormSixApi - Map size: ${mapData.length}');
+      for (final key in mapData.keys) {
+        print('FormSixApi - Key: $key, Value type: ${mapData[key].runtimeType}, Value length: ${mapData[key] is String ? (mapData[key] as String).length : 'N/A'}');
+      }
+    }
+    
     final response = await _api.postApi(formSixUrl, data, headers: headers);
     return response;
   }
