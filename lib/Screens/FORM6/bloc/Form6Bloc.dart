@@ -21,10 +21,34 @@ class UploadedDoc extends Equatable {
   final String? mimeType;
   final String? extension;
 
-  const UploadedDoc({required this.name, required this.base64Data, this.mimeType, this.extension});
+  const UploadedDoc({
+    required this.name,
+    required this.base64Data,
+    this.mimeType,
+    this.extension,
+  });
 
   @override
   List<Object?> get props => [name, base64Data, mimeType, extension];
+
+  /// Convert the document info + content into a base64-encoded string
+  String toBase64() {
+    final map = {
+      'name': name,
+      'base64Data': base64Data,
+      'mimeType': mimeType,
+      'extension': extension,
+    };
+    final jsonStr = jsonEncode(map);
+    return base64Encode(utf8.encode(jsonStr));
+  }
+
+  /// Decode from a base64 string
+  factory UploadedDoc.fromBase64(String encoded) {
+    final jsonStr = utf8.decode(base64Decode(encoded));
+    final map = jsonDecode(jsonStr);
+    return UploadedDoc.fromMap(map);
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -45,12 +69,12 @@ class UploadedDoc extends Equatable {
   }
 }
 
+
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   SampleFormBloc({required this.form6repository}) : super(const SampleFormState()) {
-    // Handlers are registered below. Initial fetch events are scheduled
-    // at the end of the constructor to ensure handlers are ready.
+
     on<SampleCodeDataChanged>((event, emit) {
       print(state.sampleCodeData);
       emit(state.copyWith(sampleCodeData: event.value));
@@ -311,55 +335,21 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
     });
 
-    on<FetchSealNumberChanged>((event, emit) async {
-      emit(state.copyWith(sealNumberOptions: [], sealNumber: ''));
-      try {
-        final Map<String, dynamic> request = {
-
-          'RequestId':  2,
-        };
-        final session = await encryptWithSession(
-          data: request,
-          rsaPublicKeyPem: rsaPublicKeyPem,
-        );
-        final encryptedPayload = {
-          'encryptedData': session.payloadForServer['EncryptedData']!,
-          'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
-          'iv': session.payloadForServer['IV']!,
-        };
-        final response = await form6repository.getSealNumber(encryptedPayload);
-        print('SealNumbers API response (encrypted):');
-        print(response);
-        // Try to decrypt and print the response for debugging
-        try {
-          final String encryptedDataBase64 =
-              (response['encryptedData'] ?? response['EncryptedData']) as String;
-          final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
-          final String decrypted = utf8.decode(
-            aesCbcDecrypt(
-              base64ToBytes(encryptedDataBase64),
-              session.aesKeyBytes,
-              base64ToBytes(serverIvBase64),
-            ),
-          );
-          print('SealNumbers API response (decrypted):');
-          print(decrypted);
-          final parsed = _parseIdNameList(decrypted, idKeys: ['sealId', 'SealId', 'id', 'Id'], nameKeys: ['sealNumber', 'SealNumber', 'name', 'Name', 'text', 'Text', 'label', 'Label']);
-          emit(state.copyWith(sealNumberOptions: parsed.names));
-        } catch (e) {
-          print('Failed to decrypt SealNumbers response: $e');
-          emit(state.copyWith(sealNumberOptions: []));
-        }
-      } catch (e) {
-        emit(state.copyWith(sealNumberOptions: []));
-      }
-    });
 
     on<FetchDoSealNumbersRequested>((event, emit) async {
       emit(state.copyWith(doSealNumbersOptions: [], doSealNumbers: '', doSealNumbersIdByName: {}));
       try {
+        final String? loginDataJson = await _secureStorage.read(key: 'loginData');
+        int? userId;
+        if (loginDataJson != null && loginDataJson.isNotEmpty) {
+          try {
+            final map = jsonDecode(loginDataJson) as Map<String, dynamic>;
+            final dynamic uid = map['userId'] ?? map['UserId'] ?? map['user_id'];
+            if (uid is int) userId = uid; else if (uid != null) userId = int.tryParse(uid.toString());
+          } catch (_) {}
+        }
         final Map<String, dynamic> request = {
-          'RequestId': 2,
+          'RequestId': userId,
         };
         final session = await encryptWithSession(
           data: request,
@@ -1141,8 +1131,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'sampleInsertedBy': userId,
         'documentName': state.documentName,
         'documentBase64': state.uploadedDocs
-            .map((e) => e.base64Data)
-            .join(","),
+            .map((doc) => doc.toBase64())
+            .join(","), // or store as JSON array if your DB supports it
+
 
       };
 

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import 'package:intl/intl.dart';
 
+import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
 import '../../../Screens/Sample list/model/view_form6_model.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
@@ -11,22 +14,39 @@ import '../../utils/enums.dart';
 class SampleDetailsScreen extends StatefulWidget {
   final String serialNo;
 
-  const SampleDetailsScreen({Key? key, required this.serialNo})
+   SampleDetailsScreen({Key? key, required this.serialNo})
     : super(key: key);
 
   State<SampleDetailsScreen> createState() => _SampleDetailsScreenState();
 }
 
 class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
-  // 🎨 Enhanced color scheme
-  static const Color primaryColor = Color(0xFF2E7D8A);
-  static const Color secondaryColor = Color(0xFF4A90A4);
-  static const Color accentColor = Color(0xFF6CB4C7);
-  static const Color backgroundColor = Color(0xFFF5F9FA);
-  static const Color cardColor = Color(0xFFFFFFFF);
-  static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color dividerColor = Color(0xFFE5E7EB);
+  List<UploadedDoc> parseUploadedDocuments(String encodedDocuments) {
+    final parts = encodedDocuments.split(","); // if multiple docs stored as CSV
+
+    final docs = <UploadedDoc>[];
+    for (var part in parts) {
+      part = part.trim();
+      if (part.isEmpty) continue;
+
+      try {
+        docs.add(UploadedDoc.fromBase64(part));
+      } catch (e) {
+        debugPrint("Error decoding document: $e");
+      }
+    }
+    return docs;
+  }
+
+
+  static  Color primaryColor = Color(0xFF2E7D8A);
+  static  Color secondaryColor = Color(0xFF4A90A4);
+  static  Color accentColor = Color(0xFF6CB4C7);
+  static  Color backgroundColor = Color(0xFFF5F9FA);
+  static  Color cardColor = Color(0xFFFFFFFF);
+  static  Color textPrimary = Color(0xFF1A1A1A);
+  static  Color textSecondary = Color(0xFF6B7280);
+  static  Color dividerColor = Color(0xFFE5E7EB);
 
   @override
   void initState() {
@@ -38,14 +58,12 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     });
   }
 
-  // ✅ Date formatter (handles multiple formats)
   String formatDate(dynamic date) {
     if (date == null) return "N/A";
     try {
       if (date is DateTime) {
         return DateFormat('dd/MM/yyyy').format(date);
       }
-      // Parse backend string like "8/13/2025 10:00:00 AM"
       final inputFormat = DateFormat("M/d/yyyy h:mm:ss a");
       final parsed = inputFormat.parse(date.toString());
       return DateFormat('dd/MM/yyyy').format(parsed);
@@ -54,7 +72,6 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     }
   }
 
-  // ✅ Yes/No formatter (for 0/1 values)
   String formatYesNo(dynamic value) {
     if (value == null) return "N/A";
     if (value.toString() == "1") return "Yes";
@@ -93,7 +110,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               final Form6Details details = data.form6Details!.first;
               return _buildDetailsView(details);
             default:
-              return const SizedBox();
+              return  SizedBox();
           }
         },
       ),
@@ -101,7 +118,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   }
 
   Widget _buildLoadingState() {
-    return const Center(
+    return  Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -124,10 +141,10 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
-          const SizedBox(height: 16),
+           SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(color: textPrimary, fontSize: 16),
+            style:  TextStyle(color: textPrimary, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],
@@ -136,7 +153,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return  Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -153,17 +170,17 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
   Widget _buildDetailsView(Form6Details details) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding:  EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // _buildHeaderCard(details),
-          const SizedBox(height: 12),
+           SizedBox(height: 12),
 
           _buildSection(
             title: "Basic Information",
 
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
             fields: [
               {
                 "label": "Serial No:",
@@ -191,7 +208,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           _buildSection(
             title: "Location Details",
 
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
 
             fields: [
               {
@@ -221,12 +238,17 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           _buildSection(
             title: "Sample Information",
 
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
 
             fields: [
               {
                 "label": "Sample Code:",
                 "value": details.sampleCodeNumber,
+                "icon": Icons.qr_code,
+              },
+              {
+                "label": "Slip Number:",
+                "value": details.doSealNumbers,
                 "icon": Icons.qr_code,
               },
               {
@@ -254,7 +276,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Preservative Details",
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
 
             fields: [
               {
@@ -278,7 +300,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           _buildSection(
             title: "Verification & Security",
 
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
 
             fields: [
               {
@@ -312,7 +334,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           _buildSection(
             title: "Form VI Details",
             // icon: Icons.description_outlined,
-            color: const Color(0xFF3B82F6),
+            color:  Color(0xFF3B82F6),
 
             fields: [
               {
@@ -331,10 +353,12 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
               },
               {"label": "Status", "value": details.status,  },
+              {"label": "Status", "value": details.documentName,  },
+              {"label": "Status", "value": _buildDocumentsList(details),  },
             ],
           ),
 
-          const SizedBox(height: 20),
+           SizedBox(height: 30),
         ],
       ),
     );
@@ -343,7 +367,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   // Widget _buildHeaderCard(Form6Details details) {
   //   return Container(
   //     width: double.infinity,
-  //     padding: const EdgeInsets.all(20),
+  //     padding:  EdgeInsets.all(20),
   //     decoration: BoxDecoration(
   //       gradient: LinearGradient(
   //         colors: [primaryColor, secondaryColor],
@@ -355,7 +379,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   //         BoxShadow(
   //           color: primaryColor.withOpacity(0.3),
   //           blurRadius: 12,
-  //           offset: const Offset(0, 6),
+  //           offset:  Offset(0, 6),
   //         ),
   //       ],
   //     ),
@@ -365,15 +389,15 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   //         Row(
   //           children: [
   //             Container(
-  //               padding: const EdgeInsets.all(8),
+  //               padding:  EdgeInsets.all(8),
   //               decoration: BoxDecoration(
   //                 color: Colors.white.withOpacity(0.2),
   //                 borderRadius: BorderRadius.circular(8),
   //               ),
-  //               child: const Icon(Icons.biotech, color: Colors.white, size: 24),
+  //               child:  Icon(Icons.biotech, color: Colors.white, size: 24),
   //             ),
-  //             const SizedBox(width: 12),
-  //             const Text(
+  //              SizedBox(width: 12),
+  //              Text(
   //               "Sample Code",
   //               style: TextStyle(
   //                 color: Colors.white70,
@@ -383,12 +407,12 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   //             ),
   //           ],
   //         ),
-  //         const SizedBox(height: 8),
+  //          SizedBox(height: 8),
   //         Text(
   //           details.sampleCodeNumber?.isNotEmpty == true
   //               ? details.sampleCodeNumber!
   //               : "N/A",
-  //           style: const TextStyle(
+  //           style:  TextStyle(
   //             color: Colors.white,
   //             fontSize: 24,
   //             fontWeight: FontWeight.bold,
@@ -399,7 +423,6 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   //   );
   // }
 
-  /// ✅ Enhanced Section Card with icons and colors
   Widget _buildSection({
     required String title,
     // required IconData icon,
@@ -407,7 +430,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     required List<Map<String, dynamic>> fields,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin:  EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
@@ -415,7 +438,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 2),
+            offset:  Offset(0, 2),
           ),
         ],
       ),
@@ -424,10 +447,10 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           // Section header
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding:  EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: const BorderRadius.only(
+              borderRadius:  BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
               ),
@@ -435,7 +458,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
             child: Row(
               children: [
 
-                const SizedBox(width: 8),
+                 SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
@@ -450,7 +473,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           // Section content
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding:  EdgeInsets.all(16),
             child: Column(
               children: fields.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -463,7 +486,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
                     ),
                     if (index < fields.length - 1)
-                      const Divider(
+                       Divider(
                         color: dividerColor,
                         height: 20,
                         thickness: 1,
@@ -478,25 +501,42 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, dynamic value, ) {
-    final valueStr = value?.toString() ?? "N/A";
+  Widget _buildDetailRow(String label, dynamic value) {
+    Widget valueWidget;
+
+    if (value is Widget) {
+      // If it's already a widget (like your documents list), render directly
+      valueWidget = value;
+    } else {
+      final valueStr = value?.toString() ?? "N/A";
+      valueWidget = Text(
+        valueStr.isNotEmpty ? valueStr : "N/A",
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: valueStr.isNotEmpty ? textPrimary : textSecondary,
+          height: 1.4,
+        ),
+        textAlign: TextAlign.start,
+      );
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          padding:  EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(6),
           ),
-
         ),
-        const SizedBox(width: 12),
+         SizedBox(width: 12),
         Expanded(
           flex: 2,
           child: Text(
             label,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 14,
               color: textSecondary,
               fontWeight: FontWeight.w500,
@@ -505,18 +545,122 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         ),
         Expanded(
           flex: 2,
-          child: Text(
-            valueStr.isNotEmpty ? valueStr : "N/A",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: valueStr.isNotEmpty ? textPrimary : textSecondary,
-              height: 1.4,
-            ),
-            textAlign: TextAlign.start,
-          ),
+          child: valueWidget, // ✅ now supports Widget or Text
         ),
       ],
     );
   }
+
+
+
+  Widget _buildDocumentsList(Form6Details details) {
+    if (details.documents == null || details.documents!.isEmpty) {
+      return  Text("No documents uploaded");
+    }
+
+    final docs = parseUploadedDocuments(details.documents!);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: docs.map((doc) {
+        final isImage = doc.extension?.toLowerCase().contains("jpg") == true ||
+            doc.extension?.toLowerCase().contains("jpeg") == true ||
+            doc.extension?.toLowerCase().contains("png") == true;
+
+        return Padding(
+          padding:  EdgeInsets.symmetric(vertical: 6),
+          child: InkWell(
+            onTap: () {
+              if (isImage) {
+                _showImageDialog(doc);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Cannot preview ${doc.extension}")),
+                );
+              }
+            },
+            child: Row(
+              children: [
+                Icon(
+                  isImage ? Icons.image : Icons.insert_drive_file,
+                  color: Colors.blue,
+                ),
+                 SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    doc.name,
+                    style:  TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  void _showImageDialog(UploadedDoc doc) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero, // Remove default dialog padding
+          backgroundColor: Colors.transparent, // Optional: transparent background
+          child: Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.black.withOpacity(0.8), // Dim background
+                child: Center(
+                  child: InteractiveViewer(
+                    panEnabled: true,
+                    minScale: 0.5,
+                    maxScale: 3.0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.memory(
+                        base64Decode(doc.base64Data),
+                        fit: BoxFit.contain,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon:  Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                left: 20,
+                right: 20,
+                child: Text(
+                  doc.name,
+                  textAlign: TextAlign.center,
+                  style:  TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }
