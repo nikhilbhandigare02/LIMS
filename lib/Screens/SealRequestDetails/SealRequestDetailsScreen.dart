@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'dart:collection';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 import '../../common/ApiResponse.dart';
@@ -26,6 +27,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text('Update Count - Request ID: $requestId'),
           content: SizedBox(
@@ -50,7 +52,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text('Cancel',style: TextStyle(color: Colors.blue),),
             ),
             ElevatedButton(
               onPressed: () {
@@ -68,7 +70,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.blue,
                 textStyle: const TextStyle(color: Colors.blue),
                 shape: RoundedRectangleBorder(
@@ -136,6 +138,10 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 final dateText = first.sealRequestDate ?? '';
                 final totalCount = group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
 
+                final sealNumbers = subtitle == 'Seal number has been sent to FSO'
+                    ? group.map((e) => e.sealNumber ?? '-').toList()
+                    : [];
+
                 return Card(
                   color: Colors.white,
                   margin: const EdgeInsets.symmetric(vertical: 8),
@@ -173,38 +179,83 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                         const SizedBox(height: 6),
                         Text(subtitle, style: TextStyle(color: Colors.grey.shade700)),
                         const SizedBox(height: 4),
-                        Text(dateText, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Requested Date :",
+                                style: TextStyle(color: customColors.grey, fontSize: 12),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3, // right side bigger (value)
+                              child: Text(
+                                dateText,
+                                style: TextStyle(
+                                  color: customColors.grey,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Send Date :",
+                                style: TextStyle(color: customColors.grey, fontSize: 12),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                first.sealSendDate?.toString() ?? 'N/A',
+                                style: TextStyle(
+                                  color: customColors.grey,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          'Send Date: ${first.sealSendDate?.toString() ?? 'N/A'}',
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                          'Total Slip Numbers: $totalCount',
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: customColors.grey),
                         ),
                         const SizedBox(height: 10),
                         const Divider(height: 1),
                         const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: group.map((e) {
-                            final seal = e.sealNumber ?? '-';
-                            final cnt = e.count?.toString() ?? '0';
-                            return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text('$seal ($cnt)'),
-                            );
-                          }).toList(),
-                        ),
+
+                        if (sealNumbers.isNotEmpty)
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: sealNumbers.map((seal) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.grey.shade300),
+                                ),
+                                child: Text(seal),
+                              );
+                            }).toList(),
+                          ),
                       ],
                     ),
                   ),
                 );
               },
             );
+
           },
         ),
       ),
