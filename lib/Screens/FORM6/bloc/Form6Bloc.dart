@@ -1103,7 +1103,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
 
       final formData = <String, dynamic>{
-        // sample_location_master inputs
         'SenderName': state.senderName,
         'SenderDesignation': state.senderDesignation,
         'DoNumber': state.DONumber,
@@ -1141,7 +1140,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'insertedBy': userId,
         'sampleInsertedBy': userId,
         'documentName': state.documentName,
-        'documentBase64': state.uploadedDocument,
+        'documentBase64': state.uploadedDocs
+            .map((e) => e.base64Data)
+            .join(","),
 
       };
 
