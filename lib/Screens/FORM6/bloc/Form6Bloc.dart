@@ -56,15 +56,19 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(sampleCodeData: event.value));
     });
     on<UploadDocumentEvent>((event, emit) {
-      // Backward compatibility: still support single upload field
-      final String generatedName = state.documentName.isNotEmpty ? state.documentName : 'Document ${state.uploadedDocs.length + 1}';
-      final UploadedDoc doc = UploadedDoc(name: generatedName, base64Data: event.value);
-      final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)..add(doc);
+      final String safeName = state.documentName.isNotEmpty ? state.documentName : 'Document 1';
+      final UploadedDoc doc = UploadedDoc(
+        name: safeName,
+        base64Data: event.value,
+      );
+
       emit(state.copyWith(
-        uploadedDocument: event.value,
-        uploadedDocs: updated,
+        uploadedDocument: event.value, // single base64 for API
+        uploadedDocs: [doc],           // mirror in list for UI
       ));
     });
+
+
     on<documentNameChangedEvent>((event, emit) {
       print(state.documentName);
       emit(state.copyWith(
@@ -87,7 +91,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
     on<LoadSavedFormData>((event, emit) {
       emit(event.savedState); // Replace current state with saved state
-      
+
       // If dropdown options are missing, load them
       if (event.savedState.districtOptions.isEmpty) {
         add(const FetchDistrictsRequested(1));
@@ -98,7 +102,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       if (event.savedState.sealNumberOptions.isEmpty) {
         add(const FetchSealNumberChanged());
       }
-      
+
       // Load dependent dropdowns if parent selections exist but options are missing
       if (event.savedState.district.isNotEmpty && event.savedState.regionOptions.isEmpty) {
         // We need to wait for districts to load first, then load regions
@@ -110,7 +114,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           }
         });
       }
-      
+
       if (event.savedState.region.isNotEmpty && event.savedState.divisionOptions.isEmpty) {
         // We need to wait for regions to load first, then load divisions
         Future.delayed(const Duration(milliseconds: 1000), () {
@@ -136,11 +140,11 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       // Clear dependent dropdowns but preserve independent fields
       emit(state.copyWith(
-        division: '', 
-        region: '', 
-        divisionOptions: [], 
-        regionOptions: [], 
-        divisionIdByName: {}, 
+        division: '',
+        region: '',
+        divisionOptions: [],
+        regionOptions: [],
+        divisionIdByName: {},
         regionIdByName: {},
         // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
@@ -249,8 +253,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       // Clear dependent dropdowns but preserve independent fields
       emit(state.copyWith(
-        region: '', 
-        regionOptions: [], 
+        region: '',
+        regionOptions: [],
         regionIdByName: {},
         // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
@@ -351,12 +355,65 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
     });
 
+    on<FetchDoSealNumbersRequested>((event, emit) async {
+      emit(state.copyWith(doSealNumbersOptions: [], doSealNumbers: '', doSealNumbersIdByName: {}));
+      try {
+        final Map<String, dynamic> request = {
+          'RequestId': 2,
+        };
+        final session = await encryptWithSession(
+          data: request,
+          rsaPublicKeyPem: rsaPublicKeyPem,
+        );
+        final encryptedPayload = {
+          'encryptedData': session.payloadForServer['EncryptedData']!,
+          'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
+          'iv': session.payloadForServer['IV']!,
+        };
+        final response = await form6repository.getSealNumber(encryptedPayload);
+        print('DoSealNumbers API response (encrypted):');
+        print(response);
+        // Try to decrypt and print the response for debugging
+        try {
+          final String encryptedDataBase64 =
+              (response['encryptedData'] ?? response['EncryptedData']) as String;
+          final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
+          final String decrypted = utf8.decode(
+            aesCbcDecrypt(
+              base64ToBytes(encryptedDataBase64),
+              session.aesKeyBytes,
+              base64ToBytes(serverIvBase64),
+            ),
+          );
+          print('DoSealNumbers API response (decrypted):');
+          print(decrypted);
+          // For DO Seal Numbers specifically, backend returns { Id, Name }
+          final parsed = _parseIdNameList(
+            decrypted,
+            idKeys: ['Id', 'id', 'SealId', 'sealId'],
+            nameKeys: ['Name', 'name', 'SealNumber', 'sealNumber', 'Text', 'text', 'Label', 'label'],
+          );
+          emit(state.copyWith(doSealNumbersOptions: parsed.names, doSealNumbersIdByName: parsed.nameToId));
+        } catch (e) {
+          print('Failed to decrypt DoSealNumbers response: $e');
+          emit(state.copyWith(doSealNumbersOptions: [], doSealNumbersIdByName: {}));
+        }
+      } catch (e) {
+        emit(state.copyWith(doSealNumbersOptions: [], doSealNumbersIdByName: {}));
+      }
+    });
+
     on<LabChanged>((event, emit) {
       emit(state.copyWith(lab: event.value ?? ''));
     });
 
     on<SealNumberChanged>((event, emit) {
       emit(state.copyWith(sealNumber: event.value ?? ''));
+    });
+
+    on<DoSealNumbersChanged>((event, emit) {
+      print(state.documentName);
+      emit(state.copyWith(doSealNumbers: event.value ?? ''));
     });
 
     on<FormResetEvent>((event, emit) {
@@ -375,10 +432,11 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       add(const FetchNatureOfSampleRequested());
       add(const FetchLabMasterRequested());
       add(const FetchSealNumberChanged());
+      add(const FetchDoSealNumbersRequested());
       add(FetchLocationRequested());
     });
   }
-    
+
 
   Future<void> _onFetchDistrictsRequested(
       FetchDistrictsRequested event,
@@ -880,7 +938,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   //
   //   try {
   //     final formData = {
-  //       'senderName': state.senderName,
   //       'sampleCodeData': state.sampleCodeData,
   //       'DONumber': state.DONumber,
   //       'district': state.district,
@@ -950,7 +1007,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         print("🔄 Loading districts...");
         await _onFetchDistrictsRequested(const FetchDistrictsRequested(1), emit);
       }
-      
+
       if (state.regionOptions.isEmpty && state.district.isNotEmpty) {
         final districtId = state.districtIdByName[state.district];
         if (districtId != null) {
@@ -958,7 +1015,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           await _onFetchRegionsRequested(FetchRegionsRequested(districtId), emit);
         }
       }
-      
+
       if (state.divisionOptions.isEmpty && state.region.isNotEmpty) {
         final regionId = state.regionIdByName[state.region];
         if (regionId != null) {
@@ -966,12 +1023,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           await _onFetchDivisionsRequested(FetchDivisionsRequested(regionId), emit);
         }
       }
-      
+
       if (state.natureOptions.isEmpty) {
         print("🔄 Loading nature of sample options...");
         await _onFetchNatureOfSampleRequested(const FetchNatureOfSampleRequested(), emit);
       }
-      
+
       if (state.sealNumberOptions.isEmpty) {
         print("🔄 Loading seal number options...");
         await _onFetchSealNumberChanged(const FetchSealNumberChanged(), emit);
@@ -988,22 +1045,24 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print("🔍 Submit validation - Division: '${state.division}' -> ID: $divisionId");
       print("🔍 Submit validation - Article: '${state.article}' -> ID: $sampleId");
       print("🔍 Submit validation - Seal Number: '${state.sealNumber}'");
+      print("🔍 Submit validation - DO Seal Number: '${state.doSealNumbers}'");
       print("🔍 Available district IDs: ${state.districtIdByName}");
       print("🔍 Available region IDs: ${state.regionIdByName}");
       print("🔍 Available division IDs: ${state.divisionIdByName}");
       print("🔍 Available nature IDs: ${state.natureIdByName}");
       print("🔍 Available seal numbers: ${state.sealNumberOptions}");
+      print("🔍 Available DO seal numbers: ${state.doSealNumbersOptions}");
 
       if (districtId == null || regionId == null || divisionId == null || sampleId == null) {
         print("⚠️ Some IDs are still null, waiting a bit more for options to load...");
         await Future.delayed(const Duration(milliseconds: 1000));
-        
+
         // Re-check the IDs after the delay
         final retryDistrictId = state.districtIdByName[state.district];
         final retryRegionId = state.regionIdByName[state.region];
         final retryDivisionId = state.divisionIdByName[state.division];
         final retrySampleId = state.natureIdByName[state.article];
-        
+
         print("🔍 Retry validation - District: '${state.district}' -> ID: $retryDistrictId");
         print("🔍 Retry validation - Region: '${state.region}' -> ID: $retryRegionId");
         print("🔍 Retry validation - Division: '${state.division}' -> ID: $retryDivisionId");
@@ -1035,9 +1094,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
       }
-      
-      if (state.sealNumber.isEmpty) {
-        final errorMsg = 'Seal Number is required. Please select a Seal Number.';
+
+      if (state.doSealNumbers.isEmpty) {
+        final errorMsg = 'DO Seal Number is required. Please select a DO Seal Number.';
         print("❌ $errorMsg");
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
@@ -1073,7 +1132,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'WrapperCodeNumber': state.sampleCodeNumber,
         'SealImpression': state.sealImpression == true,
         'SealNumber': state.numberofSeal,
-        'SelectedSealNumber': state.sealNumber.isNotEmpty ? state.sealNumber : null,
+        'doSealNumber': state.doSealNumbers.isNotEmpty ? (state.doSealNumbersIdByName[state.doSealNumbers] ?? int.tryParse(state.doSealNumbers)) : null,
         'MemoFormVI': state.formVI == true,
         'WrapperFormVI': state.FoemVIWrapper == true,
         'Latitude': state.Lattitude.isNotEmpty ? double.tryParse(state.Lattitude) : null,
@@ -1081,15 +1140,11 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'SampleIsActive': true,
         'insertedBy': userId,
         'sampleInsertedBy': userId,
-        'UploadedDocuments': state.uploadedDocs
-            .map((e) => {
-                  'FileName': e.name,
-                  'FileDataBase64': e.base64Data,
-                  'MimeType': e.mimeType,
-                  'Extension': e.extension,
-                })
-            .toList(),
+        'documentName': state.documentName,
+        'documentBase64': state.uploadedDocument,
+
       };
+
 
       // Log the exact decrypted request we are about to send
       try {
@@ -1104,7 +1159,31 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      // Build lowercase-key payload expected by some endpoints
+      // Debug: Print the session payload structure
+      print('Session payloadForServer keys: ${session.payloadForServer.keys}');
+      print('Session payloadForServer: ${session.payloadForServer}');
+      print('Session payloadForServer type: ${session.payloadForServer.runtimeType}');
+
+      // Check if all required keys exist
+      final hasEncryptedData = session.payloadForServer.containsKey('EncryptedData');
+      final hasEncryptedAESKey = session.payloadForServer.containsKey('EncryptedAESKey');
+      final hasIV = session.payloadForServer.containsKey('IV');
+
+      print('Has EncryptedData: $hasEncryptedData');
+      print('Has EncryptedAESKey: $hasEncryptedAESKey');
+      print('Has IV: $hasIV');
+
+      if (!hasEncryptedData || !hasEncryptedAESKey || !hasIV) {
+        print('ERROR: Missing required encryption keys!');
+        emit(state.copyWith(
+          message: 'Encryption error: Missing required keys',
+          apiStatus: ApiStatus.error,
+        ));
+        return;
+      }
+
+      // Use lowercase keys consistent with other working endpoints
+      // { "encryptedData": "...", "encryptedAESKey": "...", "iv": "..." }
       final Map<String, String> encryptedPayload = {
         'encryptedData': session.payloadForServer['EncryptedData']!,
         'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
@@ -1114,8 +1193,24 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       // Log the encrypted payload being sent
       try {
         print('InsertSample request (encrypted payload): ${jsonEncode(encryptedPayload)}');
-      } catch (_) {
-        print('InsertSample request (encrypted) could not be stringified');
+        print('Payload keys: ${encryptedPayload.keys}');
+        print('Payload encryptedData length: ${encryptedPayload['encryptedData']?.length}');
+        print('Payload encryptedAESKey length: ${encryptedPayload['encryptedAESKey']?.length}');
+        print('Payload iv length: ${encryptedPayload['iv']?.length}');
+
+        // Additional validation
+        print('Payload size: ${encryptedPayload.length}');
+        print('Payload contains encryptedData: ${encryptedPayload.containsKey('encryptedData')}');
+        print('Payload contains encryptedAESKey: ${encryptedPayload.containsKey('encryptedAESKey')}');
+        print('Payload contains iv: ${encryptedPayload.containsKey('iv')}');
+
+        // Test JSON encoding
+        final jsonString = jsonEncode(encryptedPayload);
+        print('JSON string length: ${jsonString.length}');
+        print('JSON string preview: ${jsonString.substring(0, jsonString.length > 200 ? 200 : jsonString.length)}...');
+
+      } catch (e) {
+        print('InsertSample request (encrypted) could not be stringified: $e');
       }
 
       final encryptedResponse = await form6repository.FormSixApi(encryptedPayload);
@@ -1191,7 +1286,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           }
         }
 
-        emit(state.copyWith( 
+        emit(state.copyWith(
           message: successMessage,
           apiStatus: ApiStatus.success,
           Lattitude: state.Lattitude, // Preserve current Latitude

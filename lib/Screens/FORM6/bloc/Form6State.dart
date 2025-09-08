@@ -50,6 +50,9 @@ class SampleFormState extends Equatable {
   final String sendingSampleLocation;
   final List<UploadedDoc> uploadedDocs;
   final List<String> documentNames;
+  final String doSealNumbers;
+  final List<String> doSealNumbersOptions;
+  final Map<String, int> doSealNumbersIdByName;
 
   const SampleFormState({
     this.senderName = '',
@@ -100,6 +103,9 @@ class SampleFormState extends Equatable {
     this.sendingSampleLocation = '',
     this.uploadedDocs = const [],
     this.documentNames = const [],
+    this.doSealNumbers = '',
+    this.doSealNumbersOptions = const [],
+    this.doSealNumbersIdByName = const {},
   });
 
   SampleFormState copyWith({
@@ -151,6 +157,9 @@ class SampleFormState extends Equatable {
     String? sendingSampleLocation,
     List<UploadedDoc>? uploadedDocs,
     List<String>? documentNames,
+    String? doSealNumbers,
+    List<String>? doSealNumbersOptions,
+    Map<String, int>? doSealNumbersIdByName,
   }) {
     return SampleFormState(
       senderName: senderName ?? this.senderName,
@@ -201,6 +210,9 @@ class SampleFormState extends Equatable {
       sendingSampleLocation: sendingSampleLocation ?? this.sendingSampleLocation,
       uploadedDocs: uploadedDocs ?? this.uploadedDocs,
       documentNames: documentNames ?? this.documentNames,
+      doSealNumbers: doSealNumbers ?? this.doSealNumbers,
+      doSealNumbersOptions: doSealNumbersOptions ?? this.doSealNumbersOptions,
+      doSealNumbersIdByName: doSealNumbersIdByName ?? this.doSealNumbersIdByName,
     );
   }
 
@@ -254,6 +266,9 @@ class SampleFormState extends Equatable {
     sendingSampleLocation,
     uploadedDocs,
     documentNames,
+    doSealNumbers,
+    doSealNumbersOptions,
+    doSealNumbersIdByName,
   ];
 
   bool get isOtherInfoComplete {
@@ -285,7 +300,8 @@ class SampleFormState extends Equatable {
         formVI != null &&
         FoemVIWrapper != null &&
         documentName.isNotEmpty &&
-        uploadedDocs.isNotEmpty && sealNumber.isNotEmpty;
+        uploadedDocs.isNotEmpty && 
+        doSealNumbers.isNotEmpty;
   }
 
   Map<String, dynamic> toMap() {
@@ -327,6 +343,8 @@ class SampleFormState extends Equatable {
       'LabId': labIdByName[lab],
       'sendingSampleLocation': sendingSampleLocation,
       'uploadedDocs': uploadedDocs.map((e) => e.toMap()).toList(),
+      'doSealNumbers': doSealNumbers,
+      'doSealNumbersIdByName': doSealNumbersIdByName,
     };
   }
 
@@ -387,6 +405,9 @@ class SampleFormState extends Equatable {
               .toList()
           : const [],
       documentNames: map['documentNames'] != null ? List<String>.from(map['documentNames']) : const [],
+      doSealNumbers: map['doSealNumbers'] ?? '',
+      doSealNumbersOptions: map['doSealNumbersOptions'] != null ? List<String>.from(map['doSealNumbersOptions']) : const [],
+      doSealNumbersIdByName: map['doSealNumbersIdByName'] != null ? Map<String, int>.from(map['doSealNumbersIdByName']) : const {},
     );
   }
 }
