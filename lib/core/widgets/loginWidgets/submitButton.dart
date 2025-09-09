@@ -48,13 +48,12 @@ class LoginButton extends StatelessWidget {
             }
             if (passResetFlag == 0) {
               Navigator.pushReplacementNamed(context, RouteName.updateScreen);
-            } else if (passResetFlag == 1) {
-              //Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
-              Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
+            } else if (passResetFlag == 1 ) {
+              Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
+              // Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
             } else {
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }
-
             break;
           case ApiStatus.error:
             Message.showTopRightOverlay(

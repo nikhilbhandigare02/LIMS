@@ -52,7 +52,6 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
         DateTime(picked.year, picked.month, picked.day, 0, 0, 0),
       );
 
-      // ✅ Send formatted string to bloc (not raw DateTime)
       context.read<RequestStateBloc>().add(RequestDateEvent(picked));
     }
   }

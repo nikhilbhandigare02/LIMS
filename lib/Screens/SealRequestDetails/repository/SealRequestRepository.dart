@@ -20,4 +20,17 @@ class SealRequestRepository{
     return response;
   }
 
+  Future<dynamic> UpdateCount(Map<String, String> encryptedBody) async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'authToken');
+    final String url = '${ApiBase.baseUrl}${ApiEndpoints.updateSlipCount}';
+
+    final headers = <String, String>{
+      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+    };
+
+    final response = await _api.postApi(url, encryptedBody, headers: headers);
+    return response;
+  }
+
 }

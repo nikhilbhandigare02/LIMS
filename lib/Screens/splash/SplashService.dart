@@ -20,18 +20,31 @@ class SplashService {
     Timer(
       const Duration(seconds: 3),
           () {
-        if (loginFlag == '1' && verifyflag == '1') {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            RouteName.SampleAnalysisScreen,
-                (route) => false,
-          );
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            RouteName.loginScreen,
-                (route) => false,
-          );
+        // if (loginFlag == '1' && verifyflag == '1') {
+        //   Navigator.pushNamedAndRemoveUntil(
+        //     context,
+        //     RouteName.SampleAnalysisScreen,
+        //         (route) => false,
+        //   );
+        // } else {
+        //   Navigator.pushNamedAndRemoveUntil(
+        //     context,
+        //     RouteName.loginScreen,
+        //         (route) => false,
+        //   );
+
+            // if (verifyflag == '1') {
+            //   Navigator.pushNamedAndRemoveUntil(
+            //     context,
+            //     RouteName.SampleAnalysisScreen,
+            //         (route) => false,
+            //   );
+            // } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteName.loginScreen,
+                    (route) => false,
+              );
 
           // Navigator.push(
           //   context,
@@ -43,7 +56,7 @@ class SplashService {
           //   ),
           // );
         }
-      },
+      // },
     );
   }
 }

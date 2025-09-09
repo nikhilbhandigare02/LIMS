@@ -18,5 +18,6 @@ class ApiEndpoints {
   static const String requestforseal = 'SealRequest/seal_request';
   static const String getRequestData = 'SealRequest/GetSealRequestDetails';
   static const String sealNumberdropdown = 'mobile/GetSealNumber';
+  static const String updateSlipCount = 'SealRequest/updateSealRequest';
 
 }

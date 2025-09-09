@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:intl/intl.dart';
 import 'dart:collection';
+import '../../core/utils/Message.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 import '../../common/ApiResponse.dart';
 import '../../core/utils/enums.dart';
@@ -18,71 +20,97 @@ class SealRequestDetailsScreen extends StatefulWidget {
 }
 
 class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
-  void _showUpdateCountDialog(BuildContext context, num requestId, List<Data> group) {
+  void _showUpdateCountDialog(
+      BuildContext context, num requestId, List<Data> group) {
     final TextEditingController countController = TextEditingController();
-    final currentTotalCount = group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
+    final currentTotalCount =
+    group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
     countController.text = currentTotalCount.toString();
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          title: Text('Update Count - Request ID: $requestId'),
-          content: SizedBox(
-            width: 300,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Current total count: $currentTotalCount'),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: countController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'New Count',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.numbers),
+      builder: (dialogCtx) {
+        return BlocProvider.value(
+          value: context.read<SealRequestBloc>(),
+          child: AlertDialog(
+            backgroundColor: Colors.white,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            title: Text('Update Count - Request ID: $requestId'),
+            content: SizedBox(
+              width: 300,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Current total count: $currentTotalCount'),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: countController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'New Count',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.numbers),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel',style: TextStyle(color: Colors.blue),),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newCount = int.tryParse(countController.text);
-                if (newCount != null && newCount > 0) {
-                  print('Updating count for Request ID $requestId to $newCount');
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Count updated to $newCount')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a valid count')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.blue,
-                textStyle: const TextStyle(color: Colors.blue),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: Colors.blue),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                minimumSize: const Size(100, 48),
+                ],
               ),
-              child: const Text('Update Count',style: TextStyle(color: Colors.white),),
             ),
-          ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogCtx).pop(),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final newCount = int.tryParse(countController.text);
+                  if (newCount != null && newCount > 0) {
+                    context.read<SealRequestBloc>().add(
+                      updateSlipCountEvent(
+                        requestId: requestId as int,
+                        newCount: newCount,
+                      ),
+                    );
+                    Navigator.of(dialogCtx).pop();
+
+
+                    Message.showTopRightOverlay(
+                      context,
+                      'Count updated to $newCount',
+                      MessageType.success,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please enter a valid count')),
+                    );
+                    Message.showTopRightOverlay(
+                      context,
+                      'Please enter a valid count',
+                      MessageType.error,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: const BorderSide(color: Colors.blue),
+                  ),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  minimumSize: const Size(100, 48),
+                ),
+                child: const Text(
+                  'Update Count',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -90,10 +118,14 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider<SealRequestBloc>(
-      create: (_) => SealRequestBloc(requestedSealRepository: RequestedSealRepository())
-        ..add(const getRequestDataEvent(userId: 0)),
+      create: (_) => SealRequestBloc(
+        requestedSealRepository: RequestedSealRepository(),
+      )..add(const getRequestDataEvent(userId: 0)),
+
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppHeader(
           screenTitle: 'seal number info',
           username: '',
@@ -129,6 +161,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
               padding: const EdgeInsets.all(12),
               itemCount: entries.length,
               itemBuilder: (context, index) {
+
                 final entry = entries[index];
                 final reqId = entry.key;
                 final group = entry.value;
@@ -136,17 +169,34 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 final title = 'Request ID: ${reqId.toString()}';
                 final subtitle = first.status ?? '';
                 final dateText = first.sealRequestDate ?? '';
-                final totalCount = group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
+                final totalCount =
+                group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
 
-                final sealNumbers = subtitle == 'Seal number has been sent to FSO'
+                final sealNumbers =
+                subtitle == 'Seal number has been sent to FSO'
                     ? group.map((e) => e.sealNumber ?? '-').toList()
                     : [];
+                final DateFormat inputFormat = DateFormat('M/d/yyyy h:mm:ss a'); // matches your data
+                final DateFormat outputFormat = DateFormat('dd/MM/yyyy');
 
+                String formatDate(String? dateStr) {
+                  if (dateStr == null || dateStr.isEmpty) return 'N/A';
+                  try {
+                    final DateTime parsed = inputFormat.parse(dateStr);
+                    return outputFormat.format(parsed);
+                  } catch (_) {
+                    return 'N/A';
+                  }
+                }
+
+                final String requestedDateText = formatDate(first.sealRequestDate);
+                final String sendDateText = formatDate(first.sealSendDate);
                 return Card(
                   color: Colors.white,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -158,7 +208,8 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                             Expanded(
                               child: Text(
                                 title,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
                             if (subtitle == 'Request for a seal number')
@@ -166,32 +217,38 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                                 decoration: BoxDecoration(
                                   color: Colors.blue.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.blue.shade200),
+                                  border:
+                                  Border.all(color: Colors.blue.shade200),
                                 ),
                                 child: IconButton(
-                                  onPressed: () => _showUpdateCountDialog(context, reqId, group),
-                                  icon: const Icon(Icons.edit, size: 20, color: Colors.blue),
+                                  onPressed: () => _showUpdateCountDialog(
+                                      context, reqId, group),
+                                  icon: const Icon(Icons.edit,
+                                      size: 20, color: Colors.blue),
                                   tooltip: 'Update Count',
                                 ),
                               ),
                           ],
                         ),
                         const SizedBox(height: 6),
-                        Text(subtitle, style: TextStyle(color: Colors.grey.shade700)),
+                        Text(subtitle,
+                            style: TextStyle(color: Colors.grey.shade700)),
                         const SizedBox(height: 4),
+
                         Row(
                           children: [
                             Expanded(
                               flex: 2,
                               child: Text(
                                 "Requested Date :",
-                                style: TextStyle(color: customColors.grey, fontSize: 12),
+                                style: TextStyle(
+                                    color: customColors.grey, fontSize: 12),
                               ),
                             ),
                             Expanded(
-                              flex: 3, // right side bigger (value)
+                              flex: 3,
                               child: Text(
-                                dateText,
+                                requestedDateText,
                                 style: TextStyle(
                                   color: customColors.grey,
                                   fontSize: 12,
@@ -208,13 +265,14 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                               flex: 2,
                               child: Text(
                                 "Send Date :",
-                                style: TextStyle(color: customColors.grey, fontSize: 12),
+                                style: TextStyle(
+                                    color: customColors.grey, fontSize: 12),
                               ),
                             ),
                             Expanded(
                               flex: 3,
                               child: Text(
-                                first.sealSendDate?.toString() ?? 'N/A',
+                                sendDateText,
                                 style: TextStyle(
                                   color: customColors.grey,
                                   fontSize: 12,
@@ -227,19 +285,21 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                         const SizedBox(height: 8),
                         Text(
                           'Total Slip Numbers: $totalCount',
-                          style: const TextStyle(fontWeight: FontWeight.w600, color: customColors.grey),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: customColors.grey),
                         ),
                         const SizedBox(height: 10),
                         const Divider(height: 1),
                         const SizedBox(height: 8),
-
                         if (sealNumbers.isNotEmpty)
                           Wrap(
                             spacing: 8,
                             runSpacing: 8,
                             children: sealNumbers.map((seal) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(8),
@@ -255,7 +315,6 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 );
               },
             );
-
           },
         ),
       ),
