@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
@@ -353,8 +356,8 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
               },
               {"label": "Status", "value": details.status,  },
-              {"label": "Mentioned Documents", "value": details.document_name,  },
-              {"label": "Uploaded Documents", "value": _buildDocumentsList(details),  },
+              {"label": "Status", "value": details.document_name,  },
+              {"label": "Status", "value": _buildDocumentsList(details),  },
             ],
           ),
 
@@ -525,11 +528,10 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 6,
-          height: 6,
+          padding:  EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Colors.black,
-            shape: BoxShape.circle,
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(6),
           ),
         ),
          SizedBox(width: 12),
@@ -556,7 +558,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
   Widget _buildDocumentsList(Form6Details details) {
     if (details.documents == null || details.documents!.isEmpty) {
-      return  Text("No documents uploaded");
+      return Text("No documents uploaded");
     }
 
     final docs = parseUploadedDocuments(details.documents!);
@@ -569,14 +571,21 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
             doc.extension?.toLowerCase().contains("png") == true;
 
         return Padding(
-          padding:  EdgeInsets.symmetric(vertical: 6),
+          padding: EdgeInsets.symmetric(vertical: 6),
           child: InkWell(
-            onTap: () {
-              if (isImage) {
-                _showImageDialog(doc);
-              } else {
+            onTap: () async {
+              try {
+                // Write the file to temporary directory
+                final dir = await getTemporaryDirectory();
+                final filePath = '${dir.path}/${doc.name}';
+                final file = File(filePath);
+                await file.writeAsBytes(base64Decode(doc.base64Data));
+
+                // Open with open_filex
+                await OpenFilex.open(file.path);
+              } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Cannot preview ${doc.extension}")),
+                  SnackBar(content: Text("Cannot open ${doc.name}: $e")),
                 );
               }
             },
@@ -586,11 +595,11 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                   isImage ? Icons.image : Icons.insert_drive_file,
                   color: Colors.blue,
                 ),
-                 SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     doc.name,
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
