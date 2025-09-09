@@ -79,7 +79,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
 
                     Message.showTopRightOverlay(
                       context,
-                      'Count updated to $newCount',
+                      'Slip number Count updated to $newCount',
                       MessageType.success,
                     );
                   } else {
