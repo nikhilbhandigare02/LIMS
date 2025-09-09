@@ -120,16 +120,16 @@ class Form6Details {
     String? status,
     String? senderName,
     String? senderDesignation,
-    String? doNumber,
+    String? DONumber,
     String? country,
     String? state,
     String? district,
     String? division,
     String? region,
     String? area,
-    String? doSealNumbers,
+    String? do_seal_numbers,
     String? documents,
-    String? documentName,
+    String? document_name,
   }) {
     _success = success;
     _message = message;
@@ -157,16 +157,16 @@ class Form6Details {
     _status = status;
     _senderName = senderName;
     _senderDesignation = senderDesignation;
-    _doNumber = doNumber;
+    _doNumber = DONumber;
     _country = country;
     _state = state;
     _district = district;
     _division = division;
     _region = region;
     _area = area;
-    _doSealNumbers = doSealNumbers;
+    _doSealNumbers = do_seal_numbers;
     _documents = documents;
-    _documentName = documentName;
+    _documentName = document_name;
   }
 
   Form6Details.fromJson(dynamic json) {
@@ -196,16 +196,16 @@ class Form6Details {
     _status = (json['status'] ?? json['Status'])?.toString();
     _senderName = (json['senderName'] ?? json['SenderName'])?.toString();
     _senderDesignation = (json['senderDesignation'] ?? json['SenderDesignation'])?.toString();
-    _doNumber = (json['doNumber'] ?? json['DoNumber'])?.toString();
+    _doNumber = (json['DONumber'] ?? json['DONumber'])?.toString();
     _country = (json['country'] ?? json['Country'])?.toString();
     _state = (json['state'] ?? json['State'])?.toString();
     _district = (json['district'] ?? json['District'])?.toString();
     _division = (json['division'] ?? json['Division'])?.toString();
     _region = (json['region'] ?? json['Region'])?.toString();
     _area = (json['area'] ?? json['Area'])?.toString();
-    _doSealNumbers = (json['doSealNumbers'] ?? json['DoSealNumbers'])?.toString();
+    _doSealNumbers = (json['do_seal_numbers'] ?? json['do_seal_numbers'])?.toString();
     _documents = (json['documents'] ?? json['Documents'])?.toString();
-    _documentName = (json['documentName'] ?? json['DocumentName'])?.toString();
+    _documentName = (json['document_name'] ?? json['document_name'])?.toString();
   }
 
   num? _success;
@@ -272,16 +272,16 @@ class Form6Details {
     String? status,
     String? senderName,
     String? senderDesignation,
-    String? doNumber,
+    String? DONumber,
     String? country,
     String? state,
     String? district,
     String? division,
     String? region,
     String? area,
-    String? doSealNumbers,
+    String? do_seal_numbers,
     String? documents,
-    String? documentName,
+    String? document_name,
   }) =>
       Form6Details(
         success: success ?? _success,
@@ -310,16 +310,16 @@ class Form6Details {
         status: status ?? _status,
         senderName: senderName ?? _senderName,
         senderDesignation: senderDesignation ?? _senderDesignation,
-        doNumber: doNumber ?? _doNumber,
+        DONumber: DONumber ?? _doNumber,
         country: country ?? _country,
         state: state ?? _state,
         district: district ?? _district,
         division: division ?? _division,
         region: region ?? _region,
         area: area ?? _area,
-        doSealNumbers: doSealNumbers ?? _doSealNumbers,
+        do_seal_numbers: do_seal_numbers ?? _doSealNumbers,
         documents: documents ?? _documents,
-        documentName: documentName ?? _documentName,
+        document_name: document_name ?? _documentName,
       );
 
   num? get success => _success;
@@ -348,16 +348,16 @@ class Form6Details {
   String? get status => _status;
   String? get senderName => _senderName;
   String? get senderDesignation => _senderDesignation;
-  String? get doNumber => _doNumber;
+  String? get DONumber => _doNumber;
   String? get country => _country;
   String? get state => _state;
   String? get district => _district;
   String? get division => _division;
   String? get region => _region;
   String? get area => _area;
-  String? get doSealNumbers => _doSealNumbers;
+  String? get do_seal_numbers => _doSealNumbers;
   String? get documents => _documents;
-  String? get documentName => _documentName;
+  String? get document_name => _documentName;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -387,16 +387,16 @@ class Form6Details {
     map['status'] = _status;
     map['senderName'] = _senderName;
     map['senderDesignation'] = _senderDesignation;
-    map['doNumber'] = _doNumber;
+    map['DONumber'] = _doNumber;
     map['country'] = _country;
     map['state'] = _state;
     map['district'] = _district;
     map['division'] = _division;
     map['region'] = _region;
     map['area'] = _area;
-    map['doSealNumbers'] = _doSealNumbers;
+    map['do_seal_numbers'] = _doSealNumbers;
     map['documents'] = _documents;
-    map['documentName'] = _documentName;
+    map['document_name'] = _documentName;
     return map;
   }
 }

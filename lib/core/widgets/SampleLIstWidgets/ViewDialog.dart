@@ -199,7 +199,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "DO Number:",
-                "value": details.doNumber,
+                "value": details.DONumber,
 
               },
             ],
@@ -248,7 +248,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "Slip Number:",
-                "value": details.doSealNumbers,
+                "value": details.do_seal_numbers,
                 "icon": Icons.qr_code,
               },
               {
@@ -353,8 +353,8 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
               },
               {"label": "Status", "value": details.status,  },
-              {"label": "Status", "value": details.documentName,  },
-              {"label": "Status", "value": _buildDocumentsList(details),  },
+              {"label": "Mentioned Documents", "value": details.document_name,  },
+              {"label": "Uploaded Documents", "value": _buildDocumentsList(details),  },
             ],
           ),
 
@@ -525,10 +525,11 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding:  EdgeInsets.all(6),
+          width: 6,
+          height: 6,
           decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(6),
+            color: Colors.black,
+            shape: BoxShape.circle,
           ),
         ),
          SizedBox(width: 12),
