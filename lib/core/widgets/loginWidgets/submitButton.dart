@@ -47,7 +47,7 @@ class LoginButton extends StatelessWidget {
               passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
             }
             if (passResetFlag == 0) {
-              Navigator.pushReplacementNamed(context, RouteName.updateScreen);
+              Navigator.pushNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1 ) {
               Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
               // Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
