@@ -20,7 +20,7 @@ class SealRequestDetailsScreen extends StatefulWidget {
 class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
   void _showUpdateCountDialog(BuildContext context, num requestId, List<Data> group) {
     final TextEditingController countController = TextEditingController();
-    final currentTotalCount = group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
+    final currentTotalCount = group.isNotEmpty ? (group.first.count ?? 0) : 0;
     countController.text = currentTotalCount.toString();
 
     showDialog(
@@ -136,7 +136,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 final title = 'Request ID: ${reqId.toString()}';
                 final subtitle = first.status ?? '';
                 final dateText = first.sealRequestDate ?? '';
-                final totalCount = group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
+                final totalCount = group.isNotEmpty ? (group.first.count ?? 0) : 0;
 
                 final sealNumbers = subtitle == 'Seal number has been sent to FSO'
                     ? group.map((e) => e.sealNumber ?? '-').toList()
