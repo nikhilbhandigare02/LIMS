@@ -270,17 +270,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<DivisionChanged>((event, emit) {
       print(state.division);
       emit(state.copyWith(division: event.value));
-      // When division changes, fetch regions for that division
       final divisionId = _extractIdFromSelectedDivision(event.value);
       if (divisionId != null) {
-        add(FetchRegionsRequested(divisionId)); // Corrected to FetchRegionsRequested
+        add(FetchRegionsRequested(divisionId));
       }
-      // Clear dependent dropdowns but preserve independent fields
       emit(state.copyWith(
         region: '',
         regionOptions: [],
         regionIdByName: {},
-        // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
         sendingSampleLocation: state.sendingSampleLocation,
       ));
@@ -363,7 +360,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         final response = await form6repository.getSealNumber(encryptedPayload);
         print('DoSealNumbers API response (encrypted):');
         print(response);
-        // Try to decrypt and print the response for debugging
         try {
           final String encryptedDataBase64 =
               (response['encryptedData'] ?? response['EncryptedData']) as String;
@@ -377,7 +373,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           );
           print('DoSealNumbers API response (decrypted):');
           print(decrypted);
-          // For DO Seal Numbers specifically, backend returns { Id, Name }
           final parsed = _parseIdNameList(
             decrypted,
             idKeys: ['Id', 'id', 'SealId', 'sealId'],

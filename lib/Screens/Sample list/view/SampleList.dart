@@ -273,11 +273,17 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     .expand((sampleData) => sampleData.sampleList ?? [])
                     .toList();
 
+                if (sampleDataList.isEmpty) {
+                  return const Center(child: Text('No Data Found'));
+                }
+
                 final filteredSampleDataList = _searchQuery.isEmpty
                     ? sampleDataList
                     : sampleDataList.where((sample) =>
                     sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
-
+                if (filteredSampleDataList.isEmpty) {
+                  return const Center(child: Text('No matching results'));
+                }
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
