@@ -64,7 +64,7 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
       ),
       child: Scaffold(
         appBar: AppHeader(
-          screenTitle: 'Request for seal number',
+          screenTitle: 'Request for slip number',
           username: '',
           userId: '',
           showBack: true,
@@ -107,20 +107,20 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Request Seal Number',
+                        'Request Slip Number',
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
 
                       const Text(
-                        'Select Date',
+                        'Enter count',
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          hintText: 'Enter seal number count',
+                          hintText: 'Enter slip number count',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             borderSide:  BorderSide(color: customColors.primary), // default

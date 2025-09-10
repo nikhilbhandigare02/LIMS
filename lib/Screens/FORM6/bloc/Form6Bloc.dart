@@ -920,59 +920,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     }
   }
 
-  // Future<void> _onFormSubmit(
-  //     FormSubmit event,
-  //     Emitter<SampleFormState> emit,
-  //     ) async {
-  //   emit(state.copyWith(apiStatus: ApiStatus.loading));
-  //
-  //   try {
-  //     final formData = {
-  //       'sampleCodeData': state.sampleCodeData,
-  //       'DONumber': state.DONumber,
-  //       'district': state.district,
-  //       'region': state.region,
-  //       'division': state.division,
-  //       'area': state.area,
-  //       'collectionDate': state.collectionDate?.toIso8601String(),
-  //       'placeOfCollection': state.placeOfCollection,
-  //       'SampleName': state.SampleName,
-  //       'QuantitySample': state.QuantitySample,
-  //       'article': state.article,
-  //       'preservativeAdded': state.preservativeAdded,
-  //       'preservativeName': state.preservativeName,
-  //       'preservativeQuantity': state.preservativeQuantity,
-  //       'personSignature': state.personSignature,
-  //       'slipNumber': state.slipNumber,
-  //       'DOSignature': state.DOSignature,
-  //       'sampleCodeNumber': state.sampleCodeNumber,
-  //       'sealImpression': state.sealImpression,
-  //       'numberofSeal': state.numberofSeal,
-  //       'formVI': state.formVI,
-  //       'FoemVIWrapper': state.FoemVIWrapper,
-  //     };
-  //
-  //     final response = await form6repository.FormSixApi(formData);
-  //
-  //     if (response.result == "success") {
-  //       emit(state.copyWith(
-  //         apiStatus: ApiStatus.success,
-  //         message: response.remark ?? "Form submitted successfully",
-  //       ));
-  //     } else {
-  //       emit(state.copyWith(
-  //         apiStatus: ApiStatus.error,
-  //         message: response.remark ?? "Form submission failed",
-  //       ));
-  //     }
-  //   } catch (e) {
-  //     emit(state.copyWith(
-  //       apiStatus: ApiStatus.error,
-  //       message: "Something went wrong: ${e.toString()}",
-  //     ));
-  //   }
-  // }
-
 
 
   Future<void> _onFormSubmit(

@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/update_password/BLOC/UpdatePassBloc.dart' hide UpdatePassButton;
 import 'package:food_inspector/Screens/update_password/repository/UpdatePassRepository.dart';
 import 'package:food_inspector/core/widgets/UpdatePassWidget/ConfirmPasswordInput.dart';
 
+import '../../../config/Routes/RouteName.dart';
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
@@ -25,6 +29,7 @@ class UpdatePasswordScreen extends StatefulWidget {
 
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
     with TickerProviderStateMixin {
+
   late UpdatePasswordBloc updatePasswordBloc;
   final _formKey = GlobalKey<FormState>();
 
@@ -255,11 +260,24 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 ),
                                 onPressed: state.apiStatus == ApiStatus.loading
                                     ? null
-                                    : () {
+                                    : () async {
                                   if (_formKey.currentState!.validate()) {
                                     context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
                                   }
+                                  Navigator.pop(context);
+
+                                  final secureStorage = const FlutterSecureStorage();
+                                  final loginDataStr = await secureStorage.read(key: 'loginData');
+                                  int passResetFlag = 0;
+
+                                  if (loginDataStr != null) {
+                                    final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
+                                    final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
+                                    passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
+                                  }
+                                  Navigator.pop(context);
                                 },
+
                                 child: state.apiStatus == ApiStatus.loading
                                     ? const CircularProgressIndicator(color: Colors.white)
                                     : const Text(
