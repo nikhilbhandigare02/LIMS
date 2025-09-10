@@ -60,13 +60,13 @@ class CustomDrawer extends StatelessWidget {
                   _buildMenuItem(
                     context,
                     Icons.assignment_turned_in,
-                    "Request for seal number",
+                    "Request for slip number",
                     onTap: () => Navigator.pushNamed(context, RouteName.requestForSeal),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.info,
-                    "  seal number Info",
+                    "  slip number Info",
                     onTap: () => Navigator.pushNamed(context, RouteName.SealRequestDetailsScreen),
                   ),
                   const Divider(),

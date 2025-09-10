@@ -15,7 +15,6 @@ class Form6Storage {
     }).toList();
 
     final data = {
-      'senderName': state.senderName,
       'DONumber': state.DONumber,
       'senderDesignation': state.senderDesignation,
       'district': state.district,
@@ -108,7 +107,8 @@ class Form6Storage {
     }
 
     return SampleFormState(
-      senderName: data['senderName'] ?? '',
+      // Do not restore senderName from local storage; always fetch from secure storage
+      senderName: '',
       DONumber: data['DONumber'] ?? '',
       senderDesignation: data['senderDesignation'] ?? '',
       district: data['district'] ?? '',

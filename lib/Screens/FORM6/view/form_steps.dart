@@ -65,7 +65,7 @@ List<List<Widget>> getOtherInformationSteps(
   SampleFormState state,
   SampleFormBloc bloc,
 ) {
-  // Trigger auto-population when this is built
+
   loadSenderNameIfNeeded(state, bloc);
   setDesignationIfNeeded(state, bloc);
   setCollectionDateIfNeeded(state, bloc);
@@ -391,7 +391,7 @@ List<List<Widget>> getSampleDetailsSteps(
           final selected = s.doSealNumbers;
           final items = s.doSealNumbersOptions;
           return BlocDropdown(
-            label: "DO Seal Numbers  ",
+            label: "DO Slip Numbers  ",
             //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
             items: items,
@@ -399,7 +399,7 @@ List<List<Widget>> getSampleDetailsSteps(
               if (val == null) return;
               bloc.add(DoSealNumbersChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, 'DO Seal Numbers'),
+            validator: (v) => Validators.validateEmptyField(v, 'DO Slip Numbers'),
           );
         },
       ),
