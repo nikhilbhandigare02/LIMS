@@ -15,9 +15,10 @@ import '../repository/form6Repository.dart';
 part 'Form6Event.dart';
 part 'Form6State.dart';
 
+
 class UploadedDoc extends Equatable {
   final String name;
-  final String base64Data;
+  final String base64Data; // original file content in base64
   final String? mimeType;
   final String? extension;
 
@@ -31,22 +32,44 @@ class UploadedDoc extends Equatable {
   @override
   List<Object?> get props => [name, base64Data, mimeType, extension];
 
-  /// Convert the document info + content into a base64-encoded string
+  /// Convert the document info + content into a compressed base64 string
   String toBase64() {
+    // Decode original base64 data to bytes
+    final fileBytes = base64Decode(base64Data);
+
+    // Compress the bytes using GZip
+    final compressedBytes = GZipEncoder().encode(fileBytes);
+
+    // Encode compressed bytes to base64
+    final compressedBase64 = base64Encode(compressedBytes!);
+
+    // Store info in JSON
     final map = {
       'name': name,
-      'base64Data': base64Data,
+      'base64Data': compressedBase64,
       'mimeType': mimeType,
       'extension': extension,
     };
-    final jsonStr = jsonEncode(map);
-    return base64Encode(utf8.encode(jsonStr));
+
+    // Encode JSON as base64
+    return base64Encode(utf8.encode(jsonEncode(map)));
   }
 
-  /// Decode from a base64 string
+  /// Decode from a compressed base64 string
   factory UploadedDoc.fromBase64(String encoded) {
+    // Decode outer base64 to JSON string
     final jsonStr = utf8.decode(base64Decode(encoded));
+
+    // Parse JSON to map
     final map = jsonDecode(jsonStr);
+
+    // Decode and decompress file bytes
+    final compressedBytes = base64Decode(map['base64Data']);
+    final originalBytes = GZipDecoder().decodeBytes(compressedBytes);
+
+    // Replace compressed base64 with original base64
+    map['base64Data'] = base64Encode(originalBytes);
+
     return UploadedDoc.fromMap(map);
   }
 
@@ -68,7 +91,6 @@ class UploadedDoc extends Equatable {
     );
   }
 }
-
 
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
