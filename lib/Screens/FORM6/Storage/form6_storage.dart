@@ -6,12 +6,12 @@ class Form6Storage {
   final db = Form6Database.instance;
 
   Future<void> saveForm6Data(SampleFormState state) async {
-    // Convert uploaded documents to JSON-serializable format
+    // Only persist document metadata locally to avoid huge rows
     final List<Map<String, dynamic>> documentsJson = state.uploadedDocs.map((doc) => {
       'name': doc.name,
-      'base64Data': doc.base64Data,
       'mimeType': doc.mimeType,
       'extension': doc.extension,
+      // base64 intentionally omitted from SQLite to prevent CursorWindow overflow
     }).toList();
 
     final data = {
@@ -150,8 +150,8 @@ class Form6Storage {
       sealNumber: data['sealNumber'] ?? '',
       sealNumberOptions: parseStringList(data['sealNumberOptions']),
       sendingSampleLocation: data['sendingSampleLocation'] ?? '',
-      // Restore uploaded documents
-      uploadedDocs: parseDocuments(data['uploadedDocuments']),
+      // Do not restore base64 documents from SQLite (we do not store base64)
+      uploadedDocs: const [],
       documentNames: parseStringList(data['documentNames']),
       documentName: data['documentName'] ?? '',
     );

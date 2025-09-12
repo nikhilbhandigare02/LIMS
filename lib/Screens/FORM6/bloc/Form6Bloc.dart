@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:food_inspector/Screens/login/bloc/loginBloc.dart';
 import 'package:geolocator/geolocator.dart';
-
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
 import '../../../core/utils/enums.dart';
@@ -15,10 +14,9 @@ import '../repository/form6Repository.dart';
 part 'Form6Event.dart';
 part 'Form6State.dart';
 
-
 class UploadedDoc extends Equatable {
   final String name;
-  final String base64Data; // original file content in base64
+  final String base64Data;
   final String? mimeType;
   final String? extension;
 
@@ -32,44 +30,22 @@ class UploadedDoc extends Equatable {
   @override
   List<Object?> get props => [name, base64Data, mimeType, extension];
 
-  /// Convert the document info + content into a compressed base64 string
+  /// Convert the document info + content into a base64-encoded string
   String toBase64() {
-    // Decode original base64 data to bytes
-    final fileBytes = base64Decode(base64Data);
-
-    // Compress the bytes using GZip
-    final compressedBytes = GZipEncoder().encode(fileBytes);
-
-    // Encode compressed bytes to base64
-    final compressedBase64 = base64Encode(compressedBytes!);
-
-    // Store info in JSON
     final map = {
       'name': name,
-      'base64Data': compressedBase64,
+      'base64Data': base64Data,
       'mimeType': mimeType,
       'extension': extension,
     };
-
-    // Encode JSON as base64
-    return base64Encode(utf8.encode(jsonEncode(map)));
+    final jsonStr = jsonEncode(map);
+    return base64Encode(utf8.encode(jsonStr));
   }
 
-  /// Decode from a compressed base64 string
-  factory UploadedDoc.fromBase64(String encoded) {
-    // Decode outer base64 to JSON string
+  /// Decode from a base64 string
+  factory UploadedDoc.fromBase64(String encoded)  {
     final jsonStr = utf8.decode(base64Decode(encoded));
-
-    // Parse JSON to map
     final map = jsonDecode(jsonStr);
-
-    // Decode and decompress file bytes
-    final compressedBytes = base64Decode(map['base64Data']);
-    final originalBytes = GZipDecoder().decodeBytes(compressedBytes);
-
-    // Replace compressed base64 with original base64
-    map['base64Data'] = base64Encode(originalBytes);
-
     return UploadedDoc.fromMap(map);
   }
 
@@ -91,6 +67,7 @@ class UploadedDoc extends Equatable {
     );
   }
 }
+
 
 class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
   final Form6Repository form6repository;
@@ -136,7 +113,16 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     });
 
     on<LoadSavedFormData>((event, emit) {
-      emit(event.savedState); // Replace current state with saved state
+      // Preserve in-memory uploads if storage has none (we no longer persist base64)
+      final mergedState = event.savedState.copyWith(
+        uploadedDocs: event.savedState.uploadedDocs.isNotEmpty
+            ? event.savedState.uploadedDocs
+            : state.uploadedDocs,
+        documentName: (event.savedState.documentName.isNotEmpty
+            ? event.savedState.documentName
+            : state.documentName),
+      );
+      emit(mergedState);
 
       // If dropdown options are missing, load them
       if (event.savedState.districtOptions.isEmpty) {
@@ -184,7 +170,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       if (districtId != null) {
         add(FetchDivisionsRequested(districtId)); // Corrected to FetchDivisionsRequested
       }
-      // Clear dependent dropdowns but preserve independent fields
+
       emit(state.copyWith(
         division: '',
         region: '',
@@ -300,6 +286,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         region: '',
         regionOptions: [],
         regionIdByName: {},
+        // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
         sendingSampleLocation: state.sendingSampleLocation,
       ));
@@ -382,6 +369,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         final response = await form6repository.getSealNumber(encryptedPayload);
         print('DoSealNumbers API response (encrypted):');
         print(response);
+        // Try to decrypt and print the response for debugging
         try {
           final String encryptedDataBase64 =
               (response['encryptedData'] ?? response['EncryptedData']) as String;
@@ -395,6 +383,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           );
           print('DoSealNumbers API response (decrypted):');
           print(decrypted);
+          // For DO Seal Numbers specifically, backend returns { Id, Name }
           final parsed = _parseIdNameList(
             decrypted,
             idKeys: ['Id', 'id', 'SealId', 'sealId'],
@@ -1093,16 +1082,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'SampleIsActive': true,
         'insertedBy': userId,
         'sampleInsertedBy': userId,
+
         'documentName': state.documentName,
-        'documentBase64': state.uploadedDocs
-            .map((doc) => doc.toBase64())
-            .join(","), // or store as JSON array if your DB supports it
-
-
       };
 
 
-      // Log the exact decrypted request we are about to send
+
       try {
         print('InsertSample request (decrypted JSON): ${jsonEncode(formData)}');
       } catch (_) {
@@ -1174,6 +1159,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       if (encryptedResponse != null) {
         print('Encrypted response received: $encryptedResponse');
         String successMessage = 'Form VI data submitted succesfully';
+        String? serialNoFromServer;
         try {
           final String encryptedDataBase64 =
           (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
@@ -1188,18 +1174,19 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           );
 
           print('Decrypted Form response: $decrypted');
-          // Expecting InsertSampleResponseDO -> { Success, StatusCode, Message, SerialNo }
+
           try {
             final Map<String, dynamic> resp = jsonDecode(decrypted) as Map<String, dynamic>;
             final bool success = (resp['Success'] ?? resp['success'] ?? false) == true;
             final String? serialNo = resp['SerialNo']?.toString();
+            serialNoFromServer = serialNo;
             final String? msg = resp['Message']?.toString();
             if (success) {
               successMessage = serialNo != null && serialNo.isNotEmpty
                   ? (msg != null && msg.isNotEmpty ? '$msg (Serial No: $serialNo)' : 'Submitted (Serial No: $serialNo)')
                   : (msg ?? successMessage);
             } else {
-              // if backend returns failure inside 200, show message
+
               final String err = msg ?? 'Insert failed';
               emit(state.copyWith(message: err, apiStatus: ApiStatus.error));
               return;
@@ -1226,6 +1213,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
               final Map<String, dynamic> resp = jsonDecode(decryptedFallback) as Map<String, dynamic>;
               final bool success = (resp['Success'] ?? resp['success'] ?? false) == true;
               final String? serialNo = resp['SerialNo']?.toString();
+              serialNoFromServer = serialNo;
               final String? msg = resp['Message']?.toString();
               if (!success) {
                 final String err = msg ?? 'Insert failed';
@@ -1239,6 +1227,34 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
             } catch (_) {}
           } catch (e2) {
             print('Fallback decryption also failed: $e2');
+          }
+        }
+
+        // After successful insert, upload documents without encryption using SerialNo (multipart/form-data)
+        if (serialNoFromServer != null && serialNoFromServer.isNotEmpty && state.uploadedDocs.isNotEmpty) {
+          try {
+            print('📎 Preparing to upload ${state.uploadedDocs.length} document(s) for SerialNo: ' + serialNoFromServer!);
+            for (final UploadedDoc doc in state.uploadedDocs) {
+              if (doc.base64Data.isEmpty) {
+                print('⚠️ Skipping empty document base64 for: ' + doc.name);
+                continue;
+              }
+              print('➡️ Uploading doc (multipart): ' + doc.name + ' (base64 len=' + doc.base64Data.length.toString() + ')');
+              final List<int> bytes = base64Decode(doc.base64Data);
+              final String fileName = (doc.extension != null && doc.extension!.isNotEmpty && !doc.name.toLowerCase().endsWith('.' + doc.extension!.toLowerCase()))
+                  ? doc.name + '.' + doc.extension!
+                  : doc.name;
+              await form6repository.uploadFormVIDocument(
+                serialNo: serialNoFromServer,
+                fileName: fileName,
+                fileBytes: bytes,
+              );
+            }
+            successMessage = successMessage + ' | Documents uploaded';
+          } catch (e) {
+            print('Document upload failed: $e');
+            // keep success of form insert, but inform about document failure
+            successMessage = successMessage + ' | Document upload failed';
           }
         }
 

@@ -122,7 +122,57 @@ class Form6Database {
 
   Future<Map<String, dynamic>?> fetchForm6Data() async {
     final db = await instance.database;
-    final result = await db.query('form6', limit: 1);
+    // Avoid selecting very large columns to prevent CursorWindow overflow
+    final result = await db.query(
+      'form6',
+      columns: [
+        'id',
+        'senderName',
+        'DONumber',
+        'senderDesignation',
+        'district',
+        'region',
+        'division',
+        'area',
+        'sampleCodeData',
+        'collectionDate',
+        'placeOfCollection',
+        'SampleName',
+        'QuantitySample',
+        'article',
+        'preservativeAdded',
+        'preservativeName',
+        'preservativeQuantity',
+        'personSignature',
+        'slipNumber',
+        'DOSignature',
+        'sampleCodeNumber',
+        'sealImpression',
+        'numberofSeal',
+        'formVI',
+        'FoemVIWrapper',
+        'isOtherInfoComplete',
+        'isSampleInfoComplete',
+        'districtOptions',
+        'districtIdByName',
+        'regionOptions',
+        'regionIdByName',
+        'divisionOptions',
+        'divisionIdByName',
+        'natureOptions',
+        'natureIdByName',
+        'lab',
+        'labOptions',
+        'labIdByName',
+        'sealNumber',
+        'sealNumberOptions',
+        'sendingSampleLocation',
+        // intentionally exclude 'uploadedDocuments'
+        'documentNames',
+        'documentName',
+      ],
+      limit: 1,
+    );
 
     if (result.isNotEmpty) {
       return result.first;

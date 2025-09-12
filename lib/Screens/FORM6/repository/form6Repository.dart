@@ -1,5 +1,6 @@
 import 'package:food_inspector/Network/NetworkServiceApi.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../common/APIs/APIEndpoint.dart';
 import '../../../common/APIs/BaseUrl.dart';
@@ -85,6 +86,35 @@ class Form6Repository {
     final url = ApiBase.baseUrl + ApiEndpoints.sealNumberdropdown;
     final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
     final response = await _api.postApi(url, data, headers: headers);
+    return response;
+  }
+
+  Future<dynamic> uploadFormVIDocument({
+    required String serialNo,
+    required String fileName,
+    required List<int> fileBytes,
+  }) async {
+    final url = ApiBase.baseUrl + ApiEndpoints.uploadFormVIDocument;
+    print('UploadFormVIDocument (multipart) - URL: $url');
+    print('UploadFormVIDocument (multipart) - serialNo: $serialNo, fileName: $fileName, bytes: ${fileBytes.length}');
+
+    final fields = {
+      'serialNo': serialNo,
+    };
+
+    final file = http.MultipartFile.fromBytes(
+      'file',
+      fileBytes,
+      filename: fileName,
+    );
+
+    // No auth, no encryption headers
+    final response = await _api.postMultipart(
+      url,
+      fields: fields,
+      files: [file],
+      headers: null,
+    );
     return response;
   }
 }

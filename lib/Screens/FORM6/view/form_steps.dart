@@ -256,7 +256,7 @@ List<List<Widget>> getOtherInformationSteps(
       BlocTextInput(
         label: "Sending Sample Location",
         //  icon: Icons.location_city,
-        initialValue: state.sendingSampleLocation ?? '',
+        initialValue: state.sendingSampleLocation ??  '',
         onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
         validator: (v) =>
             Validators.validateEmptyField(v, 'Sending Sample Location'),

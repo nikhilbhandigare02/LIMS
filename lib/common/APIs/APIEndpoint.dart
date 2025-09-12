@@ -11,7 +11,7 @@ class ApiEndpoints {
   static const String getNatureOfSample = 'mobile/GetNatureOfSample';
   static const String getLabMaster = 'mobile/GetLabMaster';
   static const String insertSample = 'Sample/Insert';
-  static const String getUserWiseSampleData = 'Sample/GetUserWiseSampleData';
+   static const String getUserWiseSampleData = 'Sample/GetUserWiseSampleData';
   static const String getFormVIData = 'mobile/GetForm6Data';
   static const String resetPassword = 'mobile/ForgotPassword';
   static const String VerifyLoginOTP = 'mobile/VerifyLoginOtp';
@@ -19,5 +19,5 @@ class ApiEndpoints {
   static const String getRequestData = 'SealRequest/GetSealRequestDetails';
   static const String sealNumberdropdown = 'mobile/GetSealNumber';
   static const String updateSlipCount = 'SealRequest/updateSealRequest';
-
+  static const String uploadFormVIDocument = 'UploadFormVI/UploadDocument';
 }

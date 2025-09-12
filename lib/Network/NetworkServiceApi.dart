@@ -58,4 +58,41 @@ class NetworkServiceApi extends ApiServices {
       rethrow;
     }
   }
+
+  // Multipart/form-data POST for file uploads
+  Future<dynamic> postMultipart(
+    String url, {
+    Map<String, String>? fields,
+    required List<http.MultipartFile> files,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(url));
+      if (headers != null && headers.isNotEmpty) {
+        request.headers.addAll(headers);
+      }
+      if (fields != null && fields.isNotEmpty) {
+        request.fields.addAll(fields);
+      }
+      for (final f in files) {
+        request.files.add(f);
+      }
+
+      print('HTTP MULTIPART POST: $url');
+      print('Multipart fields: ${request.fields}');
+      print('Multipart files: ${request.files.map((f) => '${f.field} -> ${f.filename} (${f.length})').toList()}');
+
+      final streamed = await request.send().timeout(const Duration(seconds: 60));
+      final response = await http.Response.fromStream(streamed);
+      print('HTTP Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      return handleResponse(response);
+    } on SocketException {
+      throw NoInternetException();
+    } on TimeoutException {
+      throw TimeoutError();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
