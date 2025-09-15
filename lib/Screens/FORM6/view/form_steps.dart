@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:food_inspector/core/utils/Message.dart';
+import 'package:food_inspector/core/utils/enums.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
 import '../bloc/Form6Bloc.dart';
@@ -744,31 +746,67 @@ List<List<Widget>> getSampleDetailsSteps(
 
               SizedBox(height: 16),
               ElevatedButton.icon(
-                icon: Icon(Icons.upload_file),
-                label: Text("Upload Document(s)"),
-                onPressed: () async {
+                icon: state.isUploading
+                    ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                    : const Icon(Icons.upload_file),
+                label: Text(state.isUploading ? "Uploading..." : "Upload Document(s)"),
+                onPressed: state.isUploading
+                    ? null
+                    : () async {
                   final result = await FilePicker.platform.pickFiles(
                     type: FileType.any,
                     allowMultiple: true,
-                    withData: false,
+                    withData: true, // required for web
                   );
 
-                  if (result != null && result.files.isNotEmpty) {
-                    final List<UploadedDoc> docs = [];
-                    for (final f in result.files) {
-                      final String? path = f.path;
-                      if (path == null) continue;
-                      final file = File(path);
-                      final bytes = await file.readAsBytes();
-                      final base64String = base64Encode(bytes);
-                      final String name = (f.name.isNotEmpty ? f.name : file.path.split('/').last);
-                      final String? ext = f.extension;
-                      final String? mime = null;
-                      docs.add(UploadedDoc(name: name, base64Data: base64String, mimeType: mime, extension: ext));
+                  if (result == null || result.files.isEmpty) return;
+
+                  const int maxTotalSize = 5 * 1024 * 1024; // 5 MB
+                  int totalSize = 0;
+
+                  for (final f in result.files) {
+                    if (f.path != null) {
+                      totalSize += await File(f.path!).length();
+                    } else if (f.bytes != null) {
+                      totalSize += f.bytes!.length;
+                    } else if (f.size != null) {
+                      totalSize += f.size!;
                     }
-                    if (docs.isNotEmpty) {
-                      context.read<SampleFormBloc>().add(AddUploadedDocuments(docs));
-                    }
+                  }
+
+                  for (final doc in state.uploadedDocs) {
+                    totalSize += base64Decode(doc.base64Data).length;
+                  }
+
+                  if (totalSize > maxTotalSize) {
+                    Message.showTopRightOverlay(context, 'Total file size (including uploaded files) must not exceed 5 MB.', MessageType.error);
+                    return;
+                  }
+
+                  final List<UploadedDoc> docs = [];
+                  for (final f in result.files) {
+                    final bytes = f.path != null
+                        ? await File(f.path!).readAsBytes()
+                        : f.bytes;
+                    if (bytes == null) continue;
+
+                    docs.add(UploadedDoc(
+                      name: f.name,
+                      base64Data: base64Encode(bytes),
+                      mimeType: null,
+                      extension: f.extension,
+                    ));
+                  }
+
+                  if (docs.isNotEmpty) {
+                    context.read<SampleFormBloc>().add(AddUploadedDocuments(docs));
                   }
                 },
               ),

@@ -99,10 +99,30 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ));
     });
 
-    on<AddUploadedDocuments>((event, emit) {
-      final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)..addAll(event.documents);
-      emit(state.copyWith(uploadedDocs: updated));
+    on<AddUploadedDocuments>((event, emit) async {
+      emit(state.copyWith(isUploading: true, clearUploadError: true));
+
+      try {
+        // 🔹 replace with actual upload API call
+        await Future.delayed(const Duration(seconds: 2));
+
+        final updated = List<UploadedDoc>.from(state.uploadedDocs)
+          ..addAll(event.documents);
+
+        emit(state.copyWith(
+          uploadedDocs: updated,
+          isUploading: false,
+          clearUploadError: true,
+        ));
+      } catch (_) {
+        emit(state.copyWith(isUploading: false, uploadError: "Upload failed"));
+      }
     });
+
+    on<UploadFailed>((event, emit) {
+      emit(state.copyWith(isUploading: false, uploadError: event.message));
+    });
+
 
     on<RemoveUploadedDocument>((event, emit) {
       if (event.index >= 0 && event.index < state.uploadedDocs.length) {
@@ -111,7 +131,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(uploadedDocs: updated));
       }
     });
+    on<UploadStarted>((event, emit) {
+      emit(state.copyWith(isUploading: true));
+    });
 
+    on<UploadFinished>((event, emit) {
+      emit(state.copyWith(isUploading: false));
+    });
     on<LoadSavedFormData>((event, emit) {
       // Preserve in-memory uploads if storage has none (we no longer persist base64)
       final mergedState = event.savedState.copyWith(

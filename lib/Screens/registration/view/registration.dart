@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
+import '../../../core/utils/Message.dart';
+import '../../../core/utils/enums.dart';
 import '../../../core/widgets/RegistrationInput/RegistrationWidget.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -99,12 +101,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
     print('City: $selectedCity');
 
     // Show success message or navigate to next screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Registration successful!'),
-        backgroundColor: Color(0xFF4B3DFE),
-      ),
-    );
+
+    Message.showTopRightOverlay(context, 'Registration successful!', MessageType.success);
+
   }
 
   @override

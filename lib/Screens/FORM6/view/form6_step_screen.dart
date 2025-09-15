@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/FORM6/Storage/form6_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/utils/Message.dart';
+import '../../../core/utils/enums.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form_steps.dart';
 import 'form6_landing_screen.dart';
@@ -67,14 +69,12 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   }
 
   void _goToNextStep() async {
-    // Validate current step before proceeding
     final currentFormKey = _formKeys[currentStep];
     final isValid = currentFormKey.currentState?.validate() ?? true;
     if (!isValid) {
-      // Show a brief message and stop
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please correct the highlighted fields')),
-      );
+
+      Message.showTopRightOverlay(context, 'Please correct the highlighted fields', MessageType.error);
+
       return;
     }
 
@@ -129,16 +129,12 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
       if (!isComplete) {
         print("❌ Section not complete, showing error");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        );
+
+        Message.showTopRightOverlay(context, errorMessage, MessageType.error);
+
         return;
       }
 
-      // Mark section as complete in storage
       if (widget.section == 'other') {
         await storage.markSectionComplete(section: 'other');
         print("✅ Marked 'other' section as complete");

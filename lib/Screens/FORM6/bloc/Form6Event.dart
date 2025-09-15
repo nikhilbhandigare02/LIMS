@@ -309,3 +309,13 @@ class DocumentNameChanged extends SampleFormEvent {
 class FetchDoSealNumbersRequested extends SampleFormEvent {
   const FetchDoSealNumbersRequested();
 }
+
+
+class UploadStarted extends SampleFormEvent {}
+class UploadFinished extends SampleFormEvent {}
+
+
+class UploadFailed extends SampleFormEvent {
+  final String message;
+  UploadFailed(this.message);
+}
