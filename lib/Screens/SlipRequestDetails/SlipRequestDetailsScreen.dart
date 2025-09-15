@@ -10,7 +10,7 @@ import '../../common/ApiResponse.dart';
 import '../../core/utils/enums.dart';
 import 'bloc/SlipRequestBloc.dart';
 import 'model/SlipRequestModel.dart';
-import '../RequestSealNumber/repository/requestRepository.dart';
+import '../RequestSlipNumber/repository/requestRepository.dart';
 
 class SealRequestDetailsScreen extends StatefulWidget {
   const SealRequestDetailsScreen({super.key});

@@ -132,17 +132,23 @@ class BlocDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme;
+
     return DropdownButtonFormField<String>(
       value: value != null && items.contains(value) ? value : null,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: const TextStyle(
+      style: theme.bodyMedium?.copyWith( // ✅ uses app default font
         fontSize: 16,
         fontWeight: FontWeight.w500,
         color: Colors.black,
       ),
       decoration: InputDecoration(
         hintText: 'Select $label',
-        hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
+        hintStyle: theme.bodyMedium?.copyWith( // ✅ theme font
+          fontSize: 16,
+          color: Colors.black,
+          fontWeight: FontWeight.normal,
+        ),
         prefixIcon: icon != null ? Icon(icon, color: customColors.primary) : null,
         filled: true,
         fillColor: customColors.white,
@@ -153,29 +159,35 @@ class BlocDropdown extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(color: customColors.primary, ),
+          borderSide: const BorderSide(color: customColors.primary),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: customColors.primary,width: 0.5),
+          borderSide: BorderSide(color: customColors.primary, width: 0.5),
         ),
       ),
-      items: items.map((item) => DropdownMenuItem(
+      items: items
+          .map(
+            (item) => DropdownMenuItem(
           value: item,
           child: Text(
             item,
-            style: const TextStyle(
+            style: theme.bodyMedium?.copyWith( // ✅ theme font
               fontSize: 16,
-              fontWeight: FontWeight.normal, // Changed from w500 to normal
+              fontWeight: FontWeight.normal,
               color: Colors.black,
             ),
-          )
-      )).toList(),
+          ),
+        ),
+      )
+          .toList(),
       onChanged: onChanged,
-      validator: validator ?? ((val) => val == null || val.isEmpty ? '$label is required' : null),
+      validator: validator ??
+              (val) => val == null || val.isEmpty ? '$label is required' : null,
     );
   }
 }
+
 
 class BlocDatePicker extends StatelessWidget {
   final String label;

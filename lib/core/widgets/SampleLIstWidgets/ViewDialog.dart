@@ -355,7 +355,8 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "label": "Wrapper Code",
                 "value": details.wrapperCodeNumber,
               },
-              {"label": "Mentioned Document", "value": _buildDocumentsList(details),  },
+              {"label": "Mentioned Document", "value": details.documentName,  },
+              {"label": "Uploaded Document", "value": _buildDocumentsList(details),  },
               {"label": "Status", "value": details.status,  },
 
             ],

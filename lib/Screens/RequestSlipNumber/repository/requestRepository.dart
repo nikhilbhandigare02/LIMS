@@ -7,7 +7,7 @@ import '../../../Network/NetworkServiceApi.dart';
 class RequestedSealRepository{
   final _api = NetworkServiceApi();
 
-  Future<dynamic>  requestSealApi(dynamic data) async{
+  Future<dynamic>  requestSlipApi(dynamic data) async{
     const storage = FlutterSecureStorage();
     final String? token = await storage.read(key: 'authToken');
     final requestUrl = ApiBase.baseUrl + ApiEndpoints.requestforseal;

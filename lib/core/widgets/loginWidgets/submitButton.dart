@@ -8,7 +8,7 @@ import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerificatio
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/enums.dart';
-import 'package:food_inspector/core/utils/Message.dart'; // Make sure this has MessageType enum and showTopRightOverlay
+import 'package:food_inspector/core/utils/Message.dart';
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
@@ -49,8 +49,8 @@ class LoginButton extends StatelessWidget {
             if (passResetFlag == 0) {
               Navigator.pushNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1 ) {
-             // Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
-               Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
+              Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
+              // Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
             } else {
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }

@@ -734,7 +734,7 @@ List<List<Widget>> getSampleDetailsSteps(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               BlocTextInput(
-                label: "Mention any other documents",
+                label: " any other documents",
                 initialValue: state.documentName,
                 readOnly: false,
                 onChanged: (val) => bloc.add(documentNameChangedEvent(val)),

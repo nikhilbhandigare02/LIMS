@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:food_inspector/Screens/RequestSealNumber/repository/requestRepository.dart';
+import 'package:food_inspector/Screens/RequestSlipNumber/repository/requestRepository.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/ENcryption_Decryption/AES.dart';
@@ -86,7 +86,7 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
       );
 
       // Call API
-      final encryptedResponse = await requestedSealRepository.requestSealApi(session.payloadForServer);
+      final encryptedResponse = await requestedSealRepository.requestSlipApi(session.payloadForServer);
 
       if (encryptedResponse != null) {
         print('Encrypted response received: $encryptedResponse');
