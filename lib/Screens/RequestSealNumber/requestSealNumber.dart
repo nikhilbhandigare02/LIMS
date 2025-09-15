@@ -13,14 +13,14 @@ import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 
-class Requestsealnumber extends StatefulWidget {
-  const Requestsealnumber({super.key});
+class Requestslipnumber extends StatefulWidget {
+  const Requestslipnumber({super.key});
 
   @override
-  State<Requestsealnumber> createState() => _RequestsealnumberState();
+  State<Requestslipnumber> createState() => _RequestslipnumberState();
 }
 
-class _RequestsealnumberState extends State<Requestsealnumber> {
+class _RequestslipnumberState extends State<Requestslipnumber> {
   DateTime? selectedDate;
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
