@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:food_inspector/Screens/RequestSealNumber/requestSealNumber.dart';
+import 'package:food_inspector/Screens/RequestSlipNumber/requestSlipNumber.dart';
 import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
  import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';

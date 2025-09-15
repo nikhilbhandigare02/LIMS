@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:food_inspector/Screens/RequestSealNumber/repository/requestRepository.dart';
+import 'package:food_inspector/Screens/RequestSlipNumber/repository/requestRepository.dart';
 import 'package:food_inspector/Screens/SlipRequestDetails/model/SlipRequestModel.dart';
 import 'package:intl/intl.dart';
 
