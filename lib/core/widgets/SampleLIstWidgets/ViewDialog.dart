@@ -13,6 +13,7 @@ import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
 import '../../../Screens/Sample list/model/view_form6_model.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
+import '../../utils/Message.dart';
 import '../../utils/enums.dart';
 
 class SampleDetailsScreen extends StatefulWidget {
@@ -580,14 +581,14 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               await OpenFilex.open(docUrl);
             }
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("No file path available for $docName")),
-            );
+
+            Message.showTopRightOverlay(context, 'No file path available for $docName', MessageType.error);
+
           }
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Cannot open $docName: $e")),
-          );
+
+          Message.showTopRightOverlay(context, 'Cannot open $docName: $e', MessageType.error);
+
         }
       },
       child: Row(

@@ -75,18 +75,13 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                       ),
                     );
                     Navigator.of(dialogCtx).pop();
-
-
                     Message.showTopRightOverlay(
                       context,
                       'Slip number Count updated to $newCount',
                       MessageType.success,
                     );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please enter a valid count')),
-                    );
+
                     Message.showTopRightOverlay(
                       context,
                       'Please enter a valid count',

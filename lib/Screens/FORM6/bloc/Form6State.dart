@@ -6,6 +6,8 @@ class SampleFormState extends Equatable {
   final String senderDesignation;
   final String district;
   final int? requestId;
+  final bool isUploading;
+  final String? uploadError;
 
   final List<String> districtOptions;
   final Map<String, int> districtIdByName;
@@ -57,9 +59,12 @@ class SampleFormState extends Equatable {
   const SampleFormState({
     this.senderName = '',
     this.DONumber = '',
+    this.uploadError,
+
     this.senderDesignation = '',
     this.district = '',
     this.requestId ,
+    this.isUploading = false,
     this.districtOptions = const [],
     this.districtIdByName = const {},
     this.Longitude = '',
@@ -110,10 +115,13 @@ class SampleFormState extends Equatable {
 
   SampleFormState copyWith({
     String? senderName,
+    String? uploadError,
+
     String? sampleCodeData,
     String? DONumber,
     String? senderDesignation,
     String? district,
+    bool? isUploading,
     int? requestId,
     String? documentName,
     String? uploadedDocument,
@@ -160,10 +168,13 @@ class SampleFormState extends Equatable {
     String? doSealNumbers,
     List<String>? doSealNumbersOptions,
     Map<String, int>? doSealNumbersIdByName,
+    bool clearUploadError = false, // use to explicitly clear the error
+
   }) {
     return SampleFormState(
       senderName: senderName ?? this.senderName,
       sampleCodeData: sampleCodeData ?? this.sampleCodeData,
+      uploadError: clearUploadError ? null : (uploadError ?? this.uploadError),
       DONumber: DONumber ?? this.DONumber,
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
@@ -174,6 +185,7 @@ class SampleFormState extends Equatable {
       districtIdByName: districtIdByName ?? this.districtIdByName,
       Longitude: Longitude ?? this.Longitude,
       Lattitude: Lattitude ?? this.Lattitude,
+      isUploading: isUploading ?? this.isUploading,
       region: region ?? this.region,
       regionOptions: regionOptions ?? this.regionOptions,
       regionIdByName: regionIdByName ?? this.regionIdByName,
@@ -213,6 +225,7 @@ class SampleFormState extends Equatable {
       doSealNumbers: doSealNumbers ?? this.doSealNumbers,
       doSealNumbersOptions: doSealNumbersOptions ?? this.doSealNumbersOptions,
       doSealNumbersIdByName: doSealNumbersIdByName ?? this.doSealNumbersIdByName,
+
     );
   }
 
@@ -269,6 +282,8 @@ class SampleFormState extends Equatable {
     doSealNumbers,
     doSealNumbersOptions,
     doSealNumbersIdByName,
+    uploadError,
+    isUploading
   ];
 
   bool get isOtherInfoComplete {
