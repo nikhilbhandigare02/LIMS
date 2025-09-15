@@ -7,6 +7,7 @@ import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
@@ -353,11 +354,10 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               {
                 "label": "Wrapper Code",
                 "value": details.wrapperCodeNumber,
-
               },
+              {"label": "Mentioned Document", "value": _buildDocumentsList(details),  },
               {"label": "Status", "value": details.status,  },
-              {"label": "Status", "value": details.document_name,  },
-              {"label": "Status", "value": _buildDocumentsList(details),  },
+
             ],
           ),
 
@@ -508,7 +508,6 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     Widget valueWidget;
 
     if (value is Widget) {
-      // If it's already a widget (like your documents list), render directly
       valueWidget = value;
     } else {
       final valueStr = value?.toString() ?? "N/A";
@@ -548,128 +547,68 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         ),
         Expanded(
           flex: 2,
-          child: valueWidget, // ✅ now supports Widget or Text
+          child: valueWidget,
         ),
       ],
     );
   }
 
-
-
   Widget _buildDocumentsList(Form6Details details) {
-    if (details.documents == null || details.documents!.isEmpty) {
+    if (details.documentName == null || details.documentName!.isEmpty) {
       return Text("No documents uploaded");
     }
 
-    final docs = parseUploadedDocuments(details.documents!);
+    final docName = details.documentName!;
+    final docUrl = details.documentUrl ?? "";
+    final isImage = docName.toLowerCase().endsWith(".jpg") ||
+        docName.toLowerCase().endsWith(".jpeg") ||
+        docName.toLowerCase().endsWith(".png");
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: docs.map((doc) {
-        final isImage = doc.extension?.toLowerCase().contains("jpg") == true ||
-            doc.extension?.toLowerCase().contains("jpeg") == true ||
-            doc.extension?.toLowerCase().contains("png") == true;
-
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 6),
-          child: InkWell(
-            onTap: () async {
-              try {
-                // Write the file to temporary directory
-                final dir = await getTemporaryDirectory();
-                final filePath = '${dir.path}/${doc.name}';
-                final file = File(filePath);
-                await file.writeAsBytes(base64Decode(doc.base64Data));
-
-                // Open with open_filex
-                await OpenFilex.open(file.path);
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Cannot open ${doc.name}: $e")),
-                );
+    return InkWell(
+      onTap: () async {
+        try {
+          if (docUrl.isNotEmpty) {
+            if (docUrl.startsWith("http")) {
+              // open in browser
+              final uri = Uri.parse(docUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
               }
-            },
-            child: Row(
-              children: [
-                Icon(
-                  isImage ? Icons.image : Icons.insert_drive_file,
-                  color: Colors.blue,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    doc.name,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textPrimary,
-                    ),
-                  ),
-                ),
-              ],
+            } else {
+              // open local file
+              await OpenFilex.open(docUrl);
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("No file path available for $docName")),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Cannot open $docName: $e")),
+          );
+        }
+      },
+      child: Row(
+        children: [
+          Icon(
+            isImage ? Icons.image : Icons.insert_drive_file,
+            color: Colors.blue,
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              docName,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: textPrimary,
+                decoration: TextDecoration.underline, // look clickable
+              ),
             ),
           ),
-        );
-      }).toList(),
-    );
-  }
-
-  void _showImageDialog(UploadedDoc doc) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return Dialog(
-          insetPadding: EdgeInsets.zero, // Remove default dialog padding
-          backgroundColor: Colors.transparent, // Optional: transparent background
-          child: Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.black.withOpacity(0.8), // Dim background
-                child: Center(
-                  child: InteractiveViewer(
-                    panEnabled: true,
-                    minScale: 0.5,
-                    maxScale: 3.0,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.memory(
-                        base64Decode(doc.base64Data),
-                        fit: BoxFit.contain,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40,
-                right: 20,
-                child: IconButton(
-                  icon:  Icon(Icons.close, color: Colors.white, size: 30),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-              Positioned(
-                bottom: 40,
-                left: 20,
-                right: 20,
-                child: Text(
-                  doc.name,
-                  textAlign: TextAlign.center,
-                  style:  TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 

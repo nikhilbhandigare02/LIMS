@@ -5,9 +5,9 @@
 
 class ViewForm6Model {
   ViewForm6Model({
-      bool? success, 
-      String? message, 
-      num? statusCode, 
+      bool? success,
+      String? message,
+      num? statusCode,
       List<Form6Details>? form6Details,}){
     _success = success;
     _message = message;
@@ -129,7 +129,8 @@ class Form6Details {
     String? area,
     String? do_seal_numbers,
     String? documents,
-    String? document_name,
+    String? documentName,
+    String? documentUrl,
   }) {
     _success = success;
     _message = message;
@@ -166,7 +167,8 @@ class Form6Details {
     _area = area;
     _doSealNumbers = do_seal_numbers;
     _documents = documents;
-    _documentName = document_name;
+    _documentName = documentName;
+    _documentUrl = documentUrl;
   }
 
   Form6Details.fromJson(dynamic json) {
@@ -205,7 +207,8 @@ class Form6Details {
     _area = (json['area'] ?? json['Area'])?.toString();
     _doSealNumbers = (json['do_seal_numbers'] ?? json['do_seal_numbers'])?.toString();
     _documents = (json['documents'] ?? json['Documents'])?.toString();
-    _documentName = (json['document_name'] ?? json['document_name'])?.toString();
+    _documentName = (json['documentName'] ?? json['DocumentName'])?.toString();
+    _documentUrl = (json['document_url'] ?? json['documentUrl'] ?? json['DocumentUrl'])?.toString();
   }
 
   num? _success;
@@ -244,6 +247,7 @@ class Form6Details {
   String? _doSealNumbers;
   String? _documents;
   String? _documentName;
+  String? _documentUrl;
 
   Form6Details copyWith({
     num? success,
@@ -281,7 +285,8 @@ class Form6Details {
     String? area,
     String? do_seal_numbers,
     String? documents,
-    String? document_name,
+    String? documentName,
+    String? documentUrl,
   }) =>
       Form6Details(
         success: success ?? _success,
@@ -319,7 +324,8 @@ class Form6Details {
         area: area ?? _area,
         do_seal_numbers: do_seal_numbers ?? _doSealNumbers,
         documents: documents ?? _documents,
-        document_name: document_name ?? _documentName,
+        documentName: documentName ?? _documentName,
+        documentUrl: documentUrl ?? _documentUrl,
       );
 
   num? get success => _success;
@@ -357,7 +363,8 @@ class Form6Details {
   String? get area => _area;
   String? get do_seal_numbers => _doSealNumbers;
   String? get documents => _documents;
-  String? get document_name => _documentName;
+  String? get documentName => _documentName;
+  String? get documentUrl => _documentUrl;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -396,7 +403,8 @@ class Form6Details {
     map['area'] = _area;
     map['do_seal_numbers'] = _doSealNumbers;
     map['documents'] = _documents;
-    map['document_name'] = _documentName;
+    map['documentName'] = _documentName;
+    map['documentUrl'] = _documentUrl;
     return map;
   }
 }

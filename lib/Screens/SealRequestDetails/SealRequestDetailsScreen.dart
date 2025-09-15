@@ -173,7 +173,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
 
                 final sealNumbers =
-                subtitle == 'Seal number has been sent to FSO'
+                subtitle == 'Slip number has been sent to FSO'
                     ? group.map((e) => e.sealNumber ?? '-').toList()
                     : [];
                 final DateFormat inputFormat = DateFormat('M/d/yyyy h:mm:ss a'); // matches your data
@@ -212,7 +212,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
-                            if (subtitle == 'Request for a seal number')
+                            if (subtitle == 'Request for a slip number')
                               Container(
                                 decoration: BoxDecoration(
                                   color: Colors.blue.withOpacity(0.1),
