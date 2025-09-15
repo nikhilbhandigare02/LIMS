@@ -20,8 +20,10 @@ class Form6LandingScreen extends StatefulWidget {
 
 class _Form6LandingScreenState extends State<Form6LandingScreen> {
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
-  bool isOtherComplete = false;
-  bool isSampleComplete = false;
+  bool isOtherComplete = false; // FSO Info
+  bool isSampleBasicComplete = false; // Sample Info
+  bool isPreservativeComplete = false; // Preservative Info
+  bool isSealDetailsComplete = false; // Seal Details
   final Form6Storage storage = Form6Storage();
 
   @override
@@ -43,15 +45,26 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     final savedState = await storage.fetchStoredState();
     if (mounted) {
       setState(() {
-        isOtherComplete = savedState?.isOtherInfoComplete ?? false;
-        isSampleComplete = savedState?.isSampleInfoComplete ?? false;
+        // Compute completion from saved fields for resilience across app restarts
+        if (savedState != null) {
+          final s = savedState;
+          isOtherComplete = _isFsoInfoComplete(s);
+          isSampleBasicComplete = _isSampleInfoComplete(s);
+          isPreservativeComplete = _isPreservativeInfoComplete(s);
+          isSealDetailsComplete = _isSealInfoComplete(s);
+        } else {
+          isOtherComplete = false;
+          isSampleBasicComplete = false;
+          isPreservativeComplete = false;
+          isSealDetailsComplete = false;
+        }
       });
-      print("🔄 Loaded completion status - Other: $isOtherComplete, Sample: $isSampleComplete");
+      print("🔄 Loaded completion status - Other: $isOtherComplete, SampleBasic: $isSampleBasicComplete, Preservative: $isPreservativeComplete, Seal: $isSealDetailsComplete");
     }
   }
 
   Future<void> handleSubmit() async {
-    if (isOtherComplete && isSampleComplete) {
+    if (isOtherComplete && isSampleBasicComplete && isPreservativeComplete && isSealDetailsComplete) {
       context.read<SampleFormBloc>().add(FormSubmit());
     } else {
       Message.showTopRightOverlay(
@@ -67,14 +80,24 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     return BlocListener<SampleFormBloc, SampleFormState>(
       listener: (context, state) async {
         // Update completion status whenever state changes
-        final newOtherComplete = state.isOtherInfoComplete;
-        final newSampleComplete = state.isSampleInfoComplete;
+        final newOtherComplete = _isFsoInfoComplete(state);
+        final newSampleBasicComplete = _isSampleInfoComplete(state);
+        final newPreservativeComplete = _isPreservativeInfoComplete(state);
+        final newSealComplete = _isSealInfoComplete(state);
 
-        if (newOtherComplete != isOtherComplete || newSampleComplete != isSampleComplete) {
-          print("🔄 State changed - Other: $newOtherComplete, Sample: $newSampleComplete");
+        final changed =
+            newOtherComplete != isOtherComplete ||
+            newSampleBasicComplete != isSampleBasicComplete ||
+            newPreservativeComplete != isPreservativeComplete ||
+            newSealComplete != isSealDetailsComplete;
+
+        if (changed) {
+          print("🔄 State changed - Other: $newOtherComplete, SampleBasic: $newSampleBasicComplete, Preservative: $newPreservativeComplete, Seal: $newSealComplete");
           setState(() {
             isOtherComplete = newOtherComplete;
-            isSampleComplete = newSampleComplete;
+            isSampleBasicComplete = newSampleBasicComplete;
+            isPreservativeComplete = newPreservativeComplete;
+            isSealDetailsComplete = newSealComplete;
           });
         }
 
@@ -86,7 +109,9 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           await storage.clearFormData();
           setState(() {
             isOtherComplete = false;
-            isSampleComplete = false;
+            isSampleBasicComplete = false;
+            isPreservativeComplete = false;
+            isSealDetailsComplete = false;
           });
 
           final successMsg = (state.message.isNotEmpty) ? state.message : '✅ Form VI submitted successfully.';
@@ -153,7 +178,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'title': 'Sample Info',
         'subtitle': 'Basic sample details',
         'icon': Icons.science_outlined,
-        'isComplete': isSampleComplete,
+        'isComplete': isSampleBasicComplete,
         'color': Colors.green,
         'section': 'sample',
       },
@@ -161,7 +186,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'title': 'Preservative Info',
         'subtitle': 'Preservative information',
         'icon': Icons.local_pharmacy_outlined,
-        'isComplete': isSampleComplete,
+        'isComplete': isPreservativeComplete,
         'color': Colors.purple,
         'section': 'sample',
       },
@@ -169,7 +194,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'title': 'Seal Details',
         'subtitle': 'Seal and security details',
         'icon': Icons.security_outlined,
-        'isComplete': isSampleComplete,
+        'isComplete': isSealDetailsComplete,
         'color': Colors.orange,
         'section': 'sample',
       },
@@ -177,7 +202,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'title': 'Review & Submit',
         'subtitle': 'Final review and submission',
         'icon': Icons.send_outlined,
-        'isComplete': isOtherComplete && isSampleComplete,
+        'isComplete': isOtherComplete && isSampleBasicComplete && isPreservativeComplete && isSealDetailsComplete,
         'color': Colors.indigo,
         'section': 'sample',
       },
@@ -345,7 +370,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           ),
         );
       },
-      child: (isOtherComplete && isSampleComplete)
+      child: (isOtherComplete && isSampleBasicComplete && isPreservativeComplete && isSealDetailsComplete)
           ? Container(
         width: double.infinity,
         child: TextButton.icon(
@@ -380,4 +405,41 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       ),
     );
   }
+}
+
+// Completion helper functions
+bool _isFsoInfoComplete(SampleFormState s) {
+  return s.senderDesignation.isNotEmpty &&
+      s.DONumber.isNotEmpty &&
+      s.district.isNotEmpty &&
+      s.region.isNotEmpty &&
+      s.division.isNotEmpty;
+}
+
+bool _isSampleInfoComplete(SampleFormState s) {
+  final bool hasAnyCode = s.sampleCodeNumber.isNotEmpty || s.sampleCodeData.isNotEmpty;
+  return hasAnyCode &&
+      s.collectionDate != null &&
+      s.placeOfCollection.isNotEmpty &&
+      s.SampleName.isNotEmpty &&
+      s.QuantitySample.isNotEmpty &&
+      s.article.isNotEmpty;
+}
+
+bool _isPreservativeInfoComplete(SampleFormState s) {
+  if (s.preservativeAdded == null) return false;
+  if (s.preservativeAdded == true) {
+    return s.preservativeName.isNotEmpty && s.preservativeQuantity.isNotEmpty;
+  }
+  return true;
+}
+
+bool _isSealInfoComplete(SampleFormState s) {
+  final bool hasDoSeal = s.doSealNumbers.isNotEmpty;
+  return s.personSignature != null &&
+      s.slipNumber.isNotEmpty &&
+      s.DOSignature != null &&
+      s.sealImpression != null &&
+      s.numberofSeal.isNotEmpty &&
+      hasDoSeal;
 }
