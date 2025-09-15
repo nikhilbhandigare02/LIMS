@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/RequestSealNumber/repository/requestRepository.dart';
-import 'package:food_inspector/Screens/SealRequestDetails/model/SealRequestModel.dart';
+import 'package:food_inspector/Screens/SlipRequestDetails/model/SlipRequestModel.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/ApiResponse.dart';
@@ -12,21 +12,21 @@ import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
 import '../../../core/utils/enums.dart';
 import '../../Sample list/bloc/sampleBloc.dart';
-import '../repository/SealRequestRepository.dart';
+import '../repository/SlipRequestRepository.dart';
 
-part 'SealRequestEvent.dart';
-part 'SealRequestState.dart';
+part 'SlipRequestEvent.dart';
+part 'SlipRequestState.dart';
 
 
-class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
+class SlipRequestBloc extends Bloc<SlipRequestEvent, SlipRequestState>{
   final RequestedSealRepository requestedSealRepository;
-  SealRequestBloc({required this.requestedSealRepository}): super(SealRequestState(fetchRequestData: ApiResponse.loading(), count: 0)){
+  SlipRequestBloc({required this.requestedSealRepository}): super(SlipRequestState(fetchRequestData: ApiResponse.loading(), count: 0)){
     on<getRequestDataEvent>(_requestData);
     on<getCountEvent>(count);
     on<updateSlipCountEvent>(_updateSlipCount);
 
   }
-  void count(getCountEvent event, Emitter<SealRequestState> emit){
+  void count(getCountEvent event, Emitter<SlipRequestState> emit){
     print(state.count);
     emit(state.copyWith(count: event.count));
   }
@@ -35,7 +35,7 @@ class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
 
   Future<void> _requestData(
       getRequestDataEvent event,
-      Emitter<SealRequestState> emit,
+      Emitter<SlipRequestState> emit,
       ) async {
     emit(state.copyWith(fetchRequestData: ApiResponse.loading()));
 
@@ -127,7 +127,7 @@ class SealRequestBloc extends Bloc<SealRequestEvent, SealRequestState>{
 
   Future<void> _updateSlipCount(
       updateSlipCountEvent event,
-      Emitter<SealRequestState> emit,
+      Emitter<SlipRequestState> emit,
       ) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading, message: 'Updating count...'));
 

@@ -8,8 +8,8 @@ import '../../core/utils/Message.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 import '../../common/ApiResponse.dart';
 import '../../core/utils/enums.dart';
-import 'bloc/SealRequestBloc.dart';
-import 'model/SealRequestModel.dart';
+import 'bloc/SlipRequestBloc.dart';
+import 'model/SlipRequestModel.dart';
 import '../RequestSealNumber/repository/requestRepository.dart';
 
 class SealRequestDetailsScreen extends StatefulWidget {
@@ -31,7 +31,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
       context: context,
       builder: (dialogCtx) {
         return BlocProvider.value(
-          value: context.read<SealRequestBloc>(),
+          value: context.read<SlipRequestBloc>(),
           child: AlertDialog(
             backgroundColor: Colors.white,
             shape:
@@ -68,7 +68,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 onPressed: () {
                   final newCount = int.tryParse(countController.text);
                   if (newCount != null && newCount > 0) {
-                    context.read<SealRequestBloc>().add(
+                    context.read<SlipRequestBloc>().add(
                       updateSlipCountEvent(
                         requestId: requestId as int,
                         newCount: newCount,
@@ -119,20 +119,20 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return BlocProvider<SealRequestBloc>(
-      create: (_) => SealRequestBloc(
+    return BlocProvider<SlipRequestBloc>(
+      create: (_) => SlipRequestBloc(
         requestedSealRepository: RequestedSealRepository(),
       )..add(const getRequestDataEvent(userId: 0)),
 
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppHeader(
-          screenTitle: 'seal number info',
+          screenTitle: 'slip number info',
           username: '',
           userId: '',
           showBack: true,
         ),
-        body: BlocBuilder<SealRequestBloc, SealRequestState>(
+        body: BlocBuilder<SlipRequestBloc, SlipRequestState>(
           builder: (context, state) {
             final resp = state.fetchRequestData;
             if (resp.status == Status.loading) {

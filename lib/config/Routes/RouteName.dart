@@ -13,6 +13,6 @@ class RouteName{
   static const String resetPasswordScreen = 'resetPasswordScreen';
   static const String AboutUsScreen = 'AboutUsScreen';
   static const String OTPVerificationScreen = 'OTPVerificationScreen';
-  static const String requestForSeal = 'requestForSeal';
-  static const String SealRequestDetailsScreen = 'SealRequestDetailsScreen';
+  static const String requestForSlip = 'requestForSeal';
+  static const String SlipRequestDetailsScreen = 'SealRequestDetailsScreen';
 }

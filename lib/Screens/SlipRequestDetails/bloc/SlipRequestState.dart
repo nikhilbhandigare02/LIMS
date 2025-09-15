@@ -1,7 +1,7 @@
-part of 'SealRequestBloc.dart';
+part of 'SlipRequestBloc.dart';
 
-class SealRequestState extends Equatable{
-  const SealRequestState({
+class SlipRequestState extends Equatable{
+  const SlipRequestState({
     required this.fetchRequestData,
     required this.count,
     this.apiStatus = ApiStatus.initial,
@@ -11,14 +11,14 @@ class SealRequestState extends Equatable{
   final int count;
   final ApiStatus apiStatus;
   final String message;
-  SealRequestState copyWith({
+  SlipRequestState copyWith({
     final ApiResponse<dynamic>? fetchRequestData,
     final int? count,
     final ApiStatus? apiStatus,
     final String?message,
 
   }){
-    return SealRequestState(fetchRequestData: fetchRequestData ?? this.fetchRequestData, count:count?? this.count,  apiStatus: apiStatus ?? this.apiStatus,
+    return SlipRequestState(fetchRequestData: fetchRequestData ?? this.fetchRequestData, count:count?? this.count,  apiStatus: apiStatus ?? this.apiStatus,
       message: message ?? this.message,);
   }
 

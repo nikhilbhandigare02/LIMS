@@ -1,13 +1,13 @@
-part of 'SealRequestBloc.dart';
+part of 'SlipRequestBloc.dart';
 
-abstract class SealRequestEvent extends Equatable {
-  const SealRequestEvent();
+abstract class SlipRequestEvent extends Equatable {
+  const SlipRequestEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class getRequestDataEvent extends SealRequestEvent {
+class getRequestDataEvent extends SlipRequestEvent {
   final int userId;
   const getRequestDataEvent({required this.userId});
 
@@ -15,7 +15,7 @@ class getRequestDataEvent extends SealRequestEvent {
   List<Object> get props => [userId];
 }
 
-class getCountEvent extends SealRequestEvent {
+class getCountEvent extends SlipRequestEvent {
   final int count;
   const getCountEvent({required this.count});
 
@@ -24,7 +24,7 @@ class getCountEvent extends SealRequestEvent {
 }
 
 // 👇 new event for updating slip count
-class updateSlipCountEvent extends SealRequestEvent {
+class updateSlipCountEvent extends SlipRequestEvent {
   final int requestId;
   final int newCount;
 

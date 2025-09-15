@@ -12,21 +12,29 @@ import '../../core/utils/Message.dart';
 import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
-import 'package:intl/intl.dart';
 
-class Requestsealnumber extends StatefulWidget {
-  const Requestsealnumber({super.key});
+class Requestslipnumber extends StatefulWidget {
+  const Requestslipnumber({super.key});
 
   @override
-  State<Requestsealnumber> createState() => _RequestsealnumberState();
+  State<Requestslipnumber> createState() => _RequestslipnumberState();
 }
 
-class _RequestsealnumberState extends State<Requestsealnumber> {
+class _RequestslipnumberState extends State<Requestslipnumber> {
   DateTime? selectedDate;
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _dateError;
   static const int _maxDaysAhead = 30;
+
+
+  @override
+  void initState() {
+    super.initState();
+    final DateTime today = DateTime.now();
+    selectedDate = DateTime(today.year, today.month, today.day, 0, 0, 0);
+    _dateError = null;
+  }
 
 
 
@@ -145,29 +153,26 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () => _pickDate(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: _dateError == null ? customColors.primary : Colors.red),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                selectedDate == null
-                                    ? 'DD/MM/YYYY'
-                                    : dateFormat.format(selectedDate!),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: selectedDate == null ? Colors.grey : Colors.black,
-                                ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: _dateError == null ? customColors.primary : Colors.red),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedDate == null
+                                  ? 'DD/MM/YYYY'
+                                  : dateFormat.format(selectedDate!),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: selectedDate == null ? Colors.grey : Colors.black,
                               ),
-                              const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
-                            ],
-                          ),
+                            ),
+                            const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
+                          ],
                         ),
                       ),
                       if (_dateError != null) ...[
@@ -180,7 +185,7 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
 
                       const SizedBox(height: 30),
 
-                      /// Submit Button
+
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -206,6 +211,10 @@ class _RequestsealnumberState extends State<Requestsealnumber> {
                             });
 
                             if (_formKey.currentState?.validate() == true && dateValidation == null) {
+                              if (selectedDate != null) {
+                                final DateTime normalized = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, 0, 0, 0);
+                                context.read<RequestStateBloc>().add(RequestDateEvent(normalized));
+                              }
                               context.read<RequestStateBloc>().add(SubmitRequestEvent());
                             }
                           },
