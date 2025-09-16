@@ -127,7 +127,7 @@ class Form6Details {
     String? division,
     String? region,
     String? area,
-    String? do_seal_numbers,
+    String? slip_number,
     String? documents,
     String? documentName,
     String? documentUrl,
@@ -165,7 +165,7 @@ class Form6Details {
     _division = division;
     _region = region;
     _area = area;
-    _doSealNumbers = do_seal_numbers;
+    _slip_number = slip_number;
     _documents = documents;
     _documentName = documentName;
     _documentUrl = documentUrl;
@@ -205,7 +205,7 @@ class Form6Details {
     _division = (json['division'] ?? json['Division'])?.toString();
     _region = (json['region'] ?? json['Region'])?.toString();
     _area = (json['area'] ?? json['Area'])?.toString();
-    _doSealNumbers = (json['do_seal_numbers'] ?? json['do_seal_numbers'])?.toString();
+    _slip_number = (json['slip_number'] ?? json['slip_number'])?.toString();
     _documents = (json['documents'] ?? json['Documents'])?.toString();
     _documentName = (json['documentName'] ?? json['DocumentName'])?.toString();
     _documentUrl = (json['document_url'] ?? json['documentUrl'] ?? json['DocumentUrl'])?.toString();
@@ -244,7 +244,7 @@ class Form6Details {
   String? _division;
   String? _region;
   String? _area;
-  String? _doSealNumbers;
+  String? _slip_number;
   String? _documents;
   String? _documentName;
   String? _documentUrl;
@@ -283,7 +283,7 @@ class Form6Details {
     String? division,
     String? region,
     String? area,
-    String? do_seal_numbers,
+    String? slip_number,
     String? documents,
     String? documentName,
     String? documentUrl,
@@ -322,7 +322,7 @@ class Form6Details {
         division: division ?? _division,
         region: region ?? _region,
         area: area ?? _area,
-        do_seal_numbers: do_seal_numbers ?? _doSealNumbers,
+        slip_number: slip_number ?? _slip_number,
         documents: documents ?? _documents,
         documentName: documentName ?? _documentName,
         documentUrl: documentUrl ?? _documentUrl,
@@ -361,7 +361,7 @@ class Form6Details {
   String? get division => _division;
   String? get region => _region;
   String? get area => _area;
-  String? get do_seal_numbers => _doSealNumbers;
+  String? get slip_number => _slip_number;
   String? get documents => _documents;
   String? get documentName => _documentName;
   String? get documentUrl => _documentUrl;
@@ -401,7 +401,7 @@ class Form6Details {
     map['division'] = _division;
     map['region'] = _region;
     map['area'] = _area;
-    map['do_seal_numbers'] = _doSealNumbers;
+    map['slip_number'] = _slip_number;
     map['documents'] = _documents;
     map['documentName'] = _documentName;
     map['documentUrl'] = _documentUrl;
