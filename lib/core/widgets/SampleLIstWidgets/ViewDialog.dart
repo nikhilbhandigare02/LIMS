@@ -253,7 +253,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "Slip Number:",
-                "value": details.do_seal_numbers,
+                "value": details.slip_number,
                 "icon": Icons.qr_code,
               },
               {

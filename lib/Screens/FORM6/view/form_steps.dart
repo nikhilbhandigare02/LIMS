@@ -68,9 +68,12 @@ List<List<Widget>> getOtherInformationSteps(
   SampleFormBloc bloc,
 ) {
 
-  loadSenderNameIfNeeded(state, bloc);
-  setDesignationIfNeeded(state, bloc);
-  setCollectionDateIfNeeded(state, bloc);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    loadSenderNameIfNeeded(state, bloc);
+    setDesignationIfNeeded(state, bloc);
+    setCollectionDateIfNeeded(state, bloc);
+  });
+
   return [
     [
       BlocTextInput(
@@ -390,7 +393,7 @@ List<List<Widget>> getSampleDetailsSteps(
               ),
             );
           }
-          final selected = s.doSealNumbers;
+          final selected = s.doSlipNumbers;
           final items = s.doSealNumbersOptions;
           return BlocDropdown(
             label: "DO Slip Numbers  ",

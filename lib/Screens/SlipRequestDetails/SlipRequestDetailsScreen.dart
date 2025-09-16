@@ -152,26 +152,27 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
             final entries = grouped.entries.toList()
               ..sort((a, b) => (b.key).compareTo(a.key));
 
-            return ListView.builder(
+             return ListView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: entries.length,
               itemBuilder: (context, index) {
-
                 final entry = entries[index];
                 final reqId = entry.key;
                 final group = entry.value;
                 final first = group.first;
+
                 final title = 'Request ID: ${reqId.toString()}';
                 final subtitle = first.status ?? '';
-                final dateText = first.sealRequestDate ?? '';
+                final dateText = first.slipRequestDate ?? '';
                 final totalCount =
                 group.fold<num>(0, (sum, e) => sum + (e.count ?? 0));
 
-                final sealNumbers =
-                subtitle == 'Slip number has been sent to FSO'
-                    ? group.map((e) => e.sealNumber ?? '-').toList()
+                // ✅ Use statusID instead of raw text compare
+                final sealNumbers = first.status_ID == 31
+                    ? group.map((e) => e.slipNumber ?? '-').toList()
                     : [];
-                final DateFormat inputFormat = DateFormat('M/d/yyyy h:mm:ss a'); // matches your data
+
+                final DateFormat inputFormat = DateFormat('M/d/yyyy h:mm:ss a');
                 final DateFormat outputFormat = DateFormat('dd/MM/yyyy');
 
                 String formatDate(String? dateStr) {
@@ -184,8 +185,9 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                   }
                 }
 
-                final String requestedDateText = formatDate(first.sealRequestDate);
-                final String sendDateText = formatDate(first.sealSendDate);
+                final String requestedDateText = formatDate(first.slipRequestDate);
+                final String sendDateText = formatDate(first.slipSendDate);
+
                 return Card(
                   color: Colors.white,
                   margin: const EdgeInsets.symmetric(vertical: 8),
@@ -207,13 +209,12 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
-                            if (subtitle == 'Request for a slip number')
+                            if (first.status_ID == 30)
                               Container(
                                 decoration: BoxDecoration(
                                   color: Colors.blue.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
-                                  border:
-                                  Border.all(color: Colors.blue.shade200),
+                                  border: Border.all(color: Colors.blue.shade200),
                                 ),
                                 child: IconButton(
                                   onPressed: () => _showUpdateCountDialog(
@@ -287,6 +288,8 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                         const SizedBox(height: 10),
                         const Divider(height: 1),
                         const SizedBox(height: 8),
+
+                        // ✅ Show slip numbers only if status_ID = 31
                         if (sealNumbers.isNotEmpty)
                           Wrap(
                             spacing: 8,
@@ -310,6 +313,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 );
               },
             );
+
           },
         ),
       ),
