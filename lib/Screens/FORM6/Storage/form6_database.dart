@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -29,6 +29,7 @@ class Form6Database {
     await db.execute('''
     CREATE TABLE form6 (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId TEXT,
       senderName TEXT,
       DONumber TEXT,
       senderDesignation TEXT,
@@ -112,21 +113,38 @@ class Form6Database {
       await db.execute('ALTER TABLE form6 ADD COLUMN sealNumber TEXT');
       await db.execute('ALTER TABLE form6 ADD COLUMN sealNumberOptions TEXT');
     }
+    if (oldVersion < 8) {
+      await db.execute('ALTER TABLE form6 ADD COLUMN userId TEXT');
+    }
+
   }
 
-  Future<void> insertForm6Data(Map<String, dynamic> data) async {
+  // Insert or update per user
+  Future<void> insertForm6Data(Map<String, dynamic> data, {required String userId}) async {
     final db = await instance.database;
-    await db.delete('form6'); // Only 1 entry at a time
-    await db.insert('form6', data);
+
+    // Check if a record already exists for this user
+    final existing = await db.query('form6', where: 'userId = ?', whereArgs: [userId]);
+
+    data['userId'] = userId;
+
+    if (existing.isNotEmpty) {
+      // Update
+      await db.update('form6', data, where: 'userId = ?', whereArgs: [userId]);
+    } else {
+      // Insert
+      await db.insert('form6', data);
+    }
   }
 
-  Future<Map<String, dynamic>?> fetchForm6Data() async {
+  Future<Map<String, dynamic>?> fetchForm6Data({required String userId}) async {
     final db = await instance.database;
-    // Avoid selecting very large columns to prevent CursorWindow overflow
+
     final result = await db.query(
       'form6',
       columns: [
         'id',
+        'userId',
         'senderName',
         'DONumber',
         'senderDesignation',
@@ -167,23 +185,33 @@ class Form6Database {
         'sealNumber',
         'sealNumberOptions',
         'sendingSampleLocation',
-        // intentionally exclude 'uploadedDocuments'
+        'uploadedDocuments',
         'documentNames',
         'documentName',
       ],
+      where: 'userId = ?',
+      whereArgs: [userId],
       limit: 1,
     );
 
-    if (result.isNotEmpty) {
-      return result.first;
-    }
+    if (result.isNotEmpty) return result.first;
     return null;
   }
 
-  Future<void> clearForm6Data() async {
+  Future<void> updateForm6Data({required String userId, required Map<String, dynamic> data}) async {
     final db = await instance.database;
-    await db.delete('form6');
+    await db.update('form6', data, where: 'userId = ?', whereArgs: [userId]);
   }
+
+  Future<void> clearForm6Data({required String userId}) async {
+    final db = await instance.database;
+    await db.delete(
+      'form6',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+  }
+
 
   Future<List<Map<String, dynamic>>> queryAll() async {
     final db = await instance.database;
