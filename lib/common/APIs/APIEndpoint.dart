@@ -15,9 +15,9 @@ class ApiEndpoints {
   static const String getFormVIData = 'mobile/GetForm6Data';
   static const String resetPassword = 'mobile/ForgotPassword';
   static const String VerifyLoginOTP = 'mobile/VerifyLoginOtp';
-  static const String requestforseal = 'SealRequest/seal_request';
-  static const String getRequestData = 'SealRequest/GetSealRequestDetails';
-  static const String sealNumberdropdown = 'mobile/GetSealNumber';
-  static const String updateSlipCount = 'SealRequest/updateSealRequest';
+  static const String requestforslip = 'SlipRequest/slip_request';
+  static const String getRequestData = 'SlipRequest/GetSlipRequestDetails';
+  static const String sealNumberdropdown = 'mobile/GetSlipNumber';
+  static const String updateSlipCount = 'SlipRequest/updateSlipRequest';
   static const String uploadFormVIDocument = 'UploadFormVI/UploadDocument';
 }

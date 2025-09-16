@@ -152,7 +152,7 @@ class SlipRequestBloc extends Bloc<SlipRequestEvent, SlipRequestState>{
       final Map<String, dynamic> requestData = {
         "UserId": userId,
         "p_request_id": event.requestId,
-        "SealNumbers": event.newCount,
+        "SlipNumbersCount": event.newCount,
         "RequestedDate": currentDate,
       };
 

@@ -77,7 +77,7 @@ class RequestStateBloc extends Bloc<RequestSealEvent, RequestSealState>{
       final RequestData = {
         'RequestedDate': requestedDateStr,
         'UserId': userId,
-        'SealNumbers': state.sealNumberCount,
+        'SlipNumbersCount': state.sealNumberCount,
       };
 
       final session = await encryptWithSession(

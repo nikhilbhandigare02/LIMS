@@ -5,9 +5,9 @@
 
 class SealRequestModel {
   SealRequestModel({
-      bool? success, 
-      num? statusCode, 
-      String? message, 
+      bool? success,
+      num? statusCode,
+      String? message,
       List<Data>? data,}){
     _success = success;
     _statusCode = statusCode;
@@ -55,7 +55,6 @@ SealRequestModel copyWith({  bool? success,
     }
     return map;
   }
-
 }
 
 /// seal_Number : "SN-001"
@@ -66,62 +65,70 @@ SealRequestModel copyWith({  bool? success,
 
 class Data {
   Data({
-      String? sealNumber,
+      String? slipNumber,
       num? requestId,
       num? count,
+      num? status_ID,
       String? status,
-      String? sealRequestDate,
-      dynamic sealSendDate,}){
-    _sealNumber = sealNumber;
+      String? slipRequestDate,
+      dynamic slipSendDate,}){
+    _slipNumber = slipNumber;
     _requestId = requestId;
     _count = count;
+    _status_ID = status_ID;
     _status = status;
-    _sealRequestDate = sealRequestDate;
-    _sealSendDate = sealSendDate;
+    _slipRequestDate = slipRequestDate;
+    _slipSendDate = slipSendDate;
 }
 
   Data.fromJson(dynamic json) {
-    _sealNumber = json['seal_Number'] ?? json['Seal_Number'];
+    _slipNumber = json['Slip_Number'] ?? json['slip_Number'];
     _requestId = json['request_id'] ?? json['Request_id'] ?? json['requestId'] ?? json['RequestId'];
     _count = json['count'] ?? json['Count'];
+    _status_ID = json['status_ID'] ?? json['Status_ID'];
     _status = json['status'] ?? json['Status'];
-    _sealRequestDate = json['seal_request_date'] ?? json['Seal_request_date'] ?? json['sealRequestDate'];
-    _sealSendDate = json['seal_send_date'] ?? json['Seal_send_date'] ?? json['sealSendDate'];
+    _slipRequestDate = json['slip_request_date'] ?? json['Slip_request_date'] ?? json['slipRequestDate'];
+    _slipSendDate = json['slip_send_date'] ?? json['Slip_send_date'] ?? json['slipSendDate'];
   }
-  String? _sealNumber;
+  String? _slipNumber;
   num? _requestId;
   num? _count;
+  num? _status_ID;
   String? _status;
-  String? _sealRequestDate;
-  dynamic _sealSendDate;
-Data copyWith({  String? sealNumber,
+  String? _slipRequestDate;
+  dynamic _slipSendDate;
+Data copyWith({  String? slipNumber,
   num? requestId,
   num? count,
+  num? status_ID,
   String? status,
   String? sealRequestDate,
   dynamic sealSendDate,
-}) => Data(  sealNumber: sealNumber ?? _sealNumber,
+}) => Data(  slipNumber: slipNumber ?? _slipNumber,
   requestId: requestId ?? _requestId,
   count: count ?? _count,
+  status_ID: status_ID ?? _status_ID,
   status: status ?? _status,
-  sealRequestDate: sealRequestDate ?? _sealRequestDate,
-  sealSendDate: sealSendDate ?? _sealSendDate,
+  slipRequestDate: sealRequestDate ?? _slipRequestDate,
+  slipSendDate: sealSendDate ?? _slipSendDate,
 );
-  String? get sealNumber => _sealNumber;
+  String? get slipNumber => _slipNumber;
   num? get requestId => _requestId;
   num? get count => _count;
+  num? get status_ID => _status_ID;
   String? get status => _status;
-  String? get sealRequestDate => _sealRequestDate;
-  dynamic get sealSendDate => _sealSendDate;
+  String? get slipRequestDate => _slipRequestDate;
+  dynamic get slipSendDate => _slipSendDate;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['seal_Number'] = _sealNumber;
+    map['slip_Number'] = _slipNumber;
     map['request_id'] = _requestId;
     map['count'] = _count;
+    map['status_ID'] = _status_ID;
     map['status'] = _status;
-    map['seal_request_date'] = _sealRequestDate;
-    map['seal_send_date'] = _sealSendDate;
+    map['slip_request_date'] = _slipRequestDate;
+    map['slip_send_date'] = _slipSendDate;
     return map;
   }
 

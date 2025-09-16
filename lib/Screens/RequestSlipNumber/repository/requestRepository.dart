@@ -10,7 +10,7 @@ class RequestedSealRepository{
   Future<dynamic>  requestSlipApi(dynamic data) async{
     const storage = FlutterSecureStorage();
     final String? token = await storage.read(key: 'authToken');
-    final requestUrl = ApiBase.baseUrl + ApiEndpoints.requestforseal;
+    final requestUrl = ApiBase.baseUrl + ApiEndpoints.requestforslip;
     final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
     final response = await _api.postApi(requestUrl, data,headers: headers);
     return response;

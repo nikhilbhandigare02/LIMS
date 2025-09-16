@@ -390,7 +390,7 @@ List<List<Widget>> getSampleDetailsSteps(
               ),
             );
           }
-          final selected = s.doSealNumbers;
+          final selected = s.doSlipNumbers;
           final items = s.doSealNumbersOptions;
           return BlocDropdown(
             label: "DO Slip Numbers  ",

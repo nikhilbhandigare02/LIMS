@@ -99,11 +99,9 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       });
       print("🔄 Moved to step: $currentStep");
     } else {
-      // Validate completion based on section
       bool isComplete = false;
       String errorMessage = "";
 
-      // Debug print for FSO Info validation
       if (widget.section == 'other') {
         print('Validation fields:');
         print('senderName: \'${state.senderName}\'');

@@ -369,7 +369,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
 
     on<FetchDoSealNumbersRequested>((event, emit) async {
-      emit(state.copyWith(doSealNumbersOptions: [], doSealNumbers: '', doSealNumbersIdByName: {}));
+      emit(state.copyWith(doSealNumbersOptions: [], doSlipNumbers: '', doSealNumbersIdByName: {}));
       try {
         final String? loginDataJson = await _secureStorage.read(key: 'loginData');
         int? userId;
@@ -435,7 +435,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
     on<DoSealNumbersChanged>((event, emit) {
       print(state.documentName);
-      emit(state.copyWith(doSealNumbers: event.value ?? ''));
+      emit(state.copyWith(doSlipNumbers: event.value ?? ''));
     });
 
     on<FormResetEvent>((event, emit) {
@@ -1014,7 +1014,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print("🔍 Submit validation - Division: '${state.division}' -> ID: $divisionId");
       print("🔍 Submit validation - Article: '${state.article}' -> ID: $sampleId");
       print("🔍 Submit validation - Seal Number: '${state.sealNumber}'");
-      print("🔍 Submit validation - DO Seal Number: '${state.doSealNumbers}'");
+      print("🔍 Submit validation - DO Seal Number: '${state.doSlipNumbers}'");
       print("🔍 Available district IDs: ${state.districtIdByName}");
       print("🔍 Available region IDs: ${state.regionIdByName}");
       print("🔍 Available division IDs: ${state.divisionIdByName}");
@@ -1064,7 +1064,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         return;
       }
 
-      if (state.doSealNumbers.isEmpty) {
+      if (state.doSlipNumbers.isEmpty) {
         final errorMsg = 'DO Seal Number is required. Please select a DO Seal Number.';
         print("❌ $errorMsg");
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
@@ -1075,8 +1075,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'SenderName': state.senderName,
         'SenderDesignation': state.senderDesignation,
         'DoNumber': state.DONumber,
-        'CountryId': 1, // defaulting to India; adjust when you wire Country dropdown
-        'StateId': 1,   // defaulting to the active state; replace with selected StateId when available
+        'CountryId': 1,
+        'StateId': 1,
         'DistrictId': districtId,
         'RegionId': regionId,
         'DivisionId': divisionId,
@@ -1100,7 +1100,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'WrapperCodeNumber': state.sampleCodeNumber,
         'SealImpression': state.sealImpression == true,
         'SealNumber': state.numberofSeal,
-        'doSealNumber': state.doSealNumbers.isNotEmpty ? (state.doSealNumbersIdByName[state.doSealNumbers] ?? int.tryParse(state.doSealNumbers)) : null,
+        'doSlipNumber': state.doSlipNumbers.isNotEmpty ? (state.doSealNumbersIdByName[state.doSlipNumbers] ?? int.tryParse(state.doSlipNumbers)) : null,
         'MemoFormVI': state.formVI == true,
         'WrapperFormVI': state.FoemVIWrapper == true,
         'Latitude': state.Lattitude.isNotEmpty ? double.tryParse(state.Lattitude) : null,

@@ -58,7 +58,6 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      // Call API
       final encryptedResponse = await forgotPasswordRepository.ForgotPassApi(session.payloadForServer);
 
       if (encryptedResponse == null) {
@@ -74,7 +73,6 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
       String? decryptedString;
 
       try {
-        // Primary decryption method (AES session key)
         final String encryptedDataBase64 =
         (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 =
@@ -91,8 +89,6 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
         print('Decrypted response: $decryptedString');
       } catch (e) {
         print('Primary decryption failed: $e');
-
-        // Fallback decryption method
         try {
           final String encryptedAESKey =
           (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
@@ -118,7 +114,6 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
         }
       }
 
-      // If decryption was successful, store in secure storage
       final Map<String, dynamic> otpResponse = jsonDecode(decryptedString);
 
       print('OTP Verification Code: ${otpResponse['verificationCode']}');
@@ -146,8 +141,7 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
       verifyOTPEvent event,
       Emitter<ForgotPasswordState> emit,
       ) async {
-    // Start loading
-    // Guard: require 6-digit OTP before proceeding
+
     if (state.otp.isEmpty || state.otp.length != 6 || !RegExp(r'^\d{6}$').hasMatch(state.otp)) {
       emit(state.copyWith(
         apiStatus: ApiStatus.error,
@@ -179,7 +173,6 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState>{
         rsaPublicKeyPem: rsaPublicKeyPem,
       );
 
-      // Call API
       final encryptedResponse = await forgotPasswordRepository.VerifyOTPApi(session.payloadForServer);
 
       if (encryptedResponse != null) {
