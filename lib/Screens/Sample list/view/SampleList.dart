@@ -681,8 +681,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       columns: [
                         DataColumn(label: Text('Serial No.')),
                         DataColumn(label: Text('Sent Date')),
-                        DataColumn(label: Text('Resent Date')),
                         DataColumn(label: Text('Requested Date')),
+                        DataColumn(label: Text('Resent Date')),
                         DataColumn(label: Text('Status')),
                         DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Actions')),
