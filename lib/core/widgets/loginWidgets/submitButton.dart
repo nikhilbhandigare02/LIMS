@@ -49,7 +49,7 @@ class LoginButton extends StatelessWidget {
             if (passResetFlag == 0) {
               Navigator.pushNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1 ) {
-              //Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
+              // Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
               Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
             } else {
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);

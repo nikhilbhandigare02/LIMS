@@ -49,7 +49,6 @@ Future<void> loadSenderNameIfNeeded(
   }
 }
 
-// Helper to set designation if not set
 void setDesignationIfNeeded(SampleFormState state, SampleFormBloc bloc) {
   if (state.senderDesignation.isEmpty) {
     bloc.add(senderDesignationChanged('Food Safety Officer'));
@@ -68,12 +67,9 @@ List<List<Widget>> getOtherInformationSteps(
   SampleFormBloc bloc,
 ) {
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    loadSenderNameIfNeeded(state, bloc);
-    setDesignationIfNeeded(state, bloc);
-    setCollectionDateIfNeeded(state, bloc);
-  });
-
+  loadSenderNameIfNeeded(state, bloc);
+  setDesignationIfNeeded(state, bloc);
+  setCollectionDateIfNeeded(state, bloc);
   return [
     [
       BlocTextInput(

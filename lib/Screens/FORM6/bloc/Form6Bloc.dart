@@ -1149,15 +1149,13 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         return;
       }
 
-      // Use lowercase keys consistent with other working endpoints
-      // { "encryptedData": "...", "encryptedAESKey": "...", "iv": "..." }
+
       final Map<String, String> encryptedPayload = {
         'encryptedData': session.payloadForServer['EncryptedData']!,
         'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
         'iv': session.payloadForServer['IV']!,
       };
 
-      // Log the encrypted payload being sent
       try {
         print('InsertSample request (encrypted payload): ${jsonEncode(encryptedPayload)}');
         print('Payload keys: ${encryptedPayload.keys}');

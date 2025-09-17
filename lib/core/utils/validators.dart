@@ -231,7 +231,7 @@ class Validators {
   static List<TextInputFormatter> getNumberOnlyInputFormatters() {
     return [
       FilteringTextInputFormatter.digitsOnly,
-      LengthLimitingTextInputFormatter(20),  
+      LengthLimitingTextInputFormatter(20), // Adjust max length as needed
     ];
   }
 

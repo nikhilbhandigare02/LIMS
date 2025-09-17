@@ -106,7 +106,7 @@ class SampleList {
 
     _serialNo = pickString(['serial_no', 'serialNo', 'SerialNo', 'Serial_No']);
     _sampleSentDate = pickString(['sample_sent_date', 'sampleSentDate', 'SampleSentDate']);
-    _sampleResentDate  = pickString(['sample_resent_date', 'sampleResentDate', 'SampleResentDate']);
+    _sampleResentDate = pickString(['sample_resent_date', 'sampleResentDate', 'SampleResentDate']);
     _sampleReRequestedDate = pickString(['sample_re_requested_date', 'sampleReRequestedDate', 'SampleReRequestedDate']);
     _labLocation = pickString(['lab_location', 'labLocation', 'LabLocation']);
     _statusName = pickString([
