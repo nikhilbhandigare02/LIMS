@@ -71,14 +71,15 @@ class _BlocTextInputState extends State<BlocTextInput> {
       controller: _controller,
       onChanged: widget.onChanged,
       readOnly: widget.readOnly,
+      enabled: !widget.readOnly,
       validator: widget.validator,
       inputFormatters: widget.inputFormatters,
       keyboardType: widget.keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
-        color: Colors.black,
+        color: widget.readOnly ? Colors.black54 : Colors.black,
       ),
       decoration: InputDecoration(
         hintText: 'Enter ${widget.label}',
@@ -87,7 +88,7 @@ class _BlocTextInputState extends State<BlocTextInput> {
             ? Icon(widget.icon, color: customColors.primary)
             : null,
         filled: true,
-        fillColor: customColors.white,
+        fillColor: widget.readOnly ? Colors.grey.shade200 : customColors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
@@ -100,6 +101,10 @@ class _BlocTextInputState extends State<BlocTextInput> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: BorderSide(color: customColors.primary,width: 0.5),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 0.5),
         ),
       ),
     );
@@ -128,6 +133,7 @@ class BlocDropdown extends StatelessWidget {
     required this.onChanged,
     this.icon,
     this.validator,
+
   });
 
   @override
@@ -252,6 +258,254 @@ class BlocDatePicker extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class BlocSearchableDropdown extends StatefulWidget {
+  final String label;
+  final String? value;
+  final List<String> items;
+  final void Function(String?) onChanged;
+  final IconData? icon;
+  final String? Function(String?)? validator;
+
+  const BlocSearchableDropdown({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    this.icon,
+    this.validator,
+  });
+
+  @override
+  State<BlocSearchableDropdown> createState() => _BlocSearchableDropdownState();
+}
+
+class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
+  late TextEditingController _searchController;
+  List<String> _filteredItems = [];
+  bool _isDropdownOpen = false;
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    _filteredItems = widget.items;
+    
+    // Set initial text if value is provided
+    if (widget.value != null && widget.value!.isNotEmpty) {
+      _searchController.text = widget.value!;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant BlocSearchableDropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Update filtered items if items list changes
+    if (widget.items != oldWidget.items) {
+      _filteredItems = widget.items;
+    }
+    
+    // Update text field if value changes externally
+    if (widget.value != oldWidget.value) {
+      if (widget.value != null && widget.value!.isNotEmpty) {
+        _searchController.text = widget.value!;
+      } else {
+        _searchController.clear();
+      }
+    }
+  }
+
+  void _filterItems(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredItems = widget.items;
+      } else {
+        _filteredItems = widget.items
+            .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+    
+    if (_overlayEntry != null) {
+      _overlayEntry!.markNeedsBuild();
+    }
+  }
+
+  void _showDropdown() {
+    if (_isDropdownOpen) return;
+    
+    _isDropdownOpen = true;
+    _filteredItems = widget.items;
+    
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _hideDropdown() {
+    if (!_isDropdownOpen) return;
+    
+    _isDropdownOpen = false;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    Size size = renderBox.size;
+
+    return OverlayEntry(
+      builder: (context) => Positioned(
+        width: size.width,
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          offset: Offset(0.0, size.height + 5.0),
+          child: Material(
+            elevation: 4.0,
+            borderRadius: BorderRadius.circular(5),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 200),
+              decoration: BoxDecoration(
+                color: customColors.white,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: customColors.primary, width: 0.5),
+              ),
+              child: _filteredItems.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'No items found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: _filteredItems.length,
+                      itemBuilder: (context, index) {
+                        final item = _filteredItems[index];
+                        return InkWell(
+                          onTap: () {
+                            _searchController.text = item;
+                            widget.onChanged(item);
+                            _hideDropdown();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              border: index < _filteredItems.length - 1
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 0.5,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        onTap: () {
+          if (_isDropdownOpen) {
+            _hideDropdown();
+          } else {
+            _showDropdown();
+          }
+        },
+        child: TextFormField(
+          controller: _searchController,
+          validator: widget.validator ??
+              (val) => val == null || val.isEmpty ? '${widget.label} is required' : null,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+          onChanged: (value) {
+            _filterItems(value);
+            if (!_isDropdownOpen) {
+              _showDropdown();
+            }
+          },
+          onTap: () {
+            if (!_isDropdownOpen) {
+              _showDropdown();
+            }
+          },
+          decoration: InputDecoration(
+            hintText: 'Search ${widget.label}',
+            hintStyle: const TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+            ),
+            prefixIcon: widget.icon != null
+                ? Icon(widget.icon, color: customColors.primary)
+                : null,
+            suffixIcon: Icon(
+              _isDropdownOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: customColors.primary,
+            ),
+            filled: true,
+            fillColor: customColors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: customColors.primary),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: const BorderSide(color: customColors.primary),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: customColors.primary, width: 0.5),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _hideDropdown();
+    _searchController.dispose();
+    super.dispose();
   }
 }
 

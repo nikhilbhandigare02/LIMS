@@ -118,21 +118,21 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      FutureBuilder<String?>(
-                        future: loadDisplayName(),
-                        builder: (context, snapshot) {
-                          final displayName = (snapshot.connectionState == ConnectionState.done && (snapshot.data ?? '').isNotEmpty)
-                              ? snapshot.data!
-                              : username;
-                          return Text(
-                            displayName,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: customColors.white,
-                            ),
-                          );
-                        },
-                      ),
+                      // FutureBuilder<String?>(
+                      //   future: loadDisplayName(),
+                      //   builder: (context, snapshot) {
+                      //     final displayName = (snapshot.connectionState == ConnectionState.done && (snapshot.data ?? '').isNotEmpty)
+                      //         ? snapshot.data!
+                      //         : username;
+                      //     return Text(
+                      //       displayName,
+                      //       style: const TextStyle(
+                      //         fontSize: 15,
+                      //         color: customColors.white,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                     ],
                   ),
                 ),

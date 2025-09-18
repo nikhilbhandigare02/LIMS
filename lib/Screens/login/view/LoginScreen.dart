@@ -104,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   children: [
                      SizedBox(height: 30),
 
-                    // Main Login Card
                     Container(
                       padding:  EdgeInsets.all(16),
                       decoration: BoxDecoration(

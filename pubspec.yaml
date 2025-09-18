@@ -54,6 +54,7 @@ dependencies:
   path_provider: ^2.1.5
   archive: ^4.0.7
   url_launcher:
+  dropdown_search: ^6.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

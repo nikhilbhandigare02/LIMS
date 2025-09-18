@@ -3,12 +3,14 @@ import 'enums.dart';
 
 class Message {
   static void showTopRightOverlay(
-      BuildContext context, String message, MessageType type) {
+      BuildContext context, String message, MessageType type,
+      {String? title}) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => _OverlayMessage(
         message: message,
         type: type,
+        title: title,
       ),
     );
 
@@ -48,12 +50,14 @@ class Message {
 
 class _OverlayMessage extends StatefulWidget {
   final String message;
+  final String? title;
   final MessageType type;
 
   const _OverlayMessage({
     Key? key,
     required this.message,
     required this.type,
+    this.title,
   }) : super(key: key);
 
   @override
@@ -111,38 +115,82 @@ class _OverlayMessageState extends State<_OverlayMessage>
           child: Material(
             color: Colors.transparent,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 250), // Limit width
+              constraints: const BoxConstraints(maxWidth: 280),
               child: Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: color,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(icon, color: Colors.white, size: 24),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Text(
-                        widget.message,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                    // Side colored bar
+                    Container(
+                      width: 6,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
                         ),
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
                       ),
+                    ),
+
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(icon, color: color, size: 20),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    widget.title ??
+                                        widget.type.name.toUpperCase(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: color,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              widget.message,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Close button
+                    IconButton(
+                      onPressed: () {
+                        if (mounted) {
+                          _controller.reverse();
+                        }
+                      },
+                      icon: const Icon(Icons.close, size: 18),
+                      color: Colors.black54,
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),

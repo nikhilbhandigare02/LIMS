@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -107,7 +106,7 @@ List<List<Widget>> getOtherInformationSteps(
             absorbing: items.isEmpty,
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
-              child: BlocDropdown(
+              child: BlocSearchableDropdown(
                 label: "District",
                 //icon: Icons.location_on,
                 value: selected.isEmpty ? null : selected,
@@ -168,7 +167,7 @@ List<List<Widget>> getOtherInformationSteps(
             absorbing: items.isEmpty,
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
-              child: BlocDropdown(
+              child: BlocSearchableDropdown(
                 label: "Division",
                 // icon: Icons.apartment,
                 value: selected.isEmpty ? null : selected,
@@ -230,7 +229,7 @@ List<List<Widget>> getOtherInformationSteps(
             absorbing: items.isEmpty,
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
-              child: BlocDropdown(
+              child: BlocSearchableDropdown(
                 label: "Region",
                 // icon: Icons.map,
                 value: selected.isEmpty ? null : selected,
@@ -285,7 +284,7 @@ List<List<Widget>> getOtherInformationSteps(
           }
           final selected = s.lab;
           final items = s.labOptions;
-          return BlocDropdown(
+          return BlocSearchableDropdown(
             label: "Lab  ",
             //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
@@ -385,6 +384,7 @@ List<List<Widget>> getSampleDetailsSteps(
                   value: loading,
                   items: const [loading],
                   onChanged: (_) {},
+
                 ),
               ),
             );
@@ -537,7 +537,7 @@ List<List<Widget>> getSampleDetailsSteps(
               if (state.preservativeAdded == true) ...[
                 SizedBox(height: 16),
                 BlocTextInput(
-                  label: "If yes, mention the name of Preservative",
+                  label: " the name of Preservative",
                   // icon: Icons.medication,
                   initialValue: state.preservativeName,
                   onChanged: (val) => context.read<SampleFormBloc>().add(
