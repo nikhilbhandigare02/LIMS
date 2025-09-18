@@ -4,7 +4,7 @@ import '../../config/Themes/colors/colorsTheme.dart';
 import 'enums.dart'; // your MessageType enum
 
 class Message {
-  /// Toast-like overlay in top-right
+
   static void showTopRightOverlay(
       BuildContext context,
       String message,
@@ -14,25 +14,69 @@ class Message {
     final overlayState = Overlay.of(context);
     if (overlayState == null) return;
 
-    final overlayEntry = OverlayEntry(
-      builder: (context) => _OverlayMessage(
-        message: message,
-        type: type,
-        title: title,
-      ),
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        final color = getColor(type);
+        final icon = getIcon(type);
+
+        // 👇 keyboard height
+        final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+        return Positioned(
+          left: 16,
+          right: 16,
+          bottom: keyboardHeight + 16, // 👈 stay above keyboard if open
+          child: Material(
+            elevation: 6,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, color: color, size: 22),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (overlayEntry.mounted) overlayEntry.remove();
+                    },
+                    child: const Icon(Icons.close, size: 18, color: Colors.grey),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
 
     overlayState.insert(overlayEntry);
 
-    // remove after a while (safe check)
+    // Auto remove after 3 sec
     Future.delayed(const Duration(seconds: 3), () {
-      try {
-        if (overlayEntry.mounted) overlayEntry.remove();
-      } catch (_) {}
+      if (overlayEntry.mounted) {
+        overlayEntry.remove();
+      }
     });
   }
 
-  /// Modal popup dialog with OK button (blocking)
+
+
   static Future<void> showPopup(
       BuildContext context, {
         required String message,
@@ -49,9 +93,8 @@ class Message {
       barrierDismissible: barrierDismissible,
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Row(
             children: [
               Icon(icon, color: color),
@@ -60,23 +103,24 @@ class Message {
                 child: Text(
                   title ?? type.name.toUpperCase(),
                   style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                      color: color, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
             ],
           ),
-          content: Text(message, textAlign: TextAlign.center), // optional center text
-          actionsAlignment: MainAxisAlignment.center, // 👈 this centers actions
+          content: Text(message),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                if (onOk != null) onOk();
-              },
-              child: const Text("OK"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center, // 👈 Center the button
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    if (onOk != null) onOk();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
             ),
           ],
         );
@@ -113,7 +157,6 @@ class Message {
   }
 }
 
-/// Private overlay message widget (kept in same file so it remains accessible)
 class _OverlayMessage extends StatefulWidget {
   final String message;
   final String? title;
