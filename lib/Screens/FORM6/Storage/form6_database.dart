@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 8,
+      version: 11,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -27,7 +27,7 @@ class Form6Database {
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE form6 (
+    CREATE TABLE FSOLIMS (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       userId TEXT,
       senderName TEXT,
@@ -54,8 +54,6 @@ class Form6Database {
       numberofSeal TEXT,
       formVI INTEGER,
       FoemVIWrapper INTEGER,
-      isOtherInfoComplete INTEGER,
-      isSampleInfoComplete INTEGER,
       districtOptions TEXT,
       districtIdByName TEXT,
       regionOptions TEXT,
@@ -69,54 +67,25 @@ class Form6Database {
       labIdByName TEXT,
       sealNumber TEXT,
       sealNumberOptions TEXT,
+      doSlipNumbers TEXT,
+      doSealNumbersOptions TEXT,
+      doSealNumbersIdByName TEXT,
       sendingSampleLocation TEXT,
       uploadedDocuments TEXT,
       documentNames TEXT,
-      documentName TEXT
+      documentName TEXT,
+      Lattitude TEXT,
+      Longitude TEXT
     )
     ''');
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN isOtherInfoComplete INTEGER');
-      await db.execute('ALTER TABLE form6 ADD COLUMN isSampleInfoComplete INTEGER');
-      await db.execute('ALTER TABLE form6 ADD COLUMN isSampleDetailsComplete INTEGER');
-      await db.execute('ALTER TABLE form6 ADD COLUMN isPreservativeInfoComplete INTEGER');
-      await db.execute('ALTER TABLE form6 ADD COLUMN isSealInfoComplete INTEGER');
-      await db.execute('ALTER TABLE form6 ADD COLUMN isFinalReviewComplete INTEGER');
+    if (oldVersion < 11) {
+      // Drop old table and create new FSOLIMS table
+      await db.execute('DROP TABLE IF EXISTS form6');
+      await _createDB(db, 11);
     }
-    if (oldVersion < 3) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN districtOptions TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN districtIdByName TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN regionOptions TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN regionIdByName TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN divisionOptions TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN divisionIdByName TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN natureOptions TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN natureIdByName TEXT');
-    }
-    if (oldVersion < 4) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN lab TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN labOptions TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN labIdByName TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN sendingSampleLocation TEXT');
-    }
-    if (oldVersion < 5) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN uploadedDocuments TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN documentNames TEXT');
-    }
-    if (oldVersion < 6) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN documentName TEXT');
-    }
-    if (oldVersion < 7) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN sealNumber TEXT');
-      await db.execute('ALTER TABLE form6 ADD COLUMN sealNumberOptions TEXT');
-    }
-    if (oldVersion < 8) {
-      await db.execute('ALTER TABLE form6 ADD COLUMN userId TEXT');
-    }
-
   }
 
   // Insert or update per user
@@ -124,16 +93,16 @@ class Form6Database {
     final db = await instance.database;
 
     // Check if a record already exists for this user
-    final existing = await db.query('form6', where: 'userId = ?', whereArgs: [userId]);
+    final existing = await db.query('FSOLIMS', where: 'userId = ?', whereArgs: [userId]);
 
     data['userId'] = userId;
 
     if (existing.isNotEmpty) {
       // Update
-      await db.update('form6', data, where: 'userId = ?', whereArgs: [userId]);
+      await db.update('FSOLIMS', data, where: 'userId = ?', whereArgs: [userId]);
     } else {
       // Insert
-      await db.insert('form6', data);
+      await db.insert('FSOLIMS', data);
     }
   }
 
@@ -141,7 +110,7 @@ class Form6Database {
     final db = await instance.database;
 
     final result = await db.query(
-      'form6',
+      'FSOLIMS',
       columns: [
         'id',
         'userId',
@@ -169,8 +138,6 @@ class Form6Database {
         'numberofSeal',
         'formVI',
         'FoemVIWrapper',
-        'isOtherInfoComplete',
-        'isSampleInfoComplete',
         'districtOptions',
         'districtIdByName',
         'regionOptions',
@@ -184,10 +151,15 @@ class Form6Database {
         'labIdByName',
         'sealNumber',
         'sealNumberOptions',
+        'doSlipNumbers',
+        'doSealNumbersOptions',
+        'doSealNumbersIdByName',
         'sendingSampleLocation',
         'uploadedDocuments',
         'documentNames',
         'documentName',
+        'Lattitude',
+        'Longitude',
       ],
       where: 'userId = ?',
       whereArgs: [userId],
@@ -200,13 +172,13 @@ class Form6Database {
 
   Future<void> updateForm6Data({required String userId, required Map<String, dynamic> data}) async {
     final db = await instance.database;
-    await db.update('form6', data, where: 'userId = ?', whereArgs: [userId]);
+    await db.update('FSOLIMS', data, where: 'userId = ?', whereArgs: [userId]);
   }
 
   Future<void> clearForm6Data({required String userId}) async {
     final db = await instance.database;
     await db.delete(
-      'form6',
+      'FSOLIMS',
       where: 'userId = ?',
       whereArgs: [userId],
     );
@@ -215,6 +187,6 @@ class Form6Database {
 
   Future<List<Map<String, dynamic>>> queryAll() async {
     final db = await instance.database;
-    return await db.query('form6');
+    return await db.query('FSOLIMS');
   }
 }

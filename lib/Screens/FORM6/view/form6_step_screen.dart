@@ -6,6 +6,7 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
+import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form_steps.dart';
 import 'form6_landing_screen.dart';
@@ -34,9 +35,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     _loadSavedData();
     print("🔄 Form6StepScreen initialized for section: ${widget.section}");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
-    // Fetch districts for StateId=1 on init
     context.read<SampleFormBloc>().add(const FetchDistrictsRequested(1));
-    // Load Nature of Sample on init
     context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
   }
 
@@ -71,24 +70,19 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   void _goToNextStep() async {
     final currentFormKey = _formKeys[currentStep];
     final isValid = currentFormKey.currentState?.validate() ?? true;
+
     if (!isValid) {
-
-      Message.showTopRightOverlay(context, 'Please correct the highlighted fields', MessageType.error);
-
+      AppDialog.show(context, 'Please correct the highlighted fields', MessageType.error);
       return;
     }
 
     final bloc = context.read<SampleFormBloc>();
     final state = bloc.state;
 
-    print("🔄 Going to next step. Current step: $currentStep, Total steps: ${stepFields.length}");
-    print("🔄 Current completion status - Other: ${state.isOtherInfoComplete}, Sample: ${state.isSampleInfoComplete}");
-    print("🔄 Documents to save: ${state.uploadedDocs.length} documents");
-
-    // Save current state including documents
     await storage.saveForm6Data(state);
     await Future.delayed(const Duration(milliseconds: 50));
 
+    // If still steps left in current section
     if (currentStep < stepFields.length - 1) {
       setState(() {
         currentStep++;
@@ -97,75 +91,59 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
           _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
         }
       });
-      print("🔄 Moved to step: $currentStep");
+      return;
+    }
+
+    // ✅ Section-level validation
+    bool isComplete = false;
+    String errorMessage = "";
+
+    if (widget.section == 'other') {
+      isComplete = state.isOtherInfoComplete;
+      errorMessage = "⚠️ Please complete all required fields.";
+    } else if (widget.section == 'sample') {
+      isComplete = state.isSampleInfoComplete;
+      errorMessage = "⚠️ Please complete all sample fields.";
+    }
+
+    if (!isComplete) {
+      AppDialog.show(context, errorMessage, MessageType.error);
+      return;
+    }
+
+    // ✅ If section complete → go to next section
+    if (widget.section == 'other') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: bloc,
+            child: const Form6StepScreen(section: 'sample'),
+          ),
+        ),
+      );
     } else {
-      bool isComplete = false;
-      String errorMessage = "";
-
-      if (widget.section == 'other') {
-        print('Validation fields:');
-        print('senderName: \'${state.senderName}\'');
-        print('senderDesignation: \'${state.senderDesignation}\'');
-        print('DONumber: \'${state.DONumber}\'');
-        print('district: \'${state.district}\'');
-        print('division: \'${state.division}\'');
-        print('region: \'${state.region}\'');
-        print('area: \'${state.area}\'');
-        print('lab: \'${state.lab}\'');
-        print('sendingSampleLocation: \'${state.sendingSampleLocation}\'');
-      }
-
-      if (widget.section == 'other') {
-        isComplete = state.isOtherInfoComplete;
-        errorMessage = "⚠️ Please complete all required fields.";
-        print("🔄 Other section completion check: $isComplete");
-      } else if (widget.section == 'sample') {
-        isComplete = state.isSampleInfoComplete;
-        errorMessage = "⚠️ Please complete all sample fields.";
-        print("🔄 Sample section completion check: $isComplete");
-      }
-
-      if (!isComplete) {
-        print("❌ Section not complete, showing error");
-
-        Message.showTopRightOverlay(context, errorMessage, MessageType.error);
-
-        return;
-      }
-
-      if (widget.section == 'other') {
-        await storage.markSectionComplete(section: 'other');
-        print("✅ Marked 'other' section as complete");
-      } else if (widget.section == 'sample') {
-        await storage.markSectionComplete(section: 'sample');
-        print("✅ Marked 'sample' section as complete");
-      }
-
-      // Return to landing screen with completion status
-      print("🔄 Returning to landing screen with completion status");
+      // If last section → go back to landing
       Navigator.pop(context, 'completed');
-
-      // Navigate to next section if available
-      if (widget.section == 'other') {
-        Future.delayed(const Duration(milliseconds: 200), () {
-          print("🔄 Navigating to sample section");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: bloc,
-                child: const Form6StepScreen(section: 'sample'),
-              ),
-            ),
-          );
-        });
-      }
     }
   }
-
   void _goToPreviousStep() async {
     if (currentStep == 0) {
-      Navigator.pop(context);
+      if (widget.section == 'sample') {
+        // Go back to Other section instead of landing
+        final bloc = context.read<SampleFormBloc>();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+              value: bloc,
+              child: const Form6StepScreen(section: 'other'),
+            ),
+          ),
+        );
+      } else {
+        Navigator.pop(context);
+      }
     } else {
       final bloc = context.read<SampleFormBloc>();
       await _loadSavedData();
@@ -173,9 +151,9 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         currentStep--;
         stepFields = _generateStepFields(bloc.state);
       });
-      print("🔄 Moved to previous step: $currentStep");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -188,10 +166,12 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         backgroundColor: Colors.grey[50],
         appBar: AppHeader(
           screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
-          username: ' ',
+          // username: ' ',
           userId: ' ',
-          showBack: true,
+          showBack: false,
         ),
+        drawer: CustomDrawer(),
+
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

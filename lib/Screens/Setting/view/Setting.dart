@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../config/Routes/RouteName.dart';
+import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
 import '../../update_password/view/UpdatePassword.dart';
 
@@ -18,10 +19,12 @@ class _SettingState extends State<Setting> {
       backgroundColor: Colors.white,
       appBar: AppHeader(
         screenTitle: "Setting",
-        username: "Rajeev Ranjan",
+        // username: "Rajeev Ranjan",
         userId: "394884",
-        showBack: true,
+        showBack: false,
       ),
+      drawer: CustomDrawer(),
+
       body: ListView(
         padding: EdgeInsets.all(8),
         children: [

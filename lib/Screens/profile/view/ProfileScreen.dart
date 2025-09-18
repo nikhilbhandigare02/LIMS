@@ -80,7 +80,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Top Section with Curved Background
             Stack(
               children: [
                 ClipPath(

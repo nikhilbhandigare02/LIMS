@@ -200,18 +200,19 @@ class Validators {
 
   static String? validateNumberOfSeals(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Number of Seals is required';
+      return 'Number of Slips is required';
     }
 
     if (!RegExp(r'^[0-9]+$').hasMatch(value.trim())) {
-      return 'Number of Seals must contain only numbers';
+      return 'Number of Slips must contain only numbers';
     }
 
     int? number = int.tryParse(value.trim());
     if (number != null && number <= 0) {
-      return 'Number of Seals must be greater than 0';
+      return 'Number of Slips must be greater than 0';
+    }else if (number != null && number > 5) {
+      return 'Number of Slips must not be greater than 5';
     }
-
     return null;
   }
 

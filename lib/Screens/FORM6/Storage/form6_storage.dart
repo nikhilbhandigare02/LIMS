@@ -34,7 +34,6 @@ class Form6Storage {
     if (userId == null) throw Exception('User not logged in');
     final userIdStr = userId.toString(); // ✅ convert int to String
 
-
     // Only persist document metadata locally to avoid huge rows
     final List<Map<String, dynamic>> documentsJson = state.uploadedDocs.map((doc) => {
       'name': doc.name,
@@ -68,8 +67,6 @@ class Form6Storage {
       'numberofSeal': state.numberofSeal,
       'formVI': state.formVI == null ? null : (state.formVI! ? 1 : 0),
       'FoemVIWrapper': state.FoemVIWrapper == null ? null : (state.FoemVIWrapper! ? 1 : 0),
-      'isOtherInfoComplete': state.isOtherInfoComplete ? 1 : 0,
-      'isSampleInfoComplete': state.isSampleInfoComplete ? 1 : 0,
       'districtOptions': jsonEncode(state.districtOptions),
       'districtIdByName': jsonEncode(state.districtIdByName),
       'regionOptions': jsonEncode(state.regionOptions),
@@ -83,15 +80,20 @@ class Form6Storage {
       'labIdByName': jsonEncode(state.labIdByName),
       'sealNumber': state.sealNumber,
       'sealNumberOptions': jsonEncode(state.sealNumberOptions),
+      'doSlipNumbers': state.doSlipNumbers,
+      'doSealNumbersOptions': jsonEncode(state.doSealNumbersOptions),
+      'doSealNumbersIdByName': jsonEncode(state.doSealNumbersIdByName),
       'sendingSampleLocation': state.sendingSampleLocation,
       'uploadedDocuments': jsonEncode(documentsJson),
       'documentNames': jsonEncode(state.uploadedDocs.map((doc) => doc.name).toList()),
       'documentName': state.documentName,
+      'Lattitude': state.Lattitude,
+      'Longitude': state.Longitude,
     };
 
     // ✅ Save data per user
     await db.insertForm6Data(data, userId: userIdStr);
-    print("✅ Saved Form6 data to SQLite for user $userId including ${state.uploadedDocs.length} documents");
+    print("✅ Saved Form6 data to FSOLIMS table for user $userId including ${state.uploadedDocs.length} documents");
   }
 
   Future<SampleFormState?> fetchStoredState() async {
@@ -178,36 +180,19 @@ class Form6Storage {
       labIdByName: parseStringIntMap(data['labIdByName']),
       sealNumber: data['sealNumber'] ?? '',
       sealNumberOptions: parseStringList(data['sealNumberOptions']),
+      doSlipNumbers: data['doSlipNumbers'] ?? '',
+      doSealNumbersOptions: parseStringList(data['doSealNumbersOptions']),
+      doSealNumbersIdByName: parseStringIntMap(data['doSealNumbersIdByName']),
       sendingSampleLocation: data['sendingSampleLocation'] ?? '',
       uploadedDocs: const [],
       documentNames: parseStringList(data['documentNames']),
       documentName: data['documentName'] ?? '',
+      Lattitude: data['Lattitude'] ?? '',
+      Longitude: data['Longitude'] ?? '',
     );
   }
 
-  Future<void> markSectionComplete({
-    required String section,
-    String? subSection,
-  }) async {
-    final userId = await getCurrentUserId();
-    if (userId == null) throw Exception('User not logged in');
-    final userIdStr = userId.toString();
-    if (userId == null) return;
 
-    final Map<String, dynamic>? currentData = await db.fetchForm6Data(userId: userIdStr);
-    if (currentData == null) return;
-
-    final updatedData = Map<String, dynamic>.from(currentData);
-
-    if (section == 'other') {
-      updatedData['isOtherInfoComplete'] = 1;
-    } else if (section == 'sample') {
-      updatedData['isSampleInfoComplete'] = 1;
-    }
-
-    await db.updateForm6Data(userId: userIdStr, data: updatedData);
-    print("✅ Marked section '$section' as complete for user $userId");
-  }
 
   Future<void> clearFormData() async {
     final userId = await getCurrentUserId();
