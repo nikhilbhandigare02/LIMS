@@ -5,6 +5,7 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:intl/intl.dart';
 import 'dart:collection';
 import '../../core/utils/Message.dart';
+import '../../core/widgets/AppDrawer/Drawer.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 import '../../common/ApiResponse.dart';
 import '../../core/utils/enums.dart';
@@ -123,10 +124,12 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
         backgroundColor: Colors.white,
         appBar: AppHeader(
           screenTitle: 'slip number info',
-          username: '',
+          // username: '',
           userId: '',
-          showBack: true,
+          showBack: false,
         ),
+        drawer: CustomDrawer(),
+
         body: BlocBuilder<SlipRequestBloc, SlipRequestState>(
           builder: (context, state) {
             final resp = state.fetchRequestData;

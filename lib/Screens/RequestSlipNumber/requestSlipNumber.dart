@@ -11,6 +11,7 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import '../../core/utils/Message.dart';
 import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
+import '../../core/widgets/AppDrawer/Drawer.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 
 class Requestslipnumber extends StatefulWidget {
@@ -21,7 +22,7 @@ class Requestslipnumber extends StatefulWidget {
 }
 
 class _RequestslipnumberState extends State<Requestslipnumber> {
-  DateTime? selectedDate;
+  DateTime selectedDate = DateTime.now(); // default = current date
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _dateError;
@@ -55,7 +56,6 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
         _dateError = null;
       });
 
-      // ✅ Format as dd/MM/yyyy HH:mm:ss
       final String apiDate = DateFormat("dd/MM/yyyy HH:mm:ss").format(
         DateTime(picked.year, picked.month, picked.day, 0, 0, 0),
       );
@@ -73,10 +73,12 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
       child: Scaffold(
         appBar: AppHeader(
           screenTitle: 'Request for slip number',
-          username: '',
+          // username: '',
           userId: '',
-          showBack: true,
+          showBack: false,
         ),
+        drawer: CustomDrawer(),
+
         body: BlocListener<RequestStateBloc, RequestSealState>(
           listener: (context, state) async {
             switch (state.apiStatus) {
@@ -114,9 +116,13 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Request Slip Number',
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      SizedBox(height: 15,),
+                      Text(
+                        'Request for a slip number on ${dateFormat.format(selectedDate)}', // always shows current date
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 20),
 
@@ -148,40 +154,34 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                         },
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Select Date',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: _dateError == null ? customColors.primary : Colors.red),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              selectedDate == null
-                                  ? 'DD/MM/YYYY'
-                                  : dateFormat.format(selectedDate!),
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: selectedDate == null ? Colors.grey : Colors.black,
-                              ),
-                            ),
-                            const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
-                          ],
-                        ),
-                      ),
-                      if (_dateError != null) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          _dateError!,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
-                        ),
-                      ],
+                      // const Text(
+                      //   'Select Date',
+                      //   style: TextStyle(fontSize: 16),
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                      //   decoration: BoxDecoration(
+                      //     border: Border.all(color: _dateError == null ? customColors.primary : Colors.red),
+                      //     borderRadius: BorderRadius.circular(5),
+                      //   ),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Text(
+                      //         selectedDate == null
+                      //             ? 'DD/MM/YYYY'
+                      //             : dateFormat.format(selectedDate!),
+                      //         style: TextStyle(
+                      //           fontSize: 16,
+                      //           color: selectedDate == null ? Colors.grey : Colors.black,
+                      //         ),
+                      //       ),
+                      //       const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
+                      //     ],
+                      //   ),
+                      // ),
+
 
                       const SizedBox(height: 30),
 

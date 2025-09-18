@@ -16,7 +16,7 @@ class _HelpSuportState extends State<HelpSuport> {
     return Scaffold(
       appBar: AppHeader(
         screenTitle: "Help & Support",
-        username: "Rajeev Ranjan",
+        // username: "Rajeev Ranjan",
         userId: "394884",
         showBack: true,
       ),

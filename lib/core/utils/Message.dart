@@ -1,11 +1,19 @@
+// message.dart
 import 'package:flutter/material.dart';
-import 'enums.dart';
+import '../../config/Themes/colors/colorsTheme.dart';
+import 'enums.dart'; // your MessageType enum
 
 class Message {
+  /// Toast-like overlay in top-right
   static void showTopRightOverlay(
-      BuildContext context, String message, MessageType type,
-      {String? title}) {
-    final overlay = Overlay.of(context);
+      BuildContext context,
+      String message,
+      MessageType type, {
+        String? title,
+      }) {
+    final overlayState = Overlay.of(context);
+    if (overlayState == null) return;
+
     final overlayEntry = OverlayEntry(
       builder: (context) => _OverlayMessage(
         message: message,
@@ -14,9 +22,66 @@ class Message {
       ),
     );
 
-    overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 3))
-        .then((_) => overlayEntry.remove());
+    overlayState.insert(overlayEntry);
+
+    // remove after a while (safe check)
+    Future.delayed(const Duration(seconds: 3), () {
+      try {
+        if (overlayEntry.mounted) overlayEntry.remove();
+      } catch (_) {}
+    });
+  }
+
+
+  static Future<void> showPopup(
+      BuildContext context, {
+        required String message,
+        required MessageType type,
+        String? title,
+        bool barrierDismissible = false,
+        VoidCallback? onOk,
+      }) {
+    final color = getColor(type);
+    final icon = getIcon(type);
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Row(
+            children: [
+              Icon(icon, color: color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title ?? type.name.toUpperCase(),
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(message, textAlign: TextAlign.center),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                if (onOk != null) onOk();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   static IconData getIcon(MessageType type) {
@@ -48,7 +113,7 @@ class Message {
   }
 }
 
-class _OverlayMessage extends StatefulWidget {
+ class _OverlayMessage extends StatefulWidget {
   final String message;
   final String? title;
   final MessageType type;
@@ -66,9 +131,9 @@ class _OverlayMessage extends StatefulWidget {
 
 class _OverlayMessageState extends State<_OverlayMessage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _fadeAnimation;
+  late final AnimationController _controller;
+  late final Animation<Offset> _slideAnimation;
+  late final Animation<double> _fadeAnimation;
 
   @override
   void initState() {
@@ -79,16 +144,17 @@ class _OverlayMessageState extends State<_OverlayMessage>
       vsync: this,
     );
 
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(1.0, 0), end: Offset.zero).animate(
-          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-        );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(1.0, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _fadeAnimation =
         CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
 
     _controller.forward();
 
+    // auto-reverse after 2s (visual); actual removal is handled by caller
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) _controller.reverse();
     });
@@ -115,7 +181,7 @@ class _OverlayMessageState extends State<_OverlayMessage>
           child: Material(
             color: Colors.transparent,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 280),
+              constraints: const BoxConstraints(maxWidth: 320),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -129,11 +195,12 @@ class _OverlayMessageState extends State<_OverlayMessage>
                   ],
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Side colored bar
                     Container(
                       width: 6,
-                      height: 60,
+                      height: 64,
                       decoration: BoxDecoration(
                         color: color,
                         borderRadius: const BorderRadius.only(
@@ -143,12 +210,14 @@ class _OverlayMessageState extends State<_OverlayMessage>
                       ),
                     ),
 
+                    // content
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
                               children: [
@@ -156,8 +225,7 @@ class _OverlayMessageState extends State<_OverlayMessage>
                                 const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
-                                    widget.title ??
-                                        widget.type.name.toUpperCase(),
+                                    widget.title ?? widget.type.name.toUpperCase(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
@@ -202,3 +270,173 @@ class _OverlayMessageState extends State<_OverlayMessage>
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+//
+// enum MessageType { success, error, network, info }
+
+class AppDialog {
+  static bool _isDialogOpen = false;
+
+  static Future<void> show(
+      BuildContext context,
+      String message,
+      MessageType type, {
+        String? title,
+        String? serialNumber,
+        VoidCallback? onOk,
+      }) async {
+    if (_isDialogOpen) return;
+    _isDialogOpen = true;
+
+    final color = _getColor(type);
+    final icon = _getIcon(type);
+
+    // Build message with serial number (bold inline)
+    final formattedMessage = RichText(
+      text: TextSpan(
+        text: message,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87,
+          height: 1.4,
+        ),
+        children: serialNumber != null
+            ? [
+          const TextSpan(text: "\n\nSerial Number: ",
+              style: TextStyle(color: Colors.grey)),
+          TextSpan(
+            text: serialNumber,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ]
+            : [],
+      ),
+    );
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding: const EdgeInsets.all(16),
+          title: type == MessageType.info
+              ? null
+              : Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title ?? type.name.toUpperCase(),
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: type == MessageType.info
+              ? Row(
+            children: [
+              SizedBox(
+                height: 22,
+                width: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: formattedMessage),
+            ],
+          )
+              : formattedMessage,
+          actions: type == MessageType.info
+              ? null
+              : [
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  if (onOk != null) onOk();
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    ).whenComplete(() => _isDialogOpen = false);
+  }
+
+  static void closePopup(BuildContext context) {
+    if (_isDialogOpen) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _isDialogOpen = false;
+    }
+  }
+
+  static IconData _getIcon(MessageType type) {
+    switch (type) {
+      case MessageType.success:
+        return Icons.check_circle;
+      case MessageType.error:
+        return Icons.error;
+      case MessageType.network:
+        return Icons.wifi_off;
+      case MessageType.info:
+      default:
+        return Icons.info;
+    }
+  }
+
+  static Color _getColor(MessageType type) {
+    switch (type) {
+      case MessageType.success:
+        return Colors.green;
+      case MessageType.error:
+        return Colors.red;
+      case MessageType.network:
+        return Colors.orange;
+      case MessageType.info:
+      default:
+        return Colors.blue;
+    }
+  }
+}
+

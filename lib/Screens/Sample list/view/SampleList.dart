@@ -184,145 +184,133 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: sampleBloc,
-      child: SafeArea(
-        top: false,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Scaffold(
-          backgroundColor: Colors.grey[50],
-          appBar: AppHeader(
-            screenTitle: 'Sample Analysis',
-            username: 'Username',
-            userId: 'UserID',
-            showBack: false,
-            actions: [
-              Container(
-                margin: EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white24, Colors.white12],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppHeader(
+          screenTitle: 'Sample Analysis',
+          // username: 'Username',
+          userId: 'UserID',
+          showBack: false,
+          actions: [
+
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
                 ),
-                child: IconButton(
-                  icon: Icon(Icons.add, color: Colors.white),
-                  tooltip: 'Go to Home',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) =>
-                            SampleFormBloc(form6repository: Form6Repository()),
-                        child: Form6LandingScreen(),
-                      ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.add, color: Colors.white),
+                tooltip: 'Go to Home',
+                onPressed: () =>Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                      child: Form6LandingScreen(),
                     ),
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white24, Colors.white12],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
                 ),
-                child: IconButton(
-                  icon: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: Icon(
-                      isCardView ? Icons.table_chart : Icons.view_agenda,
-                      key: ValueKey(isCardView),
-                      color: Colors.white,
-                    ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
                   ),
-                  onPressed: toggleView,
-                  tooltip: isCardView
-                      ? 'Switch to Table View'
-                      : 'Switch to Card View',
-                ),
+                ],
               ),
-            ],
-          ),
-          drawer: CustomDrawer(),
-          body: BlocBuilder<SampleBloc, getSampleListState>(
-            builder: (context, state) {
-              switch (state.fetchSampleList.status) {
-                case Status.loading:
-                  return Center(child: const CircularProgressIndicator());
-                case Status.complete:
-                  if (state.fetchSampleList.data == null ||
-                      state.fetchSampleList.data.isEmpty) {
-                    return Center(child: Text('No Data Found'));
-                  }
-                  final sampleList =
-                  state.fetchSampleList.data as List<SampleData>;
-                  final sampleDataList = sampleList
-                      .expand((sampleData) => sampleData.sampleList ?? [])
-                      .toList();
+              child: IconButton(
+                icon: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  child: Icon(
+                    isCardView ? Icons.table_chart : Icons.view_agenda,
+                    key: ValueKey(isCardView),
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: toggleView,
+                tooltip: isCardView
+                    ? 'Switch to Table View'
+                    : 'Switch to Card View',
+              ),
+            ),
+          ],
 
-                  if (sampleDataList.isEmpty) {
-                    return const Center(child: Text('No Data Found'));
-                  }
+        ),
 
-                  final filteredSampleDataList = _searchQuery.isEmpty
-                      ? sampleDataList
-                      : sampleDataList
-                      .where((sample) =>
-                  sample.serialNo?.toLowerCase().contains(
-                    _searchQuery.toLowerCase(),
-                  ) ??
-                      false)
-                      .toList();
-                  if (filteredSampleDataList.isEmpty) {
-                    return const Center(child: Text('No matching results'));
-                  }
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.grey[50]!, Colors.grey[100]!],
-                      ),
+        drawer: CustomDrawer(),
+        body: BlocBuilder<SampleBloc, getSampleListState>(
+          builder: (context, state) {
+            switch (state.fetchSampleList.status) {
+              case Status.loading:
+                return Center(child: const CircularProgressIndicator());
+              case Status.complete:
+                if (state.fetchSampleList.data == null ||
+                    state.fetchSampleList.data.isEmpty) {
+                  return Center(child: Text('No Data Found'));
+                }
+                final sampleList =
+                state.fetchSampleList.data as List<SampleData>;
+                final sampleDataList = sampleList
+                    .expand((sampleData) => sampleData.sampleList ?? [])
+                    .toList();
+
+                if (sampleDataList.isEmpty) {
+                  return const Center(child: Text('No Data Found'));
+                }
+
+                final filteredSampleDataList = _searchQuery.isEmpty
+                    ? sampleDataList
+                    : sampleDataList.where((sample) =>
+                    sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
+                if (filteredSampleDataList.isEmpty) {
+                  return const Center(child: Text('No matching results'));
+                }
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.grey[50]!, Colors.grey[100]!],
                     ),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: isCardView
-                          ? _buildCardView(
-                          filteredSampleDataList.cast<SampleList>())
-                          : _buildTableView(
-                          filteredSampleDataList.cast<SampleList>()),
-                    ),
-                  );
-                case Status.error:
-                  return Center(
-                    child: Text('Error: ${state.fetchSampleList.message}'),
-                  );
-                default:
-                  return Center(child: Text('Unexpected state'));
-              }
-            },
-          ),
+                  ),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: isCardView
+                        ? _buildCardView(filteredSampleDataList.cast<SampleList>())
+                        : _buildTableView(filteredSampleDataList.cast<SampleList>()),
+                  ),
+                );
+              case Status.error:
+                return Center(
+                  child: Text('Error: ${state.fetchSampleList.message}'),
+                );
+              default:
+                return Center(child: Text('Unexpected state'));
+            }
+          },
         ),
       ),
     );
   }
-
 
   Widget _buildCardView(List<SampleList> sampleDataList) {
     return Padding(
@@ -588,256 +576,258 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-
+  
 
   Widget _buildTableView(List<SampleList> sampleDataList) {
     List<SampleList> paginatedData = getPaginatedData(sampleDataList);
     int totalPages = getTotalPages(sampleDataList.length);
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.9),
+                  Colors.white.withOpacity(0.7),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.table_chart, color: customColors.primary, size: 22),
+                SizedBox(width: 12),
+                Text(
+                  ' Table View',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: customColors.primary,
+                  ),
+                ),
+                Spacer(),
+                // Page info
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: customColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: customColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 4),
+          // Search bar below table header card
+          _buildBodySearchField(),
+          SizedBox(height: 12),
+          Expanded(
+            child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withOpacity(0.9),
-                    Colors.white.withOpacity(0.7),
-                  ],
+                  colors: [Colors.white, Colors.grey[50]!],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.grey.withOpacity(0.15),
+                    spreadRadius: 1,
                     blurRadius: 8,
                     offset: Offset(0, 3),
                   ),
                 ],
               ),
-              child: Row(
-                children: [
-                  Icon(Icons.table_chart, color: customColors.primary, size: 22),
-                  SizedBox(width: 12),
-                  Text(
-                    ' Table View',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: customColors.primary,
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: customColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: customColors.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 4),
-            _buildBodySearchField(),
-            SizedBox(height: 12),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.white, Colors.grey[50]!],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.15),
-                      spreadRadius: 1,
-                      blurRadius: 8,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
                   child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        headingRowColor: MaterialStateProperty.all(
-                          customColors.primary,
-                        ),
-                        headingTextStyle: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        dataRowHeight: 60,
-                        headingRowHeight: 50,
-                        columnSpacing: 20,
-                        columns: [
-                          DataColumn(label: Text('Serial No.')),
-                          DataColumn(label: Text('Sent Date')),
-                          DataColumn(label: Text('Requested Date')),
-                          DataColumn(label: Text('Resent Date')),
-                          DataColumn(label: Text('Status')),
-                          DataColumn(label: Text('Lab Location')),
-                          DataColumn(label: Text('Actions')),
-                        ],
-                        rows: paginatedData.map((data) {
-                          return DataRow(
-                            cells: [
-                              DataCell(
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      headingRowColor: MaterialStateProperty.all(
+                        customColors.primary,
+                      ),
+                      headingTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      dataRowHeight: 60,
+                      headingRowHeight: 50,
+                      columnSpacing: 20,
+                      columns: [
+                        DataColumn(label: Text('Serial No.')),
+                        DataColumn(label: Text('Sent Date')),
+                        DataColumn(label: Text('Requested Date')),
+                        DataColumn(label: Text('Resent Date')),
+                        DataColumn(label: Text('Status')),
+                        DataColumn(label: Text('Lab Location')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows: paginatedData.map((data) {
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      customColors.primary.withOpacity(0.1),
+                                      customColors.primary.withOpacity(0.2),
+                                    ],
                                   ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        customColors.primary.withOpacity(0.1),
-                                        customColors.primary.withOpacity(0.2),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  data.serialNo ?? 'N/A',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            DataCell(Text(_formatDate(data.sampleSentDate))),
+                            DataCell(Text(_formatDate(data.sampleResentDate))),
+                            DataCell(
+                              Text(_formatDate(data.sampleReRequestedDate)),
+                            ),
+                            DataCell(
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      getStatusColor(data.statusName),
+                                      getStatusColor(
+                                        data.statusName,
+                                      ).withOpacity(0.8),
+                                    ],
                                   ),
-                                  child: Text(
-                                    data.serialNo ?? 'N/A',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  data.statusName ?? 'Unknown',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
-                              DataCell(Text(_formatDate(data.sampleSentDate))),
-                              DataCell(Text(_formatDate(data.sampleResentDate))),
-                              DataCell(
-                                Text(_formatDate(data.sampleReRequestedDate)),
-                              ),
-                              DataCell(
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        getStatusColor(data.statusName),
-                                        getStatusColor(
-                                          data.statusName,
-                                        ).withOpacity(0.8),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    data.statusName ?? 'Unknown',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                            ),
+                            DataCell(
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  data.labLocation ?? 'N/A',
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              DataCell(
-                                Container(
-                                  width: 120,
-                                  child: Text(
-                                    data.labLocation ?? 'N/A',
-                                    overflow: TextOverflow.ellipsis,
+                            ),
+                            DataCell(
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.blue,
+                                          Colors.blue.withOpacity(0.8),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.visibility,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider.value(
+                                            value: sampleBloc,
+                                            child: SampleDetailsScreen(
+                                                serialNo: data.serialNo ?? ''),
+                                          ),
+                                        ),
+                                      ),
+                                      iconSize: 18,
+                                    ),
                                   ),
-                                ),
-                              ),
-                              DataCell(
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
+                                  if (_isTampered(data.statusName)) ...[
+                                    SizedBox(width: 4),
                                     Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.blue,
-                                            Colors.blue.withOpacity(0.8),
+                                            Colors.green,
+                                            Colors.green.withOpacity(0.8),
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: IconButton(
                                         icon: Icon(
-                                          Icons.visibility,
+                                          Icons.edit,
                                           color: Colors.white,
                                         ),
-                                        onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => BlocProvider.value(
-                                              value: sampleBloc,
-                                              child: SampleDetailsScreen(
-                                                  serialNo: data.serialNo ?? ''),
-                                            ),
-                                          ),
-                                        ),
+                                        onPressed: () =>
+                                            _showEditDialog(context, data),
                                         iconSize: 18,
                                       ),
                                     ),
-                                    if (_isTampered(data.statusName)) ...[
-                                      SizedBox(width: 4),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.green,
-                                              Colors.green.withOpacity(0.8),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.edit,
-                                            color: Colors.white,
-                                          ),
-                                          onPressed: () =>
-                                              _showEditDialog(context, data),
-                                          iconSize: 18,
-                                        ),
-                                      ),
-                                    ],
                                   ],
-                                ),
+                                ],
                               ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            _buildPaginationControls(sampleDataList.length, totalPages),
-          ],
-        ),
+          ),
+          SizedBox(height: 16),
+          // Pagination Controls
+          _buildPaginationControls(sampleDataList.length, totalPages),
+        ],
       ),
     );
   }
 
+  
 
   String _formatDate(String? date) {
     if (date == null || date == '0001-01-01T00:00:00') return 'N/A';

@@ -15,6 +15,7 @@ import '../../../Screens/Sample list/model/view_form6_model.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../utils/Message.dart';
 import '../../utils/enums.dart';
+import '../AppDrawer/Drawer.dart';
 
 class SampleDetailsScreen extends StatefulWidget {
   final String serialNo;
@@ -90,10 +91,12 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
       backgroundColor: backgroundColor,
       appBar: AppHeader(
         screenTitle: 'Sample Form VI Details',
-        username: 'Username',
+        // username: 'Username',
         userId: 'UserID',
-        showBack: true,
+        showBack: false,
       ),
+      drawer: CustomDrawer(),
+
       body: BlocBuilder<SampleBloc, getSampleListState>(
         builder: (context, state) {
           final currentStatus = state.getFormData.status;
