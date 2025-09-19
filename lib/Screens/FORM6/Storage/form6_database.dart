@@ -47,7 +47,6 @@ class Form6Database {
       preservativeName TEXT,
       preservativeQuantity TEXT,
       personSignature INTEGER,
-      slipNumber TEXT,
       DOSignature INTEGER,
       sampleCodeNumber TEXT,
       sealImpression INTEGER,
@@ -131,7 +130,6 @@ class Form6Database {
         'preservativeName',
         'preservativeQuantity',
         'personSignature',
-        'slipNumber',
         'DOSignature',
         'sampleCodeNumber',
         'sealImpression',
@@ -189,4 +187,15 @@ class Form6Database {
     final db = await instance.database;
     return await db.query('FSOLIMS');
   }
+
+  Future<void> resetFSOLIMSTable() async {
+    final db = await instance.database;
+
+    // Drop existing table
+    await db.execute('DROP TABLE IF EXISTS FSOLIMS');
+
+    // Recreate table
+    await _createDB(db, 11);
+  }
+
 }

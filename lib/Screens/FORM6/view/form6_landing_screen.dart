@@ -459,7 +459,6 @@ bool _isPreservativeInfoComplete(SampleFormState s) {
 bool _isSealInfoComplete(SampleFormState s) {
   final bool hasDoSeal = s.doSlipNumbers.isNotEmpty;
   return s.personSignature != null &&
-      s.slipNumber.isNotEmpty &&
       s.DOSignature != null &&
       s.sealImpression != null &&
       s.numberofSeal.isNotEmpty &&

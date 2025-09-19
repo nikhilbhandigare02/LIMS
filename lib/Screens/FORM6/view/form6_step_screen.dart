@@ -94,7 +94,6 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       return;
     }
 
-    // ✅ Section-level validation
     bool isComplete = false;
     String errorMessage = "";
 
@@ -111,7 +110,6 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       return;
     }
 
-    // ✅ If section complete → go to next section
     if (widget.section == 'other') {
       Navigator.pushReplacement(
         context,

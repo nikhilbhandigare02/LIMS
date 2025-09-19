@@ -154,12 +154,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
           ),
           SizedBox(width: 8),
-          // Confirm icon button (compact, avoids overflow)
+
           FittedBox(
             fit: BoxFit.scaleDown,
             child: ElevatedButton(
               onPressed: () {
-                // Placeholder: integrate API call later
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Date range selected (hook to API later)')),
                 );

@@ -32,7 +32,7 @@ class SampleFormState extends Equatable {
   final String preservativeName;
   final String preservativeQuantity;
   final bool? personSignature;
-  final String slipNumber;
+  // final String slipNumber;
   final bool? DOSignature;
   final String sampleCodeNumber;
   final bool? sealImpression;
@@ -90,7 +90,7 @@ class SampleFormState extends Equatable {
     this.preservativeName = '',
     this.preservativeQuantity = '',
     this.personSignature, // default null
-    this.slipNumber = '',
+    // this.slipNumber = '',
     this.DOSignature, // default null
     this.sampleCodeNumber = '',
     this.sealImpression, // default null
@@ -204,7 +204,7 @@ class SampleFormState extends Equatable {
       preservativeName: preservativeName ?? this.preservativeName,
       preservativeQuantity: preservativeQuantity ?? this.preservativeQuantity,
       personSignature: personSignature ?? this.personSignature,
-      slipNumber: slipNumber ?? this.slipNumber,
+      // slipNumber: slipNumber ?? this.slipNumber,
       DOSignature: DOSignature ?? this.DOSignature,
       sampleCodeNumber: sampleCodeNumber ?? this.sampleCodeNumber,
       sealImpression: sealImpression ?? this.sealImpression,
@@ -263,7 +263,6 @@ class SampleFormState extends Equatable {
     preservativeQuantity,
     sealNumber,
     personSignature,
-    slipNumber,
     DOSignature,
     sampleCodeNumber,
     sealImpression,
@@ -307,7 +306,6 @@ class SampleFormState extends Equatable {
         article.isNotEmpty &&
         preservativeAdded != null &&
         personSignature != null &&
-        slipNumber.isNotEmpty &&
         DOSignature != null &&
         sampleCodeNumber.isNotEmpty &&
         sealImpression != null &&
@@ -339,7 +337,6 @@ class SampleFormState extends Equatable {
       'preservativeName': preservativeName,
       'preservativeQuantity': preservativeQuantity,
       'personSignature': personSignature == null ? null : (personSignature! ? 1 : 0),
-      'slipNumber': slipNumber,
       'DOSignature': DOSignature == null ? null : (DOSignature! ? 1 : 0),
       'sampleCodeNumber': sampleCodeNumber,
       'sealImpression': sealImpression == null ? null : (sealImpression! ? 1 : 0),
@@ -389,7 +386,6 @@ class SampleFormState extends Equatable {
       personSignature: map['personSignature'] == null
           ? null
           : map['personSignature'] == 1,
-      slipNumber: map['slipNumber'] ?? '',
       DOSignature: map['DOSignature'] == null
           ? null
           : map['DOSignature'] == 1,
