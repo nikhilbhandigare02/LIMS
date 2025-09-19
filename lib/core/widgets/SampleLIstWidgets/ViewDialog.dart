@@ -341,7 +341,6 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           _buildSection(
             title: "Form VI Details",
-            // icon: Icons.description_outlined,
             color:  Color(0xFF3B82F6),
 
             fields: [
@@ -574,24 +573,26 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         try {
           if (docUrl.isNotEmpty) {
             if (docUrl.startsWith("http")) {
-              // open in browser
               final uri = Uri.parse(docUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               }
             } else {
-              // open local file
               await OpenFilex.open(docUrl);
             }
           } else {
-
-            Message.showTopRightOverlay(context, 'No file path available for $docName', MessageType.error);
-
+            Message.showTopRightOverlay(
+              context,
+              'No file path available for $docName',
+              MessageType.error,
+            );
           }
         } catch (e) {
-
-          Message.showTopRightOverlay(context, 'Cannot open $docName: $e', MessageType.error);
-
+          Message.showTopRightOverlay(
+            context,
+            'Cannot open $docName: $e',
+            MessageType.error,
+          );
         }
       },
       child: Row(
@@ -600,15 +601,21 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
             isImage ? Icons.image : Icons.insert_drive_file,
             color: Colors.blue,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              docName,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textPrimary,
-                decoration: TextDecoration.underline, // look clickable
+            child: Tooltip(
+              message: docName,
+              child: Text(
+                docName,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textPrimary,
+                  decoration: TextDecoration.underline,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                softWrap: false,
               ),
             ),
           ),

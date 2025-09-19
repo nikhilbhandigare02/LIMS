@@ -86,8 +86,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       );
 
       emit(state.copyWith(
-        uploadedDocument: event.value, // single base64 for API
-        uploadedDocs: [doc],           // mirror in list for UI
+        uploadedDocument: event.value,
+        uploadedDocs: [doc],
       ));
     });
 
@@ -1095,7 +1095,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'PreservativeName': state.preservativeName,
         'QuantityOfPreservative': state.preservativeQuantity,
         'WitnessSignature': state.personSignature == true,
-        'PaperSlipNumber': state.slipNumber,
+        'PaperSlipNumber': '',
         'SignatureOfDo': state.DOSignature == true,
         'WrapperCodeNumber': state.sampleCodeNumber,
         'SealImpression': state.sealImpression == true,
