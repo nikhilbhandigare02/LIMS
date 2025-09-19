@@ -8,7 +8,6 @@ class Form6Storage {
   final db = Form6Database.instance;
   final _secureStorage = FlutterSecureStorage();
 
-  // 🔹 Get current logged-in userId
   Future<int?> getCurrentUserId() async {
     final String? loginDataJson = await _secureStorage.read(key: 'loginData');
     int? userId;
@@ -60,7 +59,6 @@ class Form6Storage {
       'preservativeName': state.preservativeName,
       'preservativeQuantity': state.preservativeQuantity,
       'personSignature': state.personSignature == null ? null : (state.personSignature! ? 1 : 0),
-      'slipNumber': state.slipNumber,
       'DOSignature': state.DOSignature == null ? null : (state.DOSignature! ? 1 : 0),
       'sampleCodeNumber': state.sampleCodeNumber,
       'sealImpression': state.sealImpression == null ? null : (state.sealImpression! ? 1 : 0),
@@ -160,7 +158,6 @@ class Form6Storage {
       preservativeName: data['preservativeName'] ?? '',
       preservativeQuantity: data['preservativeQuantity'] ?? '',
       personSignature: toBool(data['personSignature']),
-      slipNumber: data['slipNumber'] ?? '',
       DOSignature: toBool(data['DOSignature']),
       sampleCodeNumber: data['sampleCodeNumber'] ?? '',
       sealImpression: toBool(data['sealImpression']),

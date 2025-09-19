@@ -118,7 +118,6 @@ class Validators {
       return 'Mobile number must be exactly 10 digits';
     }
 
-    // Check if it contains only digits
     if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
       return 'Mobile number must contain only digits';
     }
@@ -274,7 +273,6 @@ class Validators {
 class Form6Validators {
   static Map<String, String?> validateStep(List<String> fieldNames, SampleFormState state) {
     final Map<String, String?> errors = {};
-
     for (final field in fieldNames) {
       switch (field) {
         case 'senderName':
@@ -330,9 +328,6 @@ class Form6Validators {
         case 'personSignature':
           errors[field] = state.personSignature == null ? 'Signature confirmation required' : null;
           break;
-        case 'slipNumber':
-          errors[field] = Validators.validateSlipNumber(state.slipNumber);
-          break;
         case 'DOSignature':
           errors[field] = state.DOSignature == null ? 'DO Signature required' : null;
           break;
@@ -355,7 +350,6 @@ class Form6Validators {
           errors[field] = null;
       }
     }
-
     return errors;
   }
 }

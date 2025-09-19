@@ -593,16 +593,16 @@ List<List<Widget>> getSampleDetailsSteps(
         },
       ),
       SizedBox(height: 16),
-      BlocTextInput(
-        label: "Paper Slip Number",
-        // icon: Icons.sticky_note_2,
-        initialValue: state.slipNumber,
-        onChanged: (val) => bloc.add(slipNumberChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, 'Paper Slip Number'),
-
-        inputFormatters: Validators.getNumberOnlyInputFormatters(),
-        keyboardType: TextInputType.number,
-      ),
+      // BlocTextInput(
+      //   label: "Paper Slip Number",
+      //   // icon: Icons.sticky_note_2,
+      //   initialValue: state.slipNumber,
+      //   onChanged: (val) => bloc.add(slipNumberChanged(val)),
+      //   validator: (v) => Validators.validateEmptyField(v, 'Paper Slip Number'),
+      //
+      //   inputFormatters: Validators.getNumberOnlyInputFormatters(),
+      //   keyboardType: TextInputType.number,
+      // ),
       SizedBox(height: 16),
 
       BlocBuilder<SampleFormBloc, SampleFormState>(

@@ -210,7 +210,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       ));
     });
     on<CollectionDateChanged>((event, emit) {
-        print(state.collectionDate);
+      print(state.collectionDate);
 
       emit(state.copyWith(collectionDate: event.value));
     });
@@ -238,10 +238,10 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       print(state.personSignature);
       emit(state.copyWith(personSignature: event.value));
     });
-    on<slipNumberChanged>((event, emit) {
-      print(state.slipNumber);
-      emit(state.copyWith(slipNumber: event.value));
-    });
+    // on<slipNumberChanged>((event, emit) {
+    //   print(state.slipNumber);
+    //   emit(state.copyWith(slipNumber: event.value));
+    // });
     on<DOSignatureChanged>((event, emit) {
       print(state.DOSignature);
 
@@ -345,7 +345,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         // Try to decrypt and print the response for debugging
         try {
           final String encryptedDataBase64 =
-              (response['encryptedData'] ?? response['EncryptedData']) as String;
+          (response['encryptedData'] ?? response['EncryptedData']) as String;
           final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
           final String decrypted = utf8.decode(
             aesCbcDecrypt(
@@ -398,7 +398,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         // Try to decrypt and print the response for debugging
         try {
           final String encryptedDataBase64 =
-              (response['encryptedData'] ?? response['EncryptedData']) as String;
+          (response['encryptedData'] ?? response['EncryptedData']) as String;
           final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
           final String decrypted = utf8.decode(
             aesCbcDecrypt(
@@ -482,7 +482,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       try {
         final String encryptedDataBase64 =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
         final String decrypted = utf8.decode(
@@ -503,9 +503,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       } catch (e) {
         try {
           final String encryptedAESKey =
-              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
           final String encryptedData =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
           final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decryptedFallback = await decrypt(
@@ -549,7 +549,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       try {
         final String encryptedDataBase64 =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
         final String decrypted = utf8.decode(
@@ -570,9 +570,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       } catch (e) {
         try {
           final String encryptedAESKey =
-              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
           final String encryptedData =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
           final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decryptedFallback = await decrypt(
@@ -612,7 +612,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       try {
         final String encryptedDataBase64 =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
         final String decrypted = utf8.decode(
@@ -633,9 +633,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       } catch (e) {
         try {
           final String encryptedAESKey =
-              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
           final String encryptedData =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
           final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decryptedFallback = await decrypt(
@@ -678,7 +678,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       try {
         final String encryptedDataBase64 =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
         final String decrypted = utf8.decode(
@@ -702,9 +702,9 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       } catch (e) {
         try {
           final String encryptedAESKey =
-              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
           final String encryptedData =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
           final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decryptedFallback = await decrypt(
@@ -746,7 +746,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       try {
         final String encryptedDataBase64 =
-            (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
         final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
         final String decrypted = utf8.decode(
@@ -765,14 +765,14 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         emit(state.copyWith(
           natureOptions: parsed.names,
           natureIdByName: parsed.nameToId,
-           article: state.article,
+          article: state.article,
         ));
       } catch (e) {
         try {
           final String encryptedAESKey =
-              (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
+          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
           final String encryptedData =
-              (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
+          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
           final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
 
           final String decryptedFallback = await decrypt(
@@ -1095,7 +1095,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'PreservativeName': state.preservativeName,
         'QuantityOfPreservative': state.preservativeQuantity,
         'WitnessSignature': state.personSignature == true,
-        'PaperSlipNumber': '',
+        // 'PaperSlipNumber': state.slipNumber,
         'SignatureOfDo': state.DOSignature == true,
         'WrapperCodeNumber': state.sampleCodeNumber,
         'SealImpression': state.sealImpression == true,
@@ -1254,31 +1254,42 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
           }
         }
 
-        // After successful insert, upload documents without encryption using SerialNo (multipart/form-data)
         if (serialNoFromServer != null && serialNoFromServer.isNotEmpty && state.uploadedDocs.isNotEmpty) {
           try {
-            print('📎 Preparing to upload ${state.uploadedDocs.length} document(s) for SerialNo: ' + serialNoFromServer!);
-            for (final UploadedDoc doc in state.uploadedDocs) {
-              if (doc.base64Data.isEmpty) {
-                print('⚠️ Skipping empty document base64 for: ' + doc.name);
-                continue;
-              }
-              print('➡️ Uploading doc (multipart): ' + doc.name + ' (base64 len=' + doc.base64Data.length.toString() + ')');
+            print('📎 Preparing to upload ${state.uploadedDocs.length} document(s) for SerialNo: $serialNoFromServer');
+
+            final List<MultipartFileData> filesToUpload = state.uploadedDocs
+                .where((doc) => doc.base64Data.isNotEmpty) // skip empty
+                .map((doc) {
               final List<int> bytes = base64Decode(doc.base64Data);
-              final String fileName = (doc.extension != null && doc.extension!.isNotEmpty && !doc.name.toLowerCase().endsWith('.' + doc.extension!.toLowerCase()))
-                  ? doc.name + '.' + doc.extension!
+
+              final String fileName = (doc.extension != null &&
+                  doc.extension!.isNotEmpty &&
+                  !doc.name.toLowerCase().endsWith('.${doc.extension!.toLowerCase()}'))
+                  ? '${doc.name}.${doc.extension}'
                   : doc.name;
-              await form6repository.uploadFormVIDocument(
+
+              print('➡️ Prepared doc: $fileName (bytes=${bytes.length})');
+
+              return MultipartFileData(name: fileName, bytes: bytes);
+            }).toList();
+
+            if (filesToUpload.isNotEmpty) {
+              final response = await form6repository.uploadFormVIDocuments(
                 serialNo: serialNoFromServer,
-                fileName: fileName,
-                fileBytes: bytes,
+                files: filesToUpload,
               );
+
+              print('✅ Documents uploaded response: $response');
+              successMessage = '$successMessage | Documents uploaded';
+            } else {
+              print('⚠️ No documents with valid data to upload.');
+              successMessage = '$successMessage | No valid documents to upload';
             }
-            successMessage = successMessage + ' | Documents uploaded';
           } catch (e) {
-            print('Document upload failed: $e');
+            print('❌ Document upload failed: $e');
             // keep success of form insert, but inform about document failure
-            successMessage = successMessage + ' | Document upload failed';
+            successMessage = '$successMessage | Document upload failed';
           }
         }
 

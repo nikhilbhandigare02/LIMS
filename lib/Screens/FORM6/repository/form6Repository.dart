@@ -89,32 +89,44 @@ class Form6Repository {
     return response;
   }
 
-  Future<dynamic> uploadFormVIDocument({
+  Future<dynamic> uploadFormVIDocuments({
     required String serialNo,
-    required String fileName,
-    required List<int> fileBytes,
+    required List<MultipartFileData> files, // custom class below
   }) async {
     final url = ApiBase.baseUrl + ApiEndpoints.uploadFormVIDocument;
-    print('UploadFormVIDocument (multipart) - URL: $url');
-    print('UploadFormVIDocument (multipart) - serialNo: $serialNo, fileName: $fileName, bytes: ${fileBytes.length}');
+    print('UploadFormVIDocuments (multipart) - URL: $url');
+    print('SerialNo: $serialNo, files count: ${files.length}');
 
-    final fields = {
-      'serialNo': serialNo,
-    };
+    final fields = {'serialNo': serialNo};
 
-    final file = http.MultipartFile.fromBytes(
-      'file',
-      fileBytes,
-      filename: fileName,
-    );
+    // Include auth header if available
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'authToken');
+    final headers = token != null && token.isNotEmpty
+        ? {'Authorization': 'Bearer $token'}
+        : null;
 
-    // No auth, no encryption headers
+    // Convert each file to MultipartFile (array-style field name)
+    final multipartFiles = files.map((f) => http.MultipartFile.fromBytes(
+      'files',        // must match [FromForm] List<IFormFile> files
+      f.bytes,
+      filename: f.name,
+    )).toList();
+
+    // Send request
     final response = await _api.postMultipart(
       url,
       fields: fields,
-      files: [file],
-      headers: null,
+      files: multipartFiles,
+      headers: headers,
     );
+
     return response;
   }
+}
+class MultipartFileData {
+  final String name;
+  final List<int> bytes;
+
+  MultipartFileData({required this.name, required this.bytes});
 }

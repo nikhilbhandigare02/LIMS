@@ -19,5 +19,5 @@ class ApiEndpoints {
   static const String getRequestData = 'SlipRequest/GetSlipRequestDetails';
   static const String sealNumberdropdown = 'mobile/GetSlipNumber';
   static const String updateSlipCount = 'SlipRequest/updateSlipRequest';
-  static const String uploadFormVIDocument = 'UploadFormVI/UploadDocument';
+  static const String uploadFormVIDocument = 'UploadFormVI/UploadDocuments';
 }
