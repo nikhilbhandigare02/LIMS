@@ -52,6 +52,14 @@ class SampleBloc extends Bloc<SampleEvent, getSampleListState> {
         "UserID": userId,
       };
 
+      // Optionally include date range if provided
+      if (event.fromDate != null) {
+        requestData["FromDate"] = event.fromDate!.toIso8601String();
+      }
+      if (event.toDate != null) {
+        requestData["ToDate"] = event.toDate!.toIso8601String();
+      }
+
       final encryptedRequest = await encryptWithSession(
         data: requestData,
         rsaPublicKeyPem: rsaPublicKeyPem,

@@ -26,8 +26,12 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late SampleBloc sampleBloc;
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  // Date filtering state
+  DateTime _currentDay = DateTime.now();
+  DateTimeRange? _selectedRange;
+  bool _useRange = false;
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
   @override
   void initState() {
@@ -43,12 +47,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
     sampleBloc = SampleBloc(sampleRepository: SampleRepository());
     sampleBloc.add(getSampleListEvent());
-
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
-    });
   }
   int getTotalPages(int totalItems) {
     return (totalItems / itemsPerPage).ceil();
@@ -59,8 +57,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     return allData.sublist(startIndex, endIndex);
   }
 
-  Widget _buildBodySearchField() {
+  Widget _buildStaticDateFilterBar() {
+    final today = DateTime.now();
+    final from = _fromDate ?? today;
+    final to = _toDate ?? today;
+    String f(DateTime d) => '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -73,14 +76,107 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         ],
         border: Border.all(color: Colors.grey[200]!),
       ),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search, color: customColors.primary),
-          hintText: 'Search Sample by Serial No...',
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        ),
+      child: Row(
+        children: [
+          // Middle content expands and keeps things centered
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // From picker
+                Flexible(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        initialDate: from,
+                      );
+                      if (picked != null) {
+                        setState(() => _fromDate = picked);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.calendar_today, size: 16, color: customColors.primary),
+                          SizedBox(width: 6),
+                          Text('From: ${f(from)}', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                // To picker
+                Flexible(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        initialDate: to.isBefore(from) ? from : to,
+                      );
+                      if (picked != null) {
+                        setState(() => _toDate = picked);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.calendar_today, size: 16, color: customColors.primary),
+                          SizedBox(width: 6),
+                          Text('To: ${f(to)}', style: TextStyle(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8),
+          // Confirm icon button (compact, avoids overflow)
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: ElevatedButton(
+              onPressed: () {
+                // Placeholder: integrate API call later
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Date range selected (hook to API later)')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: customColors.primary,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.all(8),
+                visualDensity: VisualDensity.compact,
+                minimumSize: Size(32, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Icon(Icons.check, size: 18, color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -89,7 +185,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   void dispose() {
     _animationController.dispose();
     sampleBloc.close();
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -163,23 +258,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 130,
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(child: Text(value)),
-      ],
-    );
-  }
- 
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -276,13 +355,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     return const Center(child: Text('No Data Found'));
                   }
 
-                  final filteredSampleDataList = _searchQuery.isEmpty
-                      ? sampleDataList
-                      : sampleDataList.where((sample) =>
-                  sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
-                  if (filteredSampleDataList.isEmpty) {
-                    return const Center(child: Text('No matching results'));
-                  }
+                  final filteredSampleDataList = sampleDataList; // static design only, no filtering applied
                   return Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -311,7 +384,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-
   Widget _buildCardView(List<SampleList> sampleDataList) {
     return Padding(
       padding: EdgeInsets.all(16.0),
@@ -370,7 +442,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
           ),
           SizedBox(height: 4),
-          _buildBodySearchField(),
+          // Static date bar (design only)
+          // NOTE: This is non-functional for now; API integration can wire it later.
+          // Keeping it only in card view was not requested; thus we remove it here.
           SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
@@ -384,7 +458,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-
   Widget _buildSampleCard(SampleList data, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
@@ -528,7 +601,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-
   Widget _buildCompactInfoRow(IconData icon, String value) {
     return Row(
       children: [
@@ -548,7 +620,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ],
     );
   }
-
   Widget _buildCompactActionButton({ required IconData icon, required Color color, required VoidCallback onPressed,}) {
     return Container(
       decoration: BoxDecoration(
@@ -575,9 +646,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-
-  
-
   Widget _buildTableView(List<SampleList> sampleDataList) {
     List<SampleList> paginatedData = getPaginatedData(sampleDataList);
     int totalPages = getTotalPages(sampleDataList.length);
@@ -640,8 +708,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
           ),
           SizedBox(height: 4),
-          // Search bar below table header card
-          _buildBodySearchField(),
+          // Static date filter below table header card (design only)
+          _buildStaticDateFilterBar(),
           SizedBox(height: 12),
           Expanded(
             child: Container(
@@ -826,9 +894,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
     );
   }
-
-  
-
   String _formatDate(String? date) {
     if (date == null || date == '0001-01-01T00:00:00') return 'N/A';
     try {
@@ -841,7 +906,22 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return 'N/A';
     }
   }
-
+  DateTime? _parseDate(String? date) {
+    if (date == null || date.isEmpty || date == '0001-01-01T00:00:00') {
+      return null;
+    }
+    try {
+      final d = DateTime.parse(date);
+      return DateTime(d.year, d.month, d.day);
+    } catch (_) {
+      return null;
+    }
+  }
+  DateTime? _getRecordDate(SampleList s) {
+    return _parseDate(s.sampleSentDate) ??
+        _parseDate(s.sampleResentDate) ??
+        _parseDate(s.sampleReRequestedDate);
+  } 
   Widget _buildPaginationControls(int totalItems, int totalPages) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
