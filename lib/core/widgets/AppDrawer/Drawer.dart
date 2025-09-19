@@ -95,15 +95,56 @@ class CustomDrawer extends StatelessWidget {
             ),
             const Divider(),
             _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
-              final bool confirmed = await ExitConfirmation.show(
-                context,
-                title: "Logout",
-                description: "Are you sure you want to Logout?",
-                confirmText: "Yes",
-                cancelText: "No",
-                confirmIcon: Icons.exit_to_app,
-                cancelIcon: Icons.cancel_outlined,
-              );
+              final bool confirmed = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    // Set the dialog's shape to a square
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.zero),
+                    ),
+                    // Set the dialog's background color to white
+                    backgroundColor: Colors.white,
+
+                    title: const Text("Logout"),
+                    content: const Text("Are you sure you want to Logout?"),
+                    actions: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton.icon(
+                            icon: const Icon(Icons.cancel_outlined, color: Colors.blue), // Icon for "No"
+                            label: const Text(
+                              "No",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(false);
+                            },
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.zero),
+                              ),
+                            ),
+                            icon: const Icon(Icons.exit_to_app, color: Colors.white), // Icon for "Logout"
+                            label: const Text(
+                              "Logout",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(true);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ) ?? false;
 
               if (confirmed) {
                 // Set login flag = 0 on logout
@@ -113,7 +154,7 @@ class CustomDrawer extends StatelessWidget {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   RouteName.loginScreen,
-                  (Route<dynamic> route) => false,
+                      (Route<dynamic> route) => false,
                 );
               }
             }),

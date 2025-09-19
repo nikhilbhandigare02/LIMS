@@ -4,7 +4,7 @@ import '../../config/Themes/colors/colorsTheme.dart';
 import 'enums.dart'; // your MessageType enum
 
 class Message {
-
+  /// Toast-like overlay in top-right
   static void showTopRightOverlay(
       BuildContext context,
       String message,
@@ -82,7 +82,7 @@ class Message {
         required String message,
         required MessageType type,
         String? title,
-        bool barrierDismissible = false, // force user to press OK by default
+        bool barrierDismissible = false,
         VoidCallback? onOk,
       }) {
     final color = getColor(type);
@@ -93,8 +93,9 @@ class Message {
       barrierDismissible: barrierDismissible,
       builder: (ctx) {
         return AlertDialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           title: Row(
             children: [
               Icon(icon, color: color),
@@ -103,24 +104,23 @@ class Message {
                 child: Text(
                   title ?? type.name.toUpperCase(),
                   style: TextStyle(
-                      color: color, fontWeight: FontWeight.bold, fontSize: 16),
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
           ),
-          content: Text(message),
+          content: Text(message, textAlign: TextAlign.center),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center, // 👈 Center the button
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    if (onOk != null) onOk();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                if (onOk != null) onOk();
+              },
+              child: const Text("OK"),
             ),
           ],
         );
@@ -157,7 +157,7 @@ class Message {
   }
 }
 
-class _OverlayMessage extends StatefulWidget {
+ class _OverlayMessage extends StatefulWidget {
   final String message;
   final String? title;
   final MessageType type;
@@ -315,104 +315,139 @@ class _OverlayMessageState extends State<_OverlayMessage>
   }
 }
 
+// import 'package:flutter/material.dart';
+//
+// enum MessageType { success, error, network, info }
+
 class AppDialog {
   static bool _isDialogOpen = false;
 
-  /// Show popup dialog (handles info/loading, success, error, etc.)
   static Future<void> show(
       BuildContext context,
       String message,
       MessageType type, {
         String? title,
+        String? serialNumber,
         VoidCallback? onOk,
       }) async {
-    if (_isDialogOpen) return; // prevent stacking dialogs
+    if (_isDialogOpen) return;
     _isDialogOpen = true;
 
-    final color = getColor(type);
-    final icon = getIcon(type);
+    final color = _getColor(type);
+    final icon = _getIcon(type);
 
-    if (type == MessageType.info) {
-      // Loading dialog (no OK button)
-      await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+    // Build message with serial number (bold inline)
+    final formattedMessage = RichText(
+      text: TextSpan(
+        text: message,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87,
+          height: 1.4,
+        ),
+        children: serialNumber != null
+            ? [
+          const TextSpan(text: "\n\nSerial Number: ",
+              style: TextStyle(color: Colors.grey)),
+          TextSpan(
+            text: serialNumber,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            content: Row(
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(message),
+          ),
+        ]
+            : [],
+      ),
+    );
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding: const EdgeInsets.all(16),
+          title: type == MessageType.info
+              ? null
+              : Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
-            ),
-          );
-        },
-      ).whenComplete(() {
-        _isDialogOpen = false;
-      });
-    } else {
-      // Success / Error / Other popups (with OK button)
-      await showDialog<void>(
-        context: context,
-        barrierDismissible: false, // cannot close by tapping outside
-        builder: (ctx) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            title: Row(
-              children: [
-                Icon(icon, color: color),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    title ?? type.name.toUpperCase(),
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            content: Text(message),
-            actions: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: customColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(ctx).pop(); // close on OK
-                  if (onOk != null) onOk();
-                },
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
                 child: Text(
-                  "OK",
+                  title ?? type.name.toUpperCase(),
                   style: TextStyle(
-                    color: customColors.white,
+                    color: color,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
               ),
             ],
-          );
-        },
-      ).whenComplete(() {
-        _isDialogOpen = false;
-      });
-    }
+          ),
+          content: type == MessageType.info
+              ? Row(
+            children: [
+              SizedBox(
+                height: 22,
+                width: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: formattedMessage),
+            ],
+          )
+              : formattedMessage,
+          actions: type == MessageType.info
+              ? null
+              : [
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  if (onOk != null) onOk();
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    ).whenComplete(() => _isDialogOpen = false);
   }
 
-  /// Close popup manually (useful for closing loading popup)
   static void closePopup(BuildContext context) {
     if (_isDialogOpen) {
       Navigator.of(context, rootNavigator: true).pop();
@@ -420,8 +455,7 @@ class AppDialog {
     }
   }
 
-  /// Icons
-  static IconData getIcon(MessageType type) {
+  static IconData _getIcon(MessageType type) {
     switch (type) {
       case MessageType.success:
         return Icons.check_circle;
@@ -435,8 +469,7 @@ class AppDialog {
     }
   }
 
-  /// Colors
-  static Color getColor(MessageType type) {
+  static Color _getColor(MessageType type) {
     switch (type) {
       case MessageType.success:
         return Colors.green;
@@ -450,3 +483,4 @@ class AppDialog {
     }
   }
 }
+

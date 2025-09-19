@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
-import '../../../core/utils/ExitCOnfirmtionWidget.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
@@ -164,163 +163,150 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 130,
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(child: Text(value)),
+      ],
+    );
+  }
+ 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final bool confirmed = await ExitConfirmation.show(
-          context,
-          title: "Exit",
-          description: "Are you sure you want to Exit ?",
-          confirmText: "Yes",
-          cancelText: "No",
-          confirmIcon: Icons.exit_to_app,
-          cancelIcon: Icons.cancel_outlined,
-        );
+    return BlocProvider.value(
+      value: sampleBloc,
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppHeader(
+          screenTitle: 'Sample Analysis',
+          // username: 'Username',
+          userId: 'UserID',
+          showBack: false,
+          actions: [
 
-        // if (confirmed) {
-        //   // Clear login flag
-        //   const storage = FlutterSecureStorage();
-        //   await storage.write(key: 'isLogin', value: '0');
-        //
-        //   Navigator.pushNamedAndRemoveUntil(
-        //     context,
-        //     RouteName.loginScreen,
-        //         (Route<dynamic> route) => false,
-        //   );
-        //   return true; // allow navigation (actually replaces with login screen)
-        // }
-
-        return false; // stay on the screen
-      },
-
-      child: BlocProvider.value(
-        value: sampleBloc,
-        child: Scaffold(
-          backgroundColor: Colors.grey[50],
-          appBar: AppHeader(
-            screenTitle: 'Sample Analysis',
-            // username: 'Username',
-            userId: 'UserID',
-            showBack: false,
-            actions: [
-
-              Container(
-                margin: EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white24, Colors.white12],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
                 ),
-                child: IconButton(
-                  icon: Icon(Icons.add, color: Colors.white),
-                  tooltip: 'Go to Home',
-                  onPressed: () =>Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-                        child: Form6LandingScreen(),
-                      ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.add, color: Colors.white),
+                tooltip: 'Go to Home',
+                onPressed: () =>Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                      child: Form6LandingScreen(),
                     ),
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white24, Colors.white12],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white24, Colors.white12],
                 ),
-                child: IconButton(
-                  icon: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: Icon(
-                      isCardView ? Icons.table_chart : Icons.view_agenda,
-                      key: ValueKey(isCardView),
-                      color: Colors.white,
-                    ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
                   ),
-                  onPressed: toggleView,
-                  tooltip: isCardView
-                      ? 'Switch to Table View'
-                      : 'Switch to Card View',
-                ),
+                ],
               ),
-            ],
+              child: IconButton(
+                icon: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  child: Icon(
+                    isCardView ? Icons.table_chart : Icons.view_agenda,
+                    key: ValueKey(isCardView),
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: toggleView,
+                tooltip: isCardView
+                    ? 'Switch to Table View'
+                    : 'Switch to Card View',
+              ),
+            ),
+          ],
 
-          ),
+        ),
 
-          drawer: CustomDrawer(),
-          body: BlocBuilder<SampleBloc, getSampleListState>(
-            builder: (context, state) {
-              switch (state.fetchSampleList.status) {
-                case Status.loading:
-                  return Center(child: const CircularProgressIndicator());
-                case Status.complete:
-                  if (state.fetchSampleList.data == null ||
-                      state.fetchSampleList.data.isEmpty) {
-                    return Center(child: Text('No Data Found'));
-                  }
-                  final sampleList =
-                  state.fetchSampleList.data as List<SampleData>;
-                  final sampleDataList = sampleList
-                      .expand((sampleData) => sampleData.sampleList ?? [])
-                      .toList();
+        drawer: CustomDrawer(),
+        body: BlocBuilder<SampleBloc, getSampleListState>(
+          builder: (context, state) {
+            switch (state.fetchSampleList.status) {
+              case Status.loading:
+                return Center(child: const CircularProgressIndicator());
+              case Status.complete:
+                if (state.fetchSampleList.data == null ||
+                    state.fetchSampleList.data.isEmpty) {
+                  return Center(child: Text('No Data Found'));
+                }
+                final sampleList =
+                state.fetchSampleList.data as List<SampleData>;
+                final sampleDataList = sampleList
+                    .expand((sampleData) => sampleData.sampleList ?? [])
+                    .toList();
 
-                  if (sampleDataList.isEmpty) {
-                    return const Center(child: Text('No Data Found'));
-                  }
+                if (sampleDataList.isEmpty) {
+                  return const Center(child: Text('No Data Found'));
+                }
 
-                  final filteredSampleDataList = _searchQuery.isEmpty
-                      ? sampleDataList
-                      : sampleDataList.where((sample) =>
-                  sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
-                  if (filteredSampleDataList.isEmpty) {
-                    return const Center(child: Text('No matching results'));
-                  }
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.grey[50]!, Colors.grey[100]!],
-                      ),
+                final filteredSampleDataList = _searchQuery.isEmpty
+                    ? sampleDataList
+                    : sampleDataList.where((sample) =>
+                    sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
+                if (filteredSampleDataList.isEmpty) {
+                  return const Center(child: Text('No matching results'));
+                }
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.grey[50]!, Colors.grey[100]!],
                     ),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: isCardView
-                          ? _buildCardView(filteredSampleDataList.cast<SampleList>())
-                          : _buildTableView(filteredSampleDataList.cast<SampleList>()),
-                    ),
-                  );
-                case Status.error:
-                  return Center(
-                    child: Text('Error: ${state.fetchSampleList.message}'),
-                  );
-                default:
-                  return Center(child: Text('Unexpected state'));
-              }
-            },
-          ),
+                  ),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: isCardView
+                        ? _buildCardView(filteredSampleDataList.cast<SampleList>())
+                        : _buildTableView(filteredSampleDataList.cast<SampleList>()),
+                  ),
+                );
+              case Status.error:
+                return Center(
+                  child: Text('Error: ${state.fetchSampleList.message}'),
+                );
+              default:
+                return Center(child: Text('Unexpected state'));
+            }
+          },
         ),
       ),
     );
