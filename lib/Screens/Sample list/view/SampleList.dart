@@ -192,7 +192,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           userId: 'UserID',
           showBack: false,
           actions: [
-
             Container(
               margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
@@ -211,7 +210,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               child: IconButton(
                 icon: Icon(Icons.add, color: Colors.white),
                 tooltip: 'Go to Home',
-                onPressed: () =>Navigator.push(
+                onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider(
@@ -247,66 +246,67 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   ),
                 ),
                 onPressed: toggleView,
-                tooltip: isCardView
-                    ? 'Switch to Table View'
-                    : 'Switch to Card View',
+                tooltip: isCardView ? 'Switch to Table View' : 'Switch to Card View',
               ),
             ),
           ],
-
         ),
-
         drawer: CustomDrawer(),
-        body: BlocBuilder<SampleBloc, getSampleListState>(
-          builder: (context, state) {
-            switch (state.fetchSampleList.status) {
-              case Status.loading:
-                return Center(child: const CircularProgressIndicator());
-              case Status.complete:
-                if (state.fetchSampleList.data == null ||
-                    state.fetchSampleList.data.isEmpty) {
-                  return Center(child: Text('No Data Found'));
-                }
-                final sampleList =
-                state.fetchSampleList.data as List<SampleData>;
-                final sampleDataList = sampleList
-                    .expand((sampleData) => sampleData.sampleList ?? [])
-                    .toList();
+        body: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          bottom: true,
+          child: BlocBuilder<SampleBloc, getSampleListState>(
+            builder: (context, state) {
+              switch (state.fetchSampleList.status) {
+                case Status.loading:
+                  return Center(child: const CircularProgressIndicator());
+                case Status.complete:
+                  if (state.fetchSampleList.data == null ||
+                      state.fetchSampleList.data.isEmpty) {
+                    return Center(child: Text('No Data Found'));
+                  }
+                  final sampleList = state.fetchSampleList.data as List<SampleData>;
+                  final sampleDataList = sampleList
+                      .expand((sampleData) => sampleData.sampleList ?? [])
+                      .toList();
 
-                if (sampleDataList.isEmpty) {
-                  return const Center(child: Text('No Data Found'));
-                }
+                  if (sampleDataList.isEmpty) {
+                    return const Center(child: Text('No Data Found'));
+                  }
 
-                final filteredSampleDataList = _searchQuery.isEmpty
-                    ? sampleDataList
-                    : sampleDataList.where((sample) =>
-                    sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
-                if (filteredSampleDataList.isEmpty) {
-                  return const Center(child: Text('No matching results'));
-                }
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.grey[50]!, Colors.grey[100]!],
+                  final filteredSampleDataList = _searchQuery.isEmpty
+                      ? sampleDataList
+                      : sampleDataList.where((sample) =>
+                  sample.serialNo?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false).toList();
+                  if (filteredSampleDataList.isEmpty) {
+                    return const Center(child: Text('No matching results'));
+                  }
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.grey[50]!, Colors.grey[100]!],
+                      ),
                     ),
-                  ),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: isCardView
-                        ? _buildCardView(filteredSampleDataList.cast<SampleList>())
-                        : _buildTableView(filteredSampleDataList.cast<SampleList>()),
-                  ),
-                );
-              case Status.error:
-                return Center(
-                  child: Text('Error: ${state.fetchSampleList.message}'),
-                );
-              default:
-                return Center(child: Text('Unexpected state'));
-            }
-          },
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: isCardView
+                          ? _buildCardView(filteredSampleDataList.cast<SampleList>())
+                          : _buildTableView(filteredSampleDataList.cast<SampleList>()),
+                    ),
+                  );
+                case Status.error:
+                  return Center(
+                    child: Text('Error: ${state.fetchSampleList.message}'),
+                  );
+                default:
+                  return Center(child: Text('Unexpected state'));
+              }
+            },
+          ),
         ),
       ),
     );
