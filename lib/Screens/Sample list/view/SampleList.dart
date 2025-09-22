@@ -158,9 +158,34 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             fit: BoxFit.scaleDown,
             child: ElevatedButton(
               onPressed: () {
+                final fromDate = _fromDate;
+                final toDate = _toDate;
 
+                // Debug: show what we're about to send
+                // ignore: avoid_print
+                print('[UI] SampleList filter tick pressed. fromDate=${fromDate?.toIso8601String()}, toDate=${toDate?.toIso8601String()}');
+
+                // Validate range when both selected
+                if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid range: To date must be on/after From date')),
+                  );
+                  return;
+                }
+
+                // Reset pagination to first page before fetching
+                setState(() {
+                  currentPage = 0;
+                });
+
+                // Dispatch API call with optional dates; when null, backend should default to current date
+                sampleBloc.add(
+                  getSampleListEvent(fromDate: fromDate, toDate: toDate),
+                );
+
+                // Optional UX feedback
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Date range selected (hook to API later)')),
+                  const SnackBar(content: Text('Fetching filtered records...')),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -336,6 +361,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           right: false,
           bottom: true,
           child: BlocBuilder<SampleBloc, getSampleListState>(
+            bloc: sampleBloc,
             builder: (context, state) {
               switch (state.fetchSampleList.status) {
                 case Status.loading:
@@ -343,7 +369,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 case Status.complete:
                   if (state.fetchSampleList.data == null ||
                       state.fetchSampleList.data.isEmpty) {
-                    return Center(child: Text('No Data Found'));
+                    return const Center(child: Text('Currently, no records exist.'));
                   }
                   final sampleList = state.fetchSampleList.data as List<SampleData>;
                   final sampleDataList = sampleList
@@ -351,7 +377,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       .toList();
 
                   if (sampleDataList.isEmpty) {
-                    return const Center(child: Text('No Data Found'));
+                    return const Center(child: Text('Currently, no records exist.'));
                   }
 
                   final filteredSampleDataList = sampleDataList; // static design only, no filtering applied
@@ -371,6 +397,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     ),
                   );
                 case Status.error:
+                  final msg = state.fetchSampleList.message?.toString().toLowerCase() ?? '';
+                  final isNotFound = msg.contains('404') || msg.contains('not found') || msg.contains('no data');
+                  if (isNotFound) {
+                    return const Center(child: Text('Currently, no records exist.'));
+                  }
                   return Center(
                     child: Text('Error: ${state.fetchSampleList.message}'),
                   );

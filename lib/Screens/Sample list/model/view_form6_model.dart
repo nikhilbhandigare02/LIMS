@@ -1,13 +1,10 @@
-/// success : true
-/// message : "Form6 data fetched successfully."
-/// statusCode : 200
-/// form6Details : [{"success":1,"message":"Form VI data fetched successfully","statusCode":200,"serialNo":"LIMS_337","sampleCodeNumber":"56","collectionDate":"19-09-2025 16:41:12","placeOfCollection":"dh","sampleName":"rh","quantityOfSample":"dh","natureOfSample":"Loose","preservativeAdded":"0","preservativeName":"","quantityOfPreservative":"","witnessSignature":"0","signatureOfDO":"0","wrapperCodeNumber":"56","sealImpression":"False","sealNumber":"56","memoFormVI":"0","wrapperFormVI":"0","latitude":"19.217273","longitude":"72.9804205","status":"Sample Assigned to Analyst","senderName":"Aditya FSO","senderDesignation":"Food Safety Officer","doNumber":"65","country":"India","state":"Maharashtra","district":"Pune","division":"Pune City Division","region":"Pune City Region 1","area":"hd","slip_number":"asdasdasd","documentName":null,"documentUrl":"[{\"DocumentName\":\"62b97e6953c65bae2efa492e-lab_report-b5c059d4-873c-4d03-87ec-6aeb87d6a667.pdf\",\"DocumentUrl\":\"http://103.118.17.144:803/ViewDocument/2025\\September/62b97e6953c65bae2efa492e-lab_report-b5c059d4-873c-4d03-87ec-6aeb87d6a667.pdf\"},{\"DocumentName\":\"Screenshot_2025-09-15-18-40-32-422_io.mlite.credit_Access(1)(2)(3).jpg\",\"DocumentUrl\":\"http://103.118.17.144:803/ViewDocument/2025\\September/Screenshot_2025-09-15-18-40-32-422_io.mlite.credit_Access(1)(2)(3).jpg\"}]"}]
-
+ import 'dart:convert';
+ 
 class ViewForm6Model {
   ViewForm6Model({
-      bool? success, 
-      String? message, 
-      num? statusCode, 
+      bool? success,
+      String? message,
+      num? statusCode,
       List<Form6Details>? form6Details,}){
     _success = success;
     _message = message;
@@ -16,12 +13,13 @@ class ViewForm6Model {
 }
 
   ViewForm6Model.fromJson(dynamic json) {
-    _success = json['success'];
-    _message = json['message'];
-    _statusCode = json['statusCode'];
-    if (json['form6Details'] != null) {
+    _success = json['success'] ?? json['Success'] ?? json['SUCCESS'];
+    _message = (json['message'] ?? json['Message'])?.toString();
+    _statusCode = json['statusCode'] ?? json['StatusCode'] ?? json['status_code'];
+    final dynamic detailsNode = json['form6Details'] ?? json['Form6Details'] ?? json['form_6_details'];
+    if (detailsNode is List) {
       _form6Details = [];
-      json['form6Details'].forEach((v) {
+      detailsNode.forEach((v) {
         _form6Details?.add(Form6Details.fromJson(v));
       });
     }
@@ -57,79 +55,47 @@ ViewForm6Model copyWith({  bool? success,
 
 }
 
-/// success : 1
-/// message : "Form VI data fetched successfully"
-/// statusCode : 200
-/// serialNo : "LIMS_337"
-/// sampleCodeNumber : "56"
-/// collectionDate : "19-09-2025 16:41:12"
-/// placeOfCollection : "dh"
-/// sampleName : "rh"
-/// quantityOfSample : "dh"
-/// natureOfSample : "Loose"
-/// preservativeAdded : "0"
-/// preservativeName : ""
-/// quantityOfPreservative : ""
-/// witnessSignature : "0"
-/// signatureOfDO : "0"
-/// wrapperCodeNumber : "56"
-/// sealImpression : "False"
-/// sealNumber : "56"
-/// memoFormVI : "0"
-/// wrapperFormVI : "0"
-/// latitude : "19.217273"
-/// longitude : "72.9804205"
-/// status : "Sample Assigned to Analyst"
-/// senderName : "Aditya FSO"
-/// senderDesignation : "Food Safety Officer"
-/// doNumber : "65"
-/// country : "India"
-/// state : "Maharashtra"
-/// district : "Pune"
-/// division : "Pune City Division"
-/// region : "Pune City Region 1"
-/// area : "hd"
-/// slip_number : "asdasdasd"
-/// documentName : null
-/// documentUrl : "[{\"DocumentName\":\"62b97e6953c65bae2efa492e-lab_report-b5c059d4-873c-4d03-87ec-6aeb87d6a667.pdf\",\"DocumentUrl\":\"http://103.118.17.144:803/ViewDocument/2025\\September/62b97e6953c65bae2efa492e-lab_report-b5c059d4-873c-4d03-87ec-6aeb87d6a667.pdf\"},{\"DocumentName\":\"Screenshot_2025-09-15-18-40-32-422_io.mlite.credit_Access(1)(2)(3).jpg\",\"DocumentUrl\":\"http://103.118.17.144:803/ViewDocument/2025\\September/Screenshot_2025-09-15-18-40-32-422_io.mlite.credit_Access(1)(2)(3).jpg\"}]"
 
 class Form6Details {
   Form6Details({
-      num? success, 
-      String? message, 
-      num? statusCode, 
-      String? serialNo, 
-      String? sampleCodeNumber, 
-      String? collectionDate, 
-      String? placeOfCollection, 
-      String? sampleName, 
-      String? quantityOfSample, 
-      String? natureOfSample, 
-      String? preservativeAdded, 
-      String? preservativeName, 
-      String? quantityOfPreservative, 
-      String? witnessSignature, 
-      String? signatureOfDO, 
-      String? wrapperCodeNumber, 
-      String? sealImpression, 
-      String? sealNumber, 
-      String? memoFormVI, 
-      String? wrapperFormVI, 
-      String? latitude, 
-      String? longitude, 
-      String? status, 
-      String? senderName, 
-      String? senderDesignation, 
-      String? doNumber, 
-      String? country, 
-      String? state, 
-      String? district, 
-      String? division, 
-      String? region, 
-      String? area, 
-      String? slipNumber, 
-      dynamic documentName, 
-      String? documentUrl,}){
+    num? success,
+    String? message,
+    num? statusCode,
+    String? serialNo,
+    String? sampleCodeNumber,
+    String? collectionDate,
+    String? placeOfCollection,
+    String? sampleName,
+    String? quantityOfSample,
+    String? sampleId,
+    String? preservativeAdded,
+    String? preservativeName,
+    String? quantityOfPreservative,
+    String? witnessSignature,
+    String? paperSlipNumber,
+    String? signatureOfDO,
+    String? wrapperCodeNumber,
+    String? sealImpression,
+    String? sealNumber,
+    String? memoFormVI,
+    String? wrapperFormVI,
+    String? latitude,
+    String? longitude,
+    String? status,
+    String? senderName,
+    String? senderDesignation,
+    String? DONumber,
+    String? country,
+    String? state,
+    String? district,
+    String? division,
+    String? region,
+    String? area,
+    String? slip_number,
+    String? documents,
+    List<String>? documentNames,
+    List<String>? documentUrls,
+  }) {
     _success = success;
     _message = message;
     _statusCode = statusCode;
@@ -139,11 +105,12 @@ class Form6Details {
     _placeOfCollection = placeOfCollection;
     _sampleName = sampleName;
     _quantityOfSample = quantityOfSample;
-    _natureOfSample = natureOfSample;
+    _sampleId = sampleId;
     _preservativeAdded = preservativeAdded;
     _preservativeName = preservativeName;
     _quantityOfPreservative = quantityOfPreservative;
     _witnessSignature = witnessSignature;
+    _paperSlipNumber = paperSlipNumber;
     _signatureOfDO = signatureOfDO;
     _wrapperCodeNumber = wrapperCodeNumber;
     _sealImpression = sealImpression;
@@ -155,55 +122,130 @@ class Form6Details {
     _status = status;
     _senderName = senderName;
     _senderDesignation = senderDesignation;
-    _doNumber = doNumber;
+    _doNumber = DONumber;
     _country = country;
     _state = state;
     _district = district;
     _division = division;
     _region = region;
     _area = area;
-    _slipNumber = slipNumber;
-    _documentName = documentName;
-    _documentUrl = documentUrl;
-}
+    _slip_number = slip_number;
+    _documents = documents;
+    _documentNames = documentNames;
+    _documentUrls = documentUrls;
+  }
 
   Form6Details.fromJson(dynamic json) {
-    _success = json['success'];
-    _message = json['message'];
-    _statusCode = json['statusCode'];
-    _serialNo = json['serialNo'];
-    _sampleCodeNumber = json['sampleCodeNumber'];
-    _collectionDate = json['collectionDate'];
-    _placeOfCollection = json['placeOfCollection'];
-    _sampleName = json['sampleName'];
-    _quantityOfSample = json['quantityOfSample'];
-    _natureOfSample = json['natureOfSample'];
-    _preservativeAdded = json['preservativeAdded'];
-    _preservativeName = json['preservativeName'];
-    _quantityOfPreservative = json['quantityOfPreservative'];
-    _witnessSignature = json['witnessSignature'];
-    _signatureOfDO = json['signatureOfDO'];
-    _wrapperCodeNumber = json['wrapperCodeNumber'];
-    _sealImpression = json['sealImpression'];
-    _sealNumber = json['sealNumber'];
-    _memoFormVI = json['memoFormVI'];
-    _wrapperFormVI = json['wrapperFormVI'];
-    _latitude = json['latitude'];
-    _longitude = json['longitude'];
-    _status = json['status'];
-    _senderName = json['senderName'];
-    _senderDesignation = json['senderDesignation'];
-    _doNumber = json['doNumber'];
-    _country = json['country'];
-    _state = json['state'];
-    _district = json['district'];
-    _division = json['division'];
-    _region = json['region'];
-    _area = json['area'];
-    _slipNumber = json['slip_number'];
-    _documentName = json['documentName'];
-    _documentUrl = json['documentUrl'];
+    _success = json['success'] ?? json['Success'];
+    _message = (json['message'] ?? json['Message'])?.toString();
+    _statusCode = json['statusCode'] ?? json['StatusCode'];
+    _serialNo = (json['serialNo'] ?? json['SerialNo'] ?? json['serial_no'])?.toString();
+    _sampleCodeNumber = (json['sampleCodeNumber'] ?? json['SampleCodeNumber'] ?? json['sampleCode'])?.toString();
+    _collectionDate = (json['collectionDate'] ?? json['CollectionDate'] ?? json['collection_date'])?.toString();
+    _placeOfCollection = (json['placeOfCollection'] ?? json['PlaceOfCollection'] ?? json['place_of_collection'])?.toString();
+    _sampleName = (json['sampleName'] ?? json['SampleName'])?.toString();
+    _quantityOfSample = (json['quantityOfSample'] ?? json['QuantityOfSample'])?.toString();
+    _sampleId = (json['sampleId'] ?? json['SampleId'])?.toString();
+    _preservativeAdded = (json['preservativeAdded'] ?? json['PreservativeAdded'])?.toString();
+    _preservativeName = (json['preservativeName'] ?? json['PreservativeName'])?.toString();
+    _quantityOfPreservative = (json['quantityOfPreservative'] ?? json['QuantityOfPreservative'])?.toString();
+    _witnessSignature = (json['witnessSignature'] ?? json['WitnessSignature'])?.toString();
+    _paperSlipNumber = (json['paperSlipNumber'] ?? json['PaperSlipNumber'])?.toString();
+    _signatureOfDO = (json['signatureOfDO'] ?? json['SignatureOfDO'])?.toString();
+    _wrapperCodeNumber = (json['wrapperCodeNumber'] ?? json['WrapperCodeNumber'])?.toString();
+    _sealImpression = (json['sealImpression'] ?? json['SealImpression'])?.toString();
+    _sealNumber = (json['sealNumber'] ?? json['SealNumber'])?.toString();
+    _memoFormVI = (json['memoFormVI'] ?? json['MemoFormVI'])?.toString();
+    _wrapperFormVI = (json['wrapperFormVI'] ?? json['WrapperFormVI'])?.toString();
+    _latitude = (json['latitude'] ?? json['Latitude'])?.toString();
+    _longitude = (json['longitude'] ?? json['Longitude'])?.toString();
+    _status = (json['status'] ?? json['Status'])?.toString();
+    _senderName = (json['senderName'] ?? json['SenderName'])?.toString();
+    _senderDesignation = (json['senderDesignation'] ?? json['SenderDesignation'])?.toString();
+    _doNumber = (json['DONumber'] ?? json['DONumber'])?.toString();
+    _country = (json['country'] ?? json['Country'])?.toString();
+    _state = (json['state'] ?? json['State'])?.toString();
+    _district = (json['district'] ?? json['District'])?.toString();
+    _division = (json['division'] ?? json['Division'])?.toString();
+    _region = (json['region'] ?? json['Region'])?.toString();
+    _area = (json['area'] ?? json['Area'])?.toString();
+    _slip_number = (json['slip_number'] ?? json['slip_number'])?.toString();
+    _documents = (json['documents'] ?? json['Documents'])?.toString();
+    // Parse document list from a JSON array string present in documentUrl (as per API)
+    final dynamic docUrlNode = json['document_url'] ?? json['documentUrl'] ?? json['DocumentUrl'] ?? json['DocumentURL'];
+    final dynamic docNameNode = json['documentName'] ?? json['DocumentName'] ?? json['DocumentNames'];
+    // ignore: avoid_print
+    print('[Form6Details] Raw documentUrl node type=${docUrlNode.runtimeType}');
+    List<String> names = [];
+    List<String> urls = [];
+    try {
+      if (docUrlNode is String && docUrlNode.trim().isNotEmpty) {
+        final dynamic parsed = jsonDecode(docUrlNode);
+        if (parsed is List) {
+          for (final item in parsed) {
+            if (item is Map<String, dynamic>) {
+              final n = (item['DocumentName'] ?? item['documentName'] ?? item['name'])?.toString();
+              final u = (item['DocumentUrl'] ?? item['documentUrl'] ?? item['url'])?.toString();
+              if (n != null && n.isNotEmpty) names.add(n);
+              if (u != null && u.isNotEmpty) urls.add(u);
+            }
+          }
+        }
+      } else if (docUrlNode is List) {
+        for (final item in docUrlNode) {
+          if (item is Map<String, dynamic>) {
+            final n = (item['DocumentName'] ?? item['documentName'] ?? item['name'])?.toString();
+            final u = (item['DocumentUrl'] ?? item['documentUrl'] ?? item['url'])?.toString();
+            if (n != null && n.isNotEmpty) names.add(n);
+            if (u != null && u.isNotEmpty) urls.add(u);
+          }
+        }
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('[Form6Details] JSON decode failed for documentUrl: $e');
+      // Fallback: try to extract pairs using RegExp from raw string
+      if (docUrlNode is String && docUrlNode.isNotEmpty) {
+        final raw = docUrlNode;
+        final nameExp = RegExp(r'"(?:DocumentName|documentName)"\s*:\s*"([^"]+)"');
+        final urlExp = RegExp(r'"(?:DocumentUrl|documentUrl|url)"\s*:\s*"([^"]+)"');
+        final nameMatches = nameExp.allMatches(raw).toList();
+        final urlMatches = urlExp.allMatches(raw).toList();
+        final count = nameMatches.length > 0 ? nameMatches.length : urlMatches.length;
+        for (int i = 0; i < count; i++) {
+          final n = i < nameMatches.length ? nameMatches[i].group(1) : null;
+          final u = i < urlMatches.length ? urlMatches[i].group(1) : null;
+          if (n != null && n.isNotEmpty) names.add(n);
+          if (u != null && u.isNotEmpty) urls.add(u);
+        }
+        // If still nothing and it looks like a single URL, use it
+        if (urls.isEmpty && raw.startsWith('http')) {
+          urls.add(raw);
+        }
+      }
+    }
+    if ((names.isEmpty && docNameNode != null)) {
+      final dn = docNameNode.toString();
+      if (dn.isNotEmpty) names = [dn];
+    }
+    // Fallback: if urls present but names missing, derive names from URL basename
+    if (urls.isNotEmpty && names.isEmpty) {
+      names = urls.map((u) {
+        final s = u.toString();
+        final idx = s.lastIndexOf('/');
+        return idx >= 0 ? s.substring(idx + 1) : s;
+      }).toList();
+    }
+    // If names present but urls missing and docUrlNode is a non-empty string, use it as single URL
+    if (names.isNotEmpty && urls.isEmpty && docUrlNode is String && docUrlNode.isNotEmpty) {
+      urls = [docUrlNode];
+    }
+    _documentNames = names.isNotEmpty ? names : null;
+    _documentUrls = urls.isNotEmpty ? urls : null;
+    // ignore: avoid_print
+    print('[Form6Details] Parsed documents -> names=${_documentNames?.length ?? 0}, urls=${_documentUrls?.length ?? 0}');
   }
+
   num? _success;
   String? _message;
   num? _statusCode;
@@ -213,11 +255,12 @@ class Form6Details {
   String? _placeOfCollection;
   String? _sampleName;
   String? _quantityOfSample;
-  String? _natureOfSample;
+  String? _sampleId;
   String? _preservativeAdded;
   String? _preservativeName;
   String? _quantityOfPreservative;
   String? _witnessSignature;
+  String? _paperSlipNumber;
   String? _signatureOfDO;
   String? _wrapperCodeNumber;
   String? _sealImpression;
@@ -236,80 +279,90 @@ class Form6Details {
   String? _division;
   String? _region;
   String? _area;
-  String? _slipNumber;
-  dynamic _documentName;
-  String? _documentUrl;
-Form6Details copyWith({  num? success,
-  String? message,
-  num? statusCode,
-  String? serialNo,
-  String? sampleCodeNumber,
-  String? collectionDate,
-  String? placeOfCollection,
-  String? sampleName,
-  String? quantityOfSample,
-  String? natureOfSample,
-  String? preservativeAdded,
-  String? preservativeName,
-  String? quantityOfPreservative,
-  String? witnessSignature,
-  String? signatureOfDO,
-  String? wrapperCodeNumber,
-  String? sealImpression,
-  String? sealNumber,
-  String? memoFormVI,
-  String? wrapperFormVI,
-  String? latitude,
-  String? longitude,
-  String? status,
-  String? senderName,
-  String? senderDesignation,
-  String? doNumber,
-  String? country,
-  String? state,
-  String? district,
-  String? division,
-  String? region,
-  String? area,
-  String? slipNumber,
-  dynamic documentName,
-  String? documentUrl,
-}) => Form6Details(  success: success ?? _success,
-  message: message ?? _message,
-  statusCode: statusCode ?? _statusCode,
-  serialNo: serialNo ?? _serialNo,
-  sampleCodeNumber: sampleCodeNumber ?? _sampleCodeNumber,
-  collectionDate: collectionDate ?? _collectionDate,
-  placeOfCollection: placeOfCollection ?? _placeOfCollection,
-  sampleName: sampleName ?? _sampleName,
-  quantityOfSample: quantityOfSample ?? _quantityOfSample,
-  natureOfSample: natureOfSample ?? _natureOfSample,
-  preservativeAdded: preservativeAdded ?? _preservativeAdded,
-  preservativeName: preservativeName ?? _preservativeName,
-  quantityOfPreservative: quantityOfPreservative ?? _quantityOfPreservative,
-  witnessSignature: witnessSignature ?? _witnessSignature,
-  signatureOfDO: signatureOfDO ?? _signatureOfDO,
-  wrapperCodeNumber: wrapperCodeNumber ?? _wrapperCodeNumber,
-  sealImpression: sealImpression ?? _sealImpression,
-  sealNumber: sealNumber ?? _sealNumber,
-  memoFormVI: memoFormVI ?? _memoFormVI,
-  wrapperFormVI: wrapperFormVI ?? _wrapperFormVI,
-  latitude: latitude ?? _latitude,
-  longitude: longitude ?? _longitude,
-  status: status ?? _status,
-  senderName: senderName ?? _senderName,
-  senderDesignation: senderDesignation ?? _senderDesignation,
-  doNumber: doNumber ?? _doNumber,
-  country: country ?? _country,
-  state: state ?? _state,
-  district: district ?? _district,
-  division: division ?? _division,
-  region: region ?? _region,
-  area: area ?? _area,
-  slipNumber: slipNumber ?? _slipNumber,
-  documentName: documentName ?? _documentName,
-  documentUrl: documentUrl ?? _documentUrl,
-);
+  String? _slip_number;
+  String? _documents;
+  List<String>? _documentNames;
+  List<String>? _documentUrls;
+
+  Form6Details copyWith({
+    num? success,
+    String? message,
+    num? statusCode,
+    String? serialNo,
+    String? sampleCodeNumber,
+    String? collectionDate,
+    String? placeOfCollection,
+    String? sampleName,
+    String? quantityOfSample,
+    String? sampleId,
+    String? preservativeAdded,
+    String? preservativeName,
+    String? quantityOfPreservative,
+    String? witnessSignature,
+    String? paperSlipNumber,
+    String? signatureOfDO,
+    String? wrapperCodeNumber,
+    String? sealImpression,
+    String? sealNumber,
+    String? memoFormVI,
+    String? wrapperFormVI,
+    String? latitude,
+    String? longitude,
+    String? status,
+    String? senderName,
+    String? senderDesignation,
+    String? DONumber,
+    String? country,
+    String? state,
+    String? district,
+    String? division,
+    String? region,
+    String? area,
+    String? slip_number,
+    String? documents,
+    List<String>? documentNames,
+    List<String>? documentUrls,
+  }) =>
+      Form6Details(
+        success: success ?? _success,
+        message: message ?? _message,
+        statusCode: statusCode ?? _statusCode,
+        serialNo: serialNo ?? _serialNo,
+        sampleCodeNumber: sampleCodeNumber ?? _sampleCodeNumber,
+        collectionDate: collectionDate ?? _collectionDate,
+        placeOfCollection: placeOfCollection ?? _placeOfCollection,
+        sampleName: sampleName ?? _sampleName,
+        quantityOfSample: quantityOfSample ?? _quantityOfSample,
+        sampleId: sampleId ?? _sampleId,
+        preservativeAdded: preservativeAdded ?? _preservativeAdded,
+        preservativeName: preservativeName ?? _preservativeName,
+        quantityOfPreservative: quantityOfPreservative ?? _quantityOfPreservative,
+        witnessSignature: witnessSignature ?? _witnessSignature,
+        paperSlipNumber: paperSlipNumber ?? _paperSlipNumber,
+        signatureOfDO: signatureOfDO ?? _signatureOfDO,
+        wrapperCodeNumber: wrapperCodeNumber ?? _wrapperCodeNumber,
+        sealImpression: sealImpression ?? _sealImpression,
+        sealNumber: sealNumber ?? _sealNumber,
+        memoFormVI: memoFormVI ?? _memoFormVI,
+        wrapperFormVI: wrapperFormVI ?? _wrapperFormVI,
+        latitude: latitude ?? _latitude,
+        longitude: longitude ?? _longitude,
+        status: status ?? _status,
+        senderName: senderName ?? _senderName,
+        senderDesignation: senderDesignation ?? _senderDesignation,
+        DONumber: DONumber ?? _doNumber,
+        country: country ?? _country,
+        state: state ?? _state,
+        district: district ?? _district,
+        division: division ?? _division,
+        region: region ?? _region,
+        area: area ?? _area,
+        slip_number: slip_number ?? _slip_number,
+        documents: documents ?? _documents,
+        documentNames: documentNames ?? _documentNames,
+        documentUrls: documentUrls ?? _documentUrls,
+      );
+
   num? get success => _success;
   String? get message => _message;
   num? get statusCode => _statusCode;
@@ -319,11 +372,12 @@ Form6Details copyWith({  num? success,
   String? get placeOfCollection => _placeOfCollection;
   String? get sampleName => _sampleName;
   String? get quantityOfSample => _quantityOfSample;
-  String? get natureOfSample => _natureOfSample;
+  String? get sampleId => _sampleId;
   String? get preservativeAdded => _preservativeAdded;
   String? get preservativeName => _preservativeName;
   String? get quantityOfPreservative => _quantityOfPreservative;
   String? get witnessSignature => _witnessSignature;
+  String? get paperSlipNumber => _paperSlipNumber;
   String? get signatureOfDO => _signatureOfDO;
   String? get wrapperCodeNumber => _wrapperCodeNumber;
   String? get sealImpression => _sealImpression;
@@ -335,16 +389,17 @@ Form6Details copyWith({  num? success,
   String? get status => _status;
   String? get senderName => _senderName;
   String? get senderDesignation => _senderDesignation;
-  String? get doNumber => _doNumber;
+  String? get DONumber => _doNumber;
   String? get country => _country;
   String? get state => _state;
   String? get district => _district;
   String? get division => _division;
   String? get region => _region;
   String? get area => _area;
-  String? get slipNumber => _slipNumber;
-  dynamic get documentName => _documentName;
-  String? get documentUrl => _documentUrl;
+  String? get slip_number => _slip_number;
+
+  List<String>? get documentNames => _documentNames;
+  List<String>? get documentUrls => _documentUrls;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -357,11 +412,12 @@ Form6Details copyWith({  num? success,
     map['placeOfCollection'] = _placeOfCollection;
     map['sampleName'] = _sampleName;
     map['quantityOfSample'] = _quantityOfSample;
-    map['natureOfSample'] = _natureOfSample;
+    map['sampleId'] = _sampleId;
     map['preservativeAdded'] = _preservativeAdded;
     map['preservativeName'] = _preservativeName;
     map['quantityOfPreservative'] = _quantityOfPreservative;
     map['witnessSignature'] = _witnessSignature;
+    map['paperSlipNumber'] = _paperSlipNumber;
     map['signatureOfDO'] = _signatureOfDO;
     map['wrapperCodeNumber'] = _wrapperCodeNumber;
     map['sealImpression'] = _sealImpression;
@@ -373,17 +429,17 @@ Form6Details copyWith({  num? success,
     map['status'] = _status;
     map['senderName'] = _senderName;
     map['senderDesignation'] = _senderDesignation;
-    map['doNumber'] = _doNumber;
+    map['DONumber'] = _doNumber;
     map['country'] = _country;
     map['state'] = _state;
     map['district'] = _district;
     map['division'] = _division;
     map['region'] = _region;
     map['area'] = _area;
-    map['slip_number'] = _slipNumber;
-    map['documentName'] = _documentName;
-    map['documentUrl'] = _documentUrl;
+    map['slip_number'] = _slip_number;
+    map['documents'] = _documents;
+    map['documentName'] = _documentNames;
+    map['documentUrl'] = _documentUrls;
     return map;
   }
-
 }

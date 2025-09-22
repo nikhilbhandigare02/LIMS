@@ -207,7 +207,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "DO Number:",
-                "value": details.doNumber,
+                "value": details.DONumber,
 
               },
             ],
@@ -256,7 +256,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "Slip Number:",
-                "value": details.slipNumber,
+                "value": details.slip_number,
                 "icon": Icons.qr_code,
               },
               {
@@ -354,7 +354,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "label": "Wrapper Code",
                 "value": details.wrapperCodeNumber,
               },
-              {"label": "Mentioned Document", "value": details.documentName,  },
+              {"label": "Mentioned Document", "value": _buildMentionedDocuments(details),  },
               {"label": "Uploaded Document", "value": _buildDocumentsList(details),  },
               {"label": "Status", "value": details.status,  },
 
@@ -554,69 +554,128 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   }
 
   Widget _buildDocumentsList(Form6Details details) {
-    if (details.documentName == null || details.documentName!.isEmpty) {
+    final urls = details.documentUrls ?? const [];
+    final names = details.documentNames ?? const [];
+    if (urls.isEmpty) {
       return Text("No documents uploaded");
     }
 
-    final docName = details.documentName!;
-    final docUrl = details.documentUrl ?? "";
-    final isImage = docName.toLowerCase().endsWith(".jpg") ||
-        docName.toLowerCase().endsWith(".jpeg") ||
-        docName.toLowerCase().endsWith(".png");
+    String _nameFor(int index) {
+      if (index < names.length && (names[index]).toString().isNotEmpty) {
+        return names[index];
+      }
+      final u = index < urls.length ? urls[index] : '';
+      final idx = u.lastIndexOf('/');
+      return idx >= 0 ? u.substring(idx + 1) : u;
+    }
 
-    return InkWell(
-      onTap: () async {
-        try {
-          if (docUrl.isNotEmpty) {
-            if (docUrl.startsWith("http")) {
-              final uri = Uri.parse(docUrl);
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(urls.length, (index) {
+        final docUrl = urls[index];
+        final docName = _nameFor(index);
+        final lower = docName.toLowerCase();
+        final isImage = lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.gif');
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: InkWell(
+            onTap: () async {
+              try {
+                if (docUrl.isNotEmpty) {
+                  if (docUrl.startsWith('http')) {
+                    final uri = Uri.parse(docUrl);
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    }
+                  } else {
+                    await OpenFilex.open(docUrl);
+                  }
+                } else {
+                  Message.showTopRightOverlay(
+                    context,
+                    'No file path available for $docName',
+                    MessageType.error,
+                  );
+                }
+              } catch (e) {
+                Message.showTopRightOverlay(
+                  context,
+                  'Cannot open $docName: $e',
+                  MessageType.error,
+                );
               }
-            } else {
-              await OpenFilex.open(docUrl);
-            }
-          } else {
-            Message.showTopRightOverlay(
-              context,
-              'No file path available for $docName',
-              MessageType.error,
-            );
-          }
-        } catch (e) {
-          Message.showTopRightOverlay(
-            context,
-            'Cannot open $docName: $e',
-            MessageType.error,
-          );
-        }
-      },
-      child: Row(
-        children: [
-          Icon(
-            isImage ? Icons.image : Icons.insert_drive_file,
-            color: Colors.blue,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Tooltip(
-              message: docName,
-              child: Text(
-                docName,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: textPrimary,
-                  decoration: TextDecoration.underline,
+            },
+            child: Row(
+              children: [
+                Icon(
+                  isImage ? Icons.image : Icons.insert_drive_file,
+                  color: Colors.blue,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                softWrap: false,
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Tooltip(
+                    message: docName,
+                    child: Text(
+                      docName,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildMentionedDocuments(Form6Details details) {
+    final names = details.documentNames ?? const [];
+    final urls = details.documentUrls ?? const [];
+    if (names.isEmpty || urls.isEmpty) {
+      return Text("N/A");
+    }
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: List.generate(names.length, (index) {
+        final docName = names[index];
+        final docUrl = index < urls.length ? (urls[index] ?? '') : '';
+        return InkWell(
+          onTap: () async {
+            try {
+              if (docUrl.isNotEmpty) {
+                if (docUrl.startsWith('http')) {
+                  final uri = Uri.parse(docUrl);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                } else {
+                  await OpenFilex.open(docUrl);
+                }
+              }
+            } catch (_) {}
+          },
+          child: Text(
+            docName,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.blue[700],
+              decoration: TextDecoration.underline,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      }),
     );
   }
 
