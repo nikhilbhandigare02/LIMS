@@ -78,7 +78,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
       child: Row(
         children: [
-          // Middle content expands and keeps things centered
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +98,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.grey[50],
                         borderRadius: BorderRadius.circular(8),
@@ -108,9 +107,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.calendar_today, size: 16, color: customColors.primary),
+                          Icon(Icons.calendar_today, size: 13, color: customColors.primary),
                           SizedBox(width: 6),
-                          Text('From: ${f(from)}', style: TextStyle(fontWeight: FontWeight.w600)),
+                          Text('From: ${f(from)}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                         ],
                       ),
                     ),
@@ -142,7 +141,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.calendar_today, size: 16, color: customColors.primary),
+                          Icon(Icons.calendar_today, size: 13, color: customColors.primary),
                           SizedBox(width: 6),
                           Text('To: ${f(to)}', style: TextStyle(fontWeight: FontWeight.w600)),
                         ],

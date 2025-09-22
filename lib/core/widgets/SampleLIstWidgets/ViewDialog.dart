@@ -207,7 +207,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "DO Number:",
-                "value": details.DONumber,
+                "value": details.doNumber,
 
               },
             ],
@@ -256,7 +256,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               },
               {
                 "label": "Slip Number:",
-                "value": details.slip_number,
+                "value": details.slipNumber,
                 "icon": Icons.qr_code,
               },
               {
@@ -316,11 +316,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "value": formatYesNo(details.witnessSignature),
 
               },
-              {
-                "label": "Paper Slip No:",
-                "value": details.paperSlipNumber,
 
-              },
               {
                 "label": "DO Signature:",
                 "value": formatYesNo(details.signatureOfDO),
