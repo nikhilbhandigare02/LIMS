@@ -49,15 +49,17 @@ class SampleBloc extends Bloc<SampleEvent, getSampleListState> {
       }
 
       final Map<String, dynamic> requestData = {
-        "UserID": userId,
+        "userID": userId,
       };
 
       // Optionally include date range if provided
+      String _fmt(DateTime d) =>
+          '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
       if (event.fromDate != null) {
-        requestData["FromDate"] = event.fromDate!.toIso8601String();
+        requestData["fromDate"] = _fmt(event.fromDate!);
       }
       if (event.toDate != null) {
-        requestData["ToDate"] = event.toDate!.toIso8601String();
+        requestData["toDate"] = _fmt(event.toDate!);
       }
 
       final encryptedRequest = await encryptWithSession(

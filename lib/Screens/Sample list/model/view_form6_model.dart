@@ -1,8 +1,5 @@
-/// success : true
-/// message : "Form6 data fetched successfully."
-/// statusCode : 200
-/// form6Details : [{"success":1,"message":"Form VI data fetched successfully","statusCode":200,"serialNo":"S001","sampleCodeNumber":"SCN0001","collectionDate":"13-08-2025 10:00:00","placeOfCollection":"Mumbai","sampleName":"Water Sample","quantityOfSample":"500 ml","sampleId":"0","preservativeAdded":"1","preservativeName":"Sodium Thiosulfate","quantityOfPreservative":"5 g","witnessSignature":"1","paperSlipNumber":"PS-001","signatureOfDO":"1","wrapperCodeNumber":"WC-2025-01","sealImpression":"True","sealNumber":"SEAL-001","memoFormVI":"1","wrapperFormVI":"1","latitude":"19.0760","longitude":"72.8777","status":"Sample received by courier/Physically","senderName":"fso aditya","senderDesignation":"FSO","doNumber":"DO-12345","country":"India","state":"Maharashtra","district":"Mumbai","division":"Pimpri-Chinchwad Division","region":"Pune City Region 2","area":"Central Lab Area"}]
-
+ import 'dart:convert';
+ 
 class ViewForm6Model {
   ViewForm6Model({
       bool? success,
@@ -58,39 +55,6 @@ ViewForm6Model copyWith({  bool? success,
 
 }
 
-/// success : 1
-/// message : "Form VI data fetched successfully"
-/// statusCode : 200
-/// serialNo : "S001"
-/// sampleCodeNumber : "SCN0001"
-/// collectionDate : "13-08-2025 10:00:00"
-/// placeOfCollection : "Mumbai"
-/// sampleName : "Water Sample"
-/// quantityOfSample : "500 ml"
-/// sampleId : "0"
-/// preservativeAdded : "1"
-/// preservativeName : "Sodium Thiosulfate"
-/// quantityOfPreservative : "5 g"
-/// witnessSignature : "1"
-/// paperSlipNumber : "PS-001"
-/// signatureOfDO : "1"
-/// wrapperCodeNumber : "WC-2025-01"
-/// sealImpression : "True"
-/// sealNumber : "SEAL-001"
-/// memoFormVI : "1"
-/// wrapperFormVI : "1"
-/// latitude : "19.0760"
-/// longitude : "72.8777"
-/// status : "Sample received by courier/Physically"
-/// senderName : "fso aditya"
-/// senderDesignation : "FSO"
-/// doNumber : "DO-12345"
-/// country : "India"
-/// state : "Maharashtra"
-/// district : "Mumbai"
-/// division : "Pimpri-Chinchwad Division"
-/// region : "Pune City Region 2"
-/// area : "Central Lab Area"
 
 class Form6Details {
   Form6Details({
@@ -129,8 +93,8 @@ class Form6Details {
     String? area,
     String? slip_number,
     String? documents,
-    String? documentName,
-    String? documentUrl,
+    List<String>? documentNames,
+    List<String>? documentUrls,
   }) {
     _success = success;
     _message = message;
@@ -167,8 +131,8 @@ class Form6Details {
     _area = area;
     _slip_number = slip_number;
     _documents = documents;
-    _documentName = documentName;
-    _documentUrl = documentUrl;
+    _documentNames = documentNames;
+    _documentUrls = documentUrls;
   }
 
   Form6Details.fromJson(dynamic json) {
@@ -207,8 +171,79 @@ class Form6Details {
     _area = (json['area'] ?? json['Area'])?.toString();
     _slip_number = (json['slip_number'] ?? json['slip_number'])?.toString();
     _documents = (json['documents'] ?? json['Documents'])?.toString();
-    _documentName = (json['documentName'] ?? json['DocumentName'])?.toString();
-    _documentUrl = (json['document_url'] ?? json['documentUrl'] ?? json['DocumentUrl'])?.toString();
+    // Parse document list from a JSON array string present in documentUrl (as per API)
+    final dynamic docUrlNode = json['document_url'] ?? json['documentUrl'] ?? json['DocumentUrl'] ?? json['DocumentURL'];
+    final dynamic docNameNode = json['documentName'] ?? json['DocumentName'] ?? json['DocumentNames'];
+    // ignore: avoid_print
+    print('[Form6Details] Raw documentUrl node type=${docUrlNode.runtimeType}');
+    List<String> names = [];
+    List<String> urls = [];
+    try {
+      if (docUrlNode is String && docUrlNode.trim().isNotEmpty) {
+        final dynamic parsed = jsonDecode(docUrlNode);
+        if (parsed is List) {
+          for (final item in parsed) {
+            if (item is Map<String, dynamic>) {
+              final n = (item['DocumentName'] ?? item['documentName'] ?? item['name'])?.toString();
+              final u = (item['DocumentUrl'] ?? item['documentUrl'] ?? item['url'])?.toString();
+              if (n != null && n.isNotEmpty) names.add(n);
+              if (u != null && u.isNotEmpty) urls.add(u);
+            }
+          }
+        }
+      } else if (docUrlNode is List) {
+        for (final item in docUrlNode) {
+          if (item is Map<String, dynamic>) {
+            final n = (item['DocumentName'] ?? item['documentName'] ?? item['name'])?.toString();
+            final u = (item['DocumentUrl'] ?? item['documentUrl'] ?? item['url'])?.toString();
+            if (n != null && n.isNotEmpty) names.add(n);
+            if (u != null && u.isNotEmpty) urls.add(u);
+          }
+        }
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('[Form6Details] JSON decode failed for documentUrl: $e');
+      // Fallback: try to extract pairs using RegExp from raw string
+      if (docUrlNode is String && docUrlNode.isNotEmpty) {
+        final raw = docUrlNode;
+        final nameExp = RegExp(r'"(?:DocumentName|documentName)"\s*:\s*"([^"]+)"');
+        final urlExp = RegExp(r'"(?:DocumentUrl|documentUrl|url)"\s*:\s*"([^"]+)"');
+        final nameMatches = nameExp.allMatches(raw).toList();
+        final urlMatches = urlExp.allMatches(raw).toList();
+        final count = nameMatches.length > 0 ? nameMatches.length : urlMatches.length;
+        for (int i = 0; i < count; i++) {
+          final n = i < nameMatches.length ? nameMatches[i].group(1) : null;
+          final u = i < urlMatches.length ? urlMatches[i].group(1) : null;
+          if (n != null && n.isNotEmpty) names.add(n);
+          if (u != null && u.isNotEmpty) urls.add(u);
+        }
+        // If still nothing and it looks like a single URL, use it
+        if (urls.isEmpty && raw.startsWith('http')) {
+          urls.add(raw);
+        }
+      }
+    }
+    if ((names.isEmpty && docNameNode != null)) {
+      final dn = docNameNode.toString();
+      if (dn.isNotEmpty) names = [dn];
+    }
+    // Fallback: if urls present but names missing, derive names from URL basename
+    if (urls.isNotEmpty && names.isEmpty) {
+      names = urls.map((u) {
+        final s = u.toString();
+        final idx = s.lastIndexOf('/');
+        return idx >= 0 ? s.substring(idx + 1) : s;
+      }).toList();
+    }
+    // If names present but urls missing and docUrlNode is a non-empty string, use it as single URL
+    if (names.isNotEmpty && urls.isEmpty && docUrlNode is String && docUrlNode.isNotEmpty) {
+      urls = [docUrlNode];
+    }
+    _documentNames = names.isNotEmpty ? names : null;
+    _documentUrls = urls.isNotEmpty ? urls : null;
+    // ignore: avoid_print
+    print('[Form6Details] Parsed documents -> names=${_documentNames?.length ?? 0}, urls=${_documentUrls?.length ?? 0}');
   }
 
   num? _success;
@@ -246,8 +281,8 @@ class Form6Details {
   String? _area;
   String? _slip_number;
   String? _documents;
-  String? _documentName;
-  String? _documentUrl;
+  List<String>? _documentNames;
+  List<String>? _documentUrls;
 
   Form6Details copyWith({
     num? success,
@@ -285,8 +320,8 @@ class Form6Details {
     String? area,
     String? slip_number,
     String? documents,
-    String? documentName,
-    String? documentUrl,
+    List<String>? documentNames,
+    List<String>? documentUrls,
   }) =>
       Form6Details(
         success: success ?? _success,
@@ -324,8 +359,8 @@ class Form6Details {
         area: area ?? _area,
         slip_number: slip_number ?? _slip_number,
         documents: documents ?? _documents,
-        documentName: documentName ?? _documentName,
-        documentUrl: documentUrl ?? _documentUrl,
+        documentNames: documentNames ?? _documentNames,
+        documentUrls: documentUrls ?? _documentUrls,
       );
 
   num? get success => _success;
@@ -362,9 +397,9 @@ class Form6Details {
   String? get region => _region;
   String? get area => _area;
   String? get slip_number => _slip_number;
-  String? get documents => _documents;
-  String? get documentName => _documentName;
-  String? get documentUrl => _documentUrl;
+
+  List<String>? get documentNames => _documentNames;
+  List<String>? get documentUrls => _documentUrls;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -403,8 +438,8 @@ class Form6Details {
     map['area'] = _area;
     map['slip_number'] = _slip_number;
     map['documents'] = _documents;
-    map['documentName'] = _documentName;
-    map['documentUrl'] = _documentUrl;
+    map['documentName'] = _documentNames;
+    map['documentUrl'] = _documentUrls;
     return map;
   }
 }
