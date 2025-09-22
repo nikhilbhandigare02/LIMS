@@ -10,6 +10,7 @@ import 'package:food_inspector/core/widgets/UpdatePassWidget/ConfirmPasswordInpu
 import '../../../config/Routes/RouteName.dart';
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
+import '../../../core/utils/footer.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 
 import '../../../core/widgets/UpdatePassWidget/CurrentPasswordInputField.dart';
@@ -164,7 +165,11 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                           state.message,
                           MessageType.success,
                         );
-                        Navigator.pop(context);
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RouteName.loginScreen,
+                              (route) => false,
+                        );
                         break;
                       case ApiStatus.error:
                         Message.showTopRightOverlay(
@@ -289,24 +294,20 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                   ),
                                 ),
                               ),
+
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              '© 2024 Food Safety Organization',
-                              style: TextStyle(
-                                color: Colors.grey.withOpacity(0.6),
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            SizedBox(height: 15),
+                            Footer(),
                           ],
+
                         ),
                       );
                     },
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
+                SizedBox(height: 25),
+
             ],
           ),
         ),

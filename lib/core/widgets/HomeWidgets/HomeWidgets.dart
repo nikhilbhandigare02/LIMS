@@ -124,6 +124,7 @@ class BlocDropdown extends StatelessWidget {
   final void Function(String?) onChanged;
   final IconData? icon;
   final String? Function(String?)? validator;
+  final Color? dropdownColor;
 
   const BlocDropdown({
     super.key,
@@ -133,6 +134,7 @@ class BlocDropdown extends StatelessWidget {
     required this.onChanged,
     this.icon,
     this.validator,
+    this.dropdownColor,
 
   });
 
@@ -148,6 +150,7 @@ class BlocDropdown extends StatelessWidget {
         fontWeight: FontWeight.w500,
         color: Colors.black,
       ),
+      dropdownColor: dropdownColor ?? customColors.white,
       decoration: InputDecoration(
         hintText: 'Select $label',
         hintStyle: theme.bodyMedium?.copyWith( // ✅ theme font

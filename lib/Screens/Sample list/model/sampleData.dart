@@ -1,8 +1,3 @@
-/// sampleList : [{"serial_no":"S002","sample_sent_date":"2025-08-13T16:36:40+05:30","sample_resent_date":"2025-08-13T17:55:03+05:30","sample_re_requested_date":"2025-08-13T15:50:51+05:30","lab_location":"Mumbai","status_name":null,"userID":2},{"serial_no":"S003","sample_sent_date":"2025-08-13T16:41:29+05:30","sample_resent_date":"0001-01-01T00:00:00","sample_re_requested_date":"0001-01-01T00:00:00","lab_location":null,"status_name":null,"userID":2},{"serial_no":"S004","sample_sent_date":"2025-08-13T17:56:41+05:30","sample_resent_date":"0001-01-01T00:00:00","sample_re_requested_date":"0001-01-01T00:00:00","lab_location":"Pune","status_name":null,"userID":2}]
-/// success : true
-/// message : "Sample data fetched successfully."
-/// statusCode : 200
-
 class SampleData {
   SampleData({
     List<SampleList>? sampleList,
@@ -17,15 +12,19 @@ class SampleData {
   }
 
   SampleData.fromJson(dynamic json) {
-    if (json['sampleList'] != null) {
+    // Note: API returns "SampleList" (capital S) not "sampleList"
+    if (json['SampleList'] != null) {
       _sampleList = [];
-      json['sampleList'].forEach((v) {
+      json['SampleList'].forEach((v) {
         _sampleList?.add(SampleList.fromJson(v));
       });
     }
-    _success = json['success'] ?? false;
-    _message = json['message'] ?? '';
-    _statusCode = json['statusCode'] ?? 0;
+    // Note: API returns "Success" (capital S) not "success"
+    _success = json['Success'] ?? false;
+    // Note: API returns "Message" (capital M) not "message"
+    _message = json['Message'] ?? '';
+    // Note: API returns "StatusCode" (capital S) not "statusCode"
+    _statusCode = json['StatusCode'] ?? 0;
   }
 
   List<SampleList>? _sampleList;
@@ -54,22 +53,14 @@ class SampleData {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (_sampleList != null) {
-      map['sampleList'] = _sampleList?.map((v) => v.toJson()).toList();
+      map['SampleList'] = _sampleList?.map((v) => v.toJson()).toList();
     }
-    map['success'] = _success;
-    map['message'] = _message;
-    map['statusCode'] = _statusCode;
+    map['Success'] = _success;
+    map['Message'] = _message;
+    map['StatusCode'] = _statusCode;
     return map;
   }
 }
-
-/// serial_no : "S002"
-/// sample_sent_date : "2025-08-13T16:36:40+05:30"
-/// sample_resent_date : "2025-08-13T17:55:03+05:30"
-/// sample_re_requested_date : "2025-08-13T15:50:51+05:30"
-/// lab_location : "Mumbai"
-/// status_name : null
-/// userID : 2
 
 class SampleList {
   SampleList({
@@ -94,28 +85,35 @@ class SampleList {
     String? pickString(List<String> candidateKeys) {
       for (final key in candidateKeys) {
         final dynamic value = (json as Map<String, dynamic>)[key];
-        if (value != null) return value.toString();
+        if (value != null && value.toString().isNotEmpty) {
+          return value.toString();
+        }
       }
       return null;
     }
 
     String? parseDate(String? date) {
-      if (date == null || date == '' || date.startsWith('0001-01-01')) return null;
+      if (date == null ||
+          date.isEmpty ||
+          date == 'null' ||
+          date.toLowerCase() == 'null' ||
+          date.startsWith('0001-01-01')) {
+        return null;
+      }
       return date;
     }
 
     _serialNo = pickString(['serial_no', 'serialNo', 'SerialNo', 'Serial_No']);
-    _sampleSentDate =
-        parseDate(pickString(['sample_sent_date', 'sampleSentDate', 'SampleSentDate']));
-    _sampleResentDate =
-        parseDate(pickString(['sample_resent_date', 'sampleResentDate', 'SampleResentDate']));
-    _sampleReRequestedDate = parseDate(
-        pickString(['sample_re_requested_date', 'sampleReRequestedDate', 'SampleReRequestedDate']));
+
+    // Direct mapping since API returns exact keys
+    _sampleSentDate = parseDate(json['sample_sent_date']?.toString());
+    _sampleResentDate = parseDate(json['sample_resent_date']?.toString());
+    _sampleReRequestedDate = parseDate(json['sample_re_requested_date']?.toString());
+
     _labLocation = pickString(['lab_location', 'labLocation', 'LabLocation']);
     _statusName = pickString(['status_name', 'statusName']);
 
-    final dynamic userValue =
-        json['userID'] ?? json['UserID'] ?? json['userId'] ?? json['UserId'];
+    final dynamic userValue = json['UserID'] ?? json['userID'] ?? json['userId'] ?? json['UserId'];
     if (userValue is num) {
       _userID = userValue;
     } else if (userValue is String) {
@@ -167,6 +165,6 @@ class SampleList {
     'sample_re_requested_date': _sampleReRequestedDate,
     'lab_location': _labLocation,
     'status_name': _statusName,
-    'userID': _userID,
+    'UserID': _userID,
   };
 }

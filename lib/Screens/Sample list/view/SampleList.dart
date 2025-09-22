@@ -811,9 +811,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                               ),
                             ),
                             DataCell(Text(_formatDate(data.sampleSentDate))),
-                            DataCell(Text(_formatDate(data.sampleResentDate))),
+                            DataCell(Text(_formatDate(data.sampleReRequestedDate))),
                             DataCell(
-                              Text(_formatDate(data.sampleReRequestedDate)),
+                              Text(_formatDate(data.sampleResentDate)),
                             ),
                             DataCell(
                               Container(
@@ -926,25 +926,84 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
   String _formatDate(String? date) {
-    if (date == null || date == '0001-01-01T00:00:00') return 'N/A';
+       if (date == null) return 'N/A';
+    final raw = date.trim();
+    if (raw.isEmpty) return 'N/A';
+    final lower = raw.toLowerCase();
+    if (lower == 'null' || lower == 'n/a' || lower == 'na' || lower == '-') {
+      return 'N/A';
+    }
+
     try {
-      final parsedDate = DateTime.parse(date);
-      final day = parsedDate.day.toString().padLeft(2, '0');
-      final month = parsedDate.month.toString().padLeft(2, '0');
-      final year = parsedDate.year.toString();
-      return '$day/$month/$year';
+      DateTime? parsedDate;
+
+      // Try ISO-8601 first (e.g., 2025-09-22T11:20:45Z or 2025-09-22)
+      if (raw.contains('T') || raw.contains('-')) {
+        parsedDate = DateTime.tryParse(raw);
+      }
+
+      // Handle slashed formats from API e.g., "9/22/2025 4:20:45 PM" or "9/22/2025 16:20:45" or just "9/22/2025"
+      if (parsedDate == null && raw.contains('/')) {
+        final datePart = raw.split(' ').first; // take part before space
+        final parts = datePart.split('/');
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (month != null && day != null && year != null) {
+            parsedDate = DateTime(year, month, day);
+          }
+        }
+      }
+
+      if (parsedDate == null) return 'N/A';
+
+      final d = parsedDate.day.toString().padLeft(2, '0');
+      final m = parsedDate.month.toString().padLeft(2, '0');
+      final y = parsedDate.year.toString();
+      return '$d/$m/$y';
     } catch (e) {
+      // ignore: avoid_print
+      print('Error parsing date: $date - Error: $e');
       return 'N/A';
     }
   }
+
+
   DateTime? _parseDate(String? date) {
-    if (date == null || date.isEmpty || date == '0001-01-01T00:00:00') {
+    if (date == null) return null;
+    final raw = date.trim();
+    if (raw.isEmpty) return null;
+    final lower = raw.toLowerCase();
+    if (lower == 'null' || lower == 'n/a' || lower == 'na' || lower == '-') {
       return null;
     }
+
     try {
-      final d = DateTime.parse(date);
-      return DateTime(d.year, d.month, d.day);
-    } catch (_) {
+      // Try ISO formats
+      if (raw.contains('T') || raw.contains('-')) {
+        final p = DateTime.tryParse(raw);
+        if (p != null) return DateTime(p.year, p.month, p.day);
+      }
+
+      // Handle slashed formats with or without time
+      if (raw.contains('/')) {
+        final datePart = raw.split(' ').first; // "9/22/2025"
+        final parts = datePart.split('/');
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (month != null && day != null && year != null) {
+            return DateTime(year, month, day);
+          }
+        }
+      }
+
+      return null;
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error parsing date for filtering: $date - Error: $e');
       return null;
     }
   }
