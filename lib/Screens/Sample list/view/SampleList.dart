@@ -59,20 +59,17 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
   Widget _buildStaticDateFilterBar() {
     final today = DateTime.now();
-    final from = _fromDate ?? today;
-    final to = _toDate ?? today;
-
     String f(DateTime d) =>
         '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isSmall = constraints.maxWidth < 400;
+        final isSmall = constraints.maxWidth < 450; // breakpoint for responsiveness
 
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding:  EdgeInsets.symmetric(horizontal: 22, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -88,62 +85,72 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // From Date Picker
+                // From picker
                 _buildDateBox(
-                  context,
-                  label: "From: ${f(from)}",
-                  date: from,
+                  label: _fromDate == null
+                      ? 'Select From Date'
+                      : 'From: ${f(_fromDate!)}',
+                  date: _fromDate ?? today,
+                  color: _fromDate == null ? Colors.grey[600]! : Colors.black87,
                   onPicked: (picked) => setState(() => _fromDate = picked),
+                  isSmall: isSmall,
                 ),
                 const SizedBox(width: 12),
 
-                // To Date Picker
+                // To picker
                 _buildDateBox(
-                  context,
-                  label: "To: ${f(to)}",
-                  date: to.isBefore(from) ? from : to,
+                  label: _toDate == null
+                      ? 'Select To Date'
+                      : 'To: ${f(_toDate!)}',
+                  date: _toDate ?? _fromDate ?? today,
+                  color: _toDate == null ? Colors.grey[600]! : Colors.black87,
                   onPicked: (picked) => setState(() => _toDate = picked),
+                  isSmall: isSmall,
                 ),
                 const SizedBox(width: 8),
 
-                // Apply Button
-                ElevatedButton(
-                  onPressed: () {
-                    final fromDate = _fromDate;
-                    final toDate = _toDate;
+                // Apply button
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final fromDate = _fromDate;
+                      final toDate = _toDate;
 
-                    if (fromDate != null &&
-                        toDate != null &&
-                        toDate.isBefore(fromDate)) {
+                      if (fromDate != null &&
+                          toDate != null &&
+                          toDate.isBefore(fromDate)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Invalid range: To date must be on/after From date')),
+                        );
+                        return;
+                      }
+
+                      setState(() => currentPage = 0);
+
+                      sampleBloc.add(
+                        getSampleListEvent(fromDate: fromDate, toDate: toDate),
+                      );
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text(
-                                'Invalid range: To date must be on/after From date')),
+                            content: Text('Fetching filtered records...')),
                       );
-                      return;
-                    }
-
-                    setState(() => currentPage = 0);
-
-                    sampleBloc.add(
-                      getSampleListEvent(fromDate: fromDate, toDate: toDate),
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Fetching filtered records...')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: customColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: isSmall ? 8 : 12, vertical: 10),
-                    visualDensity: VisualDensity.compact,
-                    minimumSize: const Size(36, 36),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: customColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.all(isSmall ? 6 : 8),
+                      minimumSize: const Size(32, 32),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child:
+                    const Icon(Icons.check, size: 18, color: Colors.white),
                   ),
-                  child: const Icon(Icons.check, size: 18, color: Colors.white),
                 ),
               ],
             ),
@@ -153,11 +160,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
 
-  /// reusable date box widget
-  Widget _buildDateBox(BuildContext context,
-      {required String label,
-        required DateTime date,
-        required ValueChanged<DateTime> onPicked}) {
+  Widget _buildDateBox({
+    required String label,
+    required DateTime date,
+    required Color color,
+    required ValueChanged<DateTime> onPicked,
+    required bool isSmall,
+  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: () async {
@@ -170,7 +179,10 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         if (picked != null) onPicked(picked);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmall ? 6 : 10,
+          vertical: isSmall ? 6 : 8,
+        ),
         decoration: BoxDecoration(
           color: Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
@@ -179,11 +191,17 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.calendar_today, size: 14, color: customColors.primary),
+            Icon(Icons.calendar_today,
+                size: isSmall ? 14 : 16, color: customColors.primary),
             const SizedBox(width: 6),
-            Text(label,
-                style:
-                const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+            Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: isSmall ? 11 : 13,
+                color: color,
+              ),
+            ),
           ],
         ),
       ),
@@ -247,25 +265,25 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
 
 
-  // void _showEditDialog(BuildContext context, SampleList data) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (ctx) {
-  //       return AlertDialog(
-  //         title: Text('Edit Sample'),
-  //         content: Text(
-  //           'Edit functionality for sample ${data.serialNo} will be implemented here.',
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(ctx).pop(),
-  //             child: Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  void _showEditDialog(BuildContext context, SampleList data) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text('Edit Sample'),
+          content: Text(
+            'Edit functionality for sample ${data.serialNo} will be implemented here.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 
   @override
@@ -352,18 +370,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 case Status.loading:
                   return Center(child: const CircularProgressIndicator());
                 case Status.complete:
-                  if (state.fetchSampleList.data == null ||
-                      state.fetchSampleList.data.isEmpty) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
-                  final sampleList = state.fetchSampleList.data as List<SampleData>;
-                  final sampleDataList = sampleList
+                  // Build table layout regardless of having records; show message within table when empty
+                  final rawData = state.fetchSampleList.data as List<SampleData>?;
+                  final sampleDataList = (rawData ?? const <SampleData>[]) 
                       .expand((sampleData) => sampleData.sampleList ?? [])
                       .toList();
-
-                  if (sampleDataList.isEmpty) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
 
                   final filteredSampleDataList = sampleDataList; // static design only, no filtering applied
                   return Container(
@@ -382,13 +393,19 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     ),
                   );
                 case Status.error:
-                  final msg = state.fetchSampleList.message?.toString().toLowerCase() ?? '';
-                  final isNotFound = msg.contains('404') || msg.contains('not found') || msg.contains('no data');
-                  if (isNotFound) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
-                  return Center(
-                    child: Text('Error: ${state.fetchSampleList.message}'),
+                  // Preserve table/header UI and show message row inside the table
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.grey[50]!, Colors.grey[100]!],
+                      ),
+                    ),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: _buildTableView(const <SampleList>[]),
+                    ),
                   );
                 default:
                   return Center(child: Text('Unexpected state'));
@@ -770,132 +787,147 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Actions')),
                       ],
-                      rows: paginatedData.map((data) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      customColors.primary.withOpacity(0.1),
-                                      customColors.primary.withOpacity(0.2),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  data.serialNo ?? 'N/A',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            DataCell(Text(_formatDate(data.sampleSentDate))),
-                            DataCell(Text(_formatDate(data.sampleReRequestedDate))),
-                            DataCell(
-                              Text(_formatDate(data.sampleResentDate)),
-                            ),
-                            DataCell(
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      getStatusColor(data.statusName),
-                                      getStatusColor(
-                                        data.statusName,
-                                      ).withOpacity(0.8),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  data.statusName ?? 'Unknown',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Container(
-                                width: 120,
-                                child: Text(
-                                  data.labLocation ?? 'N/A',
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.blue,
-                                          Colors.blue.withOpacity(0.8),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.visibility,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider.value(
-                                            value: sampleBloc,
-                                            child: SampleDetailsScreen(
-                                                serialNo: data.serialNo ?? ''),
-                                          ),
-                                        ),
-                                      ),
-                                      iconSize: 18,
-                                    ),
-                                  ),
-                                  // if (_isTampered(data.statusName)) ...[
-                                  //   SizedBox(width: 4),
-                                  //   Container(
-                                  //     decoration: BoxDecoration(
-                                  //       gradient: LinearGradient(
-                                  //         colors: [
-                                  //           Colors.green,
-                                  //           Colors.green.withOpacity(0.8),
-                                  //         ],
-                                  //       ),
-                                  //       borderRadius: BorderRadius.circular(6),
-                                  //     ),
-                                  //     child: IconButton(
-                                  //       icon: Icon(
-                                  //         Icons.edit,
-                                  //         color: Colors.white,
-                                  //       ),
-                                  //       onPressed: () =>
-                                  //           _showEditDialog(context, data),
-                                  //       iconSize: 18,
-                                  //     ),
-                                  //   ),
-                                  // ],
+                      rows: paginatedData.isEmpty
+                          ? [
+                              DataRow(
+                                cells: const [
+                                  DataCell(Text(
+                                    'Currently, no records exist.',
+                                    style: TextStyle( color: Colors.black87),
+                                  )),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
                                 ],
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                            ]
+                          : paginatedData.map((data) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            customColors.primary.withOpacity(0.1),
+                                            customColors.primary.withOpacity(0.2),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        data.serialNo ?? 'N/A',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(Text(_formatDate(data.sampleSentDate))),
+                                  DataCell(Text(_formatDate(data.sampleReRequestedDate))),
+                                  DataCell(
+                                    Text(_formatDate(data.sampleResentDate)),
+                                  ),
+                                  DataCell(
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            getStatusColor(data.statusName),
+                                            getStatusColor(data.statusName).withOpacity(0.8),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        data.statusName ?? 'Unknown',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Container(
+                                      width: 120,
+                                      child: Text(
+                                        data.labLocation ?? 'N/A',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.blue,
+                                                Colors.blue.withOpacity(0.8),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.visibility,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => BlocProvider.value(
+                                                  value: sampleBloc,
+                                                  child: SampleDetailsScreen(
+                                                      serialNo: data.serialNo ?? ''),
+                                                ),
+                                              ),
+                                            ),
+                                            iconSize: 18,
+                                          ),
+                                        ),
+                                        if (_isTampered(data.statusName)) ...[
+                                          SizedBox(width: 4),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.green,
+                                                  Colors.green.withOpacity(0.8),
+                                                ],
+                                              ),
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed: () =>
+                                                  _showEditDialog(context, data),
+                                              iconSize: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
                     ),
                   ),
                 ),
