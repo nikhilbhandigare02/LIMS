@@ -7,6 +7,7 @@ import 'package:food_inspector/Screens/FORM6/repository/form6Repository.dart';
 import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/utils/Message.dart';
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
@@ -49,8 +50,23 @@ class LoginButton extends StatelessWidget {
             if (passResetFlag == 0) {
               Navigator.pushNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1 ) {
-               //Navigator.pushReplacementNamed(context, RouteName.OTPVerificationScreen);
-              Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
+              // On normal login success, decide whether to show biometric opt-in first
+              final String? biometricEnabled = await secureStorage.read(key: 'biometricEnabled');
+              bool canCheck = false;
+              bool supported = false;
+              try {
+                final localAuth = LocalAuthentication();
+                canCheck = await localAuth.canCheckBiometrics;
+                supported = await localAuth.isDeviceSupported();
+              } catch (_) {}
+
+              final bool shouldAskBiometric = (biometricEnabled == null) && canCheck && supported;
+              if (shouldAskBiometric) {
+                Navigator.pushReplacementNamed(context, RouteName.biometricOptInScreen);
+              } else {
+                // Proceed to main screen
+                Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
+              }
             } else {
               Navigator.pushReplacementNamed(context, RouteName.loginScreen);
             }

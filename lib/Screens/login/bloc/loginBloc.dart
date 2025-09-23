@@ -79,8 +79,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await secureStorage.write(key: 'authToken', value: token);
             await secureStorage.write(key: 'sender name', value: senderFullName);
 
-            // ✅ Set login flag = 1
-            await secureStorage.write(key: 'isLogin', value: '1');
+          if (state.username.isNotEmpty) {
+            await secureStorage.write(key: 'lastUsername', value: state.username);
+          }
+
+          await secureStorage.write(key: 'isLogin', value: '1');
 
             print('Auth token, sender Name & login flag stored securely.');
           } else {
@@ -109,7 +112,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             final String? fallbackToken = fallbackMap['Token'];
             if (fallbackToken != null && fallbackToken.isNotEmpty) {
               await secureStorage.write(key: 'authToken', value: fallbackToken);
-
+              // Persist last logged-in username for quick login (fallback)
+              if (state.username.isNotEmpty) {
+                await secureStorage.write(key: 'lastUsername', value: state.username);
+              }
               await secureStorage.write(key: 'isLogin', value: '1');
               final String? loginFlag = await secureStorage.read(key: 'isLogin');
               print('Login flag: $loginFlag');

@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food_inspector/Screens/RequestSlipNumber/requestSlipNumber.dart';
 import 'package:food_inspector/Screens/login/OTPVerification/View/OtpVerification.dart';
- import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
+import 'package:food_inspector/Screens/login/view/LoginScreen.dart';
+import 'package:food_inspector/Screens/login/view/BiometricOptInScreen.dart';
 import 'package:food_inspector/Screens/registration/view/registration.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import '../../Screens/ForgotScreen/View/ForgotScreen.dart';
@@ -51,6 +52,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => Setting(),);
     case RouteName.OTPVerificationScreen:
       return  MaterialPageRoute(builder: (context) => OtpVerificationScreen(),);
+    case RouteName.biometricOptInScreen:
+      return MaterialPageRoute(builder: (context) => const BiometricOptInScreen());
     case RouteName.requestForSlip:
       return  MaterialPageRoute(builder: (context) => Requestslipnumber(),);
     case RouteName.SlipRequestDetailsScreen:

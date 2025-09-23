@@ -14,49 +14,18 @@ class SplashService {
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
   void isLogin(BuildContext context) async {
-    final String? loginFlag = await secureStorage.read(key: 'isLogin');
-    final String? verifyflag = await secureStorage.read(key: 'isVerify');
-
     Timer(
       const Duration(seconds: 3),
           () {
-        // if (loginFlag == '1' && verifyflag == '1') {
-        //   Navigator.pushNamedAndRemoveUntil(
-        //     context,
-        //     RouteName.SampleAnalysisScreen,
-        //         (route) => false,
-        //   );
-        // } else {
-        //   Navigator.pushNamedAndRemoveUntil(
-        //     context,
-        //     RouteName.loginScreen,
-        //         (route) => false,
-        //   );
-
-            // if (verifyflag == '1') {
-            //   Navigator.pushNamedAndRemoveUntil(
-            //     context,
-            //     RouteName.SampleAnalysisScreen,
-            //         (route) => false,
-            //   );
-            // } else {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                RouteName.loginScreen,
-                    (route) => false,
-              );
-
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (_) => BlocProvider(
-          //       create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-          //       child: Form6LandingScreen(),
-          //     ),
-          //   ),
-          // );
+        // Navigate to login screen in all cases; the login screen will handle
+        // whether to show quick login options (biometric/password-only)
+        // based on previously saved login state in secure storage.
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          RouteName.loginScreen,
+              (route) => false,
+        );
         }
-      // },
     );
   }
 }
