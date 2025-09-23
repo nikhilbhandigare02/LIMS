@@ -59,8 +59,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
   Widget _buildStaticDateFilterBar() {
     final today = DateTime.now();
-    final from = _fromDate ?? today;
-    final to = _toDate ?? today;
     String f(DateTime d) => '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -92,7 +90,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         context: context,
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2100),
-                        initialDate: from,
+                        initialDate: _fromDate ?? today,
                       );
                       if (picked != null) {
                         setState(() => _fromDate = picked);
@@ -110,7 +108,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         children: [
                           Icon(Icons.calendar_today, size: 16, color: customColors.primary),
                           SizedBox(width: 6),
-                          Text('From: ${f(from)}', style: TextStyle(fontWeight: FontWeight.w600)),
+                          Text(
+                            _fromDate == null ? 'Select From Date' : 'From: ${f(_fromDate!)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: _fromDate == null ? Colors.grey[600] : Colors.black87,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -126,7 +130,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         context: context,
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2100),
-                        initialDate: to.isBefore(from) ? from : to,
+                        initialDate: _toDate ?? _fromDate ?? today,
                       );
                       if (picked != null) {
                         setState(() => _toDate = picked);
@@ -144,7 +148,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         children: [
                           Icon(Icons.calendar_today, size: 16, color: customColors.primary),
                           SizedBox(width: 6),
-                          Text('To: ${f(to)}', style: TextStyle(fontWeight: FontWeight.w600)),
+                          Text(
+                            _toDate == null ? 'Select To Date' : 'To: ${f(_toDate!)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: _toDate == null ? Colors.grey[600] : Colors.black87,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -153,7 +163,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ],
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 5),
 
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -162,11 +172,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 final fromDate = _fromDate;
                 final toDate = _toDate;
 
-                // Debug: show what we're about to send
-                // ignore: avoid_print
                 print('[UI] SampleList filter tick pressed. fromDate=${fromDate?.toIso8601String()}, toDate=${toDate?.toIso8601String()}');
 
-                // Validate range when both selected
+
                 if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Invalid range: To date must be on/after From date')),
@@ -174,7 +182,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   return;
                 }
 
-                // Reset pagination to first page before fetching
+
                 setState(() {
                   currentPage = 0;
                 });
