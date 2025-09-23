@@ -187,7 +187,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   currentPage = 0;
                 });
 
-                // Dispatch API call with optional dates; when null, backend should default to current date
+
                 sampleBloc.add(
                   getSampleListEvent(fromDate: fromDate, toDate: toDate),
                 );
@@ -376,18 +376,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 case Status.loading:
                   return Center(child: const CircularProgressIndicator());
                 case Status.complete:
-                  if (state.fetchSampleList.data == null ||
-                      state.fetchSampleList.data.isEmpty) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
-                  final sampleList = state.fetchSampleList.data as List<SampleData>;
-                  final sampleDataList = sampleList
+                  // Build table layout regardless of having records; show message within table when empty
+                  final rawData = state.fetchSampleList.data as List<SampleData>?;
+                  final sampleDataList = (rawData ?? const <SampleData>[]) 
                       .expand((sampleData) => sampleData.sampleList ?? [])
                       .toList();
-
-                  if (sampleDataList.isEmpty) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
 
                   final filteredSampleDataList = sampleDataList; // static design only, no filtering applied
                   return Container(
@@ -406,13 +399,19 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     ),
                   );
                 case Status.error:
-                  final msg = state.fetchSampleList.message?.toString().toLowerCase() ?? '';
-                  final isNotFound = msg.contains('404') || msg.contains('not found') || msg.contains('no data');
-                  if (isNotFound) {
-                    return const Center(child: Text('Currently, no records exist.'));
-                  }
-                  return Center(
-                    child: Text('Error: ${state.fetchSampleList.message}'),
+                  // Preserve table/header UI and show message row inside the table
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.grey[50]!, Colors.grey[100]!],
+                      ),
+                    ),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: _buildTableView(const <SampleList>[]),
+                    ),
                   );
                 default:
                   return Center(child: Text('Unexpected state'));
@@ -794,132 +793,147 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                         DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Actions')),
                       ],
-                      rows: paginatedData.map((data) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      customColors.primary.withOpacity(0.1),
-                                      customColors.primary.withOpacity(0.2),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  data.serialNo ?? 'N/A',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                      rows: paginatedData.isEmpty
+                          ? [
+                              DataRow(
+                                cells: const [
+                                  DataCell(Text(
+                                    'Currently, no records exist.',
+                                    style: TextStyle( color: Colors.black87),
+                                  )),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                  DataCell(Text('')),
+                                ],
                               ),
-                            ),
-                            DataCell(Text(_formatDate(data.sampleSentDate))),
-                            DataCell(Text(_formatDate(data.sampleReRequestedDate))),
-                            DataCell(
-                              Text(_formatDate(data.sampleResentDate)),
-                            ),
-                            DataCell(
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      getStatusColor(data.statusName),
-                                      getStatusColor(
-                                        data.statusName,
-                                      ).withOpacity(0.8),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  data.statusName ?? 'Unknown',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Container(
-                                width: 120,
-                                child: Text(
-                                  data.labLocation ?? 'N/A',
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.blue,
-                                          Colors.blue.withOpacity(0.8),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.visibility,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider.value(
-                                            value: sampleBloc,
-                                            child: SampleDetailsScreen(
-                                                serialNo: data.serialNo ?? ''),
-                                          ),
-                                        ),
-                                      ),
-                                      iconSize: 18,
-                                    ),
-                                  ),
-                                  if (_isTampered(data.statusName)) ...[
-                                    SizedBox(width: 4),
+                            ]
+                          : paginatedData.map((data) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(
                                     Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.green,
-                                            Colors.green.withOpacity(0.8),
+                                            customColors.primary.withOpacity(0.1),
+                                            customColors.primary.withOpacity(0.2),
                                           ],
                                         ),
-                                        borderRadius: BorderRadius.circular(6),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () =>
-                                            _showEditDialog(context, data),
-                                        iconSize: 18,
+                                      child: Text(
+                                        data.serialNo ?? 'N/A',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  ],
+                                  ),
+                                  DataCell(Text(_formatDate(data.sampleSentDate))),
+                                  DataCell(Text(_formatDate(data.sampleReRequestedDate))),
+                                  DataCell(
+                                    Text(_formatDate(data.sampleResentDate)),
+                                  ),
+                                  DataCell(
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            getStatusColor(data.statusName),
+                                            getStatusColor(data.statusName).withOpacity(0.8),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        data.statusName ?? 'Unknown',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Container(
+                                      width: 120,
+                                      child: Text(
+                                        data.labLocation ?? 'N/A',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.blue,
+                                                Colors.blue.withOpacity(0.8),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.visibility,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => BlocProvider.value(
+                                                  value: sampleBloc,
+                                                  child: SampleDetailsScreen(
+                                                      serialNo: data.serialNo ?? ''),
+                                                ),
+                                              ),
+                                            ),
+                                            iconSize: 18,
+                                          ),
+                                        ),
+                                        if (_isTampered(data.statusName)) ...[
+                                          SizedBox(width: 4),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Colors.green,
+                                                  Colors.green.withOpacity(0.8),
+                                                ],
+                                              ),
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed: () =>
+                                                  _showEditDialog(context, data),
+                                              iconSize: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                 ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                              );
+                            }).toList(),
                     ),
                   ),
                 ),
