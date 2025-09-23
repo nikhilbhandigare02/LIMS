@@ -745,6 +745,9 @@ List<List<Widget>> getSampleDetailsSteps(
 
               SizedBox(height: 16),
               ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                ),
                 icon: state.isUploading
                     ? const SizedBox(
                   width: 20,
@@ -754,8 +757,10 @@ List<List<Widget>> getSampleDetailsSteps(
                     color: Colors.white,
                   ),
                 )
-                    : const Icon(Icons.upload_file),
-                label: Text(state.isUploading ? "Uploading..." : "Upload Document(s)"),
+                    : const Icon(Icons.upload_file,color: Colors.blue,),
+                label: Text(state.isUploading ? "Uploading..." : "Upload Document(s)",style:  TextStyle(
+                  color: Colors.blue),),
+
                 onPressed: state.isUploading
                     ? null
                     : () async {
