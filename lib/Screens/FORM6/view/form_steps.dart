@@ -14,6 +14,17 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
+import 'package:image_picker/image_picker.dart';
+
+String _formatBytes(int bytes) {
+  const int kb = 1024;
+  const int mb = 1024 * 1024;
+  if (bytes >= mb) return (bytes / mb).toStringAsFixed(2) + ' MB';
+  if (bytes >= kb) return (bytes / kb).toStringAsFixed(2) + ' KB';
+  return bytes.toString() + ' B';
+}
+ 
+
 Future<void> loadSenderNameIfNeeded(
   SampleFormState state,
   SampleFormBloc bloc,
@@ -734,83 +745,294 @@ List<List<Widget>> getSampleDetailsSteps(
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlocTextInput(
-                label: " any other documents",
-                initialValue: state.documentName,
-                readOnly: false,
-                onChanged: (val) => bloc.add(documentNameChangedEvent(val)),
-                validator: (v) => Validators.validateEmptyField(v, 'Document Description'),
-              ),
+              Text("Any other documents", style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 8),
 
-              SizedBox(height: 16),
-              ElevatedButton.icon(
-                icon: state.isUploading
-                    ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
+              // Dynamic document rows
+              ...List.generate(state.uploadedDocs.length, (index) {
+                final doc = state.uploadedDocs[index];
+                return Card(
+                  color: customColors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        (() {
+                          // If we have an extension, render a non-editable suffix for it and only allow editing base name
+                          final String? ext = (doc.extension != null && doc.extension!.isNotEmpty)
+                              ? doc.extension
+                              : (() {
+                                  final n = doc.name;
+                                  final i = n.lastIndexOf('.');
+                                  if (i > 0 && i < n.length - 1) return n.substring(i + 1);
+                                  return null;
+                                })();
+                          if (ext != null && ext.isNotEmpty) {
+                            final String baseName = (() {
+                              final n = doc.name;
+                              final dotIdx = n.toLowerCase().endsWith('.' + ext.toLowerCase())
+                                  ? n.length - (ext.length + 1)
+                                  : -1;
+                              return dotIdx > 0 ? n.substring(0, dotIdx) : (n.isEmpty ? '' : n);
+                            })();
+                            return TextFormField(
+                              initialValue: baseName,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (v) => Validators.validateEmptyField(v, 'Document Name'),
+                              onChanged: (v) {
+                                final newName = (v.isEmpty ? '' : v) + '.' + ext;
+                                context.read<SampleFormBloc>().add(
+                                  UpdateUploadedDocumentName(index: index, name: newName),
+                                );
+                              },
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Enter Mention document name',
+                                hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
+                                filled: true,
+                                fillColor: customColors.white,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: customColors.primary),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: const BorderSide(color: customColors.primary),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: customColors.primary, width: 0.5),
+                                ),
+                                suffix: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                                  ),
+                                  child: Text(
+                                    '.$ext',
+                                    style: TextStyle(color: customColors.primary, fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return BlocTextInput(
+                              label: "Mention document name",
+                              initialValue: doc.name,
+                              onChanged: (val) => context.read<SampleFormBloc>().add(
+                                UpdateUploadedDocumentName(index: index, name: val),
+                              ),
+                              validator: (v) => Validators.validateEmptyField(v, 'Document Name'),
+                            );
+                          }
+                        })(),
+                        SizedBox(height: 12),
+                        Row(
+                          children: [
+                            ElevatedButton.icon(
+                              icon: state.isUploading
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                    )
+                                  : const Icon(Icons.upload_file),
+                              label: Text(state.isUploading ? 'Uploading...' : (doc.base64Data.isEmpty ? 'Choose file' : 'Replace file')),
+                              onPressed: state.isUploading
+                                  ? null
+                                  : () async {
+                                      final result = await FilePicker.platform.pickFiles(
+                                        type: FileType.any,
+                                        allowMultiple: false,
+                                        withData: true,
+                                      );
+                                      if (result == null || result.files.isEmpty) return;
+                                      final f = result.files.first;
+                                      final bytes = f.path != null
+                                          ? await File(f.path!).readAsBytes()
+                                          : f.bytes;
+                                      if (bytes == null) return;
+
+                                      const int maxTotalSize = 5 * 1024 * 1024;
+                                      int totalSize = 0;
+                                      for (int i = 0; i < state.uploadedDocs.length; i++) {
+                                        if (i == index) continue; // we'll replace this index
+                                        final d = state.uploadedDocs[i];
+                                        if (d.base64Data.isNotEmpty) {
+                                          totalSize += (d.sizeBytes ?? base64Decode(d.base64Data).length);
+                                        }
+                                      }
+                                      totalSize += bytes.length;
+                                      if (totalSize > maxTotalSize) {
+                                        Message.showTopRightOverlay(context, 'Total file size must not exceed 5 MB.', MessageType.error);
+                                        return;
+                                      }
+
+                                      final newDoc = UploadedDoc(
+                                        name: (doc.name.isEmpty ? (f.name) : doc.name),
+                                        base64Data: base64Encode(bytes),
+                                        mimeType: null,
+                                        extension: f.extension,
+                                        sizeBytes: bytes.length,
+                                      );
+                                      context.read<SampleFormBloc>().add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
+
+                                      if (doc.name.isEmpty) {
+                                        context.read<SampleFormBloc>().add(UpdateUploadedDocumentName(index: index, name: f.name));
+                                      }
+                                    },
+                            ),
+                            const SizedBox(width: 4),
+                            OutlinedButton(
+                              onPressed: state.isUploading
+                                  ? null
+                                  : () async {
+                                final picker = ImagePicker();
+                                final XFile? photo = await picker.pickImage(
+                                  source: ImageSource.camera,
+                                  imageQuality: 85,
+                                );
+                                if (photo == null) return;
+                                final bytes = await photo.readAsBytes();
+
+                                const int maxTotalSize = 5 * 1024 * 1024;
+                                int totalSize = 0;
+                                for (int i = 0; i < state.uploadedDocs.length; i++) {
+                                  if (i == index) continue;
+                                  final d = state.uploadedDocs[i];
+                                  if (d.base64Data.isNotEmpty) {
+                                    totalSize += base64Decode(d.base64Data).length;
+                                  }
+                                }
+                                totalSize += bytes.length;
+                                if (totalSize > maxTotalSize) {
+                                  Message.showTopRightOverlay(
+                                      context,
+                                      'Total file size must not exceed 5 MB.',
+                                      MessageType.error);
+                                  return;
+                                }
+
+                                final String ext = 'jpg';
+                                final String displayName =
+                                doc.name.isEmpty ? photo.name : doc.name;
+                                final newDoc = UploadedDoc(
+                                  name: displayName,
+                                  base64Data: base64Encode(bytes),
+                                  mimeType: 'image/jpeg',
+                                  extension: ext,
+                                  sizeBytes: bytes.length,
+                                );
+                                context
+                                    .read<SampleFormBloc>()
+                                    .add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
+
+                                if (doc.name.isEmpty) {
+                                  context
+                                      .read<SampleFormBloc>()
+                                      .add(UpdateUploadedDocumentName(index: index, name: displayName));
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.all(8), // smaller padding
+                                minimumSize: const Size(40, 40), // compact square button
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Icon(Icons.photo_camera, size: 20, color: Colors.black87),
+                            ),
+                            const SizedBox(width: 8),
+                            if (doc.base64Data.isNotEmpty)
+                              IconButton(
+                                icon: Icon(Icons.open_in_new, color: customColors.primary),
+                                tooltip: 'Open',
+                                onPressed: () async {
+                                  await _openUploadedDoc(doc);
+                                },
+                              ),
+                            IconButton(
+                              icon: Icon(
+                                (doc.base64Data.isEmpty && (doc.name.isEmpty)) ? Icons.close : Icons.delete_outline,
+                                color: customColors.primary,
+                              ),
+                              tooltip: (doc.base64Data.isEmpty && (doc.name.isEmpty)) ? 'Close' : 'Remove',
+                              onPressed: () {
+                                context.read<SampleFormBloc>().add(RemoveUploadedDocument(index));
+                              },
+                            ),
+                          ],
+                        ),
+                        if (doc.base64Data.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: Text(
+                              'Size: ' + _formatBytes((doc.sizeBytes ?? base64Decode(doc.base64Data).length)),
+                              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                            ),
+                          ),
+                        // if (doc.base64Data.isNotEmpty && doc.name.isNotEmpty)
+                        //   Padding(
+                        //     padding: const EdgeInsets.only(top: 8.0),
+                        //     child: InkWell(
+                        //       onTap: () async {
+                        //         await _openUploadedDoc(doc);
+                        //       },
+                        //       child: Row(
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //           const Icon(Icons.insert_drive_file, size: 16),
+                        //           const SizedBox(width: 6),
+                        //           Text(
+                        //             doc.name,
+                        //             style: TextStyle(
+                        //               color: customColors.primary,
+                        //               decoration: TextDecoration.underline,
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+
+              // Add new document row button (conditional)
+              if (state.uploadedDocs.isEmpty)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add document'),
+                    onPressed: () {
+                      context.read<SampleFormBloc>().add(const AddEmptyDocumentRow());
+                    },
                   ),
                 )
-                    : const Icon(Icons.upload_file),
-                label: Text(state.isUploading ? "Uploading..." : "Upload Document(s)"),
-                onPressed: state.isUploading
-                    ? null
-                    : () async {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.any,
-                    allowMultiple: true,
-                    withData: true, // required for web
-                  );
+              else if (state.uploadedDocs.first.base64Data.isNotEmpty)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add another document'),
+                    onPressed: () {
+                      context.read<SampleFormBloc>().add(const AddEmptyDocumentRow());
+                    },
+                  ),
+                ),
 
-                  if (result == null || result.files.isEmpty) return;
-
-                  const int maxTotalSize = 5 * 1024 * 1024; // 5 MB
-                  int totalSize = 0;
-
-                  for (final f in result.files) {
-                    if (f.path != null) {
-                      totalSize += await File(f.path!).length();
-                    } else if (f.bytes != null) {
-                      totalSize += f.bytes!.length;
-                    } else if (f.size != null) {
-                      totalSize += f.size!;
-                    }
-                  }
-
-                  for (final doc in state.uploadedDocs) {
-                    totalSize += base64Decode(doc.base64Data).length;
-                  }
-
-                  if (totalSize > maxTotalSize) {
-                    Message.showTopRightOverlay(context, 'Total file size (including uploaded files) must not exceed 5 MB.', MessageType.error);
-                    return;
-                  }
-
-                  final List<UploadedDoc> docs = [];
-                  for (final f in result.files) {
-                    final bytes = f.path != null
-                        ? await File(f.path!).readAsBytes()
-                        : f.bytes;
-                    if (bytes == null) continue;
-
-                    docs.add(UploadedDoc(
-                      name: f.name,
-                      base64Data: base64Encode(bytes),
-                      mimeType: null,
-                      extension: f.extension,
-                    ));
-                  }
-
-                  if (docs.isNotEmpty) {
-                    context.read<SampleFormBloc>().add(AddUploadedDocuments(docs));
-                  }
-                },
-              ),
-              SizedBox(height: 12),
-
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Icon(
@@ -820,7 +1042,18 @@ List<List<Widget>> getSampleDetailsSteps(
                   ),
                   SizedBox(width: 8),
                   Text(
-                    "File uploads: ${state.uploadedDocs.isNotEmpty ? '${state.uploadedDocs.length} file(s) uploaded' : 'Required'}",
+                    state.uploadedDocs.isNotEmpty
+                        ? (() {
+                            final count = state.uploadedDocs.where((d) => d.base64Data.isNotEmpty).length;
+                            int total = 0;
+                            for (final d in state.uploadedDocs) {
+                              if (d.base64Data.isNotEmpty) {
+                                total += (d.sizeBytes ?? base64Decode(d.base64Data).length);
+                              }
+                            }
+                            return '$count file(s) selected • ' + _formatBytes(total);
+                          })()
+                        : 'No documents added',
                     style: TextStyle(
                       fontSize: 12,
                       color: state.uploadedDocs.isNotEmpty ? Colors.green : Colors.grey[600],
@@ -828,41 +1061,6 @@ List<List<Widget>> getSampleDetailsSteps(
                   ),
                 ],
               ),
-              SizedBox(height: 12),
-              if (state.uploadedDocs.isNotEmpty) ...[
-                Text("Uploaded Files:", style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(height: 8),
-                ...List.generate(state.uploadedDocs.length, (index) {
-                  final doc = state.uploadedDocs[index];
-                  return Card(
-                    color: customColors.white,
-                    child: ListTile(
-                      leading: Icon(Icons.insert_drive_file, color: customColors.primary),
-                      title: Text(doc.name, style: TextStyle(color: customColors.primary),),
-                      subtitle: Text(doc.extension != null && doc.extension!.isNotEmpty ? '.${doc.extension}' : '', style: TextStyle(color: customColors.primary),),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.open_in_new, color: customColors.primary),
-                            tooltip: 'Open',
-                            onPressed: () async {
-                              await _openUploadedDoc(doc);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete_outline, color: customColors.primary,),
-                            tooltip: 'Remove',
-                            onPressed: () {
-                              context.read<SampleFormBloc>().add(RemoveUploadedDocument(index));
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              ],
             ],
           );
         },

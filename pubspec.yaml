@@ -55,6 +55,7 @@ dependencies:
   archive: ^4.0.7
   url_launcher:
   dropdown_search: ^6.0.2
+  image_picker: ^1.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

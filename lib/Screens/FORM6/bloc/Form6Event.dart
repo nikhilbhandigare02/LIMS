@@ -217,6 +217,27 @@ class RemoveUploadedDocument extends SampleFormEvent {
   @override
   List<Object?> get props => [index];
 }
+
+class AddEmptyDocumentRow extends SampleFormEvent {
+  const AddEmptyDocumentRow();
+}
+
+class UpdateUploadedDocumentName extends SampleFormEvent {
+  final int index;
+  final String name;
+  const UpdateUploadedDocumentName({required this.index, required this.name});
+  @override
+  List<Object?> get props => [index, name];
+}
+
+class ReplaceUploadedDocumentAt extends SampleFormEvent {
+  final int index;
+  final UploadedDoc document;
+  const ReplaceUploadedDocumentAt({required this.index, required this.document});
+  @override
+  List<Object?> get props => [index, document];
+}
+
 class UpdateFormField extends SampleFormEvent {
   final String field;
   final dynamic value;
