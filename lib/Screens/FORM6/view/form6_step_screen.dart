@@ -13,7 +13,13 @@ import 'form6_landing_screen.dart';
 
 class Form6StepScreen extends StatefulWidget {
   final String section;
-  const Form6StepScreen({super.key, required this.section});
+  final int initialStep;
+  
+  const Form6StepScreen({
+    super.key, 
+    required this.section,
+    this.initialStep = 0,
+  });
 
   @override
   State<Form6StepScreen> createState() => _Form6StepScreenState();
@@ -32,8 +38,13 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     final bloc = context.read<SampleFormBloc>();
     stepFields = _generateStepFields(bloc.state);
     _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
+    // Initialize currentStep from the provided initialStep, within bounds
+    final int maxIndex = stepFields.isNotEmpty ? stepFields.length - 1 : 0;
+    currentStep = widget.initialStep <= maxIndex
+        ? (widget.initialStep < 0 ? 0 : widget.initialStep)
+        : maxIndex;
     _loadSavedData();
-    print("🔄 Form6StepScreen initialized for section: ${widget.section}");
+    print("🔄 Form6StepScreen initialized for section: ${widget.section} with initial step: $currentStep");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
     context.read<SampleFormBloc>().add(const FetchDistrictsRequested(1));
     context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
@@ -64,6 +75,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     setState(() {
       stepFields = _generateStepFields(bloc.state);
       _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
+      // Clamp currentStep in case the number of steps changed
+      final int maxIndex = stepFields.isNotEmpty ? stepFields.length - 1 : 0;
+      if (currentStep > maxIndex) currentStep = maxIndex;
+      if (currentStep < 0) currentStep = 0;
     });
   }
 

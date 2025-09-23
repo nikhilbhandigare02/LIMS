@@ -241,12 +241,26 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             return InkWell(
               onTap: () async {
                 print("🔄 Navigating to section: ${step['section']}");
+                
+                // Determine the initial step based on the section
+                int initialStep = 0;
+                if (step['title'] == 'Preservative Info') {
+                  initialStep = 1; // Second step for preservative info
+                } else if (step['title'] == 'Seal Details') {
+                  initialStep = 2; // Third step for seal details
+                } else if (step['title'] == 'Review & Submit') {
+                  initialStep = 2; // Use last available step for review
+                }
+
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
                       value: context.read<SampleFormBloc>(),
-                      child: Form6StepScreen(section: step['section']),
+                      child: Form6StepScreen(
+                        section: step['section'],
+                        initialStep: initialStep,
+                      ),
                     ),
                   ),
                 );

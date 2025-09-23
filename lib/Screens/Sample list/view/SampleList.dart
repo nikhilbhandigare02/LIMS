@@ -61,146 +61,131 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     final today = DateTime.now();
     final from = _fromDate ?? today;
     final to = _toDate ?? today;
-    String f(DateTime d) => '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: Offset(0, 3),
-          ),
-        ],
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // From picker
-                Flexible(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        initialDate: from,
-                      );
-                      if (picked != null) {
-                        setState(() => _fromDate = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.calendar_today, size: 13, color: customColors.primary),
-                          SizedBox(width: 6),
-                          Text('From: ${f(from)}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                        ],
-                      ),
-                    ),
-                  ),
+
+    String f(DateTime d) =>
+        '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmall = constraints.maxWidth < 400;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
-                SizedBox(width: 12),
-                // To picker
-                Flexible(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        initialDate: to.isBefore(from) ? from : to,
+              ],
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // From Date Picker
+                _buildDateBox(
+                  context,
+                  label: "From: ${f(from)}",
+                  date: from,
+                  onPicked: (picked) => setState(() => _fromDate = picked),
+                ),
+                const SizedBox(width: 12),
+
+                // To Date Picker
+                _buildDateBox(
+                  context,
+                  label: "To: ${f(to)}",
+                  date: to.isBefore(from) ? from : to,
+                  onPicked: (picked) => setState(() => _toDate = picked),
+                ),
+                const SizedBox(width: 8),
+
+                // Apply Button
+                ElevatedButton(
+                  onPressed: () {
+                    final fromDate = _fromDate;
+                    final toDate = _toDate;
+
+                    if (fromDate != null &&
+                        toDate != null &&
+                        toDate.isBefore(fromDate)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Invalid range: To date must be on/after From date')),
                       );
-                      if (picked != null) {
-                        setState(() => _toDate = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.calendar_today, size: 13, color: customColors.primary),
-                          SizedBox(width: 6),
-                          Text('To: ${f(to)}', style: TextStyle(fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ),
+                      return;
+                    }
+
+                    setState(() => currentPage = 0);
+
+                    sampleBloc.add(
+                      getSampleListEvent(fromDate: fromDate, toDate: toDate),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Fetching filtered records...')),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: customColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isSmall ? 8 : 12, vertical: 10),
+                    visualDensity: VisualDensity.compact,
+                    minimumSize: const Size(36, 36),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
+                  child: const Icon(Icons.check, size: 18, color: Colors.white),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 8),
+        );
+      },
+    );
+  }
 
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ElevatedButton(
-              onPressed: () {
-                final fromDate = _fromDate;
-                final toDate = _toDate;
-
-                // Debug: show what we're about to send
-                // ignore: avoid_print
-                print('[UI] SampleList filter tick pressed. fromDate=${fromDate?.toIso8601String()}, toDate=${toDate?.toIso8601String()}');
-
-                // Validate range when both selected
-                if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid range: To date must be on/after From date')),
-                  );
-                  return;
-                }
-
-                // Reset pagination to first page before fetching
-                setState(() {
-                  currentPage = 0;
-                });
-
-                // Dispatch API call with optional dates; when null, backend should default to current date
-                sampleBloc.add(
-                  getSampleListEvent(fromDate: fromDate, toDate: toDate),
-                );
-
-                // Optional UX feedback
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Fetching filtered records...')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: customColors.primary,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.all(8),
-                visualDensity: VisualDensity.compact,
-                minimumSize: Size(32, 32),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Icon(Icons.check, size: 18, color: Colors.white),
-            ),
-          ),
-        ],
+  /// reusable date box widget
+  Widget _buildDateBox(BuildContext context,
+      {required String label,
+        required DateTime date,
+        required ValueChanged<DateTime> onPicked}) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+          initialDate: date,
+        );
+        if (picked != null) onPicked(picked);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.calendar_today, size: 14, color: customColors.primary),
+            const SizedBox(width: 6),
+            Text(label,
+                style:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
@@ -262,25 +247,25 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
 
 
-  void _showEditDialog(BuildContext context, SampleList data) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text('Edit Sample'),
-          content: Text(
-            'Edit functionality for sample ${data.serialNo} will be implemented here.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showEditDialog(BuildContext context, SampleList data) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) {
+  //       return AlertDialog(
+  //         title: Text('Edit Sample'),
+  //         content: Text(
+  //           'Edit functionality for sample ${data.serialNo} will be implemented here.',
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(ctx).pop(),
+  //             child: Text('Close'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
 
   @override
@@ -810,9 +795,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                               ),
                             ),
                             DataCell(Text(_formatDate(data.sampleSentDate))),
-                            DataCell(Text(_formatDate(data.sampleResentDate))),
+                            DataCell(Text(_formatDate(data.sampleReRequestedDate))),
                             DataCell(
-                              Text(_formatDate(data.sampleReRequestedDate)),
+                              Text(_formatDate(data.sampleResentDate)),
                             ),
                             DataCell(
                               Container(
@@ -882,29 +867,29 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                       iconSize: 18,
                                     ),
                                   ),
-                                  if (_isTampered(data.statusName)) ...[
-                                    SizedBox(width: 4),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.green,
-                                            Colors.green.withOpacity(0.8),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () =>
-                                            _showEditDialog(context, data),
-                                        iconSize: 18,
-                                      ),
-                                    ),
-                                  ],
+                                  // if (_isTampered(data.statusName)) ...[
+                                  //   SizedBox(width: 4),
+                                  //   Container(
+                                  //     decoration: BoxDecoration(
+                                  //       gradient: LinearGradient(
+                                  //         colors: [
+                                  //           Colors.green,
+                                  //           Colors.green.withOpacity(0.8),
+                                  //         ],
+                                  //       ),
+                                  //       borderRadius: BorderRadius.circular(6),
+                                  //     ),
+                                  //     child: IconButton(
+                                  //       icon: Icon(
+                                  //         Icons.edit,
+                                  //         color: Colors.white,
+                                  //       ),
+                                  //       onPressed: () =>
+                                  //           _showEditDialog(context, data),
+                                  //       iconSize: 18,
+                                  //     ),
+                                  //   ),
+                                  // ],
                                 ],
                               ),
                             ),
@@ -925,25 +910,84 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     );
   }
   String _formatDate(String? date) {
-    if (date == null || date == '0001-01-01T00:00:00') return 'N/A';
+       if (date == null) return 'N/A';
+    final raw = date.trim();
+    if (raw.isEmpty) return 'N/A';
+    final lower = raw.toLowerCase();
+    if (lower == 'null' || lower == 'n/a' || lower == 'na' || lower == '-') {
+      return 'N/A';
+    }
+
     try {
-      final parsedDate = DateTime.parse(date);
-      final day = parsedDate.day.toString().padLeft(2, '0');
-      final month = parsedDate.month.toString().padLeft(2, '0');
-      final year = parsedDate.year.toString();
-      return '$day/$month/$year';
+      DateTime? parsedDate;
+
+      // Try ISO-8601 first (e.g., 2025-09-22T11:20:45Z or 2025-09-22)
+      if (raw.contains('T') || raw.contains('-')) {
+        parsedDate = DateTime.tryParse(raw);
+      }
+
+      // Handle slashed formats from API e.g., "9/22/2025 4:20:45 PM" or "9/22/2025 16:20:45" or just "9/22/2025"
+      if (parsedDate == null && raw.contains('/')) {
+        final datePart = raw.split(' ').first; // take part before space
+        final parts = datePart.split('/');
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (month != null && day != null && year != null) {
+            parsedDate = DateTime(year, month, day);
+          }
+        }
+      }
+
+      if (parsedDate == null) return 'N/A';
+
+      final d = parsedDate.day.toString().padLeft(2, '0');
+      final m = parsedDate.month.toString().padLeft(2, '0');
+      final y = parsedDate.year.toString();
+      return '$d/$m/$y';
     } catch (e) {
+      // ignore: avoid_print
+      print('Error parsing date: $date - Error: $e');
       return 'N/A';
     }
   }
+
+
   DateTime? _parseDate(String? date) {
-    if (date == null || date.isEmpty || date == '0001-01-01T00:00:00') {
+    if (date == null) return null;
+    final raw = date.trim();
+    if (raw.isEmpty) return null;
+    final lower = raw.toLowerCase();
+    if (lower == 'null' || lower == 'n/a' || lower == 'na' || lower == '-') {
       return null;
     }
+
     try {
-      final d = DateTime.parse(date);
-      return DateTime(d.year, d.month, d.day);
-    } catch (_) {
+      // Try ISO formats
+      if (raw.contains('T') || raw.contains('-')) {
+        final p = DateTime.tryParse(raw);
+        if (p != null) return DateTime(p.year, p.month, p.day);
+      }
+
+      // Handle slashed formats with or without time
+      if (raw.contains('/')) {
+        final datePart = raw.split(' ').first; // "9/22/2025"
+        final parts = datePart.split('/');
+        if (parts.length == 3) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (month != null && day != null && year != null) {
+            return DateTime(year, month, day);
+          }
+        }
+      }
+
+      return null;
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error parsing date for filtering: $date - Error: $e');
       return null;
     }
   }

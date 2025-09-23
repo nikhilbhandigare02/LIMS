@@ -68,27 +68,38 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
               ElevatedButton(
                 onPressed: () {
                   final newCount = int.tryParse(countController.text);
-                  if (newCount != null && newCount > 0) {
-                    context.read<SlipRequestBloc>().add(
-                      updateSlipCountEvent(
-                        requestId: requestId as int,
-                        newCount: newCount,
-                      ),
-                    );
-                    Navigator.of(dialogCtx).pop();
-                    Message.showTopRightOverlay(
-                      context,
-                      'Slip number Count updated to $newCount',
-                      MessageType.success,
-                    );
-                  } else {
 
+                  if (newCount == null || newCount <= 0) {
                     Message.showTopRightOverlay(
                       context,
                       'Please enter a valid count',
                       MessageType.error,
                     );
+                    return;
                   }
+
+                  if (newCount > 5) {
+                    Message.showTopRightOverlay(
+                      context,
+                      'Count cannot be more than 5',
+                      MessageType.error,
+                    );
+                    return;
+                  }
+
+                  // ✅ Valid count (1–5), proceed
+                  context.read<SlipRequestBloc>().add(
+                    updateSlipCountEvent(
+                      requestId: requestId as int,
+                      newCount: newCount,
+                    ),
+                  );
+                  Navigator.of(dialogCtx).pop();
+                  Message.showTopRightOverlay(
+                    context,
+                    'Slip number count updated to $newCount',
+                    MessageType.success,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -96,8 +107,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                     borderRadius: BorderRadius.circular(8),
                     side: const BorderSide(color: Colors.blue),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   minimumSize: const Size(100, 48),
                 ),
                 child: const Text(
