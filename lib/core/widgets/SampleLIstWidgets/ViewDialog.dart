@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import 'package:intl/intl.dart';
@@ -351,12 +352,19 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "label": "Wrapper Code",
                 "value": details.wrapperCodeNumber,
               },
-              {"label": "Mentioned Document", "value": _buildMentionedDocuments(details),  },
+
               {"label": "Uploaded Document", "value": _buildDocumentsList(details),  },
-              {"label": "Status", "value": details.status,  },
+             // {"label": "Status", "value": details.status,  },
 
             ],
           ),
+
+          if (_buildStatusTransactionFields(details.status).isNotEmpty)
+            _buildSection(
+              title: "Status Transactions",
+              color: const Color(0xFF3B82F6),
+              fields: _buildStatusTransactionFields(details.status),
+            ),
 
            SizedBox(height: 30),
         ],
@@ -364,11 +372,87 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     );
   }
 
-  // Widget _buildHeaderCard(Form6Details details) {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding:  EdgeInsets.all(20),
-  //     decoration: BoxDecoration(
+  // Parse details.status which is a JSON array string of objects with keys
+  // Status and TransactionDate, and build fields for _buildSection
+  List<Map<String, dynamic>> _buildStatusTransactionFields(String? statusJson) {
+    if (statusJson == null || statusJson.trim().isEmpty) return const [];
+    try {
+      // Some APIs may double-encode or include surrounding quotes; ensure it's JSON array
+      final dynamic parsed = json.decode(statusJson);
+      if (parsed is! List) return const [];
+      // Build temp list with parsed DateTime for sorting (most recent first)
+      final List<Map<String, dynamic>> temp = [];
+      DateTime? _tryParse(String? raw) {
+        if (raw == null) return null;
+        final s = raw.trim();
+        return DateFormat('yyyy-MM-dd HH:mm:ss').tryParse(s) ??
+            DateTime.tryParse(s.replaceFirst(' ', 'T')) ??
+            DateFormat('M/d/yyyy h:mm:ss a').tryParse(s);
+      }
+      for (final item in parsed) {
+        if (item is Map) {
+          final status = item['Status']?.toString() ?? 'Status';
+          final txn = item['TransactionDate']?.toString();
+          temp.add({
+            'label': _wrapStatusLabel(status),
+            'value': _formatStatusDateTime(txn) ?? 'N/A',
+            '_dt': _tryParse(txn),
+          });
+        }
+      }
+      temp.sort((a, b) {
+        final ad = a['_dt'] as DateTime?;
+        final bd = b['_dt'] as DateTime?;
+        if (ad == null && bd == null) return 0;
+        if (ad == null) return 1; // nulls last
+        if (bd == null) return -1;
+        return bd.compareTo(ad); // descending (recent first)
+      });
+      // Strip helper key before returning
+      return temp.map((e) => {
+        'label': e['label'],
+        'value': e['value'],
+      }).toList();
+    } catch (e) {
+      // If it's not valid JSON, show nothing
+      return const [];
+    }
+  }
+
+  // Try to format transaction date in multiple formats -> dd/MM/yyyy hh:mm a (12-hour)
+  String? _formatStatusDateTime(String? input) {
+    if (input == null || input.trim().isEmpty) return null;
+    final raw = input.trim();
+    try {
+      // Try common API format: yyyy-MM-dd HH:mm:ss
+      final dt = DateFormat('yyyy-MM-dd HH:mm:ss').tryParse(raw) ??
+          // Try ISO parse by normalizing space to 'T'
+          DateTime.tryParse(raw.replaceFirst(' ', 'T')) ??
+          // Try M/d/yyyy h:mm:ss a
+          DateFormat('M/d/yyyy h:mm:ss a').tryParse(raw);
+      if (dt == null) return raw; // fallback to raw
+      final d = DateFormat('dd/MM/yyyy').format(dt);
+      final t = DateFormat('hh:mm a').format(dt);
+      return '$d   $t'; // add extra spaces between date and time
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  // Insert a newline after every 3 words to make long statuses easier to read
+  String _wrapStatusLabel(String input, {int wordsPerLine = 3}) {
+    final words = input.split(RegExp(r"\s+"));
+    if (words.length <= wordsPerLine) return input;
+    final buffer = StringBuffer();
+    for (int i = 0; i < words.length; i++) {
+      buffer.write(words[i]);
+      if (i < words.length - 1) buffer.write(' ');
+      if ((i + 1) % wordsPerLine == 0 && i < words.length - 1) {
+        buffer.write('\n');
+      }
+    }
+    return buffer.toString();
+  }
   //       gradient: LinearGradient(
   //         colors: [primaryColor, secondaryColor],
   //         begin: Alignment.topLeft,
