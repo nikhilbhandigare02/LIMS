@@ -62,110 +62,97 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     String f(DateTime d) =>
         '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isSmall = constraints.maxWidth < 450; // breakpoint for responsiveness
-
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Container(
-            padding:  EdgeInsets.symmetric(horizontal: 22, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-              border: Border.all(color: Colors.grey[200]!),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // From picker
-                _buildDateBox(
-                  label: _fromDate == null
-                      ? 'Select From Date'
-                      : 'From: ${f(_fromDate!)}',
-                  date: _fromDate ?? today,
-                  color: _fromDate == null ? Colors.grey[600]! : Colors.black87,
-                  onPicked: (picked) => setState(() => _fromDate = picked),
-                  isSmall: isSmall,
-                ),
-                const SizedBox(width: 12),
-
-                // To picker
-                _buildDateBox(
-                  label: _toDate == null
-                      ? 'Select To Date'
-                      : 'To: ${f(_toDate!)}',
-                  date: _toDate ?? _fromDate ?? today,
-                  color: _toDate == null ? Colors.grey[600]! : Colors.black87,
-                  onPicked: (picked) => setState(() => _toDate = picked),
-                  isSmall: isSmall,
-                ),
-                const SizedBox(width: 8),
-
-                // Apply button
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final fromDate = _fromDate;
-                      final toDate = _toDate;
-
-                      if (fromDate != null &&
-                          toDate != null &&
-                          toDate.isBefore(fromDate)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Invalid range: To date must be on/after From date')),
-                        );
-                        return;
-                      }
-
-                      setState(() => currentPage = 0);
-
-                      sampleBloc.add(
-                        getSampleListEvent(fromDate: fromDate, toDate: toDate),
-                      );
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Fetching filtered records...')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: customColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.all(isSmall ? 6 : 8),
-                      minimumSize: const Size(32, 32),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child:
-                    const Icon(Icons.check, size: 18, color: Colors.white),
-                  ),
-                ),
-              ],
+    return Container(
+      width: double.infinity, // take full width
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          // From picker
+          Expanded(
+            flex: 3,
+            child: _buildDateBox(
+              label: _fromDate == null
+                  ? 'Select From Date'
+                  : 'From: ${f(_fromDate!)}',
+              date: _fromDate ?? today,
+              onPicked: (picked) => setState(() => _fromDate = picked),
             ),
           ),
-        );
-      },
+          const SizedBox(width: 8),
+
+          // To picker
+          Expanded(
+            flex: 3,
+            child: _buildDateBox(
+              label: _toDate == null
+                  ? 'Select To Date'
+                  : 'To: ${f(_toDate!)}',
+              date: _toDate ?? _fromDate ?? today,
+              onPicked: (picked) => setState(() => _toDate = picked),
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Submit button
+          SizedBox(
+            width: 48,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                final fromDate = _fromDate;
+                final toDate = _toDate;
+
+                if (fromDate != null &&
+                    toDate != null &&
+                    toDate.isBefore(fromDate)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content:
+                        Text('Invalid range: To date must be on/after From date')),
+                  );
+                  return;
+                }
+
+                setState(() => currentPage = 0);
+
+                sampleBloc.add(
+                  getSampleListEvent(fromDate: fromDate, toDate: toDate),
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Fetching filtered records...')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.zero,
+                backgroundColor: customColors.primary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Icon(Icons.check, size: 20, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildDateBox({
     required String label,
     required DateTime date,
-    required Color color,
     required ValueChanged<DateTime> onPicked,
-    required bool isSmall,
   }) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -179,10 +166,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         if (picked != null) onPicked(picked);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isSmall ? 6 : 10,
-          vertical: isSmall ? 6 : 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
@@ -191,15 +175,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.calendar_today,
-                size: isSmall ? 14 : 16, color: customColors.primary),
+            Icon(Icons.calendar_today, size: 16, color: customColors.primary),
             const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: isSmall ? 11 : 13,
-                color: color,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: label.contains('Select') ? Colors.grey[600] : Colors.black87),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
