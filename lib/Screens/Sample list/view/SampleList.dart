@@ -884,6 +884,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                           ),
                                         ),
                                         // if (_isTampered(data.statusName)) ...[
+                                        // if (_isTampered(data.statusName)) ...[
                                         //   SizedBox(width: 4),
                                         //   Container(
                                         //     decoration: BoxDecoration(
