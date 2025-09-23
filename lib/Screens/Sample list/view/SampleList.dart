@@ -249,25 +249,25 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
 
 
-  void _showEditDialog(BuildContext context, SampleList data) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text('Edit Sample'),
-          content: Text(
-            'Edit functionality for sample ${data.serialNo} will be implemented here.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showEditDialog(BuildContext context, SampleList data) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) {
+  //       return AlertDialog(
+  //         title: Text('Edit Sample'),
+  //         content: Text(
+  //           'Edit functionality for sample ${data.serialNo} will be implemented here.',
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(ctx).pop(),
+  //             child: Text('Close'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
 
   @override
@@ -883,29 +883,29 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                             iconSize: 18,
                                           ),
                                         ),
-                                        if (_isTampered(data.statusName)) ...[
-                                          SizedBox(width: 4),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  Colors.green,
-                                                  Colors.green.withOpacity(0.8),
-                                                ],
-                                              ),
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: IconButton(
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.white,
-                                              ),
-                                              onPressed: () =>
-                                                  _showEditDialog(context, data),
-                                              iconSize: 18,
-                                            ),
-                                          ),
-                                        ],
+                                        // if (_isTampered(data.statusName)) ...[
+                                        //   SizedBox(width: 4),
+                                        //   Container(
+                                        //     decoration: BoxDecoration(
+                                        //       gradient: LinearGradient(
+                                        //         colors: [
+                                        //           Colors.green,
+                                        //           Colors.green.withOpacity(0.8),
+                                        //         ],
+                                        //       ),
+                                        //       borderRadius: BorderRadius.circular(6),
+                                        //     ),
+                                        //     child: IconButton(
+                                        //       icon: Icon(
+                                        //         Icons.edit,
+                                        //         color: Colors.white,
+                                        //       ),
+                                        //       onPressed: () =>
+                                        //           _showEditDialog(context, data),
+                                        //       iconSize: 18,
+                                        //     ),
+                                        //   ),
+                                        // ],
                                       ],
                                     ),
                                   ),

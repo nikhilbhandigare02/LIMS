@@ -298,6 +298,10 @@ class SampleFormState extends Equatable {
   }
 
   bool get isSampleInfoComplete {
+    final bool hasAtLeastOneValidDoc = uploadedDocs.any(
+      (d) => d.name.isNotEmpty && d.base64Data.isNotEmpty,
+    );
+
     return sampleCodeData.isNotEmpty &&
         collectionDate != null &&
         placeOfCollection.isNotEmpty &&
@@ -312,8 +316,7 @@ class SampleFormState extends Equatable {
         numberofSeal.isNotEmpty &&
         formVI != null &&
         FoemVIWrapper != null &&
-        documentName.isNotEmpty &&
-        uploadedDocs.isNotEmpty &&
+        hasAtLeastOneValidDoc &&
         doSlipNumbers.isNotEmpty;
   }
 

@@ -19,16 +19,18 @@ class UploadedDoc extends Equatable {
   final String base64Data;
   final String? mimeType;
   final String? extension;
+  final int? sizeBytes;
 
   const UploadedDoc({
     required this.name,
     required this.base64Data,
     this.mimeType,
     this.extension,
+    this.sizeBytes,
   });
 
   @override
-  List<Object?> get props => [name, base64Data, mimeType, extension];
+  List<Object?> get props => [name, base64Data, mimeType, extension, sizeBytes];
 
   /// Convert the document info + content into a base64-encoded string
   String toBase64() {
@@ -37,6 +39,7 @@ class UploadedDoc extends Equatable {
       'base64Data': base64Data,
       'mimeType': mimeType,
       'extension': extension,
+      'sizeBytes': sizeBytes,
     };
     final jsonStr = jsonEncode(map);
     return base64Encode(utf8.encode(jsonStr));
@@ -55,6 +58,7 @@ class UploadedDoc extends Equatable {
       'base64Data': base64Data,
       'mimeType': mimeType,
       'extension': extension,
+      'sizeBytes': sizeBytes,
     };
   }
 
@@ -64,6 +68,9 @@ class UploadedDoc extends Equatable {
       base64Data: map['base64Data'] ?? '',
       mimeType: map['mimeType'],
       extension: map['extension'],
+      sizeBytes: map['sizeBytes'] is int
+          ? map['sizeBytes'] as int
+          : (map['sizeBytes'] != null ? int.tryParse(map['sizeBytes'].toString()) : null),
     );
   }
 }
@@ -83,6 +90,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       final UploadedDoc doc = UploadedDoc(
         name: safeName,
         base64Data: event.value,
+        sizeBytes: base64Decode(event.value).length,
       );
 
       emit(state.copyWith(
@@ -129,6 +137,37 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         final List<UploadedDoc> updated = List<UploadedDoc>.from(state.uploadedDocs)
           ..removeAt(event.index);
         emit(state.copyWith(uploadedDocs: updated));
+      }
+    });
+    on<AddEmptyDocumentRow>((event, emit) {
+      final updated = List<UploadedDoc>.from(state.uploadedDocs)
+        ..add(const UploadedDoc(name: '', base64Data: '', mimeType: null, extension: null, sizeBytes: null));
+      emit(state.copyWith(uploadedDocs: updated));
+    });
+    on<UpdateUploadedDocumentName>((event, emit) {
+      if (event.index < 0 || event.index >= state.uploadedDocs.length) return;
+      final updated = List<UploadedDoc>.from(state.uploadedDocs);
+      final old = updated[event.index];
+      updated[event.index] = UploadedDoc(
+        name: event.name,
+        base64Data: old.base64Data,
+        mimeType: old.mimeType,
+        extension: old.extension,
+        sizeBytes: old.sizeBytes,
+      );
+      emit(state.copyWith(uploadedDocs: updated));
+    });
+    on<ReplaceUploadedDocumentAt>((event, emit) async {
+      if (event.index < 0 || event.index >= state.uploadedDocs.length) return;
+      emit(state.copyWith(isUploading: true, clearUploadError: true));
+      try {
+        // simulate upload API
+        await Future.delayed(const Duration(milliseconds: 500));
+        final updated = List<UploadedDoc>.from(state.uploadedDocs);
+        updated[event.index] = event.document;
+        emit(state.copyWith(uploadedDocs: updated, isUploading: false));
+      } catch (_) {
+        emit(state.copyWith(isUploading: false, uploadError: 'Upload failed'));
       }
     });
     on<UploadStarted>((event, emit) {
