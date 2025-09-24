@@ -15,6 +15,8 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _supported = false;
+  bool _hasFace = false;
+  bool _hasFingerprint = false;
 
   @override
   void initState() {
@@ -25,18 +27,25 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   Future<void> _checkSupport() async {
     bool canCheck = false;
     bool supported = false;
+    List<BiometricType> available = const [];
     try {
       canCheck = await _localAuth.canCheckBiometrics;
       supported = await _localAuth.isDeviceSupported();
+      if (canCheck && supported) {
+        available = await _localAuth.getAvailableBiometrics();
+      }
     } catch (_) {}
     if (!mounted) return;
     setState(() {
       _supported = (canCheck && supported);
+      _hasFace = available.contains(BiometricType.face);
+      _hasFingerprint = available.contains(BiometricType.fingerprint);
     });
   }
 
   Future<void> _onChoose(bool enable) async {
     await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
+    await _storage.write(key: 'isLogin', value: '1');
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(
       context,
@@ -67,7 +76,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.fingerprint,
+                        _hasFace ? Icons.face : Icons.fingerprint,
                         size: 100,
                         color: customColors.primary,
                       ),
@@ -85,8 +94,9 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        "Enable biometric authentication (Face/Touch ID) for faster login. "
-                            "You can still use your password anytime.",
+                        _hasFace
+                            ? "Enable biometric authentication (Face ID / Face Unlock) for faster login. You can still use your password anytime."
+                            : "Enable biometric authentication (Touch ID / Fingerprint) for faster login. You can still use your password anytime.",
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.grey.shade700,
                           height: 1.5,
@@ -161,7 +171,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                         elevation: 3,
                       ),
                       onPressed: _supported ? () => _onChoose(true) : null,
-                      icon: const Icon(Icons.fingerprint, size: 22),
+                      icon: Icon(_hasFace ? Icons.face : Icons.fingerprint, size: 22),
                       label: const Text(
                         "Enable",
                         style: TextStyle(fontSize: 16),

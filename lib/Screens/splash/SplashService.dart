@@ -17,9 +17,6 @@ class SplashService {
     Timer(
       const Duration(seconds: 3),
           () {
-        // Navigate to login screen in all cases; the login screen will handle
-        // whether to show quick login options (biometric/password-only)
-        // based on previously saved login state in secure storage.
         Navigator.pushNamedAndRemoveUntil(
           context,
           RouteName.loginScreen,

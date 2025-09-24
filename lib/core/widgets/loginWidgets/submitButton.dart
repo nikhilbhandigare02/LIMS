@@ -49,22 +49,25 @@ class LoginButton extends StatelessWidget {
             }
             if (passResetFlag == 0) {
               Navigator.pushNamed(context, RouteName.updateScreen);
-            } else if (passResetFlag == 1 ) {
-              // On normal login success, decide whether to show biometric opt-in first
-              final String? biometricEnabled = await secureStorage.read(key: 'biometricEnabled');
-              bool canCheck = false;
-              bool supported = false;
-              try {
-                final localAuth = LocalAuthentication();
-                canCheck = await localAuth.canCheckBiometrics;
-                supported = await localAuth.isDeviceSupported();
-              } catch (_) {}
-
-              final bool shouldAskBiometric = (biometricEnabled == null) && canCheck && supported;
-              if (shouldAskBiometric) {
-                Navigator.pushReplacementNamed(context, RouteName.biometricOptInScreen);
+            } else if (passResetFlag == 1) {
+              // Decide based on isLogin flag for first-time post-login flow
+              final String? isLogin = await secureStorage.read(key: 'isLogin');
+              if (isLogin != '1') {
+                bool canCheck = false;
+                bool supported = false;
+                try {
+                  final localAuth = LocalAuthentication();
+                  canCheck = await localAuth.canCheckBiometrics;
+                  supported = await localAuth.isDeviceSupported();
+                } catch (_) {}
+                if (canCheck && supported) {
+                  // Show biometric opt-in once
+                  Navigator.pushReplacementNamed(context, RouteName.biometricOptInScreen);
+                } else {
+                  await secureStorage.write(key: 'isLogin', value: '1');
+                  Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
+                }
               } else {
-                // Proceed to main screen
                 Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
               }
             } else {

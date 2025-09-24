@@ -12,6 +12,10 @@ import '../bloc/loginBloc.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:flutter/services.dart';
+
+// Preferred biometric enum for UI selection (platform may still present available/default method)
+enum PreferredBio { face, fingerprint }
 
 class LoginScreen extends StatefulWidget {
    LoginScreen({super.key});
@@ -28,16 +32,18 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   final _captchaController = TextEditingController();
   final GlobalKey<CaptchaWidgetState> _captchaKey = GlobalKey<CaptchaWidgetState>();
 
-  // Quick login state
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _quickLoginAvailable = false;
-  bool _showPasswordOnlyMode = false; // when true, hide username and use lastUsername
+  bool _showPasswordOnlyMode = false;
   bool _canCheckBiometrics = false;
   bool _hasBiometricHardware = false;
-  bool _biometricEnabled = false; // persisted user choice
+  bool _biometricEnabled = false;
   String? _lastUsername;
   String? _senderName;
+  bool _isInitDone = false; // to avoid initial UI flicker
+  List<BiometricType> _availableBiometrics = const [];
+  String _biometricButtonText = 'Login with Biometrics';
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -106,6 +112,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         hasHardware = await _localAuth.isDeviceSupported();
       } catch (_) {}
 
+      List<BiometricType> available = const [];
+      try {
+        if (canCheck && hasHardware) {
+          available = await _localAuth.getAvailableBiometrics();
+        }
+      } catch (_) {}
+
       final bool quick = (isLogin == '1' && (lastUsername != null && lastUsername.isNotEmpty));
       if (!mounted) return;
       setState(() {
@@ -115,42 +128,133 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         _hasBiometricHardware = hasHardware;
         _quickLoginAvailable = quick;
         _biometricEnabled = (biometricEnabled == '1');
-        _showPasswordOnlyMode = quick; // Default to password-only mode for returning users
+        _showPasswordOnlyMode = quick;
+        _availableBiometrics = available;
+        // Derive button text. On many Android devices, Face Unlock is reported as strong/weak, not explicit Face.
+        final hasFace = available.contains(BiometricType.face);
+        final hasFingerprint = available.contains(BiometricType.fingerprint);
+        final hasGeneric = available.contains(BiometricType.strong) || available.contains(BiometricType.weak);
+        if (hasFace && hasFingerprint && !hasGeneric) {
+          _biometricButtonText = 'Login with Face or Fingerprint';
+        } else if (hasFace && !hasGeneric) {
+          _biometricButtonText = 'Login with Face';
+        } else if (hasFingerprint && !hasGeneric) {
+          _biometricButtonText = 'Login with Fingerprint';
+        } else {
+          _biometricButtonText = 'Login with Biometrics';
+        }
+        _isInitDone = true;
       });
-      // Prefill bloc username with lastUsername for password-only quick login
       if (quick && lastUsername != null && lastUsername.isNotEmpty) {
         loginBloc.add(UsernameEvent(username: lastUsername));
       }
     } catch (e) {
-      // ignore and keep quick login disabled
+      if (!mounted) return;
+      setState(() {
+        _isInitDone = true;
+      });
     }
   }
 
-  Future<void> _handleBiometricLogin() async {
+  Future<void> _authenticateBiometric(PreferredBio preferred) async {
     try {
+      final availableBiometrics = await _localAuth.getAvailableBiometrics();
+
+      print("Available biometrics: $availableBiometrics");
+
+      String reason = "Authenticate to login";
+
+      final hasFace = availableBiometrics.contains(BiometricType.face);
+      final hasFingerprint = availableBiometrics.contains(BiometricType.fingerprint);
+      final hasGeneric = availableBiometrics.contains(BiometricType.strong) || availableBiometrics.contains(BiometricType.weak);
+
+      // If the user explicitly requested a modality that is not present and there is no generic support, do not fall back silently.
+      if (preferred == PreferredBio.face && !hasFace && !hasGeneric) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Face authentication is not available on this device or not enrolled.')),
+        );
+        return;
+      }
+      if (preferred == PreferredBio.fingerprint && !hasFingerprint && !hasGeneric) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fingerprint authentication is not available on this device or not enrolled.')),
+        );
+        return;
+      }
+
+      // Tailor the prompt based on user's choice and device capabilities
+      if (preferred == PreferredBio.face && hasFace) {
+        reason = "Authenticate with Face ID / Face Unlock";
+      } else if (preferred == PreferredBio.fingerprint && hasFingerprint) {
+        reason = "Authenticate with Fingerprint";
+      } else {
+        // Generic reporting (Android may return only strong/weak). Inform the user that the system will choose the available method.
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              preferred == PreferredBio.face
+                  ? 'This device reports generic biometrics. The system may show Face or Fingerprint based on what is enrolled.'
+                  : 'This device reports generic biometrics. The system may show Fingerprint or Face based on what is enrolled.',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        if (hasFace) {
+          reason = "Authenticate with Face ID / Face Unlock";
+        } else if (hasFingerprint) {
+          reason = "Authenticate with Fingerprint";
+        }
+      }
+
       final didAuth = await _localAuth.authenticate(
-        localizedReason: 'Authenticate to login',
+        localizedReason: reason,
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,
+          useErrorDialogs: true,
         ),
       );
 
       if (!mounted) return;
+
       if (didAuth) {
-        // On successful biometric auth, proceed to the main screen
+        // Success → Navigate
         Navigator.pushNamedAndRemoveUntil(
           context,
           RouteName.SampleAnalysisScreen,
-          (route) => false,
+              (route) => false,
+        );
+      } else {
+        // User cancelled or failed
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Authentication failed')),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Biometric authentication failed: $e')),
+        SnackBar(content: Text('Biometric authentication error: $e')),
       );
+      if (e is PlatformException) {
+        debugPrint('PlatformException during biometric auth: code=${e.code}, message=${e.message}');
+      }
     }
+  }
+
+  String _supportedBiometricsLabel() {
+    if (_availableBiometrics.isEmpty) return 'No biometrics available on this device';
+    final parts = <String>[];
+    if (_availableBiometrics.contains(BiometricType.face)) parts.add('Face');
+    if (_availableBiometrics.contains(BiometricType.fingerprint)) parts.add('Fingerprint');
+    // Some devices may return strong/weak instead of explicit types
+    final hasGeneric = _availableBiometrics.contains(BiometricType.strong) || _availableBiometrics.contains(BiometricType.weak);
+    if (hasGeneric && parts.isEmpty) {
+      parts.add('Face or Fingerprint');
+    }
+    return 'Supported: ' + parts.join(' • ');
   }
 
   @override
@@ -241,21 +345,70 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
                            SizedBox(height: 10),
 
-                          // Quick login actions (only if user has enabled biometrics)
-                          if (_quickLoginAvailable && _biometricEnabled && _canCheckBiometrics && _hasBiometricHardware) ...[
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: customColors.primary,
-                                  foregroundColor: Colors.white,
+                          // During init, show a lightweight placeholder to avoid showing the wrong form
+                          if (!_isInitDone) ...[
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                child: SizedBox(
+                                  width: 28,
+                                  height: 28,
+                                  child: CircularProgressIndicator(color: customColors.primary, strokeWidth: 2.5),
                                 ),
-                                onPressed: _handleBiometricLogin,
-                                icon: const Icon(Icons.fingerprint),
-                                label: const Text('Login with Biometrics'),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                          ] else ...[
+
+                          // Quick login actions (only if user has enabled biometrics)
+                          if (_quickLoginAvailable && _biometricEnabled && _canCheckBiometrics && _hasBiometricHardware) ...[
+                            Builder(builder: (_) {
+                              final hasFace = _availableBiometrics.contains(BiometricType.face);
+                              final hasFingerprint = _availableBiometrics.contains(BiometricType.fingerprint);
+                              final hasGeneric = _availableBiometrics.contains(BiometricType.strong) || _availableBiometrics.contains(BiometricType.weak);
+                              final faceEnabled = hasFace || hasGeneric; // many Android devices report Face as strong/weak
+                              final fingerEnabled = hasFingerprint || hasGeneric;
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Expanded(
+                                      //   child: ElevatedButton.icon(
+                                      //     style: ElevatedButton.styleFrom(
+                                      //       backgroundColor: faceEnabled ? customColors.primary : Colors.grey.shade300,
+                                      //       foregroundColor: faceEnabled ? Colors.white : Colors.grey.shade600,
+                                      //     ),
+                                      //     onPressed: faceEnabled ? () => _authenticateBiometric(PreferredBio.face) : null,
+                                      //     icon: const Icon(Icons.face),
+                                      //     label: const Text('Login with Face'),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(width: 12),
+                                      Expanded(
+                                        child: OutlinedButton.icon(
+                                          style: OutlinedButton.styleFrom(
+                                            side: BorderSide(color: fingerEnabled ? customColors.primary : Colors.grey.shade400, width: 1.5),
+                                            foregroundColor: fingerEnabled ? customColors.primary : Colors.grey,
+                                          ),
+                                          onPressed: fingerEnabled ? () => _authenticateBiometric(PreferredBio.fingerprint) : null,
+                                          icon: const Icon(Icons.fingerprint),
+                                          label: const Text('Fingerprint'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      _supportedBiometricsLabel(),
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
                           ],
 
                           // Form with updated styling
@@ -263,8 +416,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             key: _formKey,
                             child: Column(
                               children: [
-                                // Email Input with new styling
-                                if (!_showPasswordOnlyMode) 
+                                if (!_showPasswordOnlyMode)
                                   Container(
                                     child: EmailInput(
                                       formkey: _formKey,
@@ -273,7 +425,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                   ),
                                  SizedBox(height: 16),
 
-                                Container(
+                                if (_isInitDone) Container(
                                   child: PasswordInput(
                                     formkey: _formKey,
                                     passwordFocusNode: passFocusNode,
@@ -333,6 +485,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               ],
                             ),
                           ),
+                          ], // end of _isInitDone conditional UI
 
                            SizedBox(height: 10),
 
