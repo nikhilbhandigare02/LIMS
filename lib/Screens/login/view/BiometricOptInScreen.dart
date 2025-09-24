@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+ import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 class BiometricOptInScreen extends StatefulWidget {
@@ -17,6 +20,8 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   bool _supported = false;
   bool _hasFace = false;
   bool _hasFingerprint = false;
+  bool _authenticating = false;
+  bool _canCheckBiometrics = false;
 
   @override
   void initState() {
@@ -25,33 +30,156 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   }
 
   Future<void> _checkSupport() async {
-    bool canCheck = false;
-    bool supported = false;
-    List<BiometricType> available = const [];
     try {
-      canCheck = await _localAuth.canCheckBiometrics;
-      supported = await _localAuth.isDeviceSupported();
-      if (canCheck && supported) {
-        available = await _localAuth.getAvailableBiometrics();
+      // Check if device supports biometrics
+      _canCheckBiometrics = await _localAuth.canCheckBiometrics;
+      _supported = await _localAuth.isDeviceSupported();
+
+      if (_supported && _canCheckBiometrics) {
+        final available = await _localAuth.getAvailableBiometrics();
+
+        if (!mounted) return;
+        setState(() {
+          _hasFace = available.contains(BiometricType.face) ||
+              available.contains(BiometricType.face);
+          _hasFingerprint = available.contains(BiometricType.fingerprint) ||
+              available.contains(BiometricType.strong) ||
+              available.contains(BiometricType.weak);
+        });
       }
-    } catch (_) {}
-    if (!mounted) return;
-    setState(() {
-      _supported = (canCheck && supported);
-      _hasFace = available.contains(BiometricType.face);
-      _hasFingerprint = available.contains(BiometricType.fingerprint);
-    });
+    } on PlatformException catch (e) {
+      print("Biometric check error: ${e.message}");
+      if (!mounted) return;
+      setState(() {
+        _supported = false;
+      });
+    } catch (e) {
+      print("Unexpected error: $e");
+      if (!mounted) return;
+      setState(() {
+        _supported = false;
+      });
+    }
   }
 
   Future<void> _onChoose(bool enable) async {
-    await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
-    await _storage.write(key: 'isLogin', value: '1');
-    if (!mounted) return;
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      RouteName.SampleAnalysisScreen,
-          (route) => false,
-    );
+    try {
+      await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
+      await _storage.write(key: 'isLogin', value: '1');
+
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        RouteName.SampleAnalysisScreen,
+            (route) => false,
+      );
+    } catch (e) {
+      print("Storage error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error saving preferences')),
+      );
+    }
+  }
+
+  Future<void> _authenticateAndEnable() async {
+    if (!_supported || !_canCheckBiometrics) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Biometric authentication not supported on this device.')),
+      );
+      return;
+    }
+
+    setState(() => _authenticating = true);
+
+    try {
+      final bool didAuthenticate = await _localAuth.authenticate(
+        localizedReason: _hasFace
+            ? 'Authenticate with Face ID to enable quick sign-in'
+            : 'Authenticate with fingerprint to enable quick sign-in',
+        authMessages: [
+          const AndroidAuthMessages(
+            signInTitle: 'Authentication Required',
+            biometricHint: '',
+            biometricNotRecognized: 'Biometric not recognized. Try again.',
+            biometricRequiredTitle: 'Biometric required',
+            cancelButton: 'Cancel',
+          ),
+
+        ],
+        options: const AuthenticationOptions(
+          biometricOnly: true, // Force biometric only (no fallback to device credentials)
+          stickyAuth: true,
+          useErrorDialogs: true, // Let system handle error dialogs
+          sensitiveTransaction: false,
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (didAuthenticate) {
+        await _onChoose(true);
+      } else {
+        setState(() => _authenticating = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Authentication canceled or failed.')),
+        );
+      }
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      setState(() => _authenticating = false);
+
+      String message = 'Authentication error occurred.';
+      switch (e.code) {
+        case 'NotAvailable':
+          message = 'Biometric authentication is not available.';
+          break;
+        case 'NotEnrolled':
+          message = _hasFace
+              ? 'No face biometric enrolled. Please set up Face ID in device settings.'
+              : 'No fingerprint enrolled. Please set up fingerprint in device settings.';
+          break;
+        case 'LockedOut':
+          message = 'Biometric authentication is temporarily locked. Try again later or use passcode.';
+          break;
+        case 'PermanentlyLockedOut':
+          message = 'Biometric authentication is permanently locked. Please set up new biometrics.';
+          break;
+        case 'PasscodeNotSet':
+          message = 'Device passcode is not set. Please set a device passcode to use biometric authentication.';
+          break;
+        case 'NotInteractive':
+        case 'Failed':
+          message = 'Authentication failed. Please try again.';
+          break;
+        default:
+          message = e.message ?? 'Unknown error occurred.';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _authenticating = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to start biometric authentication.')),
+      );
+    }
+  }
+
+  // Add this method to test biometric functionality
+  Future<void> _testBiometric() async {
+    try {
+      final available = await _localAuth.getAvailableBiometrics();
+      print("Available biometrics: $available");
+      print("Device supported: ${await _localAuth.isDeviceSupported()}");
+      print("Can check biometrics: ${await _localAuth.canCheckBiometrics}");
+    } catch (e) {
+      print("Test error: $e");
+    }
   }
 
   @override
@@ -63,12 +191,19 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 📌 Middle section (logo + text)
+            // Middle section
             Expanded(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Test button for debugging (remove in production)
+                    if (kDebugMode)
+                      TextButton(
+                        onPressed: _testBiometric,
+                        child: const Text('Debug: Test Biometric'),
+                      ),
+
                     Container(
                       padding: const EdgeInsets.all(30),
                       decoration: BoxDecoration(
@@ -95,8 +230,8 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
                         _hasFace
-                            ? "Enable biometric authentication (Face ID / Face Unlock) for faster login. You can still use your password anytime."
-                            : "Enable biometric authentication (Touch ID / Fingerprint) for faster login. You can still use your password anytime.",
+                            ? "Enable Face ID for faster and secure login. You can still use your password anytime."
+                            : "Enable fingerprint authentication for faster and secure login. You can still use your password anytime.",
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.grey.shade700,
                           height: 1.5,
@@ -109,7 +244,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
               ),
             ),
 
-            // 📌 Warning box if biometrics not supported
+            // Warning box
             if (!_supported)
               Container(
                 padding: const EdgeInsets.all(14),
@@ -137,7 +272,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                 ),
               ),
 
-            // 📌 Bottom buttons
+            // Bottom buttons
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               child: Row(
@@ -151,7 +286,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () => _onChoose(false),
+                      onPressed: _authenticating ? null : () => _onChoose(false),
                       child: Text(
                         "Not now",
                         style: TextStyle(color: customColors.primary, fontSize: 16),
@@ -170,11 +305,17 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                         ),
                         elevation: 3,
                       ),
-                      onPressed: _supported ? () => _onChoose(true) : null,
-                      icon: Icon(_hasFace ? Icons.face : Icons.fingerprint, size: 22),
-                      label: const Text(
-                        "Enable",
-                        style: TextStyle(fontSize: 16),
+                      onPressed: (_supported && !_authenticating) ? _authenticateAndEnable : null,
+                      icon: _authenticating
+                          ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                          : Icon(_hasFace ? Icons.face : Icons.fingerprint, size: 22),
+                      label: Text(
+                        _authenticating ? 'Authenticating...' : 'Enable',
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

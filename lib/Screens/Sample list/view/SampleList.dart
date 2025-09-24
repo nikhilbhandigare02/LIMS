@@ -624,7 +624,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       : selectedStatus!.trim();
                   final List filteredSampleDataList = statusFilter == null
                       ? labFiltered
-                      : labFiltered
+                      : labFiltered 
                           .where((e) => (e.statusName ?? '').trim().toLowerCase() == statusFilter.toLowerCase())
                           .toList();
                   return Container(
@@ -971,10 +971,10 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       columns: [
                         DataColumn(label: Text('Serial No.')),
                         DataColumn(label: Text('Sent Date')),
+                        DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Requested Date')),
                         DataColumn(label: Text('Resent Date')),
                         DataColumn(label: Text('Status')),
-                        DataColumn(label: Text('Lab Location')),
                         DataColumn(label: Text('Actions')),
                       ],
                       rows: paginatedData.isEmpty
@@ -1019,6 +1019,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                     ),
                                   ),
                                   DataCell(Text(_formatDate(data.sampleSentDate))),
+                                  DataCell(
+                                    Container(
+                                      width: 120,
+                                      child: Text(
+                                        data.labLocation ?? 'N/A',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
                                   DataCell(Text(_formatDate(data.sampleReRequestedDate))),
                                   DataCell(
                                     Text(_formatDate(data.sampleResentDate)),
@@ -1045,15 +1054,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Container(
-                                      width: 120,
-                                      child: Text(
-                                        data.labLocation ?? 'N/A',
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ),
