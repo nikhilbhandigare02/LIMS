@@ -1079,5 +1079,4 @@ Future<void> _openUploadedDoc(UploadedDoc doc) async {
     await out.writeAsBytes(bytes, flush: true);
     await OpenFilex.open(out.path);
   } catch (_) {}
-  ///new updates///
 }

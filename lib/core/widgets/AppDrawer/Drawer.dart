@@ -12,6 +12,7 @@ import '../../utils/ExitCOnfirmtionWidget.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +100,6 @@ class CustomDrawer extends StatelessWidget {
                 context: context,
                 builder: (BuildContext dialogContext) {
                   return AlertDialog(
-                    // Set the dialog's shape to a square
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.zero),
                     ),
@@ -135,8 +135,14 @@ class CustomDrawer extends StatelessWidget {
                               "Logout",
                               style: TextStyle(color: Colors.white),
                             ),
-                            onPressed: () {
-                              Navigator.of(dialogContext).pop(true);
+                            onPressed: () async {
+                              await _secureStorage.write(key: 'isLogin', value: '0');
+
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                RouteName.loginScreen,
+                                    (Route<dynamic> route) => false,
+                              );
                             },
                           ),
                         ],

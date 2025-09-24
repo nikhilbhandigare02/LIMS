@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
@@ -13,6 +14,15 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  bool _isBiometricEnabled = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadBiometricPref();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +53,8 @@ class _SettingState extends State<Setting> {
               Navigator.pushNamed(context, RouteName. updateScreen);
             },
           ),
+          _buildBiometricTile(context), // <-- biometric tile
+
         ],
       ),
     );
@@ -93,6 +105,94 @@ class _SettingState extends State<Setting> {
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         hoverColor: Colors.grey[100],
+      ),
+    );
+  }
+
+  Future<void> _loadBiometricPref() async {
+    final value = await _storage.read(key: 'biometricEnabled');
+    setState(() {
+      _isBiometricEnabled = value == '1'; // default false if null
+    });
+  }
+
+  Future<void> _toggleBiometric(bool enable) async {
+    setState(() {
+      _isBiometricEnabled = enable;
+    });
+
+    // Save state in secure storage
+    await _storage.write(
+      key: 'biometricEnabled',
+      value: enable ? '1' : '0',
+    );
+
+    if (enable) {
+      print("✅ Biometric Enabled");
+      // here you can call local_auth to authenticate user before enabling
+    } else {
+      print("❌ Biometric Disabled");
+    }
+  }
+  Widget _buildBiometricTile(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          children: [
+            // Leading icon
+            Container(
+              margin: const EdgeInsets.only(left: 16),
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.fingerprint, color: Colors.white, size: 20),
+            ),
+
+            const SizedBox(width: 16),
+
+            // Title
+            const Expanded(
+              child: Text(
+                "Biometric Authentication",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+
+            // Switch at the far end
+            Transform.scale(
+              scale: 0.9,
+              child: Switch(
+                value: _isBiometricEnabled,
+                onChanged: _toggleBiometric,
+                activeColor: const Color(0xFF1E88E5),
+                activeTrackColor: const Color(0xFF1E88E5).withOpacity(0.5),
+                inactiveThumbColor: Colors.grey,
+                inactiveTrackColor: Colors.grey.shade400,
+              ),
+            ),
+            const SizedBox(width: 16), // right padding
+          ],
+        ),
       ),
     );
   }

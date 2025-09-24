@@ -15,4 +15,5 @@ class RouteName{
   static const String OTPVerificationScreen = 'OTPVerificationScreen';
   static const String requestForSlip = 'requestForSeal';
   static const String SlipRequestDetailsScreen = 'SealRequestDetailsScreen';
+  static const String biometricOptInScreen = 'biometricOptInScreen';
 }
