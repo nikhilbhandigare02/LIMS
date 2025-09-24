@@ -414,7 +414,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         'value': e['value'],
       }).toList();
     } catch (e) {
-      // If it's not valid JSON, show nothing
+
       return const [];
     }
   }
@@ -451,7 +451,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
         buffer.write('\n');
       }
     }
-    return buffer.toString();
+    return buffer  .toString();
   }
   //       gradient: LinearGradient(
   //         colors: [primaryColor, secondaryColor],

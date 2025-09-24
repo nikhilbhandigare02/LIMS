@@ -6,12 +6,17 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
+import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
+import '../../../core/utils/validators.dart';
 import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
 import '../../FORM6/bloc/Form6Bloc.dart';
 import '../../FORM6/repository/form6Repository.dart';
 import '../../FORM6/view/form6_landing_screen.dart';
 import '../bloc/sampleBloc.dart';
 import '../model/sampleData.dart';
+import 'dart:convert';
+import '../../../common/ENcryption_Decryption/AES.dart';
+import '../../../common/ENcryption_Decryption/key.dart';
 
 class SampleAnalysisScreen extends StatefulWidget {
   @override
@@ -26,12 +31,18 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late SampleBloc sampleBloc;
+  late SampleFormBloc sampleFormBloc;
   // Date filtering state
   DateTime _currentDay = DateTime.now();
   DateTimeRange? _selectedRange;
   bool _useRange = false;
   DateTime? _fromDate;
   DateTime? _toDate;
+  bool showFilters = false;
+  String? selectedStatus;
+  String? selectedLab;
+  bool _isStatusLoading = false;
+  List<String> _statusOptions = const <String>[];
 
   @override
   void initState() {
@@ -47,13 +58,112 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
     sampleBloc = SampleBloc(sampleRepository: SampleRepository());
     sampleBloc.add(getSampleListEvent());
+    sampleFormBloc = SampleFormBloc(form6repository: Form6Repository());
+    // Preload status so it's ready when user opens filters
+    _fetchStatusOptions();
   }
   int getTotalPages(int totalItems) {
     return (totalItems / itemsPerPage).ceil();
   }
+  Future<void> _fetchStatusOptions() async {
+    if (_isStatusLoading) return;
+    setState(() => _isStatusLoading = true);
+    try {
+      final session = await encryptWithSession(
+        data: {},
+        rsaPublicKeyPem: rsaPublicKeyPem,
+      );
+      final encryptedPayload = {
+        'encryptedData': session.payloadForServer['EncryptedData']!,
+        'encryptedAESKey': session.payloadForServer['EncryptedAESKey']!,
+        'iv': session.payloadForServer['IV']!,
+      };
+      // Debug: print request payload being sent
+      try {
+        print('Status fetch - request payload (encrypted): ' + encryptedPayload.toString());
+      } catch (_) {}
+      final repo = Form6Repository();
+      final response = await repo.getStatus(encryptedPayload);
+      try {
+        final String encryptedDataBase64 =
+            (response['encryptedData'] ?? response['EncryptedData']) as String;
+        final String serverIvBase64 = (response['iv'] ?? response['IV']) as String;
+        final String decrypted = utf8.decode(
+          aesCbcDecrypt(
+            base64ToBytes(encryptedDataBase64),
+            session.aesKeyBytes,
+            base64ToBytes(serverIvBase64),
+          ),
+        );
+        // Debug: print decrypted response body
+        try {
+          print('Status fetch - decrypted response: ' + decrypted);
+        } catch (_) {}
+        final options = _parseStatusNames(decrypted);
+        setState(() {
+          _statusOptions = options;
+        });
+      } catch (_) {
+        setState(() {
+          _statusOptions = const <String>[];
+        });
+      }
+    } catch (_) {
+      setState(() {
+        _statusOptions = const <String>[];
+      });
+    } finally {
+      if (mounted) setState(() => _isStatusLoading = false);
+    }
+  }
+
+  List<String> _parseStatusNames(String decryptedJson) {
+    try {
+      final dynamic parsed = jsonDecode(decryptedJson);
+      List list;
+      if (parsed is List) {
+        list = parsed;
+      } else if (parsed is Map && parsed['data'] is List) {
+        list = parsed['data'];
+      } else if (parsed is Map && parsed['Data'] is List) {
+        list = parsed['Data'];
+      } else {
+        return const <String>[];
+      }
+      final keys = const ['statusName', 'StatusName', 'name', 'Name', 'text', 'Text', 'label', 'Label'];
+      final names = <String>[];
+      for (final item in list) {
+        if (item is String) {
+          final v = item.trim();
+          if (v.isNotEmpty) names.add(v);
+          continue;
+        }
+        if (item is Map) {
+          for (final k in keys) {
+            final v = item[k];
+            if (v != null && v.toString().trim().isNotEmpty) {
+              names.add(v.toString().trim());
+              break;
+            }
+          }
+        }
+      }
+      // Deduplicate while preserving order
+      final seen = <String>{};
+      return [
+        for (final n in names)
+          if (seen.add(n)) n
+      ];
+    } catch (_) {
+      return const <String>[];
+    }
+  }
   List<SampleList> getPaginatedData(List<SampleList> allData) {
-    int startIndex = currentPage * itemsPerPage;
-    int endIndex = (startIndex + itemsPerPage).clamp(0, allData.length);
+    if (allData.isEmpty) return const <SampleList>[];
+    final totalPages = getTotalPages(allData.length);
+    final safePage = currentPage.clamp(0, totalPages - 1);
+    final startIndex = (safePage * itemsPerPage).clamp(0, allData.length);
+    final endIndex = (startIndex + itemsPerPage).clamp(0, allData.length);
     return allData.sublist(startIndex, endIndex);
   }
 
@@ -79,69 +189,230 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       ),
       child: Row(
         children: [
-          // From picker
-          Expanded(
-            flex: 3,
-            child: _buildDateBox(
-              label: _fromDate == null
-                  ? 'Select From Date'
-                  : 'From: ${f(_fromDate!)}',
-              date: _fromDate ?? today,
-              onPicked: (picked) => setState(() => _fromDate = picked),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // To picker
-          Expanded(
-            flex: 3,
-            child: _buildDateBox(
-              label: _toDate == null
-                  ? 'Select To Date'
-                  : 'To: ${f(_toDate!)}',
-              date: _toDate ?? _fromDate ?? today,
-              onPicked: (picked) => setState(() => _toDate = picked),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Submit button
-          SizedBox(
-            width: 48,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                final fromDate = _fromDate;
-                final toDate = _toDate;
-
-                if (fromDate != null &&
-                    toDate != null &&
-                    toDate.isBefore(fromDate)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content:
-                        Text('Invalid range: To date must be on/after From date')),
-                  );
-                  return;
-                }
-
-                setState(() => currentPage = 0);
-
-                sampleBloc.add(
-                  getSampleListEvent(fromDate: fromDate, toDate: toDate),
-                );
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Fetching filtered records...')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.zero,
-                backgroundColor: customColors.primary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
+           Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) => SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: FadeTransition(opacity: animation, child: child),
               ),
-              child: const Icon(Icons.check, size: 20, color: Colors.white),
+              child: !showFilters
+                  ? Row(
+                      key: const ValueKey('date_pickers'),
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: _buildDateBox(
+                            label: _fromDate == null
+                                ? 'From Date'
+                                : 'From: ${f(_fromDate!)}',
+                            date: _fromDate ?? today,
+                            onPicked: (picked) => setState(() => _fromDate = picked),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          flex: 3,
+                          child: _buildDateBox(
+                            label: _toDate == null
+                                ? 'To Date'
+                                : 'To: ${f(_toDate!)}',
+                            date: _toDate ?? _fromDate ?? today,
+                            onPicked: (picked) => setState(() => _toDate = picked),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final fromDate = _fromDate;
+                              final toDate = _toDate;
+
+                              if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Invalid range: To date must be on/after From date')),
+                                );
+                                return;
+                              }
+
+                              setState(() => currentPage = 0);
+
+                              sampleBloc.add(
+                                getSampleListEvent(fromDate: fromDate, toDate: toDate),
+                              );
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Fetching filtered records...')),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: customColors.primary,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: const Icon(Icons.check, size: 20, color: Colors.white),
+                          ),
+                        ),
+                      ], 
+                    )
+                  : SingleChildScrollView(
+                      key: const ValueKey('dropdown_filters'),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          // Status Dropdown
+                          SizedBox(
+                            width: 160,
+                            child: Builder(
+                              builder: (context) {
+                                if (_statusOptions.isEmpty && !_isStatusLoading) {
+                                  _fetchStatusOptions();
+                                }
+                                  if (_isStatusLoading) {
+                                  const loading = 'Loading status...';
+                                  return Opacity(
+                                    opacity: 0.7,
+                                    child: IgnorePointer(
+                                      ignoring: true,
+                                      child: BlocDropdown(
+                                        label: 'Status',
+                                        value: loading,
+                                        items: const [loading],
+                                        onChanged: (_) {},
+                                      ),
+                                    ),
+                                  );
+                                }
+                                if (_statusOptions.isEmpty) {
+                                  const none = 'No status found';
+                                  return Opacity(
+                                    opacity: 0.7,
+                                    child: IgnorePointer(
+                                      ignoring: true,
+                                      child: BlocSearchableDropdown(
+                                        label: 'Status',
+                                        value: none,
+                                        items: const [none],
+                                        onChanged: (_) {},
+                                      ),
+                                    ),
+                                  );
+                                }
+                                final List<String> statusItems = ['Select Status', ..._statusOptions];
+                                final String current = (selectedStatus == null || selectedStatus!.isEmpty)
+                                    ? 'Select Status'
+                                    : selectedStatus!;
+                                return BlocSearchableDropdown(
+                                  label: 'Status',
+                                  value: current,
+                                  items: statusItems,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      if (val == null || val == 'Select Status') {
+                                        selectedStatus = null;
+                                      } else {
+                                        selectedStatus = val;
+                                      }
+                                      currentPage = 0;
+                                    });
+                                  },
+                                  validator: (v) => null,
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8), 
+                          // Lab Dropdown (Dynamic via API)
+                          SizedBox(
+                            width: 160,
+                            child: BlocBuilder<SampleFormBloc, SampleFormState>(
+                              bloc: sampleFormBloc,
+                              builder: (context, s) {
+                                if (s.labOptions.isEmpty) {
+                                  // Trigger fetch if not already fetched
+                                  sampleFormBloc.add(FetchLabMasterRequested());
+                                  const loading = "Loading labs...";
+                                  return Opacity(
+                                    opacity: 0.7,
+                                    child: IgnorePointer(
+                                      ignoring: true,
+                                      child: BlocDropdown(
+                                        label: "Lab Master",
+                                        value: loading,
+                                        items: const [loading],
+                                        onChanged: (_) {},
+                                      ),
+                                    ),
+                                  );
+                                }
+                                final selected = s.lab;
+                                final items = ['Select Lab', ...s.labOptions];
+                                final String currentLab = selected.isEmpty ? 'Select Lab' : selected;
+                                return BlocSearchableDropdown(
+                                  label: "Lab",
+                                  value: currentLab,
+                                  items: items,
+                                  onChanged: (val) {
+                                    if (val == null) return;
+                                    final toSet = (val == 'Select Lab') ? '' : val;
+                                    sampleFormBloc.add(LabChanged(toSet));
+                                    // Keep local copy for any external use
+                                    setState(() {
+                                      selectedLab = (val == 'Select Lab') ? null : val;
+                                      currentPage = 0;
+                                    });
+                                  },
+                                  // Optional validation hook
+                                  validator: (v) => Validators.validateEmptyField(v, 'Lab'),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Filter toggle icon
+          Container(
+            decoration: BoxDecoration(
+              color: customColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: IconButton(
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(scale: animation, child: child),
+                ),
+                child: Icon(
+                  showFilters ? Icons.close : Icons.filter_alt_outlined,
+                  key: ValueKey(showFilters),
+                  color: customColors.primary,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  if (showFilters) {
+                    // We are closing the filter panel: clear selections
+                    selectedStatus = null;
+                    selectedLab = null;
+                    // Also clear lab in the SampleFormBloc so dropdown resets
+                    sampleFormBloc.add(LabChanged(''));
+                    currentPage = 0; // reset pagination when clearing filters
+                  }
+                  showFilters = !showFilters;
+                });
+              },
+              tooltip: showFilters ? 'Clear & Hide Filters' : 'Show Filters',
             ),
           ),
         ],
@@ -196,6 +467,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   void dispose() {
     _animationController.dispose();
     sampleBloc.close();
+    sampleFormBloc.close();
     super.dispose();
   }
 
@@ -246,31 +518,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     final s = status.toLowerCase();
     return s.contains('tampered') || s.contains('resubmit');
   }
-
-
-
-  // void _showEditDialog(BuildContext context, SampleList data) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (ctx) {
-  //       return AlertDialog(
-  //         title: Text('Edit Sample'),
-  //         content: Text(
-  //           'Edit functionality for sample ${data.serialNo} will be implemented here.',
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(ctx).pop(),
-  //             child: Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-
-  @override
+   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: sampleBloc,
@@ -354,13 +602,31 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                 case Status.loading:
                   return Center(child: const CircularProgressIndicator());
                 case Status.complete:
-                  // Build table layout regardless of having records; show message within table when empty
-                  final rawData = state.fetchSampleList.data as List<SampleData>?;
+                   final rawData = state.fetchSampleList.data as List<SampleData>?;
                   final sampleDataList = (rawData ?? const <SampleData>[]) 
                       .expand((sampleData) => sampleData.sampleList ?? [])
                       .toList();
 
-                  final filteredSampleDataList = sampleDataList; // static design only, no filtering applied
+                   // Apply Lab filter (from dynamic dropdown) to the data shown in the table (and cards)
+                  final String? labFilter = (selectedLab == null || selectedLab!.trim().isEmpty)
+                      ? null
+                      : selectedLab!.trim();
+                  // 1) Apply Lab filter
+                  final List labFiltered = labFilter == null
+                      ? sampleDataList
+                      : sampleDataList
+                          .where((e) => (e.labLocation ?? '').trim().toLowerCase() == labFilter.toLowerCase())
+                          .toList();
+
+                  // 2) Apply Status filter (from dynamic dropdown)
+                  final String? statusFilter = (selectedStatus == null || selectedStatus!.trim().isEmpty || selectedStatus == 'Select Status')
+                      ? null
+                      : selectedStatus!.trim();
+                  final List filteredSampleDataList = statusFilter == null
+                      ? labFiltered
+                      : labFiltered
+                          .where((e) => (e.statusName ?? '').trim().toLowerCase() == statusFilter.toLowerCase())
+                          .toList();
                   return Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -458,9 +724,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             ),
           ),
           SizedBox(height: 4),
-          // Static date bar (design only)
-          // NOTE: This is non-functional for now; API integration can wire it later.
-          // Keeping it only in card view was not requested; thus we remove it here.
+
           SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
@@ -600,14 +864,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       ),
 
                     ),
-                    // if (_isTampered(data.statusName)) ...[
-                    //   SizedBox(width: 8),
-                    //   _buildCompactActionButton(
-                    //     icon: Icons.edit,
-                    //     color: Colors.green,
-                    //     onPressed: () => _showEditDialog(context, data),
-                    //   ),
-                    // ],
+
                   ],
                 ),
               ],
@@ -671,61 +928,10 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.9),
-                  Colors.white.withOpacity(0.7),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 8,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.table_chart, color: customColors.primary, size: 22),
-                SizedBox(width: 12),
-                Text(
-                  ' Table View',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: customColors.primary,
-                  ),
-                ),
-                Spacer(),
-                // Page info
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: customColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: customColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 4),
-          // Static date filter below table header card (design only)
           _buildStaticDateFilterBar(),
+          SizedBox(height: 8),
+
+
           SizedBox(height: 12),
           Expanded(
             child: Container(
@@ -883,30 +1089,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                             iconSize: 18,
                                           ),
                                         ),
-                                        // if (_isTampered(data.statusName)) ...[
-                                        // if (_isTampered(data.statusName)) ...[
-                                        //   SizedBox(width: 4),
-                                        //   Container(
-                                        //     decoration: BoxDecoration(
-                                        //       gradient: LinearGradient(
-                                        //         colors: [
-                                        //           Colors.green,
-                                        //           Colors.green.withOpacity(0.8),
-                                        //         ],
-                                        //       ),
-                                        //       borderRadius: BorderRadius.circular(6),
-                                        //     ),
-                                        //     child: IconButton(
-                                        //       icon: Icon(
-                                        //         Icons.edit,
-                                        //         color: Colors.white,
-                                        //       ),
-                                        //       onPressed: () =>
-                                        //           _showEditDialog(context, data),
-                                        //       iconSize: 18,
-                                        //     ),
-                                        //   ),
-                                        // ],
+
                                       ],
                                     ),
                                   ),
@@ -938,13 +1121,11 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     try {
       DateTime? parsedDate;
 
-      // Try ISO-8601 first (e.g., 2025-09-22T11:20:45Z or 2025-09-22)
-      if (raw.contains('T') || raw.contains('-')) {
+       if (raw.contains('T') || raw.contains('-')) {
         parsedDate = DateTime.tryParse(raw);
       }
 
-      // Handle slashed formats from API e.g., "9/22/2025 4:20:45 PM" or "9/22/2025 16:20:45" or just "9/22/2025"
-      if (parsedDate == null && raw.contains('/')) {
+       if (parsedDate == null && raw.contains('/')) {
         final datePart = raw.split(' ').first; // take part before space
         final parts = datePart.split('/');
         if (parts.length == 3) {
@@ -969,8 +1150,6 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       return 'N/A';
     }
   }
-
-
   DateTime? _parseDate(String? date) {
     if (date == null) return null;
     final raw = date.trim();

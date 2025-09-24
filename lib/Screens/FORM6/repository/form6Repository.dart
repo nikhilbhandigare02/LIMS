@@ -89,6 +89,25 @@ class Form6Repository {
     return response;
   }
 
+  Future<dynamic> getStatus(dynamic data) async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'authToken');
+    final url = ApiBase.baseUrl + ApiEndpoints.getStatus;
+    final headers = token != null && token.isNotEmpty ? {'Authorization': 'Bearer $token'} : null;
+    // Debug prints
+    try {
+      print('getStatus - URL: ' + url);
+      print('getStatus - Headers set: ' + (headers != null ? 'Yes' : 'No'));
+      if (data is Map) {
+        print('getStatus - Payload keys: ' + (data as Map).keys.join(', '));
+      } else {
+        print('getStatus - Payload type: ' + data.runtimeType.toString());
+      }
+    } catch (_) {}
+    final response = await _api.postApi(url, data, headers: headers);
+    return response;
+  }
+
   Future<dynamic> uploadFormVIDocuments({
     required String serialNo,
     required List<MultipartFileData> files, // custom class below

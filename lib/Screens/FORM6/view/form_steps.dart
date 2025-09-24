@@ -384,13 +384,13 @@ List<List<Widget>> getSampleDetailsSteps(
         builder: (context, s) {
           if (s.doSealNumbersOptions.isEmpty) {
             bloc.add(FetchDoSealNumbersRequested());
-            const loading = "Loading DO Seal Numbers...";
+            const loading = "Loading DO Slip Numbers...";
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "DO Seal Numbers",
+                  label: "DO Slip Numbers",
                   // icon: Icons.science,
                   value: loading,
                   items: const [loading],

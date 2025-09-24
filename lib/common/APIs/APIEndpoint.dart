@@ -18,6 +18,7 @@ class ApiEndpoints {
   static const String requestforslip = 'SlipRequest/slip_request';
   static const String getRequestData = 'SlipRequest/GetSlipRequestDetails';
   static const String sealNumberdropdown = 'mobile/GetSlipNumber';
+  static const String getStatus = 'mobile/GetStatus';
   static const String updateSlipCount = 'SlipRequest/updateSlipRequest';
   static const String uploadFormVIDocument = 'UploadFormVI/UploadDocuments';
 }
