@@ -170,11 +170,21 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SampleFormBloc, SampleFormState>(
-      listenWhen: (prev, curr) => prev.documentName != curr.documentName,
-      listener: (context, state) async {
-        await storage.saveForm6Data(state);
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SampleFormBloc, SampleFormState>(
+          listenWhen: (prev, curr) => prev.documentName != curr.documentName,
+          listener: (context, state) async {
+            await storage.saveForm6Data(state);
+          },
+        ),
+        BlocListener<SampleFormBloc, SampleFormState>(
+          listenWhen: (prev, curr) => prev.uploadedDocs != curr.uploadedDocs,
+          listener: (context, state) async {
+            await storage.saveForm6Data(state);
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: customColors.grey50,
         appBar: AppHeader(

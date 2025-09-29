@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:sqflite/sqflite.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../bloc/Form6Bloc.dart';
@@ -92,6 +94,9 @@ class Form6Storage {
     // ✅ Save data per user
     await db.insertForm6Data(data, userId: userIdStr);
     print("✅ Saved Form6 data to FSOLIMS table for user $userId including ${state.uploadedDocs.length} documents");
+
+    // ✅ Persist documents into chunk table
+    await _saveDocumentsForUser(userIdStr, state.uploadedDocs);
   }
 
   Future<SampleFormState?> fetchStoredState() async {
@@ -138,7 +143,8 @@ class Form6Storage {
       }
     }
 
-    return SampleFormState(
+    // Base state from FSOLIMS metadata
+    final baseState = SampleFormState(
       senderName: data['senderName'] ?? '',
       DONumber: data['DONumber'] ?? '',
       senderDesignation: data['senderDesignation'] ?? '',
@@ -187,6 +193,62 @@ class Form6Storage {
       Lattitude: data['Lattitude'] ?? '',
       Longitude: data['Longitude'] ?? '',
     );
+
+    // ⬇️ Rehydrate documents from chunk table
+    try {
+      final rows = await db.fetchDocumentRowsForUser(userId: userIdStr);
+      print('🔎 fetchStoredState: found ${rows.length} document chunk rows for user $userIdStr');
+      if (rows.isNotEmpty) {
+        final Map<int, List<List<int>>> bufferByDoc = {};
+        final Map<int, Map<String, Object?>> metaByDoc = {};
+        for (final r in rows) {
+          final int docIdx = (r['docIndex'] as int);
+          final int chunkIdx = (r['chunkIndex'] as int);
+          final dynamic raw = r['data'];
+          final List<int> chunk = raw is Uint8List ? raw.toList() : (raw as List<int>);
+          bufferByDoc.putIfAbsent(docIdx, () => []);
+          // Ensure list is large enough
+          final list = bufferByDoc[docIdx]!;
+          if (list.length <= chunkIdx) {
+            list.length = chunkIdx + 1;
+          }
+          list[chunkIdx] = chunk;
+          metaByDoc[docIdx] = r;
+        }
+
+        final List<UploadedDoc> docs = [];
+        final sortedKeys = bufferByDoc.keys.toList()..sort();
+        for (final k in sortedKeys) {
+          final parts = bufferByDoc[k]!..removeWhere((e) => e == null);
+          final bytes = <int>[];
+          for (final p in parts) {
+            if (p != null) bytes.addAll(p);
+          }
+          final meta = metaByDoc[k]!;
+          final name = (meta['name'] as String?) ?? '';
+          final mimeType = meta['mimeType'] as String?;
+          final extension = meta['extension'] as String?;
+          final sizeBytes = (meta['sizeBytes'] is int) ? meta['sizeBytes'] as int : null;
+          final base64Data = base64Encode(bytes);
+          docs.add(UploadedDoc(
+            name: name,
+            base64Data: base64Data,
+            mimeType: mimeType,
+            extension: extension,
+            sizeBytes: sizeBytes ?? bytes.length,
+          ));
+        }
+
+        return baseState.copyWith(
+          uploadedDocs: docs,
+          documentNames: docs.map((d) => d.name).toList(),
+        );
+      }
+    } catch (_) {
+      // ignore reconstruction errors, fallback to base state
+    }
+
+    return baseState;
   }
 
 
@@ -195,7 +257,9 @@ class Form6Storage {
     final userId = await getCurrentUserId();
     if (userId == null) throw Exception('User not logged in');
 
-    await db.clearForm6Data(userId: userId.toString());
+    final uid = userId.toString();
+    await db.clearForm6Data(userId: uid);
+    await db.clearDocumentsForUser(userId: uid);
     print('🧹 Cleared form6 data for user $userId from SQLite');
   }
 
@@ -252,5 +316,48 @@ class Form6Storage {
     }
 
     await clearFormData();
+  }
+}
+
+// Private helpers
+extension on Form6Storage {
+  Future<void> _saveDocumentsForUser(String userId, List<UploadedDoc> docs) async {
+    // Clear existing rows and insert new ones atomically
+    final database = await db.database;
+    await database.transaction((txn) async {
+      await txn.delete('Form6Documents', where: 'userId = ?', whereArgs: [userId]);
+
+      const int maxPerFile = 5 * 1024 * 1024; // 5MB
+      const int chunkSize = 1024 * 900; // ~900KB per chunk to be safe
+      for (int i = 0; i < docs.length; i++) {
+        final d = docs[i];
+        if (d.base64Data.isEmpty) continue;
+        final bytes = base64Decode(d.base64Data);
+        if (bytes.length > maxPerFile) {
+          throw Exception('File exceeds 5 MB: ${d.name}');
+        }
+        int chunkIndex = 0;
+        for (int offset = 0; offset < bytes.length; offset += chunkSize) {
+          final end = (offset + chunkSize > bytes.length) ? bytes.length : offset + chunkSize;
+          final chunk = bytes.sublist(offset, end);
+          await txn.insert(
+            'Form6Documents',
+            {
+              'userId': userId,
+              'docIndex': i,
+              'chunkIndex': chunkIndex,
+              'data': Uint8List.fromList(chunk),
+              'name': d.name,
+              'mimeType': d.mimeType,
+              'extension': d.extension,
+              'sizeBytes': d.sizeBytes ?? bytes.length,
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          chunkIndex++;
+        }
+        print('💾 Saved document ${i + 1}/${docs.length}: ${d.name} (${bytes.length} bytes) in ${chunkIndex} chunk(s)');
+      }
+    });
   }
 }

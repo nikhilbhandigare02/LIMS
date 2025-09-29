@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 11,
+      version: 12,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -77,6 +77,22 @@ class Form6Database {
       Longitude TEXT
     )
     ''');
+
+    // Table to store documents in chunks to avoid CursorWindow limits
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS Form6Documents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId TEXT NOT NULL,
+      docIndex INTEGER NOT NULL,
+      name TEXT,
+      mimeType TEXT,
+      extension TEXT,
+      sizeBytes INTEGER,
+      chunkIndex INTEGER NOT NULL,
+      data BLOB NOT NULL,
+      UNIQUE(userId, docIndex, chunkIndex)
+    )
+    ''');
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -84,6 +100,22 @@ class Form6Database {
       // Drop old table and create new FSOLIMS table
       await db.execute('DROP TABLE IF EXISTS form6');
       await _createDB(db, 11);
+    }
+    if (oldVersion < 12) {
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS Form6Documents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT NOT NULL,
+        docIndex INTEGER NOT NULL,
+        name TEXT,
+        mimeType TEXT,
+        extension TEXT,
+        sizeBytes INTEGER,
+        chunkIndex INTEGER NOT NULL,
+        data BLOB NOT NULL,
+        UNIQUE(userId, docIndex, chunkIndex)
+      )
+      ''');
     }
   }
 
@@ -182,20 +214,63 @@ class Form6Database {
     );
   }
 
+  Future<void> clearDocumentsForUser({required String userId}) async {
+    final db = await instance.database;
+    await db.delete(
+      'Form6Documents',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+  }
+
+  Future<void> insertDocumentChunk({
+    required String userId,
+    required int docIndex,
+    required int chunkIndex,
+    required List<int> data,
+    String? name,
+    String? mimeType,
+    String? extension,
+    int? sizeBytes,
+  }) async {
+    final db = await instance.database;
+    await db.insert(
+      'Form6Documents',
+      {
+        'userId': userId,
+        'docIndex': docIndex,
+        'chunkIndex': chunkIndex,
+        'data': data,
+        'name': name,
+        'mimeType': mimeType,
+        'extension': extension,
+        'sizeBytes': sizeBytes,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Map<String, Object?>>> fetchDocumentRowsForUser({required String userId}) async {
+    final db = await instance.database;
+    return await db.query(
+      'Form6Documents',
+      where: 'userId = ?',
+      whereArgs: [userId],
+      orderBy: 'docIndex ASC, chunkIndex ASC',
+    );
+  }
 
   Future<List<Map<String, dynamic>>> queryAll() async {
     final db = await instance.database;
     return await db.query('FSOLIMS');
   }
-
+  
   Future<void> resetFSOLIMSTable() async {
     final db = await instance.database;
-
     // Drop existing table
     await db.execute('DROP TABLE IF EXISTS FSOLIMS');
-
-    // Recreate table
-    await _createDB(db, 11);
+    // Recreate schema (FSOLIMS and ensure Form6Documents exists)
+    await _createDB(db, 12);
   }
 
 }
