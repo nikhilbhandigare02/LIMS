@@ -70,6 +70,12 @@ class CustomDrawer extends StatelessWidget {
                     "  slip number Info",
                     onTap: () => Navigator.pushNamed(context, RouteName.SlipRequestDetailsScreen),
                   ),
+                  _buildMenuItem(
+                    context,
+                    Icons.replay_circle_filled,
+                    "Request For New Sample",
+                    onTap: () => Navigator.pushNamed(context, RouteName.ResubmitSample),
+                  ),
                   const Divider(),
                   _buildSectionTitle("Others"),
 

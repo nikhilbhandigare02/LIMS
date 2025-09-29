@@ -526,8 +526,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         backgroundColor: Colors.grey[50],
         appBar: AppHeader(
           screenTitle: 'Sample Analysis',
-          // username: 'Username',
-          userId: 'UserID',
+
           showBack: false,
           actions: [
             Container(

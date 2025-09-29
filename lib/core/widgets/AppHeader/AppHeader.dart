@@ -9,7 +9,7 @@ import '../../../config/Themes/colors/colorsTheme.dart';
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String screenTitle;
   // final String username;
-  final String userId;
+ // final String userId;
   final bool showBack;
   final VoidCallback? onBackTap;
   final VoidCallback? onMenuTap;
@@ -19,7 +19,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.screenTitle,
     // required this.username,
-    required this.userId,
+   // required this.userId,
     this.showBack = false,
     this.onBackTap,
     this.onMenuTap,

@@ -73,8 +73,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
       child: Scaffold(
         appBar: AppHeader(
           screenTitle: 'Request for slip number',
-          // username: '',
-          userId: '',
+
           showBack: false,
         ),
         drawer: CustomDrawer(),
