@@ -21,5 +21,7 @@ class ApiEndpoints {
   static const String getStatus = 'mobile/GetStatus';
   static const String updateSlipCount = 'SlipRequest/updateSlipRequest';
   static const String uploadFormVIDocument = 'UploadFormVI/UploadDocuments';
+  static const String GetApprovedSamplesByUser = 'mobile/GetApprovedSamplesByUser';
+  static const String UpdateStatusResubmit = 'mobile/UpdateStatusResubmit';
   static const String saveFcmToken = 'User/SaveUserFcmToken';
 }

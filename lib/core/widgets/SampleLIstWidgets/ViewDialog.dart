@@ -89,8 +89,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
       backgroundColor: backgroundColor,
       appBar: AppHeader(
         screenTitle: 'Sample Form VI Details',
-        // username: 'Username',
-        userId: 'UserID',
+
         showBack: false,
       ),
       drawer: CustomDrawer(),

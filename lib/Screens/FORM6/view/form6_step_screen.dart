@@ -179,8 +179,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         backgroundColor: customColors.grey50,
         appBar: AppHeader(
           screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
-          // username: ' ',
-          userId: ' ',
+
           showBack: false,
         ),
         drawer: CustomDrawer(),

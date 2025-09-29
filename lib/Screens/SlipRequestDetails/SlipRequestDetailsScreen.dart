@@ -135,7 +135,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
         appBar: AppHeader(
           screenTitle: 'slip number info',
           // username: '',
-          userId: '',
+
           showBack: false,
         ),
         drawer: CustomDrawer(),

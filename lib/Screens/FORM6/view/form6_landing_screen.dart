@@ -157,8 +157,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         backgroundColor: customColors.white,
         appBar: AppHeader(
           screenTitle: 'Form VI',
-          // username: 'Rajan',
-          userId: 'S1234',
+
           showBack: false,
         ),
         drawer: CustomDrawer(),

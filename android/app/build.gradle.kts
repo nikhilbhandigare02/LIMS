@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.food_inspector"
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName

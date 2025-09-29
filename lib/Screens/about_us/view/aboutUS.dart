@@ -10,8 +10,7 @@ class AboutUsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppHeader(
         screenTitle: "About Us",
-        // username: "Rajeev Ranjan",
-        userId: "394884",
+
         showBack: false,
       ),
       drawer: CustomDrawer(),

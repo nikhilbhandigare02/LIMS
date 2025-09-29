@@ -11,6 +11,7 @@ import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
 import '../../Screens/FORM6/view/form6_landing_screen.dart';
 
 import '../../Screens/Help_Support/view/Help_Suport.dart';
+import '../../Screens/ResubmitSample/view/resubmitSample.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/SlipRequestDetails/SlipRequestDetailsScreen.dart';
 import '../../Screens/Setting/view/Setting.dart';
@@ -58,6 +59,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => Requestslipnumber(),);
     case RouteName.SlipRequestDetailsScreen:
       return  MaterialPageRoute(builder: (context) => SealRequestDetailsScreen(),);
+    case RouteName.ResubmitSample:
+      return  MaterialPageRoute(builder: (context) => ResubmitSample(),);
     default:
       return MaterialPageRoute(builder: (context) {
         return Scaffold(

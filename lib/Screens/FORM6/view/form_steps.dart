@@ -959,6 +959,8 @@ List<List<Widget>> getSampleDetailsSteps(
                                   await _openUploadedDoc(doc);
                                 },
                               ),
+
+                          ]),
                         if (doc.base64Data.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 6.0),
@@ -967,7 +969,6 @@ List<List<Widget>> getSampleDetailsSteps(
                               style: TextStyle(fontSize: 12, color: customColors.grey600),
                             ),
                           ),
-                          ]),
                         // if (doc.base64Data.isNotEmpty && doc.name.isNotEmpty)
                         //   Padding(
                         //     padding: const EdgeInsets.only(top: 8.0),

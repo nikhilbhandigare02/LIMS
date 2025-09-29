@@ -29,8 +29,7 @@ class _SettingState extends State<Setting> {
       backgroundColor: Colors.white,
       appBar: AppHeader(
         screenTitle: "Setting",
-        // username: "Rajeev Ranjan",
-        userId: "394884",
+
         showBack: false,
       ),
       drawer: CustomDrawer(),
