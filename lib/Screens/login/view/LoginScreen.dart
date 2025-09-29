@@ -13,6 +13,9 @@ import '../../../config/Themes/colors/colorsTheme.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:food_inspector/fcm/bloc/token_bloc.dart';
+import '../../../core/utils/enums.dart';
 
 // Preferred biometric enum for UI selection (platform may still present available/default method)
 enum PreferredBio { face, fingerprint }
@@ -275,18 +278,31 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         ),
         child: BlocProvider(
           create: (_) => loginBloc,
-          child: SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: ListView(
+          child: BlocListener<LoginBloc, LoginState>(
+            listener: (context, state) async {
+              if (state.apiStatus == ApiStatus.success) {
+                try {
+                  final token = await FirebaseMessaging.instance.getToken();
+                  if (token != null && token.isNotEmpty) {
+                    context.read<TokenBloc>().add(
+                          SaveFcmTokenRequested(token: token, platform: 'flutter'),
+                        );
+                  }
+                } catch (_) {}
+              }
+            },
+            child: SafeArea(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: ListView(
                   padding:  EdgeInsets.symmetric(horizontal: 16),
                   children: [
                      SizedBox(height: 30),
 
                     Container(
-                      padding:  EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -294,17 +310,15 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           BoxShadow(
                             color: Colors.black.withOpacity(0.15),
                             blurRadius: 15,
-                            offset:  Offset(5, 5),
+                            offset: Offset(5, 5),
                           ),
                         ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
-                           SizedBox(height: 10),
-
-                           Text(
+                          SizedBox(height: 10),
+                          Text(
                             _quickLoginAvailable && _senderName != null && _senderName!.isNotEmpty
                                 ? "Welcome, ${_senderName!}"
                                 : "Login Here",
@@ -314,8 +328,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               color: Color(0xFF130160),
                             ),
                           ),
-                           SizedBox(height: 8),
-                           Text(
+                          SizedBox(height: 8),
+                          Text(
                             _quickLoginAvailable
                                 ? "You can login using biometrics or password."
                                 : "Authorized Personnel Only",
@@ -325,9 +339,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-
-                          //  SizedBox(height: 10),
-
                           Center(
                             child: Stack(
                               alignment: Alignment.center,
@@ -335,17 +346,12 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 Image.asset(
                                   'assets/img.png',
                                   height: 150,
-                                  // width: 60,
                                   fit: BoxFit.contain,
                                 ),
-
-                               ],
+                              ],
                             ),
                           ),
-
-                           SizedBox(height: 10),
-
-                          // During init, show a lightweight placeholder to avoid showing the wrong form
+                          SizedBox(height: 10),
                           if (!_isInitDone) ...[
                             Center(
                               child: Padding(
@@ -353,176 +359,128 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 child: SizedBox(
                                   width: 28,
                                   height: 28,
-                                  child: CircularProgressIndicator(color: customColors.primary, strokeWidth: 2.5),
+                                  child: CircularProgressIndicator(
+                                    color: customColors.primary,
+                                    strokeWidth: 2.5,
+                                  ),
                                 ),
                               ),
                             ),
                           ] else ...[
-
-                          // Quick login actions (only if user has enabled biometrics)
-                          if (_quickLoginAvailable && _biometricEnabled && _canCheckBiometrics && _hasBiometricHardware) ...[
-                            Builder(builder: (_) {
-                              final hasFace = _availableBiometrics.contains(BiometricType.face);
-                              final hasFingerprint = _availableBiometrics.contains(BiometricType.fingerprint);
-                              final hasGeneric = _availableBiometrics.contains(BiometricType.strong) || _availableBiometrics.contains(BiometricType.weak);
-                              final faceEnabled = hasFace || hasGeneric; // many Android devices report Face as strong/weak
-                              final fingerEnabled = hasFingerprint || hasGeneric;
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Expanded(
-                                      //   child: ElevatedButton.icon(
-                                      //     style: ElevatedButton.styleFrom(
-                                      //       backgroundColor: faceEnabled ? customColors.primary : Colors.grey.shade300,
-                                      //       foregroundColor: faceEnabled ? Colors.white : Colors.grey.shade600,
-                                      //     ),
-                                      //     onPressed: faceEnabled ? () => _authenticateBiometric(PreferredBio.face) : null,
-                                      //     icon: const Icon(Icons.face),
-                                      //     label: const Text('Login with Face'),
-                                      //   ),
-                                      // ),
-                                      // const SizedBox(width: 12),
-                                      Expanded(
-                                        child: OutlinedButton.icon(
-                                          style: OutlinedButton.styleFrom(
-                                            side: BorderSide(color: fingerEnabled ? customColors.primary : Colors.grey.shade400, width: 1.5),
-                                            foregroundColor: fingerEnabled ? customColors.primary : Colors.grey,
+                            if (_quickLoginAvailable && _biometricEnabled && _canCheckBiometrics && _hasBiometricHardware) ...[
+                              Builder(builder: (_) {
+                                final hasFace = _availableBiometrics.contains(BiometricType.face);
+                                final hasFingerprint = _availableBiometrics.contains(BiometricType.fingerprint);
+                                final hasGeneric = _availableBiometrics.contains(BiometricType.strong) || _availableBiometrics.contains(BiometricType.weak);
+                                final faceEnabled = hasFace || hasGeneric;
+                                final fingerEnabled = hasFingerprint || hasGeneric;
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            style: OutlinedButton.styleFrom(
+                                              side: BorderSide(color: fingerEnabled ? customColors.primary : Colors.grey.shade400, width: 1.5),
+                                              foregroundColor: fingerEnabled ? customColors.primary : Colors.grey,
+                                            ),
+                                            onPressed: fingerEnabled ? () => _authenticateBiometric(PreferredBio.fingerprint) : null,
+                                            icon: const Icon(Icons.fingerprint),
+                                            label: const Text('Fingerprint'),
                                           ),
-                                          onPressed: fingerEnabled ? () => _authenticateBiometric(PreferredBio.fingerprint) : null,
-                                          icon: const Icon(Icons.fingerprint),
-                                          label: const Text('Fingerprint'),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      _supportedBiometricsLabel(),
-                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              );
-                            }),
-                          ],
-
-                          // Form with updated styling
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                if (!_showPasswordOnlyMode)
-                                  Container(
-                                    child: EmailInput(
+                                    const SizedBox(height: 12),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        _supportedBiometricsLabel(),
+                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ],
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  if (!_showPasswordOnlyMode)
+                                    EmailInput(
                                       formkey: _formKey,
                                       emailFocusNode: emailFocusNode,
                                     ),
+                                  SizedBox(height: 16),
+                                  if (_isInitDone)
+                                    PasswordInput(
+                                      formkey: _formKey,
+                                      passwordFocusNode: passFocusNode,
+                                    ),
+                                  SizedBox(height: 16),
+                                  if (!_quickLoginAvailable || !_showPasswordOnlyMode)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF7F8F9),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Color(0xFF1E3A8A).withOpacity(0.1),
+                                        ),
+                                      ),
+                                      child: CaptchaWidget(controller: _captchaController, key: _captchaKey),
+                                    ),
+                                  SizedBox(height: 6),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, RouteName.forgotPasswordScreen);
+                                      },
+                                      child: Text(
+                                        "Forgot Password?",
+                                        style: TextStyle(
+                                          color: customColors.primary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                 SizedBox(height: 16),
-
-                                if (_isInitDone) Container(
-                                  child: PasswordInput(
+                                  SizedBox(height: 6),
+                                  LoginButton(
                                     formkey: _formKey,
-                                    passwordFocusNode: passFocusNode,
-                                  ),
-                                ),
-                                 SizedBox(height: 16),
-
-                                if (!_quickLoginAvailable || !_showPasswordOnlyMode)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color:  Color(0xFFF7F8F9),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color:  Color(0xFF1E3A8A).withOpacity(0.1),
-                                      ),
-                                    ),
-                                    child: CaptchaWidget(controller: _captchaController, key: _captchaKey),
-                                  ),
-                                 SizedBox(height: 6),
-
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, RouteName.forgotPasswordScreen);
+                                    onLoginSuccess: () {
+                                      _captchaController.clear();
+                                      _captchaKey.currentState?.refreshCaptcha();
                                     },
-                                    child:  Text(
-                                      "Forgot Password?",
-                                      style: TextStyle(
-                                        color: customColors.primary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
+                                  ),
+                                  if (_showPasswordOnlyMode && !_quickLoginAvailable)
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _showPasswordOnlyMode = false;
+                                        });
+                                      },
+                                      child: const Text('Use different username'),
                                     ),
-                                  ),
-                                ),
-
-                                 SizedBox(height: 6),
-
-                                LoginButton(
-                                  formkey: _formKey,
-                                  onLoginSuccess: () {
-                                    _captchaController.clear();
-                                    _captchaKey.currentState?.refreshCaptcha();
-                                  },
-                                ),
-                                if (_showPasswordOnlyMode && !_quickLoginAvailable)
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _showPasswordOnlyMode = false;
-                                      });
-                                    },
-                                    child: const Text('Use different username'),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          ], // end of _isInitDone conditional UI
-
-                           SizedBox(height: 10),
-
-                          Center(
-                            // child: TextButton(
-                            //   onPressed: () {
-                            //     Navigator.pushNamed(context, RouteName.registerScreen);
-                            //   },
-                            //   child:  Text.rich(
-                            //     TextSpan(
-                            //       text: "Don't have an account? ",
-                            //       style: TextStyle(color: Colors.black),
-                            //       children: [
-                            //         TextSpan(
-                            //           text: "Create one",
-                            //           style: TextStyle(
-                            //             color: customColors.primary,
-                            //             fontWeight: FontWeight.bold,
-                            //           ),
-                            //         )
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            child:  Footer(),
-                          ),
+                                ],
+                              ),
+                            )],
+                          SizedBox(height: 10),
+                          Center(child: Footer()),
                         ],
                       ),
                     ),
-                     SizedBox(height: 30),
-                  ]
+                    SizedBox(height: 30),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 }

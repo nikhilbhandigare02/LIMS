@@ -36,7 +36,8 @@ class NetworkServiceApi extends ApiServices {
 
       print('HTTP POST: $url');
       print('Request Headers: $requestHeaders');
-      print('Request Body (unencrypted): ${jsonEncode(data)}');
+      // Note: 'data' is the as-sent payload (may already be encrypted)
+      print('Request Body (as-sent): ${jsonEncode(data)}');
 
       final response = await http
           .post(

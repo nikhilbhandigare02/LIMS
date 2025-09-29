@@ -5,10 +5,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:food_inspector/config/Routes/Route.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+
+import 'fcm/bloc/token_bloc.dart';
+import 'fcm/repository/token_repository.dart';
 import 'firebase_options.dart';
 
-// Local notifications plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
@@ -20,30 +24,57 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   _showNotification(message);
 }
 
-Future<void> _initFirebaseMessaging() async {
+Future<void> _initFirebaseMessaging(BuildContext context) async {
   final messaging = FirebaseMessaging.instance;
 
-  // Request permission on iOS
   NotificationSettings settings = await messaging.requestPermission();
   print('🔔 Notification permission status: ${settings.authorizationStatus}');
 
-  // FCM Token
   final String? token = await messaging.getToken();
   print('🔑 FCM Token: $token');
+  if (token != null && token.isNotEmpty) {
+    // Only send token if a logged-in user exists
+    try {
+      const storage = FlutterSecureStorage();
+      final String? loginDataJson = await storage.read(key: 'loginData');
+      if (loginDataJson != null && loginDataJson.isNotEmpty) {
+        context.read<TokenBloc>().add(
+              SaveFcmTokenRequested(token: token, platform: 'flutter'),
+            );
+      } else {
+        print('ℹ️ Skipping initial FCM token send: no loginData yet');
+      }
+    } catch (e) {
+      print('⚠️ Error reading secure storage for loginData: $e');
+    }
+  }
 
-  // Foreground messages
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('📩 Foreground message received: ${message.messageId}');
     _showNotification(message);
   });
 
   // Token refresh
-  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     print('🔁 FCM Token refreshed: $newToken');
+    if (newToken.isNotEmpty) {
+      try {
+        const storage = FlutterSecureStorage();
+        final String? loginDataJson = await storage.read(key: 'loginData');
+        if (loginDataJson != null && loginDataJson.isNotEmpty) {
+          context.read<TokenBloc>().add(
+                SaveFcmTokenRequested(token: newToken, platform: 'flutter'),
+              );
+        } else {
+          print('ℹ️ Skipping refreshed FCM token send: no loginData yet');
+        }
+      } catch (e) {
+        print('⚠️ Error reading secure storage for loginData (refresh): $e');
+      }
+    }
   });
 }
 
-// Show notification in system tray
 Future<void> _showNotification(RemoteMessage message) async {
   final notification = message.notification;
   if (notification == null) return;
@@ -74,22 +105,34 @@ void main() async {
   );
   print('✅ Firebase Initialized Successfully!');
 
-  // Init local notifications
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
   const initSettings = InitializationSettings(android: androidInit);
   await flutterLocalNotificationsPlugin.initialize(initSettings);
 
-  // Register background handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Init FCM
-  await _initFirebaseMessaging();
-
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (_) => TokenBloc(TokenRepository()),
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize FCM with context so we can dispatch Bloc events
+    _initFirebaseMessaging(context);
+  }
 
   @override
   Widget build(BuildContext context) {

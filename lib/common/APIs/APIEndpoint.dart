@@ -23,4 +23,5 @@ class ApiEndpoints {
   static const String uploadFormVIDocument = 'UploadFormVI/UploadDocuments';
   static const String GetApprovedSamplesByUser = 'mobile/GetApprovedSamplesByUser';
   static const String UpdateStatusResubmit = 'mobile/UpdateStatusResubmit';
+  static const String saveFcmToken = 'User/SaveUserFcmToken';
 }
