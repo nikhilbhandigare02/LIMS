@@ -94,14 +94,14 @@ class _SplashscreenState extends State<Splashscreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: customColors.white,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white,
+              customColors.white,
               Colors.blue[50]!,
               Colors.blue[100]!,
             ],
@@ -136,7 +136,7 @@ class _SplashscreenState extends State<Splashscreen>
                           child: const Icon(
                             Icons.science,
                             size: 60,
-                            color: Colors.white,
+                            color: customColors.white,
                           ),
                         ),
                       ),
@@ -170,7 +170,7 @@ class _SplashscreenState extends State<Splashscreen>
                                 'Laboratory Information Management System',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.grey[600],
+                                  color: customColors.grey600,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 textAlign: TextAlign.center,
@@ -223,7 +223,7 @@ class _SplashscreenState extends State<Splashscreen>
                         'Loading...',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: customColors.grey600,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -262,7 +262,7 @@ class _SplashscreenState extends State<Splashscreen>
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[700],
+            color: customColors.grey600,
             fontWeight: FontWeight.w500,
           ),
         ),

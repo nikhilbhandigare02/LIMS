@@ -176,7 +176,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
         await storage.saveForm6Data(state);
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: customColors.grey50,
         appBar: AppHeader(
           screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
           // username: ' ',
@@ -229,7 +229,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                       onPressed: _goToNextStep,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: customColors.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: customColors.white,
                       ),
                       child: Row(
                         children: [
@@ -242,7 +242,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 6),
-                          const Icon(CupertinoIcons.right_chevron, color: Colors.white),
+                          const Icon(CupertinoIcons.right_chevron, color: customColors.white),
                         ],
                       ),
                     )
@@ -256,3 +256,4 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     );
   }
 }
+

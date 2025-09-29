@@ -121,7 +121,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                         'Request for a slip number on ${dateFormat.format(selectedDate)}', // always shows current date
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.black,
+                          color: customColors.black87,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -223,7 +223,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: customColors.white,
                               strokeWidth: 2,
                             ),
                           )
@@ -232,7 +232,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: customColors.white,
                             ),
                           ),
                         ),

@@ -789,11 +789,11 @@ List<List<Widget>> getSampleDetailsSteps(
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                color: customColors.black87,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Enter Mention document name',
-                                hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
+                                hintStyle: TextStyle(fontSize: 16, color: customColors.black87, fontWeight: FontWeight.normal),
                                 filled: true,
                                 fillColor: customColors.white,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -803,7 +803,7 @@ List<List<Widget>> getSampleDetailsSteps(
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: const BorderSide(color: customColors.primary),
+                                  borderSide: BorderSide(color: customColors.primary),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
@@ -812,9 +812,9 @@ List<List<Widget>> getSampleDetailsSteps(
                                 suffix: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
+                                    color: customColors.grey100,
                                     borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                                    border: Border.all(color: customColors.grey300, width: 0.5),
                                   ),
                                   child: Text(
                                     '.$ext',
@@ -839,10 +839,10 @@ List<List<Widget>> getSampleDetailsSteps(
                           children: [
                             ElevatedButton.icon(
                               icon: state.isUploading
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       width: 18,
                                       height: 18,
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: customColors.white),
                                     )
                                   : const Icon(Icons.upload_file),
                               label: Text(state.isUploading ? 'Uploading...' : (doc.base64Data.isEmpty ? 'Choose file' : 'Replace file')),
@@ -948,8 +948,8 @@ List<List<Widget>> getSampleDetailsSteps(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Icon(Icons.photo_camera, size: 20, color: Colors.black87),
-                            ),
+                              child: Icon(Icons.photo_camera, size: 20, color: customColors.black87),
+                          ),
                             const SizedBox(width: 8),
                             if (doc.base64Data.isNotEmpty)
                               IconButton(
@@ -959,31 +959,19 @@ List<List<Widget>> getSampleDetailsSteps(
                                   await _openUploadedDoc(doc);
                                 },
                               ),
-                            IconButton(
-                              icon: Icon(
-                                (doc.base64Data.isEmpty && (doc.name.isEmpty)) ? Icons.close : Icons.delete_outline,
-                                color: customColors.primary,
-                              ),
-                              tooltip: (doc.base64Data.isEmpty && (doc.name.isEmpty)) ? 'Close' : 'Remove',
-                              onPressed: () {
-                                context.read<SampleFormBloc>().add(RemoveUploadedDocument(index));
-                              },
-                            ),
-                          ],
-                        ),
                         if (doc.base64Data.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 6.0),
                             child: Text(
                               'Size: ' + _formatBytes((doc.sizeBytes ?? base64Decode(doc.base64Data).length)),
-                              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                              style: TextStyle(fontSize: 12, color: customColors.grey600),
                             ),
                           ),
+                          ]),
                         // if (doc.base64Data.isNotEmpty && doc.name.isNotEmpty)
                         //   Padding(
                         //     padding: const EdgeInsets.only(top: 8.0),
                         //     child: InkWell(
-                        //       onTap: () async {
                         //         await _openUploadedDoc(doc);
                         //       },
                         //       child: Row(
@@ -1037,7 +1025,7 @@ List<List<Widget>> getSampleDetailsSteps(
                 children: [
                   Icon(
                     state.uploadedDocs.isNotEmpty ? Icons.check_circle : Icons.circle_outlined,
-                    color: state.uploadedDocs.isNotEmpty ? Colors.green : Colors.grey,
+                    color: state.uploadedDocs.isNotEmpty ? customColors.green : customColors.grey,
                     size: 20,
                   ),
                   SizedBox(width: 8),
@@ -1056,7 +1044,7 @@ List<List<Widget>> getSampleDetailsSteps(
                         : 'No documents added',
                     style: TextStyle(
                       fontSize: 12,
-                      color: state.uploadedDocs.isNotEmpty ? Colors.green : Colors.grey[600],
+                      color: state.uploadedDocs.isNotEmpty ? customColors.green : customColors.grey600,
                     ),
                   ),
                 ],

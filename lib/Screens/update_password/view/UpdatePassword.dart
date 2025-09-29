@@ -75,7 +75,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
     _fadeController.dispose();
     _slideController.dispose();
     updatePasswordBloc.close();
-    super.dispose();
   }
 
   @override
@@ -83,7 +82,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
     return BlocProvider.value(
       value: updatePasswordBloc,
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: customColors.grey100,
         body: SafeArea(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -110,40 +109,15 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
-              Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Color(0xFFF2F2F2),
-                    ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        color: customColors.primary.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.lock_outline,
-                        color: customColors.primary,
-                        size: 50,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 35),
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: customColors.white,
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.08),
+                      color: customColors.shadowGrey08,
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -184,10 +158,10 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                   },
                   child: BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
                     buildWhen: (previous, current) =>
-                    previous.Username != current.Username ||
-                        previous.NewPassword != current.NewPassword ||
-                        previous.confirmPassword != current.confirmPassword ||
-                        previous.apiStatus != current.apiStatus,
+                        previous.Username != current.Username ||
+                            previous.NewPassword != current.NewPassword ||
+                            previous.confirmPassword != current.confirmPassword ||
+                            previous.apiStatus != current.apiStatus,
                     builder: (context, state) {
                       return Form(
                         key: _formKey,
@@ -219,7 +193,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
-                                  color: Colors.grey,
+                                  color: customColors.grey,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -242,7 +216,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
-                                  color: Colors.grey,
+                                  color: customColors.grey,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -270,7 +244,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                     context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
                                   }
 
-                                  // ❌ Remove Navigator.pop(context) here
+                                  // Remove Navigator.pop(context) here
 
                                   final secureStorage = const FlutterSecureStorage();
                                   final loginDataStr = await secureStorage.read(key: 'loginData');
@@ -283,11 +257,11 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                   }
                                 },
                                 child: state.apiStatus == ApiStatus.loading
-                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    ? const CircularProgressIndicator(color: customColors.white)
                                     : const Text(
                                   'UPDATE PASSWORD',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: customColors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),

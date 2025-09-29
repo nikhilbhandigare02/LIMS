@@ -34,7 +34,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
         return BlocProvider.value(
           value: context.read<SlipRequestBloc>(),
           child: AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: customColors.white,
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             title: Text('Update Count - Request ID: $requestId'),
@@ -62,7 +62,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 onPressed: () => Navigator.of(dialogCtx).pop(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: customColors.primary),
                 ),
               ),
               ElevatedButton(
@@ -102,17 +102,17 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: customColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
-                    side: const BorderSide(color: Colors.blue),
+                    side: const BorderSide(color: customColors.primary),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   minimumSize: const Size(100, 48),
                 ),
                 child: const Text(
                   'Update Count',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: customColors.white),
                 ),
               ),
             ],
@@ -131,7 +131,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
       )..add(const getRequestDataEvent(userId: 0)),
 
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: customColors.white,
         appBar: AppHeader(
           screenTitle: 'slip number info',
           // username: '',
@@ -202,7 +202,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                 final String sendDateText = formatDate(first.slipSendDate);
 
                 return Card(
-                  color: Colors.white,
+                  color: customColors.white,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -225,15 +225,15 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                             if (first.status_ID == 30)
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.blue.withOpacity(0.1),
+                                  color: customColors.primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.blue.shade200),
+                                  border: Border.all(color: customColors.primary.withOpacity(0.2)),
                                 ),
                                 child: IconButton(
                                   onPressed: () => _showUpdateCountDialog(
                                       context, reqId, group),
                                   icon: const Icon(Icons.edit,
-                                      size: 20, color: Colors.blue),
+                                      size: 20, color: customColors.primary),
                                   tooltip: 'Update Count',
                                 ),
                               ),
@@ -241,7 +241,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(subtitle,
-                            style: TextStyle(color: Colors.grey.shade700)),
+                            style: TextStyle(color: customColors.grey600)),
                         const SizedBox(height: 4),
 
                         Row(
@@ -312,9 +312,9 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
+                                  color: customColors.grey100,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey.shade300),
+                                  border: Border.all(color: customColors.grey300),
                                 ),
                                 child: Text(seal),
                               );

@@ -42,7 +42,7 @@ class _ResetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: customColors.grey100,
       body: SafeArea(
         child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
@@ -98,7 +98,7 @@ class _ResetPasswordView extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 70,
-                      backgroundColor: Color(0xFFF2F2F2),
+                      backgroundColor: customColors.lightGreyCircle,
                     ),
                     Container(
                       height: 100,
@@ -123,11 +123,11 @@ class _ResetPasswordView extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: customColors.white,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.08),
+                        color: customColors.shadowGrey08,
                         blurRadius: 16,
                         offset: const Offset(0, 8),
                       ),
@@ -186,12 +186,12 @@ class _ResetPasswordView extends StatelessWidget {
                               onPressed: () => _onSubmit(context),
                               child: state.apiStatus == ApiStatus.loading
                                   ? const CircularProgressIndicator(
-                                color: Colors.white,
+                                color: customColors.white,
                               )
                                   : const Text(
                                 'Reset Password',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: customColors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -246,3 +246,4 @@ class _ResetPasswordView extends StatelessWidget {
     );
   }
 }
+

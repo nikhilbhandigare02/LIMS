@@ -265,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: customColors.greyShade,
           // gradient: LinearGradient(
           //   begin: Alignment.topCenter,
           //   end: Alignment.bottomCenter,
@@ -304,11 +304,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: customColors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
+                            color: customColors.blackwithOpacity!,
                             blurRadius: 15,
                             offset: Offset(5, 5),
                           ),
@@ -335,7 +335,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 : "Authorized Personnel Only",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: customColors.grey,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -382,8 +382,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                         Expanded(
                                           child: OutlinedButton.icon(
                                             style: OutlinedButton.styleFrom(
-                                              side: BorderSide(color: fingerEnabled ? customColors.primary : Colors.grey.shade400, width: 1.5),
-                                              foregroundColor: fingerEnabled ? customColors.primary : Colors.grey,
+                                              side: BorderSide(color: fingerEnabled ? customColors.primary : customColors.grey400, width: 1.5),
+                                              foregroundColor: fingerEnabled ? customColors.primary : customColors.grey,
                                             ),
                                             onPressed: fingerEnabled ? () => _authenticateBiometric(PreferredBio.fingerprint) : null,
                                             icon: const Icon(Icons.fingerprint),
@@ -397,7 +397,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         _supportedBiometricsLabel(),
-                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                        style: TextStyle(fontSize: 12, color: customColors.grey),
                                       ),
                                     ),
                                   ],

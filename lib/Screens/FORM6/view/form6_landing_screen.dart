@@ -290,7 +290,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                             decoration: BoxDecoration(
                               color: step['isComplete']
                                   ? step['color']
-                                  : Colors.grey.shade300,
+                                  : customColors.grey300,
                               shape: BoxShape.circle,
                               boxShadow: step['isComplete']
                                   ? [
@@ -308,8 +308,8 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                                   : step['icon'],
                               size: 18,
                               color: step['isComplete']
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                                  ? customColors.white
+                                  : customColors.grey600,
                             ),
                           ),
                         ),
@@ -320,7 +320,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                           height: 40,
                           color: step['isComplete']
                               ? step['color']
-                              : Colors.grey.shade300,
+                              : customColors.grey300,
                         ),
                     ],
                   ),
@@ -335,12 +335,12 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                       decoration: BoxDecoration(
                         color: step['isComplete']
                             ? step['color'].withOpacity(0.05)
-                            : Colors.grey.shade50,
+                            : customColors.grey50,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: step['isComplete']
                               ? step['color'].withOpacity(0.2)
-                              : Colors.grey.shade200,
+                              : customColors.grey200,
                         ),
                       ),
                       child: Row(
@@ -357,7 +357,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                                   fontWeight: FontWeight.w600,
                                   color: step['isComplete']
                                       ? step['color']
-                                      : Colors.grey.shade800,
+                                      : customColors.grey800,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -365,7 +365,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                                 step['subtitle'],
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: customColors.grey600,
                                 ),
                               ),
                             ],
@@ -376,7 +376,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                             size: 16,
                             color: step['isComplete']
                                 ? step['color']
-                                : Colors.grey.shade400,
+                                : customColors.grey400,
                           ),
                         ],
                       ),
@@ -432,7 +432,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       )
           : Card(
         key: const ValueKey("warningText"),
-        color: Colors.red.shade50,
+        color: customColors.red50,
         margin: const EdgeInsets.only(top: 10),
         elevation: 2,
         shape: RoundedRectangleBorder(

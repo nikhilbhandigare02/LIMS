@@ -25,7 +25,7 @@ class ForgotScreen extends StatelessWidget {
         forgotPasswordRepository: ForgotPasswordRepository(),
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: customColors.grey100,
         body: SafeArea(
           child: Padding(
             padding:  EdgeInsets.symmetric(horizontal: 24),
@@ -63,7 +63,7 @@ class ForgotScreen extends StatelessWidget {
                     children: [
                        CircleAvatar(
                         radius: 70,
-                        backgroundColor: Color(0xFFF2F2F2),
+                        backgroundColor: customColors.lightGreyCircle,
                       ),
                       Container(
                         height: 100,
@@ -132,11 +132,11 @@ class ForgotScreen extends StatelessWidget {
                             Container(
                               padding:  EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: customColors.white,
                                 borderRadius: BorderRadius.circular(18),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity(0.08),
+                                    color: customColors.shadowGrey08,
                                     blurRadius: 16,
                                     offset:  Offset(0, 8),
                                   ),
@@ -198,14 +198,14 @@ class ForgotScreen extends StatelessWidget {
                                                 height: 20,
                                                 child:
                                                     CircularProgressIndicator(
-                                                      color: Colors.white,
+                                                      color: customColors.white,
                                                       strokeWidth: 2,
                                                     ),
                                               )
                                             :  Text(
                                                 'SEND OTP',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: customColors.white,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -258,14 +258,14 @@ class ForgotScreen extends StatelessWidget {
                                                   height: 20,
                                                   child:
                                                       CircularProgressIndicator(
-                                                        color: Colors.white,
+                                                        color: customColors.white,
                                                         strokeWidth: 2,
                                                       ),
                                                 )
                                               :  Text(
                                                   'VERIFY OTP',
                                                   style: TextStyle(
-                                                    color: Colors.white,
+                                                    color: customColors.white,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
                                                   ),
@@ -318,3 +318,4 @@ class ForgotScreen extends StatelessWidget {
     );
   }
 }
+

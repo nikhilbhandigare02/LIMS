@@ -15,6 +15,22 @@ class customColors{
   static const Color grey = Colors.grey;
   static const Color orange = Colors.orange;
   static const Color red = Colors.red;
+  static final Color? greyShade = Colors.grey[200];
+  static final Color? blackwithOpacity = Colors.black.withOpacity(0.15);
+  
+  // Shared neutrals for backgrounds and surfaces
+  static final Color? grey100 = Colors.grey[100];
+  static const Color lightGreyCircle = Color(0xFFF2F2F2);
+  static final Color shadowGrey08 = Colors.grey.withOpacity(0.08);
+
+  // Additional common shades
+  static final Color? grey50 = Colors.grey[50];
+  static final Color grey200 = Colors.grey.shade200;
+  static final Color grey300 = Colors.grey.shade300;
+  static final Color grey400 = Colors.grey.shade400;
+  static final Color grey600 = Colors.grey.shade600;
+  static final Color grey800 = Colors.grey.shade800;
+  static final Color red50 = Colors.red.shade50;
 }
 
 
