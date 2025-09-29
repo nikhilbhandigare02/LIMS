@@ -269,7 +269,8 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                   if (_formKey.currentState!.validate()) {
                                     context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
                                   }
-                                  Navigator.pop(context);
+
+                                  // ❌ Remove Navigator.pop(context) here
 
                                   final secureStorage = const FlutterSecureStorage();
                                   final loginDataStr = await secureStorage.read(key: 'loginData');
@@ -280,9 +281,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                     final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
                                     passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
                                   }
-                                  Navigator.pop(context);
                                 },
-
                                 child: state.apiStatus == ApiStatus.loading
                                     ? const CircularProgressIndicator(color: Colors.white)
                                     : const Text(
@@ -294,6 +293,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                   ),
                                 ),
                               ),
+
 
                             ),
                             SizedBox(height: 15),

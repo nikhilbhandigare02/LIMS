@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"lims-mobilenoti","appId":"1:491052480643:android:99011f378689265cd0c3b6","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"lims-mobilenoti","configurations":{"android":"1:491052480643:android:99011f378689265cd0c3b6","ios":"1:491052480643:ios:cd7c04bdf652d1add0c3b6"}}}}}}
