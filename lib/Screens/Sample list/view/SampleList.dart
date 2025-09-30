@@ -493,13 +493,15 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
     if (s.contains('verification'))
       return Colors.blue;
-    if (s.contains('coding') || s.contains('decode'))
-      return Colors.cyan;
+    // if (s.contains('coding') || s.contains('decode'))
+    //   return Colors.cyan;
     if (s.contains('assignment') ||
         s.contains('allocated') ||
         s.contains('allocation'))
       return Colors.orange;
     if (s.contains('analysis'))
+      return Colors.green;
+    if (s.contains('Resubmitted'))
       return Colors.green;
     if (s.contains('received'))
       return Colors.purple;
@@ -508,6 +510,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
     if (s.contains('sent')) return Colors.lightBlue;
 
     if (s == 're-requested' || s.contains('re-request'))
+      return Colors.redAccent;
+    if (s == 'tempered' || s.contains('re-request'))
       return Colors.redAccent;
 
     return Colors.grey;
