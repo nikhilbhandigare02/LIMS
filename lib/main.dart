@@ -7,7 +7,8 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:lottie/lottie.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 import 'fcm/bloc/token_bloc.dart';
 import 'fcm/repository/token_repository.dart';
@@ -16,12 +17,278 @@ import 'firebase_options.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 
+// Global navigator key
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+String? _pendingRoute;
+String? _postLoginRoute; // set when we should navigate after a forced login
+
+/// Always navigate to Login first; only go to ResubmitSample after login
+/// when triggered explicitly from a "View message" action (fromView == true).
+Future<void> _navigateToResubmitSampleGuarded({required bool fromView}) async {
+  try {
+    const storage = FlutterSecureStorage();
+    final nav = navigatorKey.currentState;
+    if (fromView) {
+      _postLoginRoute = RouteName.ResubmitSample;
+    } else {
+      _postLoginRoute = null;
+    }
+
+    if (nav != null) {
+      await nav.pushNamed(RouteName.loginScreen);
+      // After returning from Login, check again
+      final String? after = await storage.read(key: 'loginData');
+      if ((after != null && after.isNotEmpty) && _postLoginRoute != null) {
+        final next = _postLoginRoute!;
+        _postLoginRoute = null;
+        nav.pushNamed(next);
+      }
+    } else {
+      _pendingRoute = RouteName.loginScreen;
+      _postLoginRoute = fromView ? RouteName.ResubmitSample : null;
+    }
+  } catch (e) {
+    print('⚠️ Auth guard navigation error: $e');
+  }
+}
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   print('🔔 Background message received: ${message.messageId}');
   _showNotification(message);
+}
+
+/// Show system notification (background/terminated)
+Future<void> _showNotification(RemoteMessage message) async {
+  final notification = message.notification;
+  if (notification == null) return;
+
+  final title = notification.title ?? "Notification";
+  final body = notification.body ?? "You have a new message";
+  final imageUrl = message.data['image'];
+  final appName = (message.data['app'] as String?) ?? 'food_inspector';
+  final avatarUrl = message.data['avatar'] as String?; // optional for messaging style
+
+  // Prefer a Messaging-style layout when possible to better match the design
+  final styleInfo = (avatarUrl != null && avatarUrl.isNotEmpty)
+      ? MessagingStyleInformation(
+          const Person(name: ' '),
+          conversationTitle: title,
+          groupConversation: false,
+          messages: [
+            Message(body, DateTime.now(), const Person(name: ' ')),
+          ],
+        )
+      : ((imageUrl != null && imageUrl.isNotEmpty)
+          ? BigPictureStyleInformation(
+              FilePathAndroidBitmap(imageUrl),
+              contentTitle: title,
+              summaryText: body,
+            )
+          : BigTextStyleInformation(
+              body,
+              contentTitle: title,
+            ));
+
+  // Use a new channel ID to force Android to apply MAX importance (if an older
+  // lower-importance channel existed with the previous ID, Android would keep it).
+  final androidDetails = AndroidNotificationDetails(
+    'alerts_channel_v2',
+    'Alerts & Notifications',
+    channelDescription: 'General app alerts and updates',
+    importance: Importance.max,
+    priority: Priority.max,
+    icon: '@mipmap/ic_launcher',
+    color: Colors.deepPurple,
+    enableVibration: true,
+    playSound: true,
+    enableLights: true,
+    largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+    showWhen: true,
+    when: DateTime.now().millisecondsSinceEpoch,
+    subText: appName,
+    category: AndroidNotificationCategory.message,
+    colorized: true,
+    ticker: title,
+    styleInformation: styleInfo,
+    visibility: NotificationVisibility.public,
+    actions: <AndroidNotificationAction>[
+      AndroidNotificationAction(
+        'view',
+        'View message',
+        showsUserInterface: true,
+        cancelNotification: true,
+      ),
+    ],
+  );
+
+  final notificationDetails = NotificationDetails(android: androidDetails);
+
+  await flutterLocalNotificationsPlugin.show(
+    notification.hashCode,
+    title,
+    body,
+    notificationDetails,
+    payload: (message.data['route'] is String) ? message.data['route'] as String : null,
+  );
+}
+
+void _showInAppAnimatedMessage(RemoteMessage message) {
+  final title = message.notification?.title ?? "Notification";
+  final body = message.notification?.body ?? "You have a new message";
+  final route = message.data['route'] as String?;
+
+  final context = navigatorKey.currentContext;
+  final isDark = context != null && Theme.of(context).brightness == Brightness.dark;
+
+  showOverlayNotification(
+    (overlayContext) {
+      final Color cardBg = isDark ? const Color(0xFF121212) : Colors.white;
+      final Color textPrimary = isDark ? Colors.white : Colors.black87;
+      final Color textSecondary = isDark ? Colors.white70 : Colors.black54;
+      // final String appName = 'Food ';
+      final String timeLabel = '1m';
+      final String? avatarUrl = message.data['avatar'] as String?;
+
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: GestureDetector(
+            onTap: () {
+              OverlaySupportEntry.of(overlayContext)!.dismiss();
+              if (route != null && route.isNotEmpty) {
+                if (route == RouteName.ResubmitSample) {
+                  _navigateToResubmitSampleGuarded(fromView: false);
+                } else {
+                  _navigateFromData({'route': route});
+                }
+              }
+            },
+            child: Material(
+              color: cardBg,
+              elevation: 8,
+              borderRadius: BorderRadius.circular(16),
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // App badge
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.wb_sunny_rounded, color: Colors.white, size: 16),
+                    ),
+                    const SizedBox(width: 12),
+                    // Content
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Header line: app name • time
+                          Row(
+                            children: [
+                              // Text(appName, style: TextStyle(color: textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+                              const SizedBox(width: 6),
+                              Text('•', style: TextStyle(color: textSecondary, fontSize: 10)),
+                              const SizedBox(width: 6),
+                              Text(timeLabel, style: TextStyle(color: textSecondary, fontSize: 10)),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          // Title
+                          Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: textPrimary, fontWeight: FontWeight.w700, fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          // Body
+                          Text(
+                            body,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: textSecondary, fontSize: 14, height: 1.25),
+                          ),
+                          const SizedBox(height: 10),
+                          // CTA link
+                          InkWell(
+                            onTap: () {
+                              OverlaySupportEntry.of(overlayContext)!.dismiss();
+                              if (route != null && route.isNotEmpty) {
+                                if (route == RouteName.ResubmitSample) {
+                                  _navigateToResubmitSampleGuarded(fromView: true);
+                                } else {
+                                  _navigateFromData({'route': route});
+                                }
+                              }
+                            },
+                            child: const Text(
+                              'View message',
+                              style: TextStyle(color: Color(0xFF0F9D58), fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Trailing: avatar + chevron
+                    Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: Colors.grey.shade200,
+                          backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                              ? NetworkImage(avatarUrl)
+                              : null,
+                          child: (avatarUrl == null || avatarUrl.isEmpty)
+                              ? const Icon(Icons.person, color: Colors.grey, size: 20)
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        Icon(Icons.expand_less_rounded, color: textSecondary),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+    duration: const Duration(seconds: 5),
+    position: NotificationPosition.top,
+  );
+}
+
+void _navigateFromData(Map<String, dynamic> data) {
+  final route = data['route'] as String?;
+  if (route != null && route.isNotEmpty) {
+    final nav = navigatorKey.currentState;
+    if (nav != null) {
+      if (route == RouteName.ResubmitSample) {
+        _navigateToResubmitSampleGuarded(fromView: false);
+      } else {
+        nav.pushNamed(route);
+      }
+    } else {
+      _pendingRoute = route;
+    }
+  } else {
+    print('ℹ️ Notification clicked but no route provided in data payload');
+  }
 }
 
 Future<void> _initFirebaseMessaging(BuildContext context) async {
@@ -33,14 +300,13 @@ Future<void> _initFirebaseMessaging(BuildContext context) async {
   final String? token = await messaging.getToken();
   print('🔑 FCM Token: $token');
   if (token != null && token.isNotEmpty) {
-    // Only send token if a logged-in user exists
     try {
       const storage = FlutterSecureStorage();
       final String? loginDataJson = await storage.read(key: 'loginData');
       if (loginDataJson != null && loginDataJson.isNotEmpty) {
         context.read<TokenBloc>().add(
-              SaveFcmTokenRequested(token: token, platform: 'flutter'),
-            );
+          SaveFcmTokenRequested(token: token, platform: 'flutter'),
+        );
       } else {
         print('ℹ️ Skipping initial FCM token send: no loginData yet');
       }
@@ -49,12 +315,26 @@ Future<void> _initFirebaseMessaging(BuildContext context) async {
     }
   }
 
+  // Foreground handler
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('📩 Foreground message received: ${message.messageId}');
-    _showNotification(message);
+    _showInAppAnimatedMessage(message); // 👈 show animated popup
+    _showNotification(message); // also trigger system notification
   });
 
-  // Token refresh
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('➡️ onMessageOpenedApp: navigate without overlay');
+    // Navigate directly without showing in-app overlay on reopen
+    _navigateFromData(message.data);
+  });
+
+  final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    print('🚀 App opened from terminated via notification: navigate without overlay');
+    // Navigate directly without showing in-app overlay on cold start
+    _navigateFromData(initialMessage.data);
+  }
+
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     print('🔁 FCM Token refreshed: $newToken');
     if (newToken.isNotEmpty) {
@@ -63,8 +343,8 @@ Future<void> _initFirebaseMessaging(BuildContext context) async {
         final String? loginDataJson = await storage.read(key: 'loginData');
         if (loginDataJson != null && loginDataJson.isNotEmpty) {
           context.read<TokenBloc>().add(
-                SaveFcmTokenRequested(token: newToken, platform: 'flutter'),
-              );
+            SaveFcmTokenRequested(token: newToken, platform: 'flutter'),
+          );
         } else {
           print('ℹ️ Skipping refreshed FCM token send: no loginData yet');
         }
@@ -73,28 +353,6 @@ Future<void> _initFirebaseMessaging(BuildContext context) async {
       }
     }
   });
-}
-
-Future<void> _showNotification(RemoteMessage message) async {
-  final notification = message.notification;
-  if (notification == null) return;
-
-  const androidDetails = AndroidNotificationDetails(
-    'default_channel',
-    'General Notifications',
-    channelDescription: 'App notifications',
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-
-  const notificationDetails = NotificationDetails(android: androidDetails);
-
-  await flutterLocalNotificationsPlugin.show(
-    notification.hashCode,
-    notification.title ?? 'No title',
-    notification.body ?? 'No body',
-    notificationDetails,
-  );
 }
 
 void main() async {
@@ -107,7 +365,29 @@ void main() async {
 
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
   const initSettings = InitializationSettings(android: androidInit);
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      final payload = response.payload ?? '';
+      final actionId = response.actionId;
+      if (actionId == 'view') {
+        _navigateToResubmitSampleGuarded(fromView: true);
+        return;
+      }
+      if (payload == RouteName.ResubmitSample) {
+        _navigateToResubmitSampleGuarded(fromView: false);
+        return;
+      }
+      if (payload.isNotEmpty) {
+        navigatorKey.currentState?.pushNamed(payload);
+      }
+    },
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+  );
+
+  // Clear any stale system notifications from previous sessions to avoid
+  // them reappearing when the app restarts.
+  await flutterLocalNotificationsPlugin.cancelAll();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -117,6 +397,19 @@ void main() async {
       child: const MyApp(),
     ),
   );
+}
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse response) {
+  final payload = response.payload ?? '';
+  final actionId = response.actionId;
+  if (actionId == 'view') {
+    _pendingRoute = RouteName.ResubmitSample;
+    return;
+  }
+  if (payload.isNotEmpty) {
+    _pendingRoute = payload;
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -130,24 +423,40 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize FCM with context so we can dispatch Bloc events
     _initFirebaseMessaging(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pendingRoute != null && _pendingRoute!.isNotEmpty) {
+        final route = _pendingRoute!;
+        _pendingRoute = null;
+        final nav = navigatorKey.currentState;
+        if (nav != null) {
+          if (route == RouteName.ResubmitSample) {
+            _navigateToResubmitSampleGuarded(fromView: false);
+          } else {
+            nav.pushNamed(route);
+          }
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
+    return OverlaySupport.global( // 👈 wrap with overlay_support
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
+          textTheme: GoogleFonts.poppinsTextTheme(
+            Theme.of(context).textTheme,
+          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        navigatorKey: navigatorKey,
+        initialRoute: RouteName.splashScreen,
+        onGenerateRoute: Routes.generateRoute,
       ),
-      initialRoute: RouteName.splashScreen,
-      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
