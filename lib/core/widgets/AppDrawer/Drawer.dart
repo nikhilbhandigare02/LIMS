@@ -4,6 +4,10 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
+// For showing resubmit notifications count when available
+import '../../../core/utils/enums.dart';
+import '../../../Screens/ResubmitSample/bloc/resubmit_bloc.dart';
+
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/repository/form6Repository.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
@@ -74,6 +78,7 @@ class CustomDrawer extends StatelessWidget {
                     context,
                     Icons.replay_circle_filled,
                     "Request For New Sample",
+                    trailing: _resubmitBellBadge(context),
                     onTap: () => Navigator.pushNamed(context, RouteName.ResubmitSample),
                   ),
                   const Divider(),
@@ -136,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
                                 borderRadius: BorderRadius.all(Radius.zero),
                               ),
                             ),
-                            icon: const Icon(Icons.exit_to_app, color: Colors.white), // Icon for "Logout"
+                            icon: const Icon(Icons.exit_to_app, color: Colors.white),
                             label: const Text(
                               "Logout",
                               style: TextStyle(color: Colors.white),
@@ -324,5 +329,62 @@ class CustomDrawer extends StatelessWidget {
   }
 
 
+  Widget _resubmitBellBadge(BuildContext context) {
+    // Try to access the bloc; if not present, hide the badge gracefully.
+    ResubmitBloc bloc;
+    try {
+      bloc = BlocProvider.of<ResubmitBloc>(context);
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
+
+    return BlocBuilder<ResubmitBloc, ResubmitState>(
+      bloc: bloc,
+      buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
+      builder: (context, state) {
+        if (state.fetchList.status == Status.loading) {
+          return const SizedBox.shrink();
+        }
+        int count = 0;
+        final data = state.fetchList.data;
+        if (data is List) {
+          count = data.length;
+        }
+        if (count <= 0) return const SizedBox.shrink();
+        return _bellWithBadge(count);
+      },
+    );
+  }
+
+  Widget _bellWithBadge(int count) {
+    final String text = count > 99 ? '99+' : count.toString();
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Icon(Icons.notifications_none, color: customColors.primary),
+        Positioned(
+          right: -2,
+          top: -2,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+              color: Colors.redAccent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
 }
