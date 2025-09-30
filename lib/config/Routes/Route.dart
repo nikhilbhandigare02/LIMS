@@ -10,7 +10,7 @@ import '../../Screens/ForgotScreen/View/ForgotScreen.dart';
 import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
 import '../../Screens/FORM6/view/form6_landing_screen.dart';
 
-import '../../Screens/Help_Support/view/Help_Suport.dart';
+// import '../../Screens/Help_Support/view/Help_Suport.dart';
 import '../../Screens/ResubmitSample/view/resubmitSample.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/SlipRequestDetails/SlipRequestDetailsScreen.dart';
@@ -45,8 +45,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => UserProfileScreen(),);
     case RouteName.SampleAnalysisScreen:
       return  MaterialPageRoute(builder: (context) => SampleAnalysisScreen(),);
-    case RouteName.supportScreen:
-      return  MaterialPageRoute(builder: (context) => HelpSuport(),);
+    // case RouteName.supportScreen:
+    //   return  MaterialPageRoute(builder: (context) => HelpSuport(),);
     case RouteName.registerScreen:
       return  MaterialPageRoute(builder: (context) => RegistrationScreen(),);
     case RouteName.settingScreen:
@@ -66,7 +66,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
         return Scaffold(
           body: Text('No Route Found'),
         );
-      });
+      }
+      );
   }
 }
 }

@@ -7,6 +7,7 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 // For showing resubmit notifications count when available
 import '../../../core/utils/enums.dart';
 import '../../../Screens/ResubmitSample/bloc/resubmit_bloc.dart';
+import '../../../Screens/ResubmitSample/repository/resubmit_repository.dart';
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/repository/form6Repository.dart';
@@ -52,9 +53,6 @@ class CustomDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-
-
-
                   ),
 
                   _buildMenuItem(
@@ -285,30 +283,50 @@ class CustomDrawer extends StatelessWidget {
   // available resubmit items. If ResubmitBloc is not available in the
   // widget tree, nothing is shown.
   Widget _resubmitBellBadge(BuildContext context) {
-    // Try to access the bloc; if not present, hide the badge gracefully.
-    ResubmitBloc bloc;
+    // If a ResubmitBloc already exists above us, reuse it.
     try {
-      bloc = BlocProvider.of<ResubmitBloc>(context);
+      final existing = BlocProvider.of<ResubmitBloc>(context);
+      return BlocBuilder<ResubmitBloc, ResubmitState>(
+        bloc: existing,
+        buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
+        builder: (context, state) {
+          if (state.fetchList.status == Status.loading) {
+            return const SizedBox.shrink();
+          }
+          int count = 0;
+          final data = state.fetchList.data;
+          if (data is List) {
+            count = data.length;
+          }
+          if (count <= 0) return const SizedBox.shrink();
+          return _bellWithBadge(count);
+        },
+      );
     } catch (_) {
-      return const SizedBox.shrink();
+      // No existing bloc: create a local one to fetch count when drawer builds.
+      return BlocProvider<ResubmitBloc>(
+        create: (_) {
+          final b = ResubmitBloc(repository: ResubmitRepository());
+          b.add(const FetchApprovedSamplesByUser());
+          return b;
+        },
+        child: BlocBuilder<ResubmitBloc, ResubmitState>(
+          buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
+          builder: (context, state) {
+            if (state.fetchList.status == Status.loading) {
+              return const SizedBox.shrink();
+            }
+            int count = 0;
+            final data = state.fetchList.data;
+            if (data is List) {
+              count = data.length;
+            }
+            if (count <= 0) return const SizedBox.shrink();
+            return _bellWithBadge(count);
+          },
+        ),
+      );
     }
-
-    return BlocBuilder<ResubmitBloc, ResubmitState>(
-      bloc: bloc,
-      buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
-      builder: (context, state) {
-        if (state.fetchList.status == Status.loading) {
-          return const SizedBox.shrink();
-        }
-        int count = 0;
-        final data = state.fetchList.data;
-        if (data is List) {
-          count = data.length;
-        }
-        if (count <= 0) return const SizedBox.shrink();
-        return _bellWithBadge(count);
-      },
-    );
   }
 
   Widget _bellWithBadge(int count) {
