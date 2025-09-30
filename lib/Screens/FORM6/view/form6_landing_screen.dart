@@ -80,7 +80,24 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SampleFormBloc, SampleFormState>(
+    return WillPopScope(
+        onWillPop: () async {
+          final confirmed = await ConfirmDialog.show(
+            context,
+            title: "Exit App",
+            message: "Do you really want to exit?",
+            confirmText: "Exit",
+            confirmColor: Colors.red,
+            icon: Icons.exit_to_app,
+          );
+
+          if (confirmed) {
+
+            return true;
+          }
+          return false;
+        },
+     child:  BlocListener<SampleFormBloc, SampleFormState>(
       listener: (context, state) async {
         // Update completion status whenever state changes
         final newOtherComplete = _isFsoInfoComplete(state);
@@ -182,7 +199,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           ),
         ),
       ),
-    );
+    ) ) ;
   }
 
   Widget _buildVerticalStepProgress() {

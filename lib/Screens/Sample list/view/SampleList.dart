@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/Screens/Sample%20list/repository/sampleRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
+import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
@@ -524,7 +529,28 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
   }
    @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
+    return WillPopScope(
+        onWillPop: () async {
+          final confirmed = await ConfirmDialog.show(
+            context,
+            title: "Exit App",
+            message: "Do you really want to exit?",
+            confirmText: "Exit",
+            confirmColor: Colors.red,
+            icon: Icons.exit_to_app,
+          );
+
+          if (confirmed) {
+            if (Platform.isAndroid) {
+              SystemNavigator.pop();
+            } else if (Platform.isIOS) {
+              exit(0);
+            }
+            return true;
+          }
+          return false;
+        },
+      child: BlocProvider.value(
       value: sampleBloc,
       child: Scaffold(
         backgroundColor: Colors.grey[50],
@@ -667,7 +693,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
           ),
         ),
       ),
-    );
+    ));
   }
   Widget _buildCardView(List<SampleList> sampleDataList) {
     return Padding(
