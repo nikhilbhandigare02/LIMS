@@ -552,3 +552,62 @@ class AppDialog {
   }
 }
 
+
+class ConfirmDialog {
+  static Future<bool> show(
+      BuildContext context, {
+        required String title,
+        required String message,
+        String cancelText = "Cancel",
+        String confirmText = "OK",
+        IconData? icon,
+        Color confirmColor = Colors.blue,
+      }) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+              if (icon != null)
+                Icon(icon, color: confirmColor, size: 22),
+              if (icon != null) const SizedBox(width: 8),
+              Text(title,),
+            ],
+          ),
+          content: Text(message, style: TextStyle(fontSize: 18),),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton.icon(
+                  icon: const Icon(Icons.cancel_outlined, color: Colors.blue),
+                  label: Text(cancelText, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                ),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: confirmColor,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                  ),
+                  icon: const Icon(Icons.exit_to_app, color: Colors.white),
+                  label: Text(confirmText,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    ) ??
+        false;
+  }
+}
+
