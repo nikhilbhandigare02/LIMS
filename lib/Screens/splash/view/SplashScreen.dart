@@ -409,8 +409,8 @@ class _SplashscreenState extends State<Splashscreen>
                             borderRadius: BorderRadius.circular(4),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 14,
+                            horizontal: 25,
+                            vertical: 12,
                           ),
                           elevation: 3,
                           shadowColor: customColors.primary.withOpacity(0.3),
