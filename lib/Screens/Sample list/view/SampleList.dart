@@ -22,6 +22,7 @@ import '../model/sampleData.dart';
 import 'dart:convert';
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 class SampleAnalysisScreen extends StatefulWidget {
   @override
@@ -212,8 +213,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                           flex: 3,
                           child: _buildDateBox(
                             label: _fromDate == null
-                                ? 'From Date'
-                                : 'From: ${f(_fromDate!)}',
+                                ? AppLocalizations.of(context)!.fromDate
+                                : '${AppLocalizations.of(context)!.from}: ${f(_fromDate!)}',
                             date: _fromDate ?? today,
                             onPicked: (picked) => setState(() => _fromDate = picked),
                           ),
@@ -223,8 +224,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                           flex: 3,
                           child: _buildDateBox(
                             label: _toDate == null
-                                ? 'To Date'
-                                : 'To: ${f(_toDate!)}',
+                                ? AppLocalizations.of(context)!.toDate
+                                : '${AppLocalizations.of(context)!.to}: ${f(_toDate!)}',
                             date: _toDate ?? _fromDate ?? today,
                             onPicked: (picked) => setState(() => _toDate = picked),
                           ),
@@ -240,8 +241,8 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
 
                               if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Invalid range: To date must be on/after From date')),
+                                  SnackBar(
+                                      content: Text(AppLocalizations.of(context)!.invalidRange)),
                                 );
                                 return;
                               }
@@ -253,7 +254,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                               );
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Fetching filtered records...')),
+                                SnackBar(content: Text(AppLocalizations.of(context)!.fetchingFilteredRecords)),
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -280,46 +281,46 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                   _fetchStatusOptions();
                                 }
                                   if (_isStatusLoading) {
-                                  const loading = 'Loading status...';
+                                  final loading = AppLocalizations.of(context)!.loadingStatus;
                                   return Opacity(
                                     opacity: 0.7,
                                     child: IgnorePointer(
                                       ignoring: true,
                                       child: BlocDropdown(
-                                        label: 'Status',
+                                        label: AppLocalizations.of(context)!.status,
                                         value: loading,
-                                        items: const [loading],
+                                        items: [loading],
                                         onChanged: (_) {},
                                       ),
                                     ),
                                   );
                                 }
                                 if (_statusOptions.isEmpty) {
-                                  const none = 'No status found';
+                                  final none = AppLocalizations.of(context)!.noStatusFound;
                                   return Opacity(
                                     opacity: 0.7,
                                     child: IgnorePointer(
                                       ignoring: true,
                                       child: BlocSearchableDropdown(
-                                        label: 'Status',
+                                        label: AppLocalizations.of(context)!.status,
                                         value: none,
-                                        items: const [none],
+                                        items: [none],
                                         onChanged: (_) {},
                                       ),
                                     ),
                                   );
                                 }
-                                final List<String> statusItems = ['Select Status', ..._statusOptions];
+                                final List<String> statusItems = [AppLocalizations.of(context)!.selectStatus, ..._statusOptions];
                                 final String current = (selectedStatus == null || selectedStatus!.isEmpty)
-                                    ? 'Select Status'
+                                    ? AppLocalizations.of(context)!.selectStatus
                                     : selectedStatus!;
                                 return BlocSearchableDropdown(
-                                  label: 'Status',
+                                  label: AppLocalizations.of(context)!.status,
                                   value: current,
                                   items: statusItems,
                                   onChanged: (val) {
                                     setState(() {
-                                      if (val == null || val == 'Select Status') {
+                                      if (val == null || val == AppLocalizations.of(context)!.selectStatus) {
                                         selectedStatus = null;
                                       } else {
                                         selectedStatus = val;
@@ -342,34 +343,34 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                 if (s.labOptions.isEmpty) {
                                   // Trigger fetch if not already fetched
                                   sampleFormBloc.add(FetchLabMasterRequested());
-                                  const loading = "Loading labs...";
+                                  final loading = AppLocalizations.of(context)!.loadingLabs;
                                   return Opacity(
                                     opacity: 0.7,
                                     child: IgnorePointer(
                                       ignoring: true,
                                       child: BlocDropdown(
-                                        label: "Lab Master",
+                                        label: AppLocalizations.of(context)!.labMaster,
                                         value: loading,
-                                        items: const [loading],
+                                        items: [loading],
                                         onChanged: (_) {},
                                       ),
                                     ),
                                   );
                                 }
                                 final selected = s.lab;
-                                final items = ['Select Lab', ...s.labOptions];
-                                final String currentLab = selected.isEmpty ? 'Select Lab' : selected;
+                                final items = [AppLocalizations.of(context)!.selectLab, ...s.labOptions];
+                                final String currentLab = selected.isEmpty ? AppLocalizations.of(context)!.selectLab : selected;
                                 return BlocSearchableDropdown(
-                                  label: "Lab",
+                                  label: AppLocalizations.of(context)!.labLabel,
                                   value: currentLab,
                                   items: items,
                                   onChanged: (val) {
                                     if (val == null) return;
-                                    final toSet = (val == 'Select Lab') ? '' : val;
+                                    final toSet = (val == AppLocalizations.of(context)!.selectLab) ? '' : val;
                                     sampleFormBloc.add(LabChanged(toSet));
                                     // Keep local copy for any external use
                                     setState(() {
-                                      selectedLab = (val == 'Select Lab') ? null : val;
+                                      selectedLab = (val == AppLocalizations.of(context)!.selectLab) ? null : val;
                                       currentPage = 0;
                                     });
                                   },
@@ -417,7 +418,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   showFilters = !showFilters;
                 });
               },
-              tooltip: showFilters ? 'Clear & Hide Filters' : 'Show Filters',
+              tooltip: showFilters ? AppLocalizations.of(context)!.filterTooltipClearHide : AppLocalizations.of(context)!.filterTooltipShow,
             ),
           ),
         ],
@@ -533,9 +534,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         onWillPop: () async {
           final confirmed = await ConfirmDialog.show(
             context,
-            title: "Exit App",
-            message: "Do you really want to exit?",
-            confirmText: "Exit",
+            title: AppLocalizations.of(context)!.exitAppTitle,
+            message: AppLocalizations.of(context)!.exitAppMessage,
+            confirmText: AppLocalizations.of(context)!.exitAppConfirm,
             confirmColor: Colors.red,
             icon: Icons.exit_to_app,
           );
@@ -555,7 +556,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppHeader(
-          screenTitle: 'Sample Analysis',
+          screenTitle: AppLocalizations.of(context)!.sampleAnalysisTitle,
 
           showBack: false,
           actions: [
@@ -576,7 +577,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
               ),
               child: IconButton(
                 icon: Icon(Icons.add, color: Colors.white),
-                tooltip: 'Go to Home',
+                tooltip: AppLocalizations.of(context)!.goToHome,
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -613,7 +614,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                   ),
                 ),
                 onPressed: toggleView,
-                tooltip: isCardView ? 'Switch to Table View' : 'Switch to Card View',
+                tooltip: isCardView ? AppLocalizations.of(context)!.switchToTable : AppLocalizations.of(context)!.switchToCard,
               ),
             ),
           ],
@@ -687,7 +688,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                     ),
                   );
                 default:
-                  return Center(child: Text('Unexpected state'));
+                  return Center(child: Text(AppLocalizations.of(context)!.unexpectedState));
               }
             },
           ),

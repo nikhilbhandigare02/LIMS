@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
@@ -63,7 +64,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   }
 
   String formatDate(dynamic date) {
-    if (date == null) return "N/A";
+    if (date == null) return AppLocalizations.of(context)!.na;
     try {
       if (date is DateTime) {
         return DateFormat('dd/MM/yyyy').format(date);
@@ -77,9 +78,9 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
   }
 
   String formatYesNo(dynamic value) {
-    if (value == null) return "N/A";
-    if (value.toString() == "1") return "Yes";
-    if (value.toString() == "0") return "No";
+    if (value == null) return AppLocalizations.of(context)!.na;
+    if (value.toString() == "1") return AppLocalizations.of(context)!.yes;
+    if (value.toString() == "0") return AppLocalizations.of(context)!.no;
     return value.toString();
   }
 
@@ -88,7 +89,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppHeader(
-        screenTitle: 'Sample Form VI Details',
+        screenTitle: AppLocalizations.of(context)!.sampleFormViDetails,
 
         showBack: false,
       ),
@@ -105,7 +106,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               return _buildLoadingState();
             case Status.error:
               return _buildErrorState(
-                state.getFormData.message ?? "Error occurred",
+                state.getFormData.message ?? AppLocalizations.of(context)!.error,
               );
             case Status.complete:
               final ViewForm6Model data = state.getFormData.data;
@@ -132,7 +133,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
           SizedBox(height: 16),
           Text(
-            "Loading sample details...",
+            AppLocalizations.of(context)!.loadingSampleDetails,
             style: TextStyle(color: textSecondary, fontSize: 16),
           ),
         ],
@@ -165,7 +166,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           Icon(Icons.folder_open, size: 64, color: textSecondary),
           SizedBox(height: 16),
           Text(
-            "No details found",
+            AppLocalizations.of(context)!.noDetailsFound,
             style: TextStyle(color: textPrimary, fontSize: 16),
           ),
         ],
@@ -183,27 +184,27 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
            SizedBox(height: 12),
 
           _buildSection(
-            title: "Basic Information",
+            title: AppLocalizations.of(context)!.basicInformation,
 
             color:  Color(0xFF3B82F6),
             fields: [
               {
-                "label": "Serial No:",
+                "label": "${AppLocalizations.of(context)!.serialNo}:",
                 "value": details.serialNo,
 
               },
               {
-                "label": "Sender Name:",
+                "label": "${AppLocalizations.of(context)!.senderNameLabel}:",
                 "value": details.senderName,
 
               },
               {
-                "label": "Sender Designation:",
+                "label": "${AppLocalizations.of(context)!.senderDesignationLabel}:",
                 "value": details.senderDesignation,
 
               },
               {
-                "label": "DO Number:",
+                "label": "${AppLocalizations.of(context)!.doNumberLabel}:",
                 "value": details.DONumber,
 
               },
@@ -211,29 +212,29 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
 
           _buildSection(
-            title: "Location Details",
+            title: AppLocalizations.of(context)!.locationDetails,
 
             color:  Color(0xFF3B82F6),
 
             fields: [
               {
-                "label": "District:",
+                "label": "${AppLocalizations.of(context)!.district}:",
                 "value": details.district,
                 "icon": Icons.map,
               },
               {
-                "label": "Division:",
+                "label": "${AppLocalizations.of(context)!.division}:",
                 "value": details.division,
                 "icon": Icons.location_city,
               },
-              {"label": "Area:", "value": details.area, "icon": Icons.place},
+              {"label": "${AppLocalizations.of(context)!.area}:", "value": details.area, "icon": Icons.place},
               {
-                "label": "Latitude:",
+                "label": "${AppLocalizations.of(context)!.latitude}:",
                 "value": details.latitude,
                 "icon": Icons.gps_fixed,
               },
               {
-                "label": "Longitude:",
+                "label": "${AppLocalizations.of(context)!.longitude}:",
                 "value": details.longitude,
                 "icon": Icons.gps_not_fixed,
               },
@@ -241,38 +242,38 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
 
           _buildSection(
-            title: "Sample Information",
+            title: AppLocalizations.of(context)!.sampleInformation,
 
             color:  Color(0xFF3B82F6),
 
             fields: [
               {
-                "label": "Sample Code:",
+                "label": "${AppLocalizations.of(context)!.sampleCode}:",
                 "value": details.sampleCodeNumber,
                 "icon": Icons.qr_code,
               },
               {
-                "label": "Slip Number:",
+                "label": "${AppLocalizations.of(context)!.slipNumber}:",
                 "value": details.slip_number,
                 "icon": Icons.qr_code,
               },
               {
-                "label": "Collection Date:",
+                "label": "${AppLocalizations.of(context)!.collectionDate}:",
                 "value": formatDate(details.collectionDate),
                 "icon": Icons.calendar_today,
               },
               {
-                "label": "Collection Place:",
+                "label": "${AppLocalizations.of(context)!.collectionPlace}:",
                 "value": details.placeOfCollection,
                 "icon": Icons.location_pin,
               },
               {
-                "label": "Sample Name:",
+                "label": "${AppLocalizations.of(context)!.sampleName}:",
                 "value": details.sampleName,
                 "icon": Icons.label,
               },
               {
-                "label": "Quantity:",
+                "label": "${AppLocalizations.of(context)!.quantity}:",
                 "value": details.quantityOfSample,
                 "icon": Icons.scale,
               },
@@ -280,22 +281,22 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
 
           _buildSection(
-            title: "Preservative Details",
+            title: AppLocalizations.of(context)!.preservativeDetails,
             color:  Color(0xFF3B82F6),
 
             fields: [
               {
-                "label": "Preservative Added:",
+                "label": "${AppLocalizations.of(context)!.preservativeAdded}:",
                 "value": formatYesNo(details.preservativeAdded),
                 "icon": Icons.add_circle_outline,
               },
               {
-                "label": "Preservative Name:",
+                "label": "${AppLocalizations.of(context)!.preservativeName}:",
                 "value": details.preservativeName,
                 "icon": Icons.science,
               },
               {
-                "label": "Quantity:",
+                "label": "${AppLocalizations.of(context)!.preservativeQuantity}:",
                 "value": details.quantityOfPreservative,
                 "icon": Icons.water_drop,
               },
@@ -303,29 +304,29 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
 
           _buildSection(
-            title: "Verification & Security",
+            title: AppLocalizations.of(context)!.verificationSecurity,
 
             color:  Color(0xFF3B82F6),
 
             fields: [
               {
-                "label": "Witness Signature:",
+                "label": "${AppLocalizations.of(context)!.witnessSignature}:",
                 "value": formatYesNo(details.witnessSignature),
 
               },
 
               {
-                "label": "DO Signature:",
+                "label": "${AppLocalizations.of(context)!.doSignature}:",
                 "value": formatYesNo(details.signatureOfDO),
                 "icon": Icons.draw,
               },
               {
-                "label": "Seal Impression:",
+                "label": "${AppLocalizations.of(context)!.sealImpression}:",
                 "value": formatYesNo(details.sealImpression),
                 "icon": Icons.verified,
               },
               {
-                "label": "Seal Number:",
+                "label": "${AppLocalizations.of(context)!.sealNumber}:",
                 "value": details.sealNumber,
                 "icon": Icons.security,
               },
@@ -333,26 +334,26 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
           ),
 
           _buildSection(
-            title: "Form VI Details",
+            title: AppLocalizations.of(context)!.formViDetails,
             color:  Color(0xFF3B82F6),
 
             fields: [
               {
-                "label": "Memo Form VI",
+                "label": AppLocalizations.of(context)!.memoFormVi,
                 "value": formatYesNo(details.memoFormVI),
 
               },
               {
-                "label": "Inside Wrapper",
+                "label": AppLocalizations.of(context)!.insideWrapper,
                 "value": formatYesNo(details.wrapperFormVI),
 
               },
               {
-                "label": "Wrapper Code",
+                "label": AppLocalizations.of(context)!.wrapperCode,
                 "value": details.wrapperCodeNumber,
               },
 
-              {"label": "Uploaded Document", "value": _buildDocumentsList(details),  },
+              {"label": AppLocalizations.of(context)!.uploadedDocument, "value": _buildDocumentsList(details),  },
              // {"label": "Status", "value": details.status,  },
 
             ],
@@ -360,7 +361,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
           if (_buildStatusTransactionFields(details.status).isNotEmpty)
             _buildSection(
-              title: "Status Transactions",
+              title: AppLocalizations.of(context)!.statusTransactions,
               color: const Color(0xFF3B82F6),
               fields: _buildStatusTransactionFields(details.status),
             ),

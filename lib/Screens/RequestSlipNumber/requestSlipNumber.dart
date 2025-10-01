@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:food_inspector/Screens/RequestSlipNumber/bloc/request_bloc.dart';
 import 'package:food_inspector/Screens/RequestSlipNumber/repository/requestRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 import '../../core/utils/Message.dart';
 import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
@@ -28,7 +29,6 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
   String? _dateError;
   static const int _maxDaysAhead = 30;
 
-
   @override
   void initState() {
     super.initState();
@@ -37,17 +37,17 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
     _dateError = null;
   }
 
-
-
   Future<void> _pickDate(BuildContext context) async {
     final DateTime today = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? today,
       firstDate: DateTime(today.year, today.month, today.day),
-      lastDate: DateTime(today.year, today.month, today.day).add(
-        const Duration(days: _maxDaysAhead),
-      ),
+      lastDate: DateTime(
+        today.year,
+        today.month,
+        today.day,
+      ).add(const Duration(days: _maxDaysAhead)),
     );
 
     if (picked != null && picked != selectedDate) {
@@ -56,9 +56,9 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
         _dateError = null;
       });
 
-      final String apiDate = DateFormat("dd/MM/yyyy HH:mm:ss").format(
-        DateTime(picked.year, picked.month, picked.day, 0, 0, 0),
-      );
+      final String apiDate = DateFormat(
+        "dd/MM/yyyy HH:mm:ss",
+      ).format(DateTime(picked.year, picked.month, picked.day, 0, 0, 0));
 
       context.read<RequestStateBloc>().add(RequestDateEvent(picked));
     }
@@ -67,12 +67,11 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RequestStateBloc>(
-      create: (_) => RequestStateBloc(
-        requestedSealRepository: RequestedSealRepository(),
-      ),
+      create: (_) =>
+          RequestStateBloc(requestedSealRepository: RequestedSealRepository()),
       child: Scaffold(
         appBar: AppHeader(
-          screenTitle: 'Request for slip number',
+          screenTitle: AppLocalizations.of(context)!.requestForSlipNumber,
 
           showBack: false,
         ),
@@ -84,7 +83,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
               case ApiStatus.loading:
                 Message.showTopRightOverlay(
                   context,
-                  'Loading...',
+                  AppLocalizations.of(context)!.loading,
                   MessageType.info,
                 );
                 break;
@@ -115,9 +114,9 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Text(
-                        'Request for a slip number on ${dateFormat.format(selectedDate)}', // always shows current date
+                        '${AppLocalizations.of(context)!.requestForSlipNumber} ${dateFormat.format(selectedDate)}', // shows current date
                         style: const TextStyle(
                           fontSize: 16,
                           color: customColors.black87,
@@ -125,65 +124,45 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                       ),
                       const SizedBox(height: 20),
 
-                      const Text(
-                        'Enter count',
-                        style: TextStyle(fontSize: 16),
+                      Text(
+                        AppLocalizations.of(context)!.enterCount,
+                        style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          hintText: 'Enter slip number count',
+                          hintText: AppLocalizations.of(
+                            context,
+                          )!.slipNumberCount,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide:  BorderSide(color: customColors.primary), // default
+                            borderSide: BorderSide(color: customColors.primary),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide:  BorderSide(color: customColors.primary, width: 0.8), // blue when not focused
+                            borderSide: BorderSide(
+                              color: customColors.primary,
+                              width: 0.8,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide:  BorderSide(color: customColors.primary, width: 0.8), // blue when focused
+                            borderSide: BorderSide(
+                              color: customColors.primary,
+                              width: 0.8,
+                            ),
                           ),
                         ),
-                        validator: (value) => Validators.validateNumberOfSeals(value),
+                        validator: (value) =>
+                            Validators.validateNumberOfSeals(value),
                         onChanged: (value) {
-                          context.read<RequestStateBloc>().add(RequestCountEvent(value));
+                          context.read<RequestStateBloc>().add(
+                            RequestCountEvent(value),
+                          );
                         },
                       ),
-                      const SizedBox(height: 8),
-                      // const Text(
-                      //   'Select Date',
-                      //   style: TextStyle(fontSize: 16),
-                      // ),
-                      // const SizedBox(height: 8),
-                      // Container(
-                      //   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                      //   decoration: BoxDecoration(
-                      //     border: Border.all(color: _dateError == null ? customColors.primary : Colors.red),
-                      //     borderRadius: BorderRadius.circular(5),
-                      //   ),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Text(
-                      //         selectedDate == null
-                      //             ? 'DD/MM/YYYY'
-                      //             : dateFormat.format(selectedDate!),
-                      //         style: TextStyle(
-                      //           fontSize: 16,
-                      //           color: selectedDate == null ? Colors.grey : Colors.black,
-                      //         ),
-                      //       ),
-                      //       const Icon(Icons.calendar_today, size: 20, color: Colors.grey),
-                      //     ],
-                      //   ),
-                      // ),
-
-
                       const SizedBox(height: 30),
-
 
                       SizedBox(
                         width: double.infinity,
@@ -200,40 +179,51 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                           onPressed: state.apiStatus == ApiStatus.loading
                               ? null
                               : () {
-                            final String? dateValidation = Validators.validateDateInRange(
-                              selectedDate,
-                              minDaysFromToday: 0,
-                              maxDaysFromToday: _maxDaysAhead,
-                            );
-                            setState(() {
-                              _dateError = dateValidation;
-                            });
-
-                            if (_formKey.currentState?.validate() == true && dateValidation == null) {
-                              if (selectedDate != null) {
-                                final DateTime normalized = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, 0, 0, 0);
-                                context.read<RequestStateBloc>().add(RequestDateEvent(normalized));
-                              }
-                              context.read<RequestStateBloc>().add(SubmitRequestEvent());
-                            }
-                          },
+                                  final String? dateValidation =
+                                      Validators.validateDateInRange(
+                                        selectedDate,
+                                        minDaysFromToday: 0,
+                                        maxDaysFromToday: _maxDaysAhead,
+                                      );
+                                  setState(() {
+                                    _dateError = dateValidation;
+                                  });
+                                  if (_formKey.currentState?.validate() ==
+                                          true &&
+                                      dateValidation == null) {
+                                    final DateTime normalized = DateTime(
+                                      selectedDate.year,
+                                      selectedDate.month,
+                                      selectedDate.day,
+                                      0,
+                                      0,
+                                      0,
+                                    );
+                                    context.read<RequestStateBloc>().add(
+                                      RequestDateEvent(normalized),
+                                    );
+                                    context.read<RequestStateBloc>().add(
+                                      SubmitRequestEvent(),
+                                    );
+                                  }
+                                },
                           child: state.apiStatus == ApiStatus.loading
                               ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: customColors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                              : const Text(
-                            'Send Request',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: customColors.white,
-                            ),
-                          ),
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: customColors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  AppLocalizations.of(context)!.sendRequest,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: customColors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

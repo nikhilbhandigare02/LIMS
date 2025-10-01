@@ -12,6 +12,7 @@ import '../../core/utils/enums.dart';
 import 'bloc/SlipRequestBloc.dart';
 import 'model/SlipRequestModel.dart';
 import '../RequestSlipNumber/repository/requestRepository.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 class SealRequestDetailsScreen extends StatefulWidget {
   const SealRequestDetailsScreen({super.key});
@@ -133,7 +134,7 @@ class _SealRequestDetailsScreenState extends State<SealRequestDetailsScreen> {
       child: Scaffold(
         backgroundColor: customColors.white,
         appBar: AppHeader(
-          screenTitle: 'slip number info',
+          screenTitle: AppLocalizations.of(context)!.requestForSlipNumber,
           // username: '',
 
           showBack: false,

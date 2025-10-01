@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Sample list/model/sampleData.dart';
@@ -40,7 +41,7 @@ class _ResubmitSampleState extends State<ResubmitSample> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppHeader(
-          screenTitle: "Resubmit Sample",
+          screenTitle: AppLocalizations.of(context)!.resubmitSample,
           showBack: false,
         ),
         drawer: CustomDrawer(),
@@ -53,7 +54,7 @@ class _ResubmitSampleState extends State<ResubmitSample> {
                 // show loading popup
                 AppDialog.show(
                   context,
-                  'Submitting resubmit request... Please wait',
+                  AppLocalizations.of(context)!.submittingRequest,
                   MessageType.info,
                 );
               } else {
@@ -62,11 +63,21 @@ class _ResubmitSampleState extends State<ResubmitSample> {
                 if (status == Status.complete) {
                   final msg = state.updateStatus.data?.toString();
                   if (msg != null && msg.trim().isNotEmpty) {
-                    Message.showTopRightOverlay(context, msg, MessageType.success, title: 'Success');
+                    Message.showTopRightOverlay(
+                      context,
+                      msg,
+                      MessageType.success,
+                      title: AppLocalizations.of(context)!.success,
+                    );
                   }
                 } else if (status == Status.error) {
-                  final msg = state.updateStatus.message ?? 'Failed to resubmit';
-                  Message.showTopRightOverlay(context, msg, MessageType.error, title: 'Error');
+                  final msg = state.updateStatus.message ?? '';
+                  Message.showTopRightOverlay(
+                    context,
+                    msg.isEmpty ? AppLocalizations.of(context)!.error : msg,
+                    MessageType.error,
+                    title: AppLocalizations.of(context)!.error,
+                  );
                 }
               }
             },
@@ -78,7 +89,9 @@ class _ResubmitSampleState extends State<ResubmitSample> {
                   case Status.complete:
                     final items = (state.fetchList.data as List<SampleList>? ?? const <SampleList>[]);
                     if (items.isEmpty) {
-                      return const Center(child: Text('Currently no samples present to resubmit'));
+                      return Center(
+                        child: Text(AppLocalizations.of(context)!.noSamplesToResubmit),
+                      );
                     }
                     return ListView.separated(
                       padding: const EdgeInsets.all(16),
@@ -94,8 +107,8 @@ class _ResubmitSampleState extends State<ResubmitSample> {
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
                           isNotFound
-                              ? 'Currently no samples present to resubmit'
-                              : (state.fetchList.message ?? 'Something went wrong'),
+                              ? AppLocalizations.of(context)!.noSamplesToResubmit
+                              : (state.fetchList.message ?? AppLocalizations.of(context)!.error),
                         ),
                       ),
                     );
@@ -193,18 +206,18 @@ class _ResubmitSampleState extends State<ResubmitSample> {
                       if (serial == null || serial.isEmpty || insertedBy == null) {
                         Message.showTopRightOverlay(
                           context,
-                          'Missing serial number or user id',
+                          AppLocalizations.of(context)!.missingFields,
                           MessageType.error,
-                          title: 'Validation',
+                          title: AppLocalizations.of(context)!.validation,
                         );
                         return;
                       }
 
                       await Message.showPopup(
                         context,
-                        message: 'Do you want to resubmit the sample with serial number: '+serial+'?',
+                        message: '${AppLocalizations.of(context)!.confirmResubmit} '+serial+'?',
                         type: MessageType.info,
-                        title: 'Confirm Resubmit',
+                        title: AppLocalizations.of(context)!.confirmResubmit,
                         onOk: () {
                           _bloc.add(
                             UpdateStatusResubmitRequested(
@@ -217,7 +230,10 @@ class _ResubmitSampleState extends State<ResubmitSample> {
 
                     },
                     icon: const Icon(Icons.send_rounded, size: 16,color: Colors.white,),
-                    label: const Text('Send',style: TextStyle(color: Colors.white),),
+                    label: Text(
+                      AppLocalizations.of(context)!.sendRequest,
+                      style: const TextStyle(color: Colors.white),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade600,
                       elevation: 0,

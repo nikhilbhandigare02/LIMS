@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 // For showing resubmit notifications count when available
 import '../../../core/utils/enums.dart';
 import '../../../Screens/ResubmitSample/bloc/resubmit_bloc.dart';
+import '../../../Screens/ResubmitSample/repository/resubmit_repository.dart';
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/repository/form6Repository.dart';
@@ -42,7 +44,7 @@ class CustomDrawer extends StatelessWidget {
                   _buildMenuItem(
                     context,
                     Icons.money,
-                    "Form VI",
+                    AppLocalizations.of(context)!.menuFormVI,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -52,67 +54,64 @@ class CustomDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-
-
-
                   ),
 
                   _buildMenuItem(
                     context,
                     Icons.library_books,
-                    "Sample List Records",
+                    AppLocalizations.of(context)!.menuSampleListRecords,
                     onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.assignment_turned_in,
-                    "Request for slip number",
+                    AppLocalizations.of(context)!.menuRequestSlipNumber,
                     onTap: () => Navigator.pushNamed(context, RouteName.requestForSlip),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.info,
-                    "  slip number Info",
+                    AppLocalizations.of(context)!.menuSlipNumberInfo,
                     onTap: () => Navigator.pushNamed(context, RouteName.SlipRequestDetailsScreen),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.replay_circle_filled,
-                    "Request For New Sample",
+                    AppLocalizations.of(context)!.menuRequestNewSample,
                     trailing: _resubmitBellBadge(context),
                     onTap: () => Navigator.pushNamed(context, RouteName.ResubmitSample),
                   ),
                   const Divider(),
-                  _buildSectionTitle("Others"),
+                  _buildSectionTitle(AppLocalizations.of(context)!.menuOthers),
 
                   _buildMenuItem(
                     context,
                     Icons.settings,
-                    "Settings",
+                    AppLocalizations.of(context)!.menuSettings,
                     onTap: () => Navigator.pushNamed(context, RouteName.settingScreen),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.support_agent_outlined,
-                    "Help & Support",
+                    AppLocalizations.of(context)!.menuHelpSupport,
                     onTap: () => Navigator.pushNamed(context, RouteName.supportScreen),
                   ),
                   _buildMenuItem(
                     context,
                     Icons.info_outline_rounded,
-                    "About Us",
+                    AppLocalizations.of(context)!.menuAboutUs,
                     onTap: () => Navigator.pushNamed(context, RouteName.AboutUsScreen),
                   ),
                 ],
               ),
             ),
             const Divider(),
-          _buildMenuItem(context, Icons.logout, "Logout", onTap: () async {
+          _buildMenuItem(context, Icons.logout, AppLocalizations.of(context)!.menuLogout, onTap: () async {
             final confirmed = await ConfirmDialog.show(
               context,
-              title: "Logout",
-              message: "Are you sure you want to Logout?",
-              confirmText: "Logout",
+              title: AppLocalizations.of(context)!.logoutTitle,
+              message: AppLocalizations.of(context)!.logoutMessage,
+              confirmText: AppLocalizations.of(context)!.logoutConfirm,
               confirmColor: Colors.red,
               icon: Icons.logout,
             );
@@ -142,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
         final String? jsonString = await storage.read(key: 'loginData');
         if (jsonString == null || jsonString.isEmpty) {
           return {
-            'name': 'User',
+            'name': AppLocalizations.of(context)!.userFallback,
             'subtitle': '',
           };
         }
@@ -167,12 +166,12 @@ class CustomDrawer extends StatelessWidget {
           subtitle = email.toString();
         }
         return {
-          'name': name ?? 'User',
-          'subtitle': 'Food Safety Officer',
+          'name': name ?? AppLocalizations.of(context)!.userFallback,
+          'subtitle': AppLocalizations.of(context)!.designationFoodSafetyOfficer,
         };
       } catch (_) {
         return {
-          'name': 'User',
+          'name': AppLocalizations.of(context)!.userFallback,
           'subtitle': '',
         };
       }
@@ -209,7 +208,7 @@ class CustomDrawer extends StatelessWidget {
               child: FutureBuilder<Map<String, String>>(
                 future: loadUserHeader(),
                 builder: (context, snapshot) {
-                  final name = snapshot.hasData ? (snapshot.data!['name'] ?? 'User') : 'User';
+                  final name = snapshot.hasData ? (snapshot.data!['name'] ?? AppLocalizations.of(context)!.userFallback) : AppLocalizations.of(context)!.userFallback;
                   final subtitle = snapshot.hasData ? (snapshot.data!['subtitle'] ?? '') : '';
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,30 +284,50 @@ class CustomDrawer extends StatelessWidget {
   // available resubmit items. If ResubmitBloc is not available in the
   // widget tree, nothing is shown.
   Widget _resubmitBellBadge(BuildContext context) {
-    // Try to access the bloc; if not present, hide the badge gracefully.
-    ResubmitBloc bloc;
+    // If a ResubmitBloc already exists above us, reuse it.
     try {
-      bloc = BlocProvider.of<ResubmitBloc>(context);
+      final existing = BlocProvider.of<ResubmitBloc>(context);
+      return BlocBuilder<ResubmitBloc, ResubmitState>(
+        bloc: existing,
+        buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
+        builder: (context, state) {
+          if (state.fetchList.status == Status.loading) {
+            return const SizedBox.shrink();
+          }
+          int count = 0;
+          final data = state.fetchList.data;
+          if (data is List) {
+            count = data.length;
+          }
+          if (count <= 0) return const SizedBox.shrink();
+          return _bellWithBadge(count);
+        },
+      );
     } catch (_) {
-      return const SizedBox.shrink();
+      // No existing bloc: create a local one to fetch count when drawer builds.
+      return BlocProvider<ResubmitBloc>(
+        create: (_) {
+          final b = ResubmitBloc(repository: ResubmitRepository());
+          b.add(const FetchApprovedSamplesByUser());
+          return b;
+        },
+        child: BlocBuilder<ResubmitBloc, ResubmitState>(
+          buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
+          builder: (context, state) {
+            if (state.fetchList.status == Status.loading) {
+              return const SizedBox.shrink();
+            }
+            int count = 0;
+            final data = state.fetchList.data;
+            if (data is List) {
+              count = data.length;
+            }
+            if (count <= 0) return const SizedBox.shrink();
+            return _bellWithBadge(count);
+          },
+        ),
+      );
     }
-
-    return BlocBuilder<ResubmitBloc, ResubmitState>(
-      bloc: bloc,
-      buildWhen: (prev, curr) => prev.fetchList != curr.fetchList,
-      builder: (context, state) {
-        if (state.fetchList.status == Status.loading) {
-          return const SizedBox.shrink();
-        }
-        int count = 0;
-        final data = state.fetchList.data;
-        if (data is List) {
-          count = data.length;
-        }
-        if (count <= 0) return const SizedBox.shrink();
-        return _bellWithBadge(count);
-      },
-    );
   }
 
   Widget _bellWithBadge(int count) {

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:food_inspector/config/Routes/Route.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
@@ -13,6 +14,8 @@ import 'package:overlay_support/overlay_support.dart';
 import 'fcm/bloc/token_bloc.dart';
 import 'fcm/repository/token_repository.dart';
 import 'firebase_options.dart';
+import 'l10n/gen/app_localizations.dart';
+import 'l10n/locale_notifier.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -420,10 +423,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Locale? _locale;
   @override
   void initState() {
     super.initState();
     _initFirebaseMessaging(context);
+    _loadSavedLocale();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pendingRoute != null && _pendingRoute!.isNotEmpty) {
         final route = _pendingRoute!;
@@ -440,22 +445,62 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _loadSavedLocale() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final String? lang = await storage.read(key: 'appLanguage');
+      if (lang == null || lang.isEmpty) return;
+      Locale loc;
+      switch (lang.toLowerCase()) {
+        case 'hindi':
+        case 'hi':
+          loc = const Locale('hi');
+          break;
+        case 'marathi':
+        case 'mr':
+          loc = const Locale('mr');
+          break;
+        default:
+          loc = const Locale('en');
+      }
+      if (mounted) setState(() => _locale = loc);
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport.global( // 👈 wrap with overlay_support
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          textTheme: GoogleFonts.poppinsTextTheme(
-            Theme.of(context).textTheme,
-          ),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
-        navigatorKey: navigatorKey,
-        initialRoute: RouteName.splashScreen,
-        onGenerateRoute: Routes.generateRoute,
+    return OverlaySupport.global(
+      child: ValueListenableBuilder<Locale?>(
+        valueListenable: appLocale,
+        builder: (context, value, _) {
+          final effectiveLocale = value ?? _locale;
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            onGenerateTitle: (context) => AppLocalizations.of(context)?.appTitle ?? 'Food Inspector',
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('hi'),
+              Locale('mr'),
+            ],
+            locale: effectiveLocale,
+            theme: ThemeData(
+              scaffoldBackgroundColor: Colors.white,
+              textTheme: GoogleFonts.poppinsTextTheme(
+                Theme.of(context).textTheme,
+              ),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            ),
+            navigatorKey: navigatorKey,
+            initialRoute: RouteName.splashScreen,
+            onGenerateRoute: Routes.generateRoute,
+          );
+        },
       ),
     );
   }
