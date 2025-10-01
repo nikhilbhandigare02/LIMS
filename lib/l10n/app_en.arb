@@ -161,5 +161,7 @@
         "thStatus": "Status",
         "thActions": "Actions",
         "prev": "Prev",
-        "next": "Next"
+        "next": "Next",
+        "profile": "My Profile",
+        "updatePass": "Update Password"
 }

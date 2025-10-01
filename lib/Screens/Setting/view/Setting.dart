@@ -43,7 +43,7 @@ class _SettingState extends State<Setting> {
         children: [
           _buildListTile(
             icon: Icons.person_outline,
-            title: 'My Profile',
+            title: AppLocalizations.of(context).profile,
             onTap: () {
               Navigator.pushNamed(context, RouteName.profileScreen);
             },
@@ -51,7 +51,7 @@ class _SettingState extends State<Setting> {
           Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
           _buildListTile(
             icon: Icons.lock_outline,
-            title: 'Update Password',
+            title: AppLocalizations.of(context).updatePass,
             onTap: () {
               Navigator.pushNamed(context, RouteName. updateScreen);
             },

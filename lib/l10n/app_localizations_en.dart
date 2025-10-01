@@ -327,19 +327,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sampleListFilterBySampleListRecords => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsTooltip =>
-      'View sample list records';
+  String get sampleListFilterBySampleListRecordsTooltip => 'View sample list records';
 
   @override
   String get sampleListFilterBySampleListRecordsDialog => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogTitle =>
-      'Sample List Records';
+  String get sampleListFilterBySampleListRecordsDialogTitle => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogMessage =>
-      'Please select the sample list records you want to view';
+  String get sampleListFilterBySampleListRecordsDialogMessage => 'Please select the sample list records you want to view';
 
   @override
   String get sampleListFilterBySampleListRecordsDialogConfirm => 'View Records';
@@ -348,20 +345,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sampleListFilterBySampleListRecordsDialogCancel => 'Cancel';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound =>
-      'No records found';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound => 'No records found';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage =>
-      'No records found for the selected sample list records';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage => 'No records found for the selected sample list records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm =>
-      'OK';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm => 'OK';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel =>
-      'Cancel';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel => 'Cancel';
 
   @override
   String get sampleAnalysisTitle => 'Sample Analysis';
@@ -388,8 +381,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get to => 'To';
 
   @override
-  String get invalidRange =>
-      'Invalid range: To date must be on/after From date';
+  String get invalidRange => 'Invalid range: To date must be on/after From date';
 
   @override
   String get fetchingFilteredRecords => 'Fetching filtered records...';
@@ -467,10 +459,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
-
-  @override
-  String get profile => 'My Profile';
-
-  @override
-  String get updatePass => 'Update Password';
 }

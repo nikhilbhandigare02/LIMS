@@ -84,12 +84,10 @@ class AppLocalizationsMr extends AppLocalizations {
   String get resubmitSample => 'नमुना पुन्हा सबमिट करा';
 
   @override
-  String get submittingRequest =>
-      'विनंती सबमिट केली जात आहे... कृपया प्रतीक्षा करा';
+  String get submittingRequest => 'विनंती सबमिट केली जात आहे... कृपया प्रतीक्षा करा';
 
   @override
-  String get noSamplesToResubmit =>
-      'सध्या पुन्हा सबमिट करण्यासाठी कोणतेही नमुने उपलब्ध नाहीत';
+  String get noSamplesToResubmit => 'सध्या पुन्हा सबमिट करण्यासाठी कोणतेही नमुने उपलब्ध नाहीत';
 
   @override
   String get confirmResubmit => 'पुन्हा सबमिट करण्याची पुष्टी करा';
@@ -329,19 +327,16 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sampleListFilterBySampleListRecords => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsTooltip =>
-      'View sample list records';
+  String get sampleListFilterBySampleListRecordsTooltip => 'View sample list records';
 
   @override
   String get sampleListFilterBySampleListRecordsDialog => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogTitle =>
-      'Sample List Records';
+  String get sampleListFilterBySampleListRecordsDialogTitle => 'Sample List Records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogMessage =>
-      'Please select the sample list records you want to view';
+  String get sampleListFilterBySampleListRecordsDialogMessage => 'Please select the sample list records you want to view';
 
   @override
   String get sampleListFilterBySampleListRecordsDialogConfirm => 'View Records';
@@ -350,20 +345,16 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sampleListFilterBySampleListRecordsDialogCancel => 'Cancel';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound =>
-      'No records found';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound => 'No records found';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage =>
-      'No records found for the selected sample list records';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage => 'No records found for the selected sample list records';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm =>
-      'OK';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm => 'OK';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel =>
-      'Cancel';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel => 'Cancel';
 
   @override
   String get sampleAnalysisTitle => 'नमुना विश्लेषण';
@@ -390,8 +381,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get to => 'पर्यंत';
 
   @override
-  String get invalidRange =>
-      'अवैध श्रेणी: \'पर्यंत\' तारीख \'पासून\' तारखेपेक्षा नंतर/समान असावी';
+  String get invalidRange => 'अवैध श्रेणी: \'पर्यंत\' तारीख \'पासून\' तारखेपेक्षा नंतर/समान असावी';
 
   @override
   String get fetchingFilteredRecords => 'फिल्टर केलेले नोंदी आणत आहोत...';
@@ -469,10 +459,4 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get next => 'पुढे';
-
-  @override
-  String get profile => 'माझे प्रोफाइल';
-
-  @override
-  String get updatePass => 'पासवर्ड अपडेट करा';
 }
