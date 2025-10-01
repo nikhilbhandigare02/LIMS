@@ -435,4 +435,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unexpectedState => 'Unexpected state';
+
+  @override
+  String showingRange(Object start, Object end, Object total) {
+    return 'Showing $start-$end of $total records';
+  }
+
+  @override
+  String get thSerialNo => 'Serial No.';
+
+  @override
+  String get thSentDate => 'Sent Date';
+
+  @override
+  String get thLabLocation => 'Lab Location';
+
+  @override
+  String get thRequestedDate => 'Requested Date';
+
+  @override
+  String get thResentDate => 'Resent Date';
+
+  @override
+  String get thStatus => 'Status';
+
+  @override
+  String get thActions => 'Actions';
+
+  @override
+  String get prev => 'Prev';
+
+  @override
+  String get next => 'Next';
 }

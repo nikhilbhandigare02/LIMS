@@ -437,4 +437,36 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get unexpectedState => 'अनपेक्षित स्थिती';
+
+  @override
+  String showingRange(Object start, Object end, Object total) {
+    return ' $total पैकी $start-$end  नोंदी दर्शवत आहोत';
+  }
+
+  @override
+  String get thSerialNo => 'सिरिअल क्रमांक';
+
+  @override
+  String get thSentDate => 'पाठविल्याची तारीख';
+
+  @override
+  String get thLabLocation => 'प्रयोगशाळा ठिकाण';
+
+  @override
+  String get thRequestedDate => 'विनंती तारीख';
+
+  @override
+  String get thResentDate => 'पुन्हा पाठवण्याची तारीख';
+
+  @override
+  String get thStatus => 'स्थिती';
+
+  @override
+  String get thActions => 'क्रिया';
+
+  @override
+  String get prev => 'मागे';
+
+  @override
+  String get next => 'पुढे';
 }

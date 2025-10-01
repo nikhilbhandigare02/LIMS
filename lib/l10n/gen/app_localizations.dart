@@ -939,6 +939,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unexpected state'**
   String get unexpectedState;
+
+  /// No description provided for @showingRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {start}-{end} of {total} records'**
+  String showingRange(Object start, Object end, Object total);
+
+  /// No description provided for @thSerialNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Serial No.'**
+  String get thSerialNo;
+
+  /// No description provided for @thSentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent Date'**
+  String get thSentDate;
+
+  /// No description provided for @thLabLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Location'**
+  String get thLabLocation;
+
+  /// No description provided for @thRequestedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested Date'**
+  String get thRequestedDate;
+
+  /// No description provided for @thResentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Resent Date'**
+  String get thResentDate;
+
+  /// No description provided for @thStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get thStatus;
+
+  /// No description provided for @thActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get thActions;
+
+  /// No description provided for @prev.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev'**
+  String get prev;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _AppLocalizationsDelegate

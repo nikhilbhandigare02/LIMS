@@ -999,13 +999,13 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                       headingRowHeight: 50,
                       columnSpacing: 20,
                       columns: [
-                        DataColumn(label: Text('Serial No.')),
-                        DataColumn(label: Text('Sent Date')),
-                        DataColumn(label: Text('Lab Location')),
-                        DataColumn(label: Text('Requested Date')),
-                        DataColumn(label: Text('Resent Date')),
-                        DataColumn(label: Text('Status')),
-                        DataColumn(label: Text('Actions')),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thSerialNo)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thSentDate)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thLabLocation)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thRequestedDate)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thResentDate)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thStatus)),
+                        DataColumn(label: Text(AppLocalizations.of(context)!.thActions)),
                       ],
                       rows: paginatedData.isEmpty
                           ? [
@@ -1223,6 +1223,9 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
         _parseDate(s.sampleReRequestedDate);
   } 
   Widget _buildPaginationControls(int totalItems, int totalPages) {
+    final start = (currentPage * itemsPerPage) + 1;
+    final end = ((currentPage + 1) * itemsPerPage).clamp(0, totalItems);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -1250,15 +1253,16 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
+
                 child: Text(
-                  'Showing ${(currentPage * itemsPerPage) + 1}-${((currentPage + 1) * itemsPerPage).clamp(0, totalItems)} of $totalItems records',
+                  AppLocalizations.of(context)!.showingRange(start, end, totalItems),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
-                ),
+                )
               ),
             ],
           ),
@@ -1301,7 +1305,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                             ),
                             SizedBox(width: 4),
                             Text(
-                              'Prev',
+                              AppLocalizations.of(context)!.prev,
                               style: TextStyle(
                                 color: currentPage > 0 ? Colors.white : Colors.grey[600],
                                 fontWeight: FontWeight.w600,
@@ -1412,7 +1416,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Next',
+                              AppLocalizations.of(context)!.next,
                               style: TextStyle(
                                 color: currentPage < totalPages - 1 ? Colors.white : Colors.grey[600],
                                 fontWeight: FontWeight.w600,

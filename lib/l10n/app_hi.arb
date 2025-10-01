@@ -48,8 +48,8 @@
   "designationFoodSafetyOfficer": "खाद्य सुरक्षा अधिकारी",
   "userIdPrefix": "उपयोगकर्ता आईडी:",
   "usernamePrefix": "उपयोगकर्ता नाम:",
-    "sampleAnalysisTitle": "नमूना विश्लेषण",
-    "exitAppTitle": "ऐप से बाहर निकलें",
+  "sampleAnalysisTitle": "नमूना विश्लेषण",
+  "exitAppTitle": "ऐप से बाहर निकलें",
     "exitAppMessage": "क्या आप वास्तव में बाहर निकलना चाहते हैं?",
     "exitAppConfirm": "बाहर निकलें",
 
@@ -77,5 +77,22 @@
     "switchToTable": "टेबल दृश्य पर स्विच करें",
     "switchToCard": "कार्ड दृश्य पर स्विच करें",
 
-    "unexpectedState": "अप्रत्याशित स्थिति"
+    "unexpectedState": "अप्रत्याशित स्थिति",
+      "showingRange": "{total} में से {start}-{end} रिकॉर्ड दिखा रहे हैं",
+      "@showingRange": {
+        "placeholders": {
+          "start": {},
+          "end": {},
+          "total": {}
+        }
+      },
+        "thSerialNo": "सीरियल नंबर",
+        "thSentDate": "भेजने की तारीख",
+        "thLabLocation": "प्रयोगशाला स्थान",
+        "thRequestedDate": "अनुरोध तिथि",
+        "thResentDate": "पुनः भेजने की तिथि",
+        "thStatus": "स्थिति",
+        "thActions": "क्रियाएँ",
+        "prev": "पिछला",
+        "next": "अगला"
 }

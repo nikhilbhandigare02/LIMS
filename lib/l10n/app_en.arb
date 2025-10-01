@@ -144,5 +144,22 @@
     "switchToTable": "Switch to Table View",
     "switchToCard": "Switch to Card View",
 
-    "unexpectedState": "Unexpected state"
+    "unexpectedState": "Unexpected state",
+      "showingRange": "Showing {start}-{end} of {total} records",
+      "@showingRange": {
+        "placeholders": {
+          "start": {},
+          "end": {},
+          "total": {}
+        }
+      },
+        "thSerialNo": "Serial No.",
+        "thSentDate": "Sent Date",
+        "thLabLocation": "Lab Location",
+        "thRequestedDate": "Requested Date",
+        "thResentDate": "Resent Date",
+        "thStatus": "Status",
+        "thActions": "Actions",
+        "prev": "Prev",
+        "next": "Next"
 }
