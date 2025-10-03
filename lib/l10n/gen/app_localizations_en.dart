@@ -537,4 +537,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get form6_landing_exit => 'Exit';
+
+  @override
+  String get form6_step_form_vi_title => 'Form VI';
+
+  @override
+  String get form6_step_previous_button => 'Previous';
+
+  @override
+  String get form6_step_save_next_button => 'SAVE & NEXT';
+
+  @override
+  String get form6_step_submit_button => 'SUBMIT';
+
+  @override
+  String get form6_step_validation_error =>
+      'Please correct the highlighted fields';
+
+  @override
+  String get form6_step_other_section_incomplete =>
+      '⚠️ Please complete all required fields.';
+
+  @override
+  String get form6_step_sample_section_incomplete =>
+      '⚠️ Please complete all sample fields.';
+
+  @override
+  String get doSlipNumbers => 'DO Slip Numbers';
+
+  @override
+  String get sampleCodeNumber => 'Sample Code Number';
+
+  @override
+  String get natureOfSample => 'Nature of Sample';
+
+  @override
+  String get pleaseSelectYesOrNo => 'Please select Yes or No';
+
+  @override
+  String get anyOtherDocuments => 'Any other documents';
+
+  @override
+  String get documentName => 'Document Name';
+
+  @override
+  String get enterDocumentName => 'Enter document name';
+
+  @override
+  String get uploading => 'Uploading...';
+
+  @override
+  String get chooseFile => 'Choose file';
+
+  @override
+  String get replaceFile => 'Replace file';
 }

@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/FORM6/Storage/form6_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
+
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form_steps.dart';
 import 'form6_landing_screen.dart';
@@ -14,9 +16,8 @@ import 'form6_landing_screen.dart';
 class Form6StepScreen extends StatefulWidget {
   final String section;
   final int initialStep;
-  
   const Form6StepScreen({
-    super.key, 
+    super.key,
     required this.section,
     this.initialStep = 0,
   });
@@ -29,20 +30,17 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   int currentStep = 0;
   late List<List<Widget>> stepFields;
   late List<GlobalKey<FormState>> _formKeys;
+  bool _depsInitialized = false;
 
   final Form6Storage storage = Form6Storage();
 
   @override
   void initState() {
     super.initState();
-    final bloc = context.read<SampleFormBloc>();
-    stepFields = _generateStepFields(bloc.state);
-    _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
-    // Initialize currentStep from the provided initialStep, within bounds
-    final int maxIndex = stepFields.isNotEmpty ? stepFields.length - 1 : 0;
-    currentStep = widget.initialStep <= maxIndex
-        ? (widget.initialStep < 0 ? 0 : widget.initialStep)
-        : maxIndex;
+    // Avoid using context-dependent localization in initState
+    stepFields = [[]];
+    _formKeys = [GlobalKey<FormState>()];
+    currentStep = widget.initialStep;
     _loadSavedData();
     print("🔄 Form6StepScreen initialized for section: ${widget.section} with initial step: $currentStep");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
@@ -50,13 +48,30 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_depsInitialized) {
+      final bloc = context.read<SampleFormBloc>();
+      setState(() {
+        stepFields = _generateStepFields(bloc.state);
+        _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
+        final int maxIndex = stepFields.isNotEmpty ? stepFields.length - 1 : 0;
+        currentStep = widget.initialStep <= maxIndex
+            ? (widget.initialStep < 0 ? 0 : widget.initialStep)
+            : maxIndex;
+      });
+      _depsInitialized = true;
+    }
+  }
+
   List<List<Widget>> _generateStepFields(SampleFormState state) {
     final bloc = context.read<SampleFormBloc>();
     switch (widget.section) {
       case 'other':
-        return getOtherInformationSteps(state, bloc);
+        return getOtherInformationSteps(state, bloc, context);
       case 'sample':
-        return getSampleDetailsSteps(state, bloc);
+        return getSampleDetailsSteps(state, bloc, context);
       default:
         return [[]];
     }
@@ -87,7 +102,11 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     final isValid = currentFormKey.currentState?.validate() ?? true;
 
     if (!isValid) {
-      AppDialog.show(context, 'Please correct the highlighted fields', MessageType.error);
+      AppDialog.show(
+          context,
+          AppLocalizations.of(context)!.form6_step_validation_error,
+          MessageType.error
+      );
       return;
     }
 
@@ -114,10 +133,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
 
     if (widget.section == 'other') {
       isComplete = state.isOtherInfoComplete;
-      errorMessage = "⚠️ Please complete all required fields.";
+      errorMessage = AppLocalizations.of(context)!.form6_step_other_section_incomplete;
     } else if (widget.section == 'sample') {
       isComplete = state.isSampleInfoComplete;
-      errorMessage = "⚠️ Please complete all sample fields.";
+      errorMessage = AppLocalizations.of(context)!.form6_step_sample_section_incomplete;
     }
 
     if (!isComplete) {
@@ -140,6 +159,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       Navigator.pop(context, 'completed');
     }
   }
+
   void _goToPreviousStep() async {
     if (currentStep == 0) {
       if (widget.section == 'sample') {
@@ -167,9 +187,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<SampleFormBloc, SampleFormState>(
@@ -188,12 +209,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       child: Scaffold(
         backgroundColor: customColors.grey50,
         appBar: AppHeader(
-          screenTitle: widget.section == 'other' ? 'Form VI' : 'Form VI',
-
+          screenTitle: localizations.form6_step_form_vi_title,
           showBack: false,
         ),
         drawer: CustomDrawer(),
-
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -203,8 +222,8 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                 child: BlocBuilder<SampleFormBloc, SampleFormState>(
                   builder: (context, state) {
                     final steps = widget.section == 'other'
-                        ? getOtherInformationSteps(state, context.read<SampleFormBloc>())
-                        : getSampleDetailsSteps(state, context.read<SampleFormBloc>());
+                        ? getOtherInformationSteps(state, context.read<SampleFormBloc>(), context)
+                        : getSampleDetailsSteps(state, context.read<SampleFormBloc>(), context);
 
                     return Form(
                       key: _formKeys[currentStep],
@@ -230,7 +249,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                         children: [
                           Icon(CupertinoIcons.left_chevron, color: customColors.white),
                           const SizedBox(width: 6),
-                          Text("Previous", style: TextStyle(color: customColors.white)),
+                          Text(
+                              localizations.form6_step_previous_button,
+                              style: TextStyle(color: customColors.white)
+                          ),
                         ],
                       ),
                     ),
@@ -244,10 +266,10 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                         children: [
                           Text(
                             currentStep < stepFields.length - 1
-                                ? "SAVE & NEXT"
+                                ? localizations.form6_step_save_next_button
                                 : widget.section == 'other'
-                                ? "SAVE & NEXT"
-                                : "SUBMIT",
+                                ? localizations.form6_step_save_next_button
+                                : localizations.form6_step_submit_button,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 6),
@@ -265,4 +287,3 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     );
   }
 }
-

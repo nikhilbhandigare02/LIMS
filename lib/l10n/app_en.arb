@@ -183,5 +183,27 @@
           "form6_landing_loading": "Loading...",
           "form6_landing_exit_app": "Exit App",
           "form6_landing_exit_confirmation": "Do you really want to exit?",
-          "form6_landing_exit": "Exit"
-}
+          "form6_landing_exit": "Exit",
+          "form6_step_form_vi_title": "Form VI",
+            "form6_step_previous_button": "Previous",
+            "form6_step_save_next_button": "SAVE & NEXT",
+            "form6_step_submit_button": "SUBMIT",
+            "form6_step_validation_error": "Please correct the highlighted fields",
+            "form6_step_other_section_incomplete": "⚠️ Please complete all required fields.",
+            "form6_step_sample_section_incomplete": "⚠️ Please complete all sample fields.",
+          "doSlipNumbers": "DO Slip Numbers",
+          "sampleCodeNumber": "Sample Code Number",
+          "natureOfSample": "Nature of Sample",
+          "pleaseSelectYesOrNo": "Please select Yes or No",
+          "anyOtherDocuments": "Any other documents",
+          "documentName": "Document Name",
+          "enterDocumentName": "Enter document name",
+          "uploading": "Uploading...",
+          "chooseFile": "Choose file",
+          "replaceFile": "Replace file"
+
+         }
+
+
+
+

@@ -501,7 +501,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get form6_landing_preservative_info_subtitle => 'परिरक्षक सूचना';
 
   @override
-  String get form6_landing_seal_details_title => 'सील विवरण';
+  String get form6_landing_seal_details_title => 'Seal Details';
 
   @override
   String get form6_landing_seal_details_subtitle => 'सील और सुरक्षा विवरण';
@@ -527,7 +527,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get form6_landing_submission_failed => 'फॉर्म सबमिशन विफल हुआ।';
 
   @override
-  String get form6_landing_loading => 'लोड हो रहा है...';
+  String get form6_landing_loading => 'Loading...';
 
   @override
   String get form6_landing_exit_app => 'ऐप से बाहर निकलें';
@@ -538,4 +538,58 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get form6_landing_exit => 'बाहर निकलें';
+
+  @override
+  String get form6_step_form_vi_title => 'फॉर्म VI';
+
+  @override
+  String get form6_step_previous_button => 'पिछला';
+
+  @override
+  String get form6_step_save_next_button => 'सहेजें और आगे';
+
+  @override
+  String get form6_step_submit_button => 'सबमिट करें';
+
+  @override
+  String get form6_step_validation_error =>
+      'कृपया हाइलाइट किए गए फ़ील्ड्स को सही करें';
+
+  @override
+  String get form6_step_other_section_incomplete =>
+      '⚠️ कृपया सभी आवश्यक फ़ील्ड्स पूरे करें।';
+
+  @override
+  String get form6_step_sample_section_incomplete =>
+      '⚠️ कृपया सभी नमूना फ़ील्ड्स पूरे करें।';
+
+  @override
+  String get doSlipNumbers => 'डीओ स्लिप नंबर';
+
+  @override
+  String get sampleCodeNumber => 'नमूना कोड नंबर';
+
+  @override
+  String get natureOfSample => 'नमूने का प्रकार';
+
+  @override
+  String get pleaseSelectYesOrNo => 'कृपया हाँ या नहीं चुनें';
+
+  @override
+  String get anyOtherDocuments => 'अन्य कोई दस्तावेज़';
+
+  @override
+  String get documentName => 'दस्तावेज़ का नाम';
+
+  @override
+  String get enterDocumentName => 'दस्तावेज़ का नाम दर्ज करें';
+
+  @override
+  String get uploading => 'अपलोड हो रहा है...';
+
+  @override
+  String get chooseFile => 'फ़ाइल चुनें';
+
+  @override
+  String get replaceFile => 'फ़ाइल बदलें';
 }

@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
 import 'package:image_picker/image_picker.dart';
+import '../../../l10n/gen/app_localizations.dart';
  
 
 String _formatBytes(int bytes) {
@@ -76,7 +77,9 @@ void setCollectionDateIfNeeded(SampleFormState state, SampleFormBloc bloc) {
 List<List<Widget>> getOtherInformationSteps(
   SampleFormState state,
   SampleFormBloc bloc,
+  BuildContext context,
 ) {
+  final l = AppLocalizations.of(context)!;
 
   loadSenderNameIfNeeded(state, bloc);
   setDesignationIfNeeded(state, bloc);
@@ -84,7 +87,7 @@ List<List<Widget>> getOtherInformationSteps(
   return [
     [
       BlocTextInput(
-        label: "Name of Sender",
+        label: l.nameOfSender,
         //icon: Icons.person,
         initialValue: state.senderName,
         onChanged: (val) => bloc.add(senderNameChanged(val)),
@@ -92,7 +95,7 @@ List<List<Widget>> getOtherInformationSteps(
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Sender Official Designation",
+        label: l.senderOfficialDesignation,
         // icon: Icons.badge,
         initialValue: state.senderDesignation,
         onChanged: (val) => bloc.add(senderDesignationChanged(val)),
@@ -100,11 +103,11 @@ List<List<Widget>> getOtherInformationSteps(
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "DO Number",
+        label: l.doNumber,
         //icon: Icons.numbers,
         initialValue: state.DONumber,
         onChanged: (val) => bloc.add(DONumberChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, 'DO Number'),
+        validator: (v) => Validators.validateEmptyField(v, l.doNumber),
         // validator: Validators.validateDONumber,
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -119,7 +122,7 @@ List<List<Widget>> getOtherInformationSteps(
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocSearchableDropdown(
-                label: "District",
+                label: l.district,
                 //icon: Icons.location_on,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
@@ -141,32 +144,32 @@ List<List<Widget>> getOtherInformationSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
           if (s.district.isEmpty) {
-            const blockMsg = "Select district first";
+            final blockMsg = l.selectDistrictFirst;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Division",
+                  label: l.division,
                   // icon: Icons.apartment,
                   value: blockMsg,
-                  items: const [blockMsg],
+                  items:   [blockMsg],
                   onChanged: (_) {},
                 ),
               ),
             );
           }
           if (s.divisionOptions.isEmpty) {
-            const loading = "Loading...";
+            final loading = l.loading;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Division",
+                  label: l.division,
                   // icon: Icons.apartment,
                   value: loading,
-                  items: const [loading],
+                  items:   [loading],
                   onChanged: (_) {},
                 ),
               ),
@@ -180,7 +183,7 @@ List<List<Widget>> getOtherInformationSteps(
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocSearchableDropdown(
-                label: "Division",
+                label: l.division,
                 // icon: Icons.apartment,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
@@ -203,32 +206,32 @@ List<List<Widget>> getOtherInformationSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
           if (s.division.isEmpty) {
-            const blockMsg = "Select division first";
+            final blockMsg = l.selectDivisionFirst;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Region",
+                  label: l.region,
                   // icon: Icons.map,
                   value: blockMsg,
-                  items: const [blockMsg],
+                  items:   [blockMsg],
                   onChanged: (_) {},
                 ),
               ),
             );
           }
           if (s.regionOptions.isEmpty) {
-            const loading = "Loading...";
+            final loading = l.loading;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Region",
+                  label: l.region,
                   // icon: Icons.map,
                   value: loading,
-                  items: const [loading],
+                  items:   [loading],
                   onChanged: (_) {},
                 ),
               ),
@@ -242,7 +245,7 @@ List<List<Widget>> getOtherInformationSteps(
             child: Opacity(
               opacity: items.isEmpty ? 0.7 : 1.0,
               child: BlocSearchableDropdown(
-                label: "Region",
+                label: l.region,
                 // icon: Icons.map,
                 value: selected.isEmpty ? null : selected,
                 items: items.isEmpty ? [] : items,
@@ -258,20 +261,20 @@ List<List<Widget>> getOtherInformationSteps(
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Area",
+        label: l.area,
         //icon: Icons.home,
         initialValue: state.area,
         onChanged: (val) => bloc.add(AreaChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, 'Area'),
+        validator: (v) => Validators.validateEmptyField(v, l.area),
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Sending Sample Location",
+        label: l.sendingSampleLocation,
         //  icon: Icons.location_city,
         initialValue: state.sendingSampleLocation ??  '',
         onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Sending Sample Location'),
+            Validators.validateEmptyField(v, l.sendingSampleLocation),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -279,16 +282,16 @@ List<List<Widget>> getOtherInformationSteps(
           if (s.labOptions.isEmpty) {
             // Trigger fetch if not already fetched
             bloc.add(FetchLabMasterRequested());
-            const loading = "Loading labs...";
+            final loading = l.loadingLabs;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Lab Master",
+                  label: l.labMaster,
                   // icon: Icons.science,
                   value: loading,
-                  items: const [loading],
+                  items:   [loading],
                   onChanged: (_) {},
                 ),
               ),
@@ -297,7 +300,7 @@ List<List<Widget>> getOtherInformationSteps(
           final selected = s.lab;
           final items = s.labOptions;
           return BlocSearchableDropdown(
-            label: "Lab  ",
+            label: l.labLabel,
             //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
             items: items,
@@ -305,7 +308,7 @@ List<List<Widget>> getOtherInformationSteps(
               if (val == null) return;
               bloc.add(LabChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, 'Lab'),
+            validator: (v) => Validators.validateEmptyField(v, l.labLabel),
           );
         },
       ),
@@ -314,7 +317,7 @@ List<List<Widget>> getOtherInformationSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocTextInput(
-            label: "Latitude",
+            label: l.latitude,
             // icon: Icons.explore,
             initialValue: state.Lattitude,
             onChanged: (val) =>
@@ -327,7 +330,7 @@ List<List<Widget>> getOtherInformationSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocTextInput(
-            label: "Longitude",
+            label: l.longitude,
             // icon: Icons.navigation_outlined,
             initialValue: state.Longitude,
             onChanged: (val) =>
@@ -343,7 +346,9 @@ List<List<Widget>> getOtherInformationSteps(
 List<List<Widget>> getSampleDetailsSteps(
   SampleFormState state,
   SampleFormBloc bloc,
+  BuildContext context,
 ) {
+  final l = AppLocalizations.of(context)!;
   return [
     [
       // BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -385,16 +390,16 @@ List<List<Widget>> getSampleDetailsSteps(
         builder: (context, s) {
           if (s.doSealNumbersOptions.isEmpty) {
             bloc.add(FetchDoSealNumbersRequested());
-            const loading = "Loading DO Slip Numbers...";
+            final loading = l.loading;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "DO Slip Numbers",
+                  label: l.doSlipNumbers,
                   // icon: Icons.science,
                   value: loading,
-                  items: const [loading],
+                  items:   [loading],
                   onChanged: (_) {},
 
                 ),
@@ -404,7 +409,7 @@ List<List<Widget>> getSampleDetailsSteps(
           final selected = s.doSlipNumbers;
           final items = s.doSealNumbersOptions;
           return BlocDropdown(
-            label: "DO Slip Numbers  ",
+            label: l.doSlipNumbers,
             //  icon: Icons.science,
             value: selected.isEmpty ? null : selected,
             items: items,
@@ -412,18 +417,18 @@ List<List<Widget>> getSampleDetailsSteps(
               if (val == null) return;
               bloc.add(DoSealNumbersChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, 'DO Slip Numbers'),
+            validator: (v) => Validators.validateEmptyField(v, l.doSlipNumbers),
           );
         },
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Sample Code Number",
+        label: l.sampleCodeNumber,
         // icon: Icons.qr_code,
         initialValue: state.sampleCodeData,
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Sample Code Number'),
+            Validators.validateEmptyField(v, l.sampleCodeNumber),
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
       ),
@@ -435,7 +440,7 @@ List<List<Widget>> getSampleDetailsSteps(
             child: IgnorePointer(
               ignoring: true,
               child: BlocDatePicker(
-                label: "Date of Collection",
+                label: l.collectionDate,
                 selectedDate: state.collectionDate,
                 onChanged: (date) {
                   context.read<SampleFormBloc>().add(
@@ -450,44 +455,44 @@ List<List<Widget>> getSampleDetailsSteps(
 
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Place of Collection",
+        label: l.collectionPlace,
         // icon: Icons.place,
         initialValue: state.placeOfCollection,
         onChanged: (val) => bloc.add(PlaceChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Place of Collection'),
+            Validators.validateEmptyField(v, l.collectionPlace),
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Sample Name",
+        label: l.sampleName,
         // icon: Icons.label,
         initialValue: state.SampleName,
         onChanged: (val) => bloc.add(SampleNameChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, 'Sample Name'),
+        validator: (v) => Validators.validateEmptyField(v, l.sampleName),
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Quantity of Sample",
+        label: l.quantity,
         //icon: Icons.scale,
         initialValue: state.QuantitySample,
         onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Quantity of Sample'),
+            Validators.validateEmptyField(v, l.quantity),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
           if (s.natureOptions.isEmpty) {
-            const loading = "Loading...";
+            final loading = l.loading;
             return Opacity(
               opacity: 0.7,
               child: IgnorePointer(
                 ignoring: true,
                 child: BlocDropdown(
-                  label: "Nature of Sample",
+                  label: l.natureOfSample,
                   // icon: Icons.category,
                   value: loading,
-                  items: const [loading],
+                  items:   [loading],
                   onChanged: (_) {},
                 ),
               ),
@@ -498,7 +503,7 @@ List<List<Widget>> getSampleDetailsSteps(
               ? s.article
               : null;
           return BlocDropdown(
-            label: "Nature of Sample",
+            label: l.natureOfSample,
             // icon: Icons.category,
             value: selected,
             items: items,
@@ -507,7 +512,7 @@ List<List<Widget>> getSampleDetailsSteps(
               bloc.add(articleChanged(val));
             },
             validator: (v) =>
-                Validators.validateEmptyField(v, 'Nature of Sample'),
+                Validators.validateEmptyField(v, l.natureOfSample),
           );
         },
       ),
@@ -515,16 +520,17 @@ List<List<Widget>> getSampleDetailsSteps(
     [
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
+          final l = AppLocalizations.of(context)!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               BlocYesNoRadio(
-                label: 'Preservative Added?',
+                label: l.preservativeAdded,
                 value: state.preservativeAdded,
                 autovalidate: true, // Enable auto-validation
                 validator: (value) {
                   if (value == null) {
-                    return 'Please select Yes or No';
+                    return l.pleaseSelectYesOrNo;
                   }
 
                   return null; // Valid
@@ -549,19 +555,19 @@ List<List<Widget>> getSampleDetailsSteps(
               if (state.preservativeAdded == true) ...[
                 SizedBox(height: 16),
                 BlocTextInput(
-                  label: " the name of Preservative",
+                  label: l.preservativeName,
                   // icon: Icons.medication,
                   initialValue: state.preservativeName,
                   onChanged: (val) => context.read<SampleFormBloc>().add(
                     preservativeNameChanged(val),
                   ),
                   validator: (v) => state.preservativeAdded == true
-                      ? Validators.validateEmptyField(v, 'Preservative Name')
+                      ? Validators.validateEmptyField(v, l.preservativeName)
                       : null,
                 ),
                 SizedBox(height: 16),
                 BlocTextInput(
-                  label: "Quantity of Preservative",
+                  label: l.preservativeQuantity,
                   //  icon: Icons.scale,
                   initialValue: state.preservativeQuantity,
                   onChanged: (val) => context.read<SampleFormBloc>().add(
@@ -570,7 +576,7 @@ List<List<Widget>> getSampleDetailsSteps(
                   validator: (v) => state.preservativeAdded == true
                       ? Validators.validateEmptyField(
                           v,
-                          'Preservative Quantity',
+                          l.preservativeQuantity,
                         )
                       : null,
                 ),
@@ -584,13 +590,12 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label:
-                'Signature & thumb impression of the person/\nwitness from whom the sample \nhas been taken',
+            label: l.witnessSignature,
             value: state.personSignature,
             autovalidate: true, // Enable auto-validation
             validator: (value) {
               if (value == null) {
-                return 'Please select Yes or No';
+                return l.pleaseSelectYesOrNo;
               }
 
               return null; // Valid
@@ -620,12 +625,12 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Signature of DO OR any officer authorized by \nFSO',
+            label: l.doSignature,
             value: state.DOSignature,
             autovalidate: true, // Enable auto-validation
             validator: (value) {
               if (value == null) {
-                return 'Please select Yes or No';
+                return l.pleaseSelectYesOrNo;
               }
 
               return null; // Valid
@@ -641,13 +646,13 @@ List<List<Widget>> getSampleDetailsSteps(
 
     [
       BlocTextInput(
-        label: "Code Number of sample on Wrapper",
+        label: l.wrapperCode,
         // icon: Icons.code,
         initialValue: state.sampleCodeNumber,
 
         onChanged: (val) => bloc.add(sampleCodeNumberChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, 'Code Number on Wrapper'),
+            Validators.validateEmptyField(v, l.wrapperCode),
 
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -657,13 +662,13 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Form VI is inside the sample Wrapper? ',
+            label: l.insideWrapper,
             value: state.FoemVIWrapper,
             // icon: Icons.inventory,
             autovalidate: true, // Enable auto-validation
             validator: (value) {
               if (value == null) {
-                return 'Please select Yes or No';
+                return l.pleaseSelectYesOrNo;
               }
 
               return null; // Valid
@@ -679,11 +684,11 @@ List<List<Widget>> getSampleDetailsSteps(
 
       SizedBox(height: 16),
       BlocTextInput(
-        label: "Number of Seal",
+        label: l.sealNumber,
         // icon: Icons.lock,
         initialValue: state.numberofSeal,
         onChanged: (val) => bloc.add(numberofSealChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, 'Number of Seal'),
+        validator: (v) => Validators.validateEmptyField(v, l.sealNumber),
 
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -693,13 +698,12 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label:
-                'Memorandum of Form VI and Specimen Impression \n of the Sealed packet',
+            label: l.memoFormVi,
             value: state.formVI,
             autovalidate: true,
             validator: (value) {
               if (value == null) {
-                return 'Please select Yes or No';
+                return l.pleaseSelectYesOrNo;
               }
 
               return null; // Valid
@@ -719,12 +723,12 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           return BlocYesNoRadio(
-            label: 'Impression of seal of the sender ',
+            label: l.sealImpression,
             value: state.sealImpression,
             autovalidate: true, // Enable auto-validation
             validator: (value) {
               if (value == null) {
-                return 'Please select Yes or No';
+                return l.pleaseSelectYesOrNo;
               }
 
               return null; // Valid
@@ -743,10 +747,11 @@ List<List<Widget>> getSampleDetailsSteps(
 
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
+          final l = AppLocalizations.of(context)!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Any other documents", style: Theme.of(context).textTheme.titleMedium),
+              Text(l.anyOtherDocuments, style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 8),
 
               // Dynamic document rows
@@ -780,7 +785,7 @@ List<List<Widget>> getSampleDetailsSteps(
                             return TextFormField(
                               initialValue: baseName,
                               autovalidateMode: AutovalidateMode.onUserInteraction,
-                              validator: (v) => Validators.validateEmptyField(v, 'Document Name'),
+                              validator: (v) => Validators.validateEmptyField(v, l.documentName),
                               onChanged: (v) {
                                 final newName = (v.isEmpty ? '' : v) + '.' + ext;
                                 context.read<SampleFormBloc>().add(
@@ -793,7 +798,7 @@ List<List<Widget>> getSampleDetailsSteps(
                                 color: customColors.black87,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Enter Mention document name',
+                                hintText: l.enterDocumentName,
                                 hintStyle: TextStyle(fontSize: 16, color: customColors.black87, fontWeight: FontWeight.normal),
                                 filled: true,
                                 fillColor: customColors.white,
@@ -826,12 +831,12 @@ List<List<Widget>> getSampleDetailsSteps(
                             );
                           } else {
                             return BlocTextInput(
-                              label: "Mention document name",
+                              label: l.documentName,
                               initialValue: doc.name,
                               onChanged: (val) => context.read<SampleFormBloc>().add(
                                 UpdateUploadedDocumentName(index: index, name: val),
                               ),
-                              validator: (v) => Validators.validateEmptyField(v, 'Document Name'),
+                              validator: (v) => Validators.validateEmptyField(v, l.documentName),
                             );
                           }
                         })(),
@@ -846,7 +851,7 @@ List<List<Widget>> getSampleDetailsSteps(
                                       child: CircularProgressIndicator(strokeWidth: 2, color: customColors.white),
                                     )
                                   : const Icon(Icons.upload_file),
-                              label: Text(state.isUploading ? 'Uploading...' : (doc.base64Data.isEmpty ? 'Choose file' : 'Replace file')),
+                              label: Text(state.isUploading ? l.uploading : (doc.base64Data.isEmpty ? l.chooseFile : l.replaceFile)),
                               onPressed: state.isUploading
                                   ? null
                                   : () async {

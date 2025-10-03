@@ -498,7 +498,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get form6_landing_preservative_info_title => 'परिरक्षक माहिती';
 
   @override
-  String get form6_landing_preservative_info_subtitle => 'परिरक्षक माहिती';
+  String get form6_landing_preservative_info_subtitle =>
+      'Preservative information';
 
   @override
   String get form6_landing_seal_details_title => 'शिक्का तपशील';
@@ -511,7 +512,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get form6_landing_review_submit_subtitle =>
-      'अंतिम पुनरावलोकन आणि सबमिशन';
+      'Final review and submission';
 
   @override
   String get form6_landing_submit_button => 'फॉर्म सबमिट करा';
@@ -539,4 +540,58 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get form6_landing_exit => 'बाहेर पडा';
+
+  @override
+  String get form6_step_form_vi_title => 'फॉर्म VI';
+
+  @override
+  String get form6_step_previous_button => 'मागील';
+
+  @override
+  String get form6_step_save_next_button => 'जतन करा आणि पुढे';
+
+  @override
+  String get form6_step_submit_button => 'सबमिट करा';
+
+  @override
+  String get form6_step_validation_error =>
+      'कृपया हायलाइट केलेल्या फील्ड्स दुरुस्त करा';
+
+  @override
+  String get form6_step_other_section_incomplete =>
+      '⚠️ कृपया सर्व आवश्यक फील्ड्स पूर्ण करा.';
+
+  @override
+  String get form6_step_sample_section_incomplete =>
+      '⚠️ कृपया सर्व नमुना फील्ड्स पूर्ण करा.';
+
+  @override
+  String get doSlipNumbers => 'डीओ स्लिप क्रमांक';
+
+  @override
+  String get sampleCodeNumber => 'नमुना कोड क्रमांक';
+
+  @override
+  String get natureOfSample => 'नमुना प्रकार';
+
+  @override
+  String get pleaseSelectYesOrNo => 'कृपया होय किंवा नाही निवडा';
+
+  @override
+  String get anyOtherDocuments => 'इतर कोणतेही दस्तऐवज';
+
+  @override
+  String get documentName => 'दस्तऐवजाचे नाव';
+
+  @override
+  String get enterDocumentName => 'दस्तऐवजाचे नाव प्रविष्ट करा';
+
+  @override
+  String get uploading => 'अपलोड करत आहोत...';
+
+  @override
+  String get chooseFile => 'फाइल निवडा';
+
+  @override
+  String get replaceFile => 'फाइल बदला';
 }

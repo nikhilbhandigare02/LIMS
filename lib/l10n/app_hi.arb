@@ -35,7 +35,7 @@
   "menuSampleListRecords": "नमूना सूची रिकॉर्ड",
   "menuRequestSlipNumber": "स्लिप नंबर के लिए अनुरोध",
   "menuSlipNumberInfo": "स्लिप नंबर जानकारी",
-  "menuRequestNewSample": "नए नमूने के लिए अनुरोध",
+  "menuRequestNewSample": "नए नमूने के लिए अनुरोध", s
   "menuOthers": "अन्य",
   "menuSettings": "सेटिंग्स",
   "menuHelpSupport": "सहायता और समर्थन",
@@ -105,7 +105,6 @@
           "form6_landing_sample_info_subtitle": "मूल नमूना विवरण",
           "form6_landing_preservative_info_title": "परिरक्षक जानकारी",
           "form6_landing_preservative_info_subtitle": "परिरक्षक सूचना",
-          "form6_landing_seal_details_title": "सील विवरण",
           "form6_landing_seal_details_subtitle": "सील और सुरक्षा विवरण",
           "form6_landing_review_submit_title": "समीक्षा और सबमिट करें",
           "form6_landing_review_submit_subtitle": "अंतिम समीक्षा और सबमिशन",
@@ -113,11 +112,24 @@
           "form6_landing_form_not_filled": "⚠️ फॉर्म भरा नहीं है। कृपया फॉर्म भरें।",
           "form6_landing_form_submitted": "✅ फॉर्म VI सफलतापूर्वक सबमिट किया गया।",
           "form6_landing_submission_failed": "फॉर्म सबमिशन विफल हुआ।",
-          "form6_landing_loading": "लोड हो रहा है...",
           "form6_landing_exit_app": "ऐप से बाहर निकलें",
           "form6_landing_exit_confirmation": "क्या आप वाकई बाहर निकलना चाहते हैं?",
-          "form6_landing_exit": "बाहर निकलें"
-
-
-
-         }
+          "form6_landing_exit": "बाहर निकलें",
+          "form6_step_form_vi_title": "फॉर्म VI",
+          "form6_step_previous_button": "पिछला",
+          "form6_step_save_next_button": "सहेजें और आगे",
+          "form6_step_submit_button": "सबमिट करें",
+          "form6_step_validation_error": "कृपया हाइलाइट किए गए फ़ील्ड्स को सही करें",
+          "form6_step_other_section_incomplete": "⚠️ कृपया सभी आवश्यक फ़ील्ड्स पूरे करें।",
+          "form6_step_sample_section_incomplete": "⚠️ कृपया सभी नमूना फ़ील्ड्स पूरे करें।",
+          "doSlipNumbers": "डीओ स्लिप नंबर",
+          "sampleCodeNumber": "नमूना कोड नंबर",
+          "natureOfSample": "नमूने का प्रकार",
+          "pleaseSelectYesOrNo": "कृपया हाँ या नहीं चुनें",
+          "anyOtherDocuments": "अन्य कोई दस्तावेज़",
+          "documentName": "दस्तावेज़ का नाम",
+          "enterDocumentName": "दस्तावेज़ का नाम दर्ज करें",
+          "uploading": "अपलोड हो रहा है...",
+          "chooseFile": "फ़ाइल चुनें",
+          "replaceFile": "फ़ाइल बदलें"
+        }

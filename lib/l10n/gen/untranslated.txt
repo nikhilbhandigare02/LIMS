@@ -66,7 +66,9 @@
     "sampleListFilterBySampleListRecordsDialogNoRecordsFound",
     "sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage",
     "sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm",
-    "sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel"
+    "sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel",
+    "form6_landing_seal_details_title",
+    "form6_landing_loading"
   ],
 
   "mr": [
@@ -136,6 +138,8 @@
     "sampleListFilterBySampleListRecordsDialogNoRecordsFound",
     "sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage",
     "sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm",
-    "sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel"
+    "sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel",
+    "form6_landing_preservative_info_subtitle",
+    "form6_landing_review_submit_subtitle"
   ]
 }

@@ -1131,6 +1131,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exit'**
   String get form6_landing_exit;
+
+  /// No description provided for @form6_step_form_vi_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI'**
+  String get form6_step_form_vi_title;
+
+  /// No description provided for @form6_step_previous_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get form6_step_previous_button;
+
+  /// No description provided for @form6_step_save_next_button.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE & NEXT'**
+  String get form6_step_save_next_button;
+
+  /// No description provided for @form6_step_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBMIT'**
+  String get form6_step_submit_button;
+
+  /// No description provided for @form6_step_validation_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please correct the highlighted fields'**
+  String get form6_step_validation_error;
+
+  /// No description provided for @form6_step_other_section_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Please complete all required fields.'**
+  String get form6_step_other_section_incomplete;
+
+  /// No description provided for @form6_step_sample_section_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Please complete all sample fields.'**
+  String get form6_step_sample_section_incomplete;
+
+  /// No description provided for @doSlipNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'DO Slip Numbers'**
+  String get doSlipNumbers;
+
+  /// No description provided for @sampleCodeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Code Number'**
+  String get sampleCodeNumber;
+
+  /// No description provided for @natureOfSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature of Sample'**
+  String get natureOfSample;
+
+  /// No description provided for @pleaseSelectYesOrNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select Yes or No'**
+  String get pleaseSelectYesOrNo;
+
+  /// No description provided for @anyOtherDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Any other documents'**
+  String get anyOtherDocuments;
+
+  /// No description provided for @documentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Name'**
+  String get documentName;
+
+  /// No description provided for @enterDocumentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter document name'**
+  String get enterDocumentName;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
+
+  /// No description provided for @chooseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get chooseFile;
+
+  /// No description provided for @replaceFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace file'**
+  String get replaceFile;
 }
 
 class _AppLocalizationsDelegate

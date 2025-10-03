@@ -4,6 +4,7 @@ import 'package:food_inspector/Screens/ForgotScreen/repository/ForgotPasswordRep
 import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../../core/utils/Message.dart';
+import '../../../core/utils/footer.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
 import '../../../core/utils/validators.dart';
 import '../BLOC/ForgotPasswordBloc.dart';
@@ -222,16 +223,10 @@ class _ResetPasswordView extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            '© 2024 Food Safety Organization',
-                            style: TextStyle(
-                              color: Colors.grey.withOpacity(0.6),
-                              fontSize: 12,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          const SizedBox(height: 20),
+                          Footer(),
                         ],
+
                       );
                     },
                   ),
