@@ -152,7 +152,6 @@ class _ResetPasswordView extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
 
-                          // Confirm Password
                           CustomTextField(
                             label: 'Confirm Password',
                             icon: Icons.lock_outline,
