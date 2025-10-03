@@ -25,4 +25,6 @@ class ApiEndpoints {
     static const String UpdateStatusResubmit = 'mobile/UpdateStatusResubmit';
     static const String saveFcmToken = 'User/SaveUserFcmToken';
     static const String appUpdate = 'mobile/GetAppUpdate';
+    // Login audit/log endpoint (adjust path if backend differs)
+    static const String userLoginLog = 'mobile/UserLoginLog';
   }
