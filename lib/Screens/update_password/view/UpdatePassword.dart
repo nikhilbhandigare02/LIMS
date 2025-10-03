@@ -109,178 +109,180 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: 35),
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: customColors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: customColors.shadowGrey08,
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: BlocListener<UpdatePasswordBloc, UpdatePasswordState>(
-                  listener: (context, state) {
-                    switch (state.apiStatus) {
-                      case ApiStatus.loading:
-                        Message.showTopRightOverlay(
-                          context,
-                          'Loading...',
-                          MessageType.info,
-                        );
-                        break;
-                      case ApiStatus.success:
-                        Message.showTopRightOverlay(
-                          context,
-                          state.message,
-                          MessageType.success,
-                        );
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          RouteName.loginScreen,
-                              (route) => false,
-                        );
-                        break;
-                      case ApiStatus.error:
-                        Message.showTopRightOverlay(
-                          context,
-                          state.message,
-                          MessageType.error,
-                        );
-                        break;
-                      default:
-                        break;
-                    }
-                  },
-                  child: BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
-                    buildWhen: (previous, current) =>
-                        previous.Username != current.Username ||
-                            previous.NewPassword != current.NewPassword ||
-                            previous.confirmPassword != current.confirmPassword ||
-                            previous.apiStatus != current.apiStatus,
-                    builder: (context, state) {
-                      return Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            CustomTextField(
-                              label: 'Username',
-                              icon: Icons.person_outline,
-                              obscureText: false,
-                              isPassword: false,
-                              value: state.Username,
-                              validator: Validators.validateUsername,
-                              onChanged: (value) {
-                                context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
-                              },
-                            ),
-
-                            const SizedBox(height: 16),
-                            CustomTextField(
-                              label: 'Old Password',
-                              icon: Icons.lock_outline,
-                              obscureText: _obscureOldPassword,
-                              isPassword: true,
-                              value: state.confirmPassword,
-                              validator: Validators.validateOldPassword,
-                              onChanged: (value) {
-                                context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
-                              },
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
-                                  color: customColors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureOldPassword = !_obscureOldPassword;
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            CustomTextField(
-                              label: 'New Password',
-                              icon: Icons.lock,
-                              obscureText: _obscureNewPassword,
-                              isPassword: true,
-                              value: state.NewPassword,
-                              validator: Validators.validatePassword,
-                              onChanged: (value) {
-                                context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
-                              },
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
-                                  color: customColors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureNewPassword = !_obscureNewPassword;
-                                  });
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 25),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: customColors.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
-                                  elevation: 0,
-                                ),
-                                onPressed: state.apiStatus == ApiStatus.loading
-                                    ? null
-                                    : () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
-                                  }
-
-                                  // Remove Navigator.pop(context) here
-
-                                  final secureStorage = const FlutterSecureStorage();
-                                  final loginDataStr = await secureStorage.read(key: 'loginData');
-                                  int passResetFlag = 0;
-
-                                  if (loginDataStr != null) {
-                                    final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
-                                    final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
-                                    passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
-                                  }
-                                },
-                                child: state.apiStatus == ApiStatus.loading
-                                    ? const CircularProgressIndicator(color: customColors.white)
-                                    : const Text(
-                                  'UPDATE PASSWORD',
-                                  style: TextStyle(
-                                    color: customColors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-
-
-                            ),
-                            SizedBox(height: 15),
-                            Footer(),
-                          ],
-
-                        ),
-                      );
+              const SizedBox(height: 130),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: customColors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: customColors.shadowGrey08,
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: BlocListener<UpdatePasswordBloc, UpdatePasswordState>(
+                    listener: (context, state) {
+                      switch (state.apiStatus) {
+                        case ApiStatus.loading:
+                          Message.showTopRightOverlay(
+                            context,
+                            'Loading...',
+                            MessageType.info,
+                          );
+                          break;
+                        case ApiStatus.success:
+                          Message.showTopRightOverlay(
+                            context,
+                            state.message,
+                            MessageType.success,
+                          );
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            RouteName.loginScreen,
+                                (route) => false,
+                          );
+                          break;
+                        case ApiStatus.error:
+                          Message.showTopRightOverlay(
+                            context,
+                            state.message,
+                            MessageType.error,
+                          );
+                          break;
+                        default:
+                          break;
+                      }
                     },
+                    child: BlocBuilder<UpdatePasswordBloc, UpdatePasswordState>(
+                      buildWhen: (previous, current) =>
+                          previous.Username != current.Username ||
+                              previous.NewPassword != current.NewPassword ||
+                              previous.confirmPassword != current.confirmPassword ||
+                              previous.apiStatus != current.apiStatus,
+                      builder: (context, state) {
+                        return Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              CustomTextField(
+                                label: 'Username',
+                                icon: Icons.person_outline,
+                                obscureText: false,
+                                isPassword: false,
+                                value: state.Username,
+                                validator: Validators.validateUsername,
+                                onChanged: (value) {
+                                  context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
+                                },
+                              ),
+
+                              const SizedBox(height: 16),
+                              CustomTextField(
+                                label: 'Old Password',
+                                icon: Icons.lock_outline,
+                                obscureText: _obscureOldPassword,
+                                isPassword: true,
+                                value: state.confirmPassword,
+                                validator: Validators.validateOldPassword,
+                                onChanged: (value) {
+                                  context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
+                                    color: customColors.grey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureOldPassword = !_obscureOldPassword;
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              CustomTextField(
+                                label: 'New Password',
+                                icon: Icons.lock,
+                                obscureText: _obscureNewPassword,
+                                isPassword: true,
+                                value: state.NewPassword,
+                                validator: Validators.validatePassword,
+                                onChanged: (value) {
+                                  context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                                    color: customColors.grey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureNewPassword = !_obscureNewPassword;
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 25),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: customColors.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    elevation: 0,
+                                  ),
+                                  onPressed: state.apiStatus == ApiStatus.loading
+                                      ? null
+                                      : () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      context.read<UpdatePasswordBloc>().add(UpdatePassButtonEvent());
+                                    }
+
+                                    // Remove Navigator.pop(context) here
+
+                                    final secureStorage = const FlutterSecureStorage();
+                                    final loginDataStr = await secureStorage.read(key: 'loginData');
+                                    int passResetFlag = 0;
+
+                                    if (loginDataStr != null) {
+                                      final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
+                                      final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
+                                      passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
+                                    }
+                                  },
+                                  child: state.apiStatus == ApiStatus.loading
+                                      ? const CircularProgressIndicator(color: customColors.white)
+                                      : const Text(
+                                    'UPDATE PASSWORD',
+                                    style: TextStyle(
+                                      color: customColors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+
+                              ),
+                              SizedBox(height: 15),
+                              Footer(),
+                            ],
+
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-                SizedBox(height: 25),
+               // SizedBox(height: 25),
 
             ],
           ),

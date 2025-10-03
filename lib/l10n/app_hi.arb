@@ -98,7 +98,7 @@
         "prev": "पिछला",
         "next": "अगला",
         "form6_landing_title": "फॉर्म VI",
-          "form6_landing_sections_title": "फॉर्म VI अनुभाग",
+         "form6_landing_sections_title": "फॉर्म VI अनुभाग",
           "form6_landing_fso_info_title": "एफएसओ जानकारी",
           "form6_landing_fso_info_subtitle": "खाद्य सुरक्षा अधिकारी विवरण",
           "form6_landing_sample_info_title": "नमूना जानकारी",
@@ -117,4 +117,7 @@
           "form6_landing_exit_app": "ऐप से बाहर निकलें",
           "form6_landing_exit_confirmation": "क्या आप वाकई बाहर निकलना चाहते हैं?",
           "form6_landing_exit": "बाहर निकलें"
-}
+
+
+
+         }
