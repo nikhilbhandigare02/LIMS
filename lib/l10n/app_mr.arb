@@ -72,6 +72,8 @@
 
     "filterTooltipClearHide": "साफ करा आणि फिल्टर लपवा",
     "filterTooltipShow": "फिल्टर दाखवा",
+    "profile": "My Profile",
+    "updatePass": "Update Password",
 
     "goToHome": "होमला जा",
     "switchToTable": "टेबल दृश्यावर स्विच करा",
@@ -94,5 +96,25 @@
         "thStatus": "स्थिती",
         "thActions": "क्रिया",
         "prev": "मागे",
-        "next": "पुढे"
+        "next": "पुढे",
+        "form6_landing_title": "फॉर्म VI",
+          "form6_landing_sections_title": "फॉर्म VI विभाग",
+          "form6_landing_fso_info_title": "एफएसओ माहिती",
+          "form6_landing_fso_info_subtitle": "अन्न सुरक्षा अधिकारी तपशील",
+          "form6_landing_sample_info_title": "नमुना माहिती",
+          "form6_landing_sample_info_subtitle": "मूलभूत नमुना तपशील",
+          "form6_landing_preservative_info_title": "परिरक्षक माहिती",
+          "form6_landing_preservative_info_subtitle": "परिरक्षक माहिती",
+          "form6_landing_seal_details_title": "शिक्का तपशील",
+          "form6_landing_seal_details_subtitle": "शिक्का आणि सुरक्षा तपशील",
+          "form6_landing_review_submit_title": "पुनरावलोकन आणि सबमिट करा",
+          "form6_landing_review_submit_subtitle": "अंतिम पुनरावलोकन आणि सबमिशन",
+          "form6_landing_submit_button": "फॉर्म सबमिट करा",
+          "form6_landing_form_not_filled": "⚠️ फॉर्म भरलेला नाही. कृपया फॉर्म भरा.",
+          "form6_landing_form_submitted": "✅ फॉर्म VI यशस्वीरित्या सबमिट केला.",
+          "form6_landing_submission_failed": "फॉर्म सबमिशन अयशस्वी झाले.",
+          "form6_landing_loading": "लोड होत आहे...",
+          "form6_landing_exit_app": "ॲपमधून बाहेर पडा",
+          "form6_landing_exit_confirmation": "तुम्हाला खरोखर बाहेर पडायचे आहे?",
+          "form6_landing_exit": "बाहेर पडा"
 }

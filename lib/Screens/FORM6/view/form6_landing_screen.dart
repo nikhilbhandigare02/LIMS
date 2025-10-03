@@ -6,7 +6,9 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/utils/Message.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
+
 import '../../../core/widgets/AppDrawer/Drawer.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../Storage/form6_storage.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form6_step_screen.dart';
@@ -72,7 +74,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     } else {
       Message.showTopRightOverlay(
         context,
-        '⚠️ Form not filled. Please fill the form.',
+        AppLocalizations.of(context)!.form6_landing_form_not_filled,
         MessageType.error,
       );
     }
@@ -80,165 +82,165 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return WillPopScope(
         onWillPop: () async {
           final confirmed = await ConfirmDialog.show(
             context,
-            title: "Exit App",
-            message: "Do you really want to exit?",
-            confirmText: "Exit",
+            title: localizations.form6_landing_exit_app,
+            message: localizations.form6_landing_exit_confirmation,
+            confirmText: localizations.form6_landing_exit,
             confirmColor: Colors.red,
             icon: Icons.exit_to_app,
           );
 
           if (confirmed) {
-
             return true;
           }
           return false;
         },
-     child:  BlocListener<SampleFormBloc, SampleFormState>(
-      listener: (context, state) async {
-        // Update completion status whenever state changes
-        final newOtherComplete = _isFsoInfoComplete(state);
-        final newSampleComplete = _isSampleInfoComplete(state);
-        final newPreservativeComplete = _isPreservativeInfoComplete(state);
-        final newSealComplete = _isSealInfoComplete(state);
-        final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete;
+        child:  BlocListener<SampleFormBloc, SampleFormState>(
+          listener: (context, state) async {
+            // Update completion status whenever state changes
+            final newOtherComplete = _isFsoInfoComplete(state);
+            final newSampleComplete = _isSampleInfoComplete(state);
+            final newPreservativeComplete = _isPreservativeInfoComplete(state);
+            final newSealComplete = _isSealInfoComplete(state);
+            final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete;
 
-        final changed =
-            newOtherComplete != isOtherInfoComplete ||
-            newSampleComplete != isSampleInfoComplete ||
-            newPreservativeComplete != isPreservativeComplete ||
-            newSealComplete != isSealComplete ||
-            newReviewComplete != isReviewComplete;
+            final changed =
+                newOtherComplete != isOtherInfoComplete ||
+                    newSampleComplete != isSampleInfoComplete ||
+                    newPreservativeComplete != isPreservativeComplete ||
+                    newSealComplete != isSealComplete ||
+                    newReviewComplete != isReviewComplete;
 
-        if (changed) {
-          print("🔄 State changed - Other: $newOtherComplete, Sample: $newSampleComplete, Preservative: $newPreservativeComplete, Seal: $newSealComplete, Review: $newReviewComplete");
-          setState(() {
-            isOtherInfoComplete = newOtherComplete;
-            isSampleInfoComplete = newSampleComplete;
-            isPreservativeComplete = newPreservativeComplete;
-            isSealComplete = newSealComplete;
-            isReviewComplete = newReviewComplete;
-          });
-        }
+            if (changed) {
+              print("🔄 State changed - Other: $newOtherComplete, Sample: $newSampleComplete, Preservative: $newPreservativeComplete, Seal: $newSealComplete, Review: $newReviewComplete");
+              setState(() {
+                isOtherInfoComplete = newOtherComplete;
+                isSampleInfoComplete = newSampleComplete;
+                isPreservativeComplete = newPreservativeComplete;
+                isSealComplete = newSealComplete;
+                isReviewComplete = newReviewComplete;
+              });
+            }
 
-        // Handle submit states
-        if (state.apiStatus == ApiStatus.loading) {
-          AppDialog.show(context, "Loading...", MessageType.info);
-        } else if (state.apiStatus == ApiStatus.success) {
-          // Close loading first
-          AppDialog.closePopup(context);
+            // Handle submit states
+            if (state.apiStatus == ApiStatus.loading) {
+              AppDialog.show(context, localizations.form6_landing_loading, MessageType.info);
+            } else if (state.apiStatus == ApiStatus.success) {
+              // Close loading first
+              AppDialog.closePopup(context);
 
-          // Clear saved form only on success
-          await storage.clearFormData();
-          setState(() {
-            isOtherInfoComplete = false;
-            isSampleInfoComplete = false;
-            isPreservativeComplete = false;
-            isSealComplete = false;
-            isReviewComplete = false;
-          });
+              // Clear saved form only on success
+              await storage.clearFormData();
+              setState(() {
+                isOtherInfoComplete = false;
+                isSampleInfoComplete = false;
+                isPreservativeComplete = false;
+                isSealComplete = false;
+                isReviewComplete = false;
+              });
 
-          final successMsg = state.message.isNotEmpty
-              ? state.message
-              : '✅ Form VI submitted successfully.';
+              final successMsg = state.message.isNotEmpty
+                  ? state.message
+                  : localizations.form6_landing_form_submitted;
 
-          AppDialog.show(context, successMsg, MessageType.success, onOk: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => SampleFormBloc(form6repository: Form6Repository()),
-                  child: Form6LandingScreen(),
+              AppDialog.show(context, successMsg, MessageType.success, onOk: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => SampleFormBloc(form6repository: Form6Repository()),
+                      child: Form6LandingScreen(),
+                    ),
+                  ),
+                      (route) => false,
+                );
+              });
+            } else if (state.apiStatus == ApiStatus.error) {
+              // Close loading first
+              AppDialog.closePopup(context);
+
+              final errMsg = state.message.isNotEmpty
+                  ? state.message
+                  : localizations.form6_landing_submission_failed;
+
+              // Show error popup
+              AppDialog.show(context, errMsg, MessageType.error);
+            }
+
+          },
+          child: Scaffold(
+            backgroundColor: customColors.white,
+            appBar: AppHeader(
+              screenTitle: localizations.form6_landing_title,
+              showBack: false,
+            ),
+            drawer: CustomDrawer(),
+
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 50),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      localizations.form6_landing_sections_title,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 30),
+                    _buildVerticalStepProgress(localizations),
+                    const SizedBox(height: 15),
+                    _buildSubmitButton(localizations),
+                    const SizedBox(height: 15),
+
+                  ],
                 ),
               ),
-                  (route) => false,
-            );
-          });
-        } else if (state.apiStatus == ApiStatus.error) {
-          // Close loading first
-          AppDialog.closePopup(context);
-
-          final errMsg = state.message.isNotEmpty
-              ? state.message
-              : 'Form submission failed.';
-
-          // Show error popup
-          AppDialog.show(context, errMsg, MessageType.error);
-        }
-
-      },
-      child: Scaffold(
-        backgroundColor: customColors.white,
-        appBar: AppHeader(
-          screenTitle: 'Form VI',
-
-          showBack: false,
-        ),
-        drawer: CustomDrawer(),
-
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 50),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  'Form VI Sections',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 30),
-                _buildVerticalStepProgress(),
-                const SizedBox(height: 15),
-                _buildSubmitButton(),
-                const SizedBox(height: 15),
-
-              ],
             ),
           ),
-        ),
-      ),
-    ) ) ;
+        ) ) ;
   }
 
-  Widget _buildVerticalStepProgress() {
+  Widget _buildVerticalStepProgress(AppLocalizations localizations) {
     List<Map<String, dynamic>> steps = [
       {
-        'title': 'FSO Info',
-        'subtitle': 'Food Safety Officer details',
+        'title': localizations.form6_landing_fso_info_title,
+        'subtitle': localizations.form6_landing_fso_info_subtitle,
         'icon': Icons.person_outline,
         'isComplete': isOtherInfoComplete,
         'color': Colors.blue,
         'section': 'other',
       },
       {
-        'title': 'Sample Info',
-        'subtitle': 'Basic sample details',
+        'title': localizations.form6_landing_sample_info_title,
+        'subtitle': localizations.form6_landing_sample_info_subtitle,
         'icon': Icons.science_outlined,
         'isComplete': isSampleInfoComplete,
         'color': Colors.green,
         'section': 'sample',
       },
       {
-        'title': 'Preservative Info',
-        'subtitle': 'Preservative information',
+        'title': localizations.form6_landing_preservative_info_title,
+        'subtitle': localizations.form6_landing_preservative_info_subtitle,
         'icon': Icons.local_pharmacy_outlined,
         'isComplete': isPreservativeComplete,
         'color': Colors.purple,
         'section': 'sample',
       },
       {
-        'title': 'Seal Details',
-        'subtitle': 'Seal and security details',
+        'title': localizations.form6_landing_seal_details_title,
+        'subtitle': localizations.form6_landing_seal_details_subtitle,
         'icon': Icons.security_outlined,
         'isComplete': isSealComplete,
         'color': Colors.orange,
         'section': 'sample',
       },
       {
-        'title': 'Review & Submit',
-        'subtitle': 'Final review and submission',
+        'title': localizations.form6_landing_review_submit_title,
+        'subtitle': localizations.form6_landing_review_submit_subtitle,
         'icon': Icons.send_outlined,
         'isComplete': isReviewComplete,
         'color': Colors.indigo,
@@ -257,14 +259,14 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             return InkWell(
               onTap: () async {
                 print("🔄 Navigating to section: ${step['section']}");
-                
+
                 // Determine the initial step based on the section
                 int initialStep = 0;
-                if (step['title'] == 'Preservative Info') {
+                if (step['title'] == localizations.form6_landing_preservative_info_title) {
                   initialStep = 1; // Second step for preservative info
-                } else if (step['title'] == 'Seal Details') {
+                } else if (step['title'] == localizations.form6_landing_seal_details_title) {
                   initialStep = 2; // Third step for seal details
-                } else if (step['title'] == 'Review & Submit') {
+                } else if (step['title'] == localizations.form6_landing_review_submit_title) {
                   initialStep = 2; // Use last available step for review
                 }
 
@@ -407,7 +409,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(AppLocalizations localizations) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 500),
       switchInCurve: Curves.easeIn,
@@ -430,7 +432,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           onPressed: handleSubmit,
           icon: Icon(Icons.check_circle, color: customColors.white),
           label: Text(
-            "Submit Form",
+            localizations.form6_landing_submit_button,
             style: TextStyle(color: customColors.white),
           ),
           style: ElevatedButton.styleFrom(
@@ -459,7 +461,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 }
 
-// Completion helper functions
+// Completion helper functions (unchanged)
 bool _isFsoInfoComplete(SampleFormState s) {
   return s.senderDesignation.isNotEmpty &&
       s.DONumber.isNotEmpty &&

@@ -409,6 +409,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get selectStatus => 'स्थिति चुनें';
 
   @override
+  String get profile => 'मेरा प्रोफ़ाइल';
+
+  @override
+  String get updatePass => 'पासवर्ड अपडेट करें';
+
+  @override
   String get labMaster => 'प्रयोगशाला मास्टर';
 
   @override
@@ -469,4 +475,67 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get next => 'अगला';
+
+  @override
+  String get form6_landing_title => 'फॉर्म VI';
+
+  @override
+  String get form6_landing_sections_title => 'फॉर्म VI अनुभाग';
+
+  @override
+  String get form6_landing_fso_info_title => 'एफएसओ जानकारी';
+
+  @override
+  String get form6_landing_fso_info_subtitle => 'खाद्य सुरक्षा अधिकारी विवरण';
+
+  @override
+  String get form6_landing_sample_info_title => 'नमूना जानकारी';
+
+  @override
+  String get form6_landing_sample_info_subtitle => 'मूल नमूना विवरण';
+
+  @override
+  String get form6_landing_preservative_info_title => 'परिरक्षक जानकारी';
+
+  @override
+  String get form6_landing_preservative_info_subtitle => 'परिरक्षक सूचना';
+
+  @override
+  String get form6_landing_seal_details_title => 'सील विवरण';
+
+  @override
+  String get form6_landing_seal_details_subtitle => 'सील और सुरक्षा विवरण';
+
+  @override
+  String get form6_landing_review_submit_title => 'समीक्षा और सबमिट करें';
+
+  @override
+  String get form6_landing_review_submit_subtitle => 'अंतिम समीक्षा और सबमिशन';
+
+  @override
+  String get form6_landing_submit_button => 'फॉर्म सबमिट करें';
+
+  @override
+  String get form6_landing_form_not_filled =>
+      '⚠️ फॉर्म भरा नहीं है। कृपया फॉर्म भरें।';
+
+  @override
+  String get form6_landing_form_submitted =>
+      '✅ फॉर्म VI सफलतापूर्वक सबमिट किया गया।';
+
+  @override
+  String get form6_landing_submission_failed => 'फॉर्म सबमिशन विफल हुआ।';
+
+  @override
+  String get form6_landing_loading => 'लोड हो रहा है...';
+
+  @override
+  String get form6_landing_exit_app => 'ऐप से बाहर निकलें';
+
+  @override
+  String get form6_landing_exit_confirmation =>
+      'क्या आप वाकई बाहर निकलना चाहते हैं?';
+
+  @override
+  String get form6_landing_exit => 'बाहर निकलें';
 }
