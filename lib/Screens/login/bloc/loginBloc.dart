@@ -74,6 +74,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           final Map<String, dynamic> loginResponseMap = jsonDecode(decrypted);
           final String? token = loginResponseMap['Token'];
           final String? senderFullName = loginResponseMap['FullName'];
+          // Try to read user id with multiple possible keys and persist
+          final dynamic userIdRaw = loginResponseMap['UserId'] ?? loginResponseMap['userId'] ?? loginResponseMap['UserID'];
+          if (userIdRaw != null) {
+            await secureStorage.write(key: 'user_id', value: userIdRaw.toString());
+          }
 
           if (token != null && token.isNotEmpty) {
             await secureStorage.write(key: 'authToken', value: token);
@@ -108,6 +113,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
             final Map<String, dynamic> fallbackMap = jsonDecode(decryptedFallback);
             final String? fallbackToken = fallbackMap['Token'];
+            // Persist user id from fallback as well
+            final dynamic userIdRaw = fallbackMap['UserId'] ?? fallbackMap['userId'] ?? fallbackMap['UserID'];
+            if (userIdRaw != null) {
+              await secureStorage.write(key: 'user_id', value: userIdRaw.toString());
+            }
             if (fallbackToken != null && fallbackToken.isNotEmpty) {
               await secureStorage.write(key: 'authToken', value: fallbackToken);
               // Persist last logged-in username for quick login (fallback)

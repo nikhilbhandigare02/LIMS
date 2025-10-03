@@ -10,6 +10,8 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import 'package:food_inspector/core/utils/Message.dart';
+import 'package:food_inspector/common/device/device_id.dart';
+import 'package:food_inspector/Screens/login/repository/login_log_repository.dart';
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../Screens/login/bloc/loginBloc.dart';
@@ -47,6 +49,20 @@ class LoginButton extends StatelessWidget {
               final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
               passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
             }
+            // Fire-and-forget login log (password method)
+            try {
+              final String? userId = await secureStorage.read(key: 'user_id');
+              final deviceId = await DeviceIdProvider.getDeviceId();
+              if (userId != null && userId.isNotEmpty) {
+                final repo = LoginLogRepository();
+                // do not await to avoid blocking navigation
+                // ignore: unawaited_futures
+                repo.logUserLogin(body: {
+                  'user_id': userId,
+                  'device_id': deviceId,
+                });
+              }
+            } catch (_) {}
             if (passResetFlag == 0) {
               Navigator.pushNamed(context, RouteName.updateScreen);
             } else if (passResetFlag == 1) {
@@ -133,3 +149,4 @@ class LoginButton extends StatelessWidget {
     );
   }
 }
+

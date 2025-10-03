@@ -16,6 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:food_inspector/fcm/bloc/token_bloc.dart';
 import '../../../core/utils/enums.dart';
+import 'package:food_inspector/common/device/device_id.dart';
+import 'package:food_inspector/Screens/login/repository/login_log_repository.dart';
 
 // Preferred biometric enum for UI selection (platform may still present available/default method)
 enum PreferredBio { face, fingerprint }
@@ -171,7 +173,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       final hasFingerprint = availableBiometrics.contains(BiometricType.fingerprint);
       final hasGeneric = availableBiometrics.contains(BiometricType.strong) || availableBiometrics.contains(BiometricType.weak);
 
-      // If the user explicitly requested a modality that is not present and there is no generic support, do not fall back silently.
       if (preferred == PreferredBio.face && !hasFace && !hasGeneric) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -224,7 +225,19 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       if (!mounted) return;
 
       if (didAuth) {
-        // Success → Navigate
+        try {
+          final storage = const FlutterSecureStorage();
+          final String? userId = await storage.read(key: 'user_id');
+          final deviceId = await DeviceIdProvider.getDeviceId();
+          if (userId != null && userId.isNotEmpty) {
+            final repo = LoginLogRepository();
+            repo.logUserLogin(body: {
+              'user_id': userId,
+              'device_id': deviceId,
+            });
+          }
+        } catch (_) {}
+        // Navigate
         Navigator.pushNamedAndRemoveUntil(
           context,
           RouteName.SampleAnalysisScreen,

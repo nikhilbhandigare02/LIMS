@@ -116,7 +116,7 @@ class _SettingState extends State<Setting> {
   Future<void> _loadBiometricPref() async {
     final value = await _storage.read(key: 'biometricEnabled');
     setState(() {
-      _isBiometricEnabled = value == '1'; // default false if null
+      _isBiometricEnabled = value == '1';
     });
   }
 
