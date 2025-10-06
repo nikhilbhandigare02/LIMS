@@ -8,12 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:food_inspector/Screens/RequestSlipNumber/bloc/request_bloc.dart';
 import 'package:food_inspector/Screens/RequestSlipNumber/repository/requestRepository.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
 import '../../core/utils/Message.dart';
 import '../../core/utils/enums.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/AppDrawer/Drawer.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
+import '../../l10n/app_localizations.dart';
 
 class Requestslipnumber extends StatefulWidget {
   const Requestslipnumber({super.key});
@@ -93,6 +93,11 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                   state.message,
                   MessageType.success,
                 );
+                await Future.delayed(const Duration(milliseconds: 500));
+
+                if (mounted) {
+                  Navigator.pop(context);
+                }
                 break;
               case ApiStatus.error:
                 Message.showTopRightOverlay(

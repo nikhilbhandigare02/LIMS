@@ -8,7 +8,7 @@ import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
-import '../../../l10n/gen/app_localizations.dart';
+import '../../../l10n/app_localizations.dart';
 import '../bloc/Form6Bloc.dart';
 import 'form_steps.dart';
 import 'form6_landing_screen.dart';

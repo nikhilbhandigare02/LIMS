@@ -877,6 +877,18 @@ abstract class AppLocalizations {
   /// **'Select Status'**
   String get selectStatus;
 
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get profile;
+
+  /// No description provided for @updatePass.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Password'**
+  String get updatePass;
+
   /// No description provided for @labMaster.
   ///
   /// In en, this message translates to:
@@ -996,6 +1008,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @form6_landing_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI'**
+  String get form6_landing_title;
+
+  /// No description provided for @form6_landing_sections_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI Sections'**
+  String get form6_landing_sections_title;
+
+  /// No description provided for @form6_landing_fso_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'FSO Info'**
+  String get form6_landing_fso_info_title;
+
+  /// No description provided for @form6_landing_fso_info_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Safety Officer details'**
+  String get form6_landing_fso_info_subtitle;
+
+  /// No description provided for @form6_landing_sample_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Info'**
+  String get form6_landing_sample_info_title;
+
+  /// No description provided for @form6_landing_sample_info_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic sample details'**
+  String get form6_landing_sample_info_subtitle;
+
+  /// No description provided for @form6_landing_preservative_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Preservative Info'**
+  String get form6_landing_preservative_info_title;
+
+  /// No description provided for @form6_landing_preservative_info_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preservative information'**
+  String get form6_landing_preservative_info_subtitle;
+
+  /// No description provided for @form6_landing_seal_details_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal Details'**
+  String get form6_landing_seal_details_title;
+
+  /// No description provided for @form6_landing_seal_details_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal and security details'**
+  String get form6_landing_seal_details_subtitle;
+
+  /// No description provided for @form6_landing_review_submit_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Review & Submit'**
+  String get form6_landing_review_submit_title;
+
+  /// No description provided for @form6_landing_review_submit_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Final review and submission'**
+  String get form6_landing_review_submit_subtitle;
+
+  /// No description provided for @form6_landing_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Form'**
+  String get form6_landing_submit_button;
+
+  /// No description provided for @form6_landing_form_not_filled.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Form not filled. Please fill the form.'**
+  String get form6_landing_form_not_filled;
+
+  /// No description provided for @form6_landing_form_submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Form VI submitted successfully.'**
+  String get form6_landing_form_submitted;
+
+  /// No description provided for @form6_landing_submission_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Form submission failed.'**
+  String get form6_landing_submission_failed;
+
+  /// No description provided for @form6_landing_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get form6_landing_loading;
+
+  /// No description provided for @form6_landing_exit_app.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit App'**
+  String get form6_landing_exit_app;
+
+  /// No description provided for @form6_landing_exit_confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to exit?'**
+  String get form6_landing_exit_confirmation;
+
+  /// No description provided for @form6_landing_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get form6_landing_exit;
+
+  /// No description provided for @form6_step_form_vi_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI'**
+  String get form6_step_form_vi_title;
+
+  /// No description provided for @form6_step_previous_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get form6_step_previous_button;
+
+  /// No description provided for @form6_step_save_next_button.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE & NEXT'**
+  String get form6_step_save_next_button;
+
+  /// No description provided for @form6_step_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBMIT'**
+  String get form6_step_submit_button;
+
+  /// No description provided for @form6_step_validation_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please correct the highlighted fields'**
+  String get form6_step_validation_error;
+
+  /// No description provided for @form6_step_other_section_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Please complete all required fields.'**
+  String get form6_step_other_section_incomplete;
+
+  /// No description provided for @form6_step_sample_section_incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Please complete all sample fields.'**
+  String get form6_step_sample_section_incomplete;
+
+  /// No description provided for @doSlipNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'DO Slip Numbers'**
+  String get doSlipNumbers;
+
+  /// No description provided for @sampleCodeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Code Number'**
+  String get sampleCodeNumber;
+
+  /// No description provided for @natureOfSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature of Sample'**
+  String get natureOfSample;
+
+  /// No description provided for @pleaseSelectYesOrNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select Yes or No'**
+  String get pleaseSelectYesOrNo;
+
+  /// No description provided for @anyOtherDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Any other documents'**
+  String get anyOtherDocuments;
+
+  /// No description provided for @documentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Name'**
+  String get documentName;
+
+  /// No description provided for @enterDocumentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter document name'**
+  String get enterDocumentName;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
+
+  /// No description provided for @chooseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get chooseFile;
+
+  /// No description provided for @replaceFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace file'**
+  String get replaceFile;
+
+  /// No description provided for @enter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get enter;
+
+  /// No description provided for @loggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in...'**
+  String get loggingIn;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'SIGN IN'**
+  String get signIn;
+
+  /// No description provided for @biometricQuickSecureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick & Secure Sign-in'**
+  String get biometricQuickSecureTitle;
+
+  /// No description provided for @biometricFaceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Face ID for faster and secure login. You can still use your password anytime.'**
+  String get biometricFaceDesc;
+
+  /// No description provided for @biometricFingerprintDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable fingerprint authentication for faster and secure login. You can still use your password anytime.'**
+  String get biometricFingerprintDesc;
+
+  /// No description provided for @biometricNotAvailableWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available on this device. You can enable it later if supported.'**
+  String get biometricNotAvailableWarning;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @errorSavingPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving preferences'**
+  String get errorSavingPreferences;
+
+  /// No description provided for @biometricNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication not supported on this device.'**
+  String get biometricNotSupported;
+
+  /// No description provided for @authRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Required'**
+  String get authRequiredTitle;
+
+  /// No description provided for @biometricNotRecognized.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric not recognized. Try again.'**
+  String get biometricNotRecognized;
+
+  /// No description provided for @biometricRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric required'**
+  String get biometricRequiredTitle;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @authCanceledOrFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication canceled or failed.'**
+  String get authCanceledOrFailed;
+
+  /// No description provided for @authErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error occurred.'**
+  String get authErrorOccurred;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available.'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @noFaceEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No face biometric enrolled. Please set up Face ID in device settings.'**
+  String get noFaceEnrolled;
+
+  /// No description provided for @noFingerprintEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No fingerprint enrolled. Please set up fingerprint in device settings.'**
+  String get noFingerprintEnrolled;
+
+  /// No description provided for @biometricLockedTemporary.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is temporarily locked. Try again later or use passcode.'**
+  String get biometricLockedTemporary;
+
+  /// No description provided for @biometricLockedPermanent.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is permanently locked. Please set up new biometrics.'**
+  String get biometricLockedPermanent;
+
+  /// No description provided for @passcodeNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Device passcode is not set. Please set a device passcode to use biometric authentication.'**
+  String get passcodeNotSet;
+
+  /// No description provided for @authFailedTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please try again.'**
+  String get authFailedTryAgain;
+
+  /// No description provided for @unknownErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error occurred.'**
+  String get unknownErrorOccurred;
+
+  /// No description provided for @unableToStartBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start biometric authentication.'**
+  String get unableToStartBiometric;
+
+  /// No description provided for @debugTestBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug: Test Biometric'**
+  String get debugTestBiometric;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

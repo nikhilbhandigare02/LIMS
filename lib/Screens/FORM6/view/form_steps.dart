@@ -7,6 +7,7 @@ import 'package:food_inspector/core/utils/Message.dart';
 import 'package:food_inspector/core/utils/enums.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
+import '../../../l10n/app_localizations.dart';
 import '../bloc/Form6Bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
@@ -15,8 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
 import 'package:image_picker/image_picker.dart';
-import '../../../l10n/gen/app_localizations.dart';
- 
+
 
 String _formatBytes(int bytes) {
   const int kb = 1024;

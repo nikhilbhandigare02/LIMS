@@ -14,6 +14,7 @@ import '../../../core/widgets/AppHeader/AppHeader.dart';
 import '../../../core/widgets/HomeWidgets/HomeWidgets.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/SampleLIstWidgets/ViewDialog.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../FORM6/bloc/Form6Bloc.dart';
 import '../../FORM6/repository/form6Repository.dart';
 import '../../FORM6/view/form6_landing_screen.dart';
@@ -22,7 +23,6 @@ import '../model/sampleData.dart';
 import 'dart:convert';
 import '../../../common/ENcryption_Decryption/AES.dart';
 import '../../../common/ENcryption_Decryption/key.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 class SampleAnalysisScreen extends StatefulWidget {
   @override

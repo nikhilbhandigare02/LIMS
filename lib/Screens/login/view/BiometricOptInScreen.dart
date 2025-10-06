@@ -2,10 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:food_inspector/Screens/login/view/permission_screen.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
- import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
+
+import '../../../l10n/app_localizations.dart';
 
 class BiometricOptInScreen extends StatefulWidget {
   const BiometricOptInScreen({Key? key}) : super(key: key);
@@ -62,21 +65,55 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
     }
   }
 
-  Future<void> _onChoose(bool enable) async {
+  Future<void> _navigateAfterBiometricChoice() async {
     try {
-      await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
-      await _storage.write(key: 'isLogin', value: '1');
+      final perm = await _storage.read(key: 'permissionGranted');
+      final needsPermission = (perm != '1');
 
+      if (!mounted) return;
+      if (needsPermission) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PermissionScreen(
+              onContinue: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.SampleAnalysisScreen,
+                      (route) => false,
+                );
+              },
+            ),
+          ),
+        );
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          RouteName.SampleAnalysisScreen,
+              (route) => false,
+        );
+      }
+    } catch (_) {
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteName.SampleAnalysisScreen,
             (route) => false,
       );
+    }
+  }
+
+  Future<void> _onChoose(bool enable) async {
+    try {
+      await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
+      await _storage.write(key: 'isLogin', value: '1');
+
+      if (!mounted) return;
+      await _navigateAfterBiometricChoice();
     } catch (e) {
       print("Storage error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error saving preferences')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.errorSavingPreferences ?? 'Error saving preferences')),
       );
     }
   }
@@ -84,7 +121,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   Future<void> _authenticateAndEnable() async {
     if (!_supported || !_canCheckBiometrics) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Biometric authentication not supported on this device.')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.biometricNotSupported ?? 'Biometric authentication not supported on this device.')),
       );
       return;
     }
@@ -94,17 +131,16 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
     try {
       final bool didAuthenticate = await _localAuth.authenticate(
         localizedReason: _hasFace
-            ? 'Authenticate with Face ID to enable quick sign-in'
-            : 'Authenticate with fingerprint to enable quick sign-in',
+            ? (AppLocalizations.of(context)?.biometricFaceDesc ?? 'Authenticate with Face ID to enable quick sign-in')
+            : (AppLocalizations.of(context)?.biometricFingerprintDesc ?? 'Authenticate with fingerprint to enable quick sign-in'),
         authMessages: [
-          const AndroidAuthMessages(
-            signInTitle: 'Authentication Required',
+          AndroidAuthMessages(
+            signInTitle: AppLocalizations.of(context)?.authRequiredTitle ?? 'Authentication Required',
             biometricHint: '',
-            biometricNotRecognized: 'Biometric not recognized. Try again.',
-            biometricRequiredTitle: 'Biometric required',
-            cancelButton: 'Cancel',
+            biometricNotRecognized: AppLocalizations.of(context)?.biometricNotRecognized ?? 'Biometric not recognized. Try again.',
+            biometricRequiredTitle: AppLocalizations.of(context)?.biometricRequiredTitle ?? 'Biometric required',
+            cancelButton: AppLocalizations.of(context)?.cancel ?? 'Cancel',
           ),
-
         ],
         options: const AuthenticationOptions(
           biometricOnly: true, // Force biometric only (no fallback to device credentials)
@@ -121,38 +157,38 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
       } else {
         setState(() => _authenticating = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authentication canceled or failed.')),
+          SnackBar(content: Text(AppLocalizations.of(context)?.authCanceledOrFailed ?? 'Authentication canceled or failed.')),
         );
       }
     } on PlatformException catch (e) {
       if (!mounted) return;
       setState(() => _authenticating = false);
 
-      String message = 'Authentication error occurred.';
+      String message = AppLocalizations.of(context)?.authErrorOccurred ?? 'Authentication error occurred.';
       switch (e.code) {
         case 'NotAvailable':
-          message = 'Biometric authentication is not available.';
+          message = AppLocalizations.of(context)?.biometricNotAvailable ?? 'Biometric authentication is not available.';
           break;
         case 'NotEnrolled':
           message = _hasFace
-              ? 'No face biometric enrolled. Please set up Face ID in device settings.'
-              : 'No fingerprint enrolled. Please set up fingerprint in device settings.';
+              ? (AppLocalizations.of(context)?.noFaceEnrolled ?? 'No face biometric enrolled. Please set up Face ID in device settings.')
+              : (AppLocalizations.of(context)?.noFingerprintEnrolled ?? 'No fingerprint enrolled. Please set up fingerprint in device settings.');
           break;
         case 'LockedOut':
-          message = 'Biometric authentication is temporarily locked. Try again later or use passcode.';
+          message = AppLocalizations.of(context)?.biometricLockedTemporary ?? 'Biometric authentication is temporarily locked. Try again later or use passcode.';
           break;
         case 'PermanentlyLockedOut':
-          message = 'Biometric authentication is permanently locked. Please set up new biometrics.';
+          message = AppLocalizations.of(context)?.biometricLockedPermanent ?? 'Biometric authentication is permanently locked. Please set up new biometrics.';
           break;
         case 'PasscodeNotSet':
-          message = 'Device passcode is not set. Please set a device passcode to use biometric authentication.';
+          message = AppLocalizations.of(context)?.passcodeNotSet ?? 'Device passcode is not set. Please set a device passcode to use biometric authentication.';
           break;
         case 'NotInteractive':
         case 'Failed':
-          message = 'Authentication failed. Please try again.';
+          message = AppLocalizations.of(context)?.authFailedTryAgain ?? 'Authentication failed. Please try again.';
           break;
         default:
-          message = e.message ?? 'Unknown error occurred.';
+          message = e.message ?? (AppLocalizations.of(context)?.unknownErrorOccurred ?? 'Unknown error occurred.');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -165,7 +201,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
       if (!mounted) return;
       setState(() => _authenticating = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to start biometric authentication.')),
+        SnackBar(content: Text(AppLocalizations.of(context)?.unableToStartBiometric ?? 'Unable to start biometric authentication.')),
       );
     }
   }
@@ -185,6 +221,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -201,7 +238,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                     if (kDebugMode)
                       TextButton(
                         onPressed: _testBiometric,
-                        child: const Text('Debug: Test Biometric'),
+                        child: Text(l10n?.debugTestBiometric ?? 'Debug: Test Biometric'),
                       ),
 
                     Container(
@@ -218,7 +255,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      "Quick & Secure Sign-in",
+                      AppLocalizations.of(context)!.biometricAuthentication,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF130160),
@@ -230,8 +267,8 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
                         _hasFace
-                            ? "Enable Face ID for faster and secure login. You can still use your password anytime."
-                            : "Enable fingerprint authentication for faster and secure login. You can still use your password anytime.",
+                            ? (AppLocalizations.of(context)!.biometricFaceDesc ?? "Enable Face ID for faster and secure login. You can still use your password anytime.")
+                            : (l10n?.biometricFingerprintDesc ?? "Enable fingerprint authentication for faster and secure login. You can still use your password anytime."),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.grey.shade700,
                           height: 1.5,
@@ -261,8 +298,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Biometric authentication is not available on this device. '
-                            'You can enable it later if supported.',
+                        (l10n?.biometricNotAvailableWarning ?? 'Biometric authentication is not available on this device. You can enable it later if supported.'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.orange.shade800,
                         ),
@@ -288,7 +324,7 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                       ),
                       onPressed: _authenticating ? null : () => _onChoose(false),
                       child: Text(
-                        "Not now",
+                        l10n?.notNow ?? "Not now",
                         style: TextStyle(color: customColors.primary, fontSize: 16),
                       ),
                     ),
@@ -314,7 +350,9 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
                       )
                           : Icon(_hasFace ? Icons.face : Icons.fingerprint, size: 22),
                       label: Text(
-                        _authenticating ? 'Authenticating...' : 'Enable',
+                        _authenticating
+                            ? (AppLocalizations.of(context)!.biometricAuthentication ?? 'Authenticating...')
+                            : (l10n?.enable ?? 'Enable'),
                         style: const TextStyle(fontSize: 16),
                       ),
                     ),

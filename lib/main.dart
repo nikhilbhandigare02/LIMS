@@ -14,7 +14,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'fcm/bloc/token_bloc.dart';
 import 'fcm/repository/token_repository.dart';
 import 'firebase_options.dart';
-import 'l10n/gen/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'l10n/locale_notifier.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

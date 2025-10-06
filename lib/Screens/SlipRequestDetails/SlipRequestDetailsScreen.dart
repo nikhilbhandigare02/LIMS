@@ -9,10 +9,10 @@ import '../../core/widgets/AppDrawer/Drawer.dart';
 import '../../core/widgets/AppHeader/AppHeader.dart';
 import '../../common/ApiResponse.dart';
 import '../../core/utils/enums.dart';
+import '../../l10n/app_localizations.dart';
 import 'bloc/SlipRequestBloc.dart';
 import 'model/SlipRequestModel.dart';
 import '../RequestSlipNumber/repository/requestRepository.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 class SealRequestDetailsScreen extends StatefulWidget {
   const SealRequestDetailsScreen({super.key});

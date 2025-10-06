@@ -32,7 +32,7 @@ class UploadedDoc extends Equatable {
   @override
   List<Object?> get props => [name, base64Data, mimeType, extension, sizeBytes];
 
-  /// Convert the document info + content into a base64-encoded string
+
   String toBase64() {
     final map = {
       'name': name,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../../l10n/gen/app_localizations.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../l10n/locale_notifier.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
@@ -43,7 +43,7 @@ class _SettingState extends State<Setting> {
         children: [
           _buildListTile(
             icon: Icons.person_outline,
-            title: AppLocalizations.of(context).profile,
+            title: AppLocalizations.of(context)!.profile,
             onTap: () {
               Navigator.pushNamed(context, RouteName.profileScreen);
             },
@@ -51,7 +51,7 @@ class _SettingState extends State<Setting> {
           Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
           _buildListTile(
             icon: Icons.lock_outline,
-            title: AppLocalizations.of(context).updatePass ,
+            title: AppLocalizations.of(context)!.updatePass ,
             onTap: () {
               Navigator.pushNamed(context, RouteName. updateScreen);
             },

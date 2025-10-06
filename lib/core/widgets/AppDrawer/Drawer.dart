@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
+
 
 // For showing resubmit notifications count when available
 import '../../../core/utils/enums.dart';
@@ -14,6 +14,7 @@ import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/FORM6/repository/form6Repository.dart';
 import '../../../Screens/FORM6/view/form6_landing_screen.dart';
 import '../../../config/Routes/RouteName.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../utils/ExitCOnfirmtionWidget.dart';
 import '../../utils/Message.dart';
 

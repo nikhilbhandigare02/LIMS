@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../core/widgets/AppDrawer/Drawer.dart';
 import '../../../core/widgets/AppHeader/AppHeader.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../Sample list/model/sampleData.dart';
 import '../bloc/resubmit_bloc.dart';
 import '../repository/resubmit_repository.dart';

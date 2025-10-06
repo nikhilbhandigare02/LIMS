@@ -6,12 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:food_inspector/l10n/gen/app_localizations.dart';
+
 
 import '../../../Screens/FORM6/bloc/Form6Bloc.dart';
 import '../../../Screens/Sample list/bloc/sampleBloc.dart';
 import '../../../Screens/Sample list/model/view_form6_model.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../utils/Message.dart';
 import '../../utils/enums.dart';
 import '../AppDrawer/Drawer.dart';
@@ -79,8 +80,8 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
 
   String formatYesNo(dynamic value) {
     if (value == null) return AppLocalizations.of(context)!.na;
-    if (value.toString() == "1") return AppLocalizations.of(context)!.yes;
-    if (value.toString() == "0") return AppLocalizations.of(context)!.no;
+    if (value.toString() == "1") return 'YES';
+    if (value.toString() == "0") return 'NO';
     return value.toString();
   }
 
