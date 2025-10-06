@@ -1233,6 +1233,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Replace file'**
   String get replaceFile;
+
+  /// No description provided for @enter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get enter;
 }
 
 class _AppLocalizationsDelegate

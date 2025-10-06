@@ -591,4 +591,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get replaceFile => 'Replace file';
+
+  @override
+  String get enter => 'Enter';
 }

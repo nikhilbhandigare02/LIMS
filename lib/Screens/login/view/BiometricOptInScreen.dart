@@ -2,9 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:food_inspector/Screens/login/view/permission_screen.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
- import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 class BiometricOptInScreen extends StatefulWidget {
@@ -62,17 +63,51 @@ class _BiometricOptInScreenState extends State<BiometricOptInScreen> {
     }
   }
 
-  Future<void> _onChoose(bool enable) async {
+  Future<void> _navigateAfterBiometricChoice() async {
     try {
-      await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
-      await _storage.write(key: 'isLogin', value: '1');
+      final perm = await _storage.read(key: 'permissionGranted');
+      final needsPermission = (perm != '1');
 
+      if (!mounted) return;
+      if (needsPermission) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PermissionScreen(
+              onContinue: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.SampleAnalysisScreen,
+                      (route) => false,
+                );
+              },
+            ),
+          ),
+        );
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          RouteName.SampleAnalysisScreen,
+              (route) => false,
+        );
+      }
+    } catch (_) {
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteName.SampleAnalysisScreen,
             (route) => false,
       );
+    }
+  }
+
+  Future<void> _onChoose(bool enable) async {
+    try {
+      await _storage.write(key: 'biometricEnabled', value: enable ? '1' : '0');
+      await _storage.write(key: 'isLogin', value: '1');
+
+      if (!mounted) return;
+      await _navigateAfterBiometricChoice();
     } catch (e) {
       print("Storage error: $e");
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_inspector/l10n/app_localizations.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../utils/validators.dart';
 
@@ -82,7 +83,7 @@ class _BlocTextInputState extends State<BlocTextInput> {
         color: widget.readOnly ? Colors.black54 : Colors.black,
       ),
       decoration: InputDecoration(
-        hintText: 'Enter ${widget.label}',
+        hintText: '${AppLocalizations.of(context)?.enter ?? "Enter"} ${widget.label ?? ""}',
         hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: customColors.primary)

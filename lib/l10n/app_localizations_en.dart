@@ -399,6 +399,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectStatus => 'Select Status';
 
   @override
+  String get profile => 'My Profile';
+
+  @override
+  String get updatePass => 'Update Password';
+
+  @override
   String get labMaster => 'Lab Master';
 
   @override
@@ -459,4 +465,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get form6_landing_title => 'Form VI';
+
+  @override
+  String get form6_landing_sections_title => 'Form VI Sections';
+
+  @override
+  String get form6_landing_fso_info_title => 'FSO Info';
+
+  @override
+  String get form6_landing_fso_info_subtitle => 'Food Safety Officer details';
+
+  @override
+  String get form6_landing_sample_info_title => 'Sample Info';
+
+  @override
+  String get form6_landing_sample_info_subtitle => 'Basic sample details';
+
+  @override
+  String get form6_landing_preservative_info_title => 'Preservative Info';
+
+  @override
+  String get form6_landing_preservative_info_subtitle => 'Preservative information';
+
+  @override
+  String get form6_landing_seal_details_title => 'Seal Details';
+
+  @override
+  String get form6_landing_seal_details_subtitle => 'Seal and security details';
+
+  @override
+  String get form6_landing_review_submit_title => 'Review & Submit';
+
+  @override
+  String get form6_landing_review_submit_subtitle => 'Final review and submission';
+
+  @override
+  String get form6_landing_submit_button => 'Submit Form';
+
+  @override
+  String get form6_landing_form_not_filled => '⚠️ Form not filled. Please fill the form.';
+
+  @override
+  String get form6_landing_form_submitted => '✅ Form VI submitted successfully.';
+
+  @override
+  String get form6_landing_submission_failed => 'Form submission failed.';
+
+  @override
+  String get form6_landing_loading => 'Loading...';
+
+  @override
+  String get form6_landing_exit_app => 'Exit App';
+
+  @override
+  String get form6_landing_exit_confirmation => 'Do you really want to exit?';
+
+  @override
+  String get form6_landing_exit => 'Exit';
+
+  @override
+  String get form6_step_form_vi_title => 'Form VI';
+
+  @override
+  String get form6_step_previous_button => 'Previous';
+
+  @override
+  String get form6_step_save_next_button => 'SAVE & NEXT';
+
+  @override
+  String get form6_step_submit_button => 'SUBMIT';
+
+  @override
+  String get form6_step_validation_error => 'Please correct the highlighted fields';
+
+  @override
+  String get form6_step_other_section_incomplete => '⚠️ Please complete all required fields.';
+
+  @override
+  String get form6_step_sample_section_incomplete => '⚠️ Please complete all sample fields.';
+
+  @override
+  String get doSlipNumbers => 'DO Slip Numbers';
+
+  @override
+  String get sampleCodeNumber => 'Sample Code Number';
+
+  @override
+  String get natureOfSample => 'Nature of Sample';
+
+  @override
+  String get pleaseSelectYesOrNo => 'Please select Yes or No';
+
+  @override
+  String get anyOtherDocuments => 'Any other documents';
+
+  @override
+  String get documentName => 'Document Name';
+
+  @override
+  String get enterDocumentName => 'Enter document name';
+
+  @override
+  String get uploading => 'Uploading...';
+
+  @override
+  String get chooseFile => 'Choose file';
+
+  @override
+  String get replaceFile => 'Replace file';
+
+  @override
+  String get enter => 'Enter';
 }

@@ -93,6 +93,11 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                   state.message,
                   MessageType.success,
                 );
+                await Future.delayed(const Duration(milliseconds: 500));
+
+                if (mounted) {
+                  Navigator.pop(context);
+                }
                 break;
               case ApiStatus.error:
                 Message.showTopRightOverlay(

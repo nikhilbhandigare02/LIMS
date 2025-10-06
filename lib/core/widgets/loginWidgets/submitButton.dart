@@ -77,7 +77,6 @@ class LoginButton extends StatelessWidget {
                   supported = await localAuth.isDeviceSupported();
                 } catch (_) {}
                 if (canCheck && supported) {
-                  // Show biometric opt-in once
                   Navigator.pushReplacementNamed(context, RouteName.biometricOptInScreen);
                 } else {
                   await secureStorage.write(key: 'isLogin', value: '1');

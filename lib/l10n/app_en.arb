@@ -200,8 +200,8 @@
           "enterDocumentName": "Enter document name",
           "uploading": "Uploading...",
           "chooseFile": "Choose file",
-          "replaceFile": "Replace file"
-
+          "replaceFile": "Replace file",
+          "enter": "Enter"
          }
 
 

@@ -594,4 +594,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get replaceFile => 'फाइल बदला';
+
+  @override
+  String get enter => 'प्रवेश करा';
 }

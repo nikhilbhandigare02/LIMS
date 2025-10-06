@@ -592,4 +592,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get replaceFile => 'फ़ाइल बदलें';
+
+  @override
+  String get enter => 'प्रवेश करें';
 }
