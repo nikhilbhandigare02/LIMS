@@ -579,4 +579,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enter => 'Enter';
+
+  @override
+  String get loggingIn => 'Logging in...';
+
+  @override
+  String get signIn => 'SIGN IN';
+
+  @override
+  String get biometricQuickSecureTitle => 'Quick & Secure Sign-in';
+
+  @override
+  String get biometricFaceDesc => 'Enable Face ID for faster and secure login. You can still use your password anytime.';
+
+  @override
+  String get biometricFingerprintDesc => 'Enable fingerprint authentication for faster and secure login. You can still use your password anytime.';
+
+  @override
+  String get biometricNotAvailableWarning => 'Biometric authentication is not available on this device. You can enable it later if supported.';
+
+  @override
+  String get notNow => 'Not now';
+
+  @override
+  String get authenticating => 'Authenticating...';
+
+  @override
+  String get enable => 'Enable';
+
+  @override
+  String get errorSavingPreferences => 'Error saving preferences';
+
+  @override
+  String get biometricNotSupported => 'Biometric authentication not supported on this device.';
+
+  @override
+  String get authRequiredTitle => 'Authentication Required';
+
+  @override
+  String get biometricNotRecognized => 'Biometric not recognized. Try again.';
+
+  @override
+  String get biometricRequiredTitle => 'Biometric required';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get authCanceledOrFailed => 'Authentication canceled or failed.';
+
+  @override
+  String get authErrorOccurred => 'Authentication error occurred.';
+
+  @override
+  String get biometricNotAvailable => 'Biometric authentication is not available.';
+
+  @override
+  String get noFaceEnrolled => 'No face biometric enrolled. Please set up Face ID in device settings.';
+
+  @override
+  String get noFingerprintEnrolled => 'No fingerprint enrolled. Please set up fingerprint in device settings.';
+
+  @override
+  String get biometricLockedTemporary => 'Biometric authentication is temporarily locked. Try again later or use passcode.';
+
+  @override
+  String get biometricLockedPermanent => 'Biometric authentication is permanently locked. Please set up new biometrics.';
+
+  @override
+  String get passcodeNotSet => 'Device passcode is not set. Please set a device passcode to use biometric authentication.';
+
+  @override
+  String get authFailedTryAgain => 'Authentication failed. Please try again.';
+
+  @override
+  String get unknownErrorOccurred => 'Unknown error occurred.';
+
+  @override
+  String get unableToStartBiometric => 'Unable to start biometric authentication.';
+
+  @override
+  String get debugTestBiometric => 'Debug: Test Biometric';
 }

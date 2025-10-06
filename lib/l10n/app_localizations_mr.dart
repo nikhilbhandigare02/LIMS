@@ -156,205 +156,205 @@ class AppLocalizationsMr extends AppLocalizations {
   String get usernamePrefix => 'वापरकर्तानाव:';
 
   @override
-  String get sampleFormViDetails => 'Sample Form VI Details';
+  String get sampleFormViDetails => 'नमुना फॉर्म VI तपशील';
 
   @override
-  String get loadingSampleDetails => 'Loading sample details...';
+  String get loadingSampleDetails => 'नमुना तपशील लोड होत आहे...';
 
   @override
-  String get noDetailsFound => 'No details found';
+  String get noDetailsFound => 'कोणतेही तपशील आढळले नाहीत';
 
   @override
-  String get basicInformation => 'Basic Information';
+  String get basicInformation => 'मूलभूत माहिती';
 
   @override
-  String get serialNo => 'Serial No';
+  String get serialNo => 'सिरिअल क्रमांक';
 
   @override
-  String get senderNameLabel => 'Sender Name';
+  String get senderNameLabel => 'पाठवणाऱ्याचे नाव';
 
   @override
-  String get senderDesignationLabel => 'Sender Designation';
+  String get senderDesignationLabel => 'पाठवणाऱ्याचे पदनाम';
 
   @override
-  String get doNumberLabel => 'DO Number';
+  String get doNumberLabel => 'डीओ क्रमांक';
 
   @override
-  String get locationDetails => 'Location Details';
+  String get locationDetails => 'स्थान तपशील';
 
   @override
-  String get latitude => 'Latitude';
+  String get latitude => 'अक्षांश';
 
   @override
-  String get longitude => 'Longitude';
+  String get longitude => 'रेखांश';
 
   @override
-  String get sampleInformation => 'Sample Information';
+  String get sampleInformation => 'नमुना माहिती';
 
   @override
-  String get sampleCode => 'Sample Code';
+  String get sampleCode => 'नमुना कोड';
 
   @override
-  String get slipNumber => 'Slip Number';
+  String get slipNumber => 'स्लिप क्रमांक';
 
   @override
-  String get collectionDate => 'Collection Date';
+  String get collectionDate => 'संग्रह तारीख';
 
   @override
-  String get collectionPlace => 'Collection Place';
+  String get collectionPlace => 'संग्रह स्थान';
 
   @override
-  String get sampleName => 'Sample Name';
+  String get sampleName => 'नमुना नाव';
 
   @override
-  String get quantity => 'Quantity';
+  String get quantity => 'प्रमाण';
 
   @override
-  String get preservativeDetails => 'Preservative Details';
+  String get preservativeDetails => 'परिरक्षक तपशील';
 
   @override
-  String get preservativeAdded => 'Preservative Added';
+  String get preservativeAdded => 'परिरक्षक जोडले गेले';
 
   @override
-  String get preservativeName => 'Preservative Name';
+  String get preservativeName => 'परिरक्षक नाव';
 
   @override
-  String get preservativeQuantity => 'Quantity';
+  String get preservativeQuantity => 'प्रमाण';
 
   @override
-  String get verificationSecurity => 'Verification & Security';
+  String get verificationSecurity => 'सत्यापन आणि सुरक्षा';
 
   @override
-  String get witnessSignature => 'Witness Signature';
+  String get witnessSignature => 'साक्षीदार सही';
 
   @override
-  String get doSignature => 'DO Signature';
+  String get doSignature => 'डीओ सही';
 
   @override
-  String get sealImpression => 'Seal Impression';
+  String get sealImpression => 'शिक्का छाप';
 
   @override
-  String get sealNumber => 'Seal Number';
+  String get sealNumber => 'शिक्का क्रमांक';
 
   @override
-  String get formViDetails => 'Form VI Details';
+  String get formViDetails => 'फॉर्म VI तपशील';
 
   @override
-  String get memoFormVi => 'Memo Form VI';
+  String get memoFormVi => 'फॉर्म VI मेमो';
 
   @override
-  String get insideWrapper => 'Inside Wrapper';
+  String get insideWrapper => 'भीतरी लपेट';
 
   @override
-  String get wrapperCode => 'Wrapper Code';
+  String get wrapperCode => 'लपेट कोड';
 
   @override
-  String get uploadedDocument => 'Uploaded Document';
+  String get uploadedDocument => 'अपलोड केलेले दस्तऐवज';
 
   @override
-  String get statusTransactions => 'Status Transactions';
+  String get statusTransactions => 'स्थिती व्यवहार';
 
   @override
-  String get yes => 'Yes';
+  String get yes => 'होय';
 
   @override
-  String get no => 'No';
+  String get no => 'नाही';
 
   @override
-  String get na => 'N/A';
+  String get na => 'एन/ए';
 
   @override
-  String get noDocumentsUploaded => 'No documents uploaded';
+  String get noDocumentsUploaded => 'कोणतेही दस्तऐवज अपलोड केलेले नाहीत';
 
   @override
-  String get noFilePathAvailableFor => 'No file path available for';
+  String get noFilePathAvailableFor => 'साठी कोणताही फाइल मार्ग उपलब्ध नाही';
 
   @override
-  String get cannotOpen => 'Cannot open';
+  String get cannotOpen => 'उघडू शकत नाही';
 
   @override
-  String get sampleListTitle => 'Sample List';
+  String get sampleListTitle => 'नमुना सूची';
 
   @override
-  String get sampleListFilterBy => 'Filter by';
+  String get sampleListFilterBy => 'फिल्टर नुसार';
 
   @override
-  String get sampleListFilterBySerialNo => 'Serial No';
+  String get sampleListFilterBySerialNo => 'सिरिअल क्रमांक';
 
   @override
-  String get sampleListFilterBySlipNumber => 'Slip Number';
+  String get sampleListFilterBySlipNumber => 'स्लिप क्रमांक';
 
   @override
-  String get sampleListFilterBySampleName => 'Sample Name';
+  String get sampleListFilterBySampleName => 'नमुना नाव';
 
   @override
-  String get sampleListFilterByCollectionDate => 'Collection Date';
+  String get sampleListFilterByCollectionDate => 'संग्रह तारीख';
 
   @override
-  String get sampleListFilterBySenderName => 'Sender Name';
+  String get sampleListFilterBySenderName => 'पाठवणाऱ्याचे नाव';
 
   @override
-  String get sampleListFilterBySenderDesignation => 'Sender Designation';
+  String get sampleListFilterBySenderDesignation => 'पाठवणाऱ्याचे पदनाम';
 
   @override
-  String get sampleListFilterByDO => 'DO Number';
+  String get sampleListFilterByDO => 'डीओ क्रमांक';
 
   @override
-  String get sampleListFilterByLab => 'Lab';
+  String get sampleListFilterByLab => 'प्रयोगशाळा';
 
   @override
-  String get sampleListFilterByStatus => 'Status';
+  String get sampleListFilterByStatus => 'स्थिती';
 
   @override
-  String get sampleListFilterByAll => 'All';
+  String get sampleListFilterByAll => 'सर्व';
 
   @override
-  String get sampleListFilterByPending => 'Pending';
+  String get sampleListFilterByPending => 'लंबित';
 
   @override
-  String get sampleListFilterByApproved => 'Approved';
+  String get sampleListFilterByApproved => 'मान्य';
 
   @override
-  String get sampleListFilterByRejected => 'Rejected';
+  String get sampleListFilterByRejected => 'अस्वीकृत';
 
   @override
-  String get sampleListFilterByResubmit => 'Resubmit';
+  String get sampleListFilterByResubmit => 'पुन्हा सबमिट करा';
 
   @override
-  String get sampleListFilterBySampleList => 'Sample List';
+  String get sampleListFilterBySampleList => 'नमुना सूची';
 
   @override
-  String get sampleListFilterBySampleListRecords => 'Sample List Records';
+  String get sampleListFilterBySampleListRecords => 'नमुना सूची नोंदी';
 
   @override
-  String get sampleListFilterBySampleListRecordsTooltip => 'View sample list records';
+  String get sampleListFilterBySampleListRecordsTooltip => 'नमुना सूची नोंदी पहा';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialog => 'Sample List Records';
+  String get sampleListFilterBySampleListRecordsDialog => 'नमुना सूची नोंदी';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogTitle => 'Sample List Records';
+  String get sampleListFilterBySampleListRecordsDialogTitle => 'नमुना सूची नोंदी';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogMessage => 'Please select the sample list records you want to view';
+  String get sampleListFilterBySampleListRecordsDialogMessage => 'कृपया पाहायच्या नमुना सूची नोंदी निवडा';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogConfirm => 'View Records';
+  String get sampleListFilterBySampleListRecordsDialogConfirm => 'नोंदी पहा';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogCancel => 'Cancel';
+  String get sampleListFilterBySampleListRecordsDialogCancel => 'रद्द करा';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound => 'No records found';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFound => 'कोणतीही नोंद आढळली नाही';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage => 'No records found for the selected sample list records';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundMessage => 'निवडलेल्या नमुना सूची नोंदीसाठी कोणतीही नोंद आढळली नाही';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm => 'OK';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundConfirm => 'ठीक आहे';
 
   @override
-  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel => 'Cancel';
+  String get sampleListFilterBySampleListRecordsDialogNoRecordsFoundCancel => 'रद्द करा';
 
   @override
   String get sampleAnalysisTitle => 'नमुना विश्लेषण';
@@ -399,10 +399,10 @@ class AppLocalizationsMr extends AppLocalizations {
   String get selectStatus => 'स्थिती निवडा';
 
   @override
-  String get profile => 'My Profile';
+  String get profile => 'माझे प्रोफाइल';
 
   @override
-  String get updatePass => 'Update Password';
+  String get updatePass => 'पासवर्ड अपडेट करा';
 
   @override
   String get labMaster => 'प्रयोगशाळा मास्टर';
@@ -436,7 +436,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String showingRange(Object start, Object end, Object total) {
-    return ' $total पैकी $start-$end  नोंदी दर्शवत आहोत';
+    return '$total पैकी $start-$end नोंदी दर्शवत आहोत';
   }
 
   @override
@@ -488,7 +488,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get form6_landing_preservative_info_title => 'परिरक्षक माहिती';
 
   @override
-  String get form6_landing_preservative_info_subtitle => 'Preservative information';
+  String get form6_landing_preservative_info_subtitle => 'परिरक्षक माहिती';
 
   @override
   String get form6_landing_seal_details_title => 'शिक्का तपशील';
@@ -500,13 +500,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String get form6_landing_review_submit_title => 'पुनरावलोकन आणि सबमिट करा';
 
   @override
-  String get form6_landing_review_submit_subtitle => 'Final review and submission';
+  String get form6_landing_review_submit_subtitle => 'अंतिम पुनरावलोकन आणि सबमिशन';
 
   @override
   String get form6_landing_submit_button => 'फॉर्म सबमिट करा';
 
   @override
-  String get form6_landing_form_not_filled => '⚠️ फॉर्म भरलेला नाही. कृपया फॉर्म भरा.';
+  String get form6_landing_form_not_filled => '⚠️ फॉर्म भरा नाही. कृपया फॉर्म भरा.';
 
   @override
   String get form6_landing_form_submitted => '✅ फॉर्म VI यशस्वीरित्या सबमिट केला.';
@@ -518,7 +518,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get form6_landing_loading => 'लोड होत आहे...';
 
   @override
-  String get form6_landing_exit_app => 'ॲपमधून बाहेर पडा';
+  String get form6_landing_exit_app => 'ऍपमधून बाहेर पडा';
 
   @override
   String get form6_landing_exit_confirmation => 'तुम्हाला खरोखर बाहेर पडायचे आहे?';
@@ -578,5 +578,86 @@ class AppLocalizationsMr extends AppLocalizations {
   String get replaceFile => 'फाइल बदला';
 
   @override
-  String get enter => 'प्रवेश करा';
+  String get enter => 'प्रविष्ट करा';
+
+  @override
+  String get loggingIn => 'लॉगिन होत आहे...';
+
+  @override
+  String get signIn => 'साइन इन';
+
+  @override
+  String get biometricQuickSecureTitle => 'जलद आणि सुरक्षित साइन-इन';
+
+  @override
+  String get biometricFaceDesc => 'जलद आणि सुरक्षित लॉगिनसाठी फेस आयडी सक्षम करा. आपण केव्हाही आपला पासवर्ड वापरू शकता.';
+
+  @override
+  String get biometricFingerprintDesc => 'जलद आणि सुरक्षित लॉगिनसाठी फिंगरप्रिंट प्रमाणीकरण सक्षम करा. आपण केव्हाही आपला पासवर्ड वापरू शकता.';
+
+  @override
+  String get biometricNotAvailableWarning => 'या डिव्हाइसवर बायोमेट्रिक प्रमाणीकरण उपलब्ध नाही. समर्थित असल्यास आपण ते नंतर सक्षम करू शकता.';
+
+  @override
+  String get notNow => 'आता नाही';
+
+  @override
+  String get authenticating => 'प्रमाणीकरण होत आहे...';
+
+  @override
+  String get enable => 'सक्षम करा';
+
+  @override
+  String get errorSavingPreferences => 'प्राधान्ये जतन करताना त्रुटी';
+
+  @override
+  String get biometricNotSupported => 'या डिव्हाइसवर बायोमेट्रिक प्रमाणीकरण समर्थित नाही.';
+
+  @override
+  String get authRequiredTitle => 'प्रमाणीकरण आवश्यक';
+
+  @override
+  String get biometricNotRecognized => 'बायोमेट्रिक ओळखले गेले नाही. पुन्हा प्रयत्न करा.';
+
+  @override
+  String get biometricRequiredTitle => 'बायोमेट्रिक आवश्यक';
+
+  @override
+  String get cancel => 'रद्द करा';
+
+  @override
+  String get authCanceledOrFailed => 'प्रमाणीकरण रद्द केले किंवा अयशस्वी.';
+
+  @override
+  String get authErrorOccurred => 'प्रमाणीकरण त्रुटी झाली.';
+
+  @override
+  String get biometricNotAvailable => 'बायोमेट्रिक प्रमाणीकरण उपलब्ध नाही.';
+
+  @override
+  String get noFaceEnrolled => 'फेस बायोमेट्रिक नोंदणीकृत नाही. कृपया डिव्हाइस सेटिंगमध्ये फेस आयडी सेट करा.';
+
+  @override
+  String get noFingerprintEnrolled => 'फिंगरप्रिंट नोंदणीकृत नाही. कृपया डिव्हाइस सेटिंगमध्ये फिंगरप्रिंट सेट करा.';
+
+  @override
+  String get biometricLockedTemporary => 'बायोमेट्रिक तात्पुरते लॉक केले आहे. नंतर पुन्हा प्रयत्न करा किंवा पासकोड वापरा.';
+
+  @override
+  String get biometricLockedPermanent => 'बायोमेट्रिक कायमचे लॉक केले आहे. कृपया नवे बायोमेट्रिक्स सेट करा.';
+
+  @override
+  String get passcodeNotSet => 'डिव्हाइस पासकोड सेट नाही. बायोमेट्रिक वापरण्यासाठी पासकोड सेट करा.';
+
+  @override
+  String get authFailedTryAgain => 'प्रमाणीकरण अयशस्वी. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get unknownErrorOccurred => 'अज्ञात त्रुटी झाली.';
+
+  @override
+  String get unableToStartBiometric => 'बायोमेट्रिक प्रमाणीकरण सुरू करण्यात अक्षम.';
+
+  @override
+  String get debugTestBiometric => 'डिबग: बायोमेट्रिक चाचणी';
 }

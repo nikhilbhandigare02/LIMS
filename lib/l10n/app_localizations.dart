@@ -1236,6 +1236,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter'**
   String get enter;
+
+  /// No description provided for @loggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in...'**
+  String get loggingIn;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'SIGN IN'**
+  String get signIn;
+
+  /// No description provided for @biometricQuickSecureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick & Secure Sign-in'**
+  String get biometricQuickSecureTitle;
+
+  /// No description provided for @biometricFaceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Face ID for faster and secure login. You can still use your password anytime.'**
+  String get biometricFaceDesc;
+
+  /// No description provided for @biometricFingerprintDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable fingerprint authentication for faster and secure login. You can still use your password anytime.'**
+  String get biometricFingerprintDesc;
+
+  /// No description provided for @biometricNotAvailableWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available on this device. You can enable it later if supported.'**
+  String get biometricNotAvailableWarning;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @errorSavingPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving preferences'**
+  String get errorSavingPreferences;
+
+  /// No description provided for @biometricNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication not supported on this device.'**
+  String get biometricNotSupported;
+
+  /// No description provided for @authRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Required'**
+  String get authRequiredTitle;
+
+  /// No description provided for @biometricNotRecognized.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric not recognized. Try again.'**
+  String get biometricNotRecognized;
+
+  /// No description provided for @biometricRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric required'**
+  String get biometricRequiredTitle;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @authCanceledOrFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication canceled or failed.'**
+  String get authCanceledOrFailed;
+
+  /// No description provided for @authErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error occurred.'**
+  String get authErrorOccurred;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available.'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @noFaceEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No face biometric enrolled. Please set up Face ID in device settings.'**
+  String get noFaceEnrolled;
+
+  /// No description provided for @noFingerprintEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No fingerprint enrolled. Please set up fingerprint in device settings.'**
+  String get noFingerprintEnrolled;
+
+  /// No description provided for @biometricLockedTemporary.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is temporarily locked. Try again later or use passcode.'**
+  String get biometricLockedTemporary;
+
+  /// No description provided for @biometricLockedPermanent.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is permanently locked. Please set up new biometrics.'**
+  String get biometricLockedPermanent;
+
+  /// No description provided for @passcodeNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Device passcode is not set. Please set a device passcode to use biometric authentication.'**
+  String get passcodeNotSet;
+
+  /// No description provided for @authFailedTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please try again.'**
+  String get authFailedTryAgain;
+
+  /// No description provided for @unknownErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error occurred.'**
+  String get unknownErrorOccurred;
+
+  /// No description provided for @unableToStartBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start biometric authentication.'**
+  String get unableToStartBiometric;
+
+  /// No description provided for @debugTestBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug: Test Biometric'**
+  String get debugTestBiometric;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

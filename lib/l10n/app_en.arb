@@ -146,7 +146,7 @@
     "switchToTable": "Switch to Table View",
     "switchToCard": "Switch to Card View",
 
-    "unexpectedState": "Unexpected state",
+  "unexpectedState": "Unexpected state",
       "showingRange": "Showing {start}-{end} of {total} records",
       "@showingRange": {
         "placeholders": {
@@ -201,7 +201,37 @@
           "uploading": "Uploading...",
           "chooseFile": "Choose file",
           "replaceFile": "Replace file",
-          "enter": "Enter"
+          "enter": "Enter",
+
+          "loggingIn": "Logging in...",
+          "signIn": "SIGN IN",
+
+          "biometricQuickSecureTitle": "Quick & Secure Sign-in",
+          "biometricFaceDesc": "Enable Face ID for faster and secure login. You can still use your password anytime.",
+          "biometricFingerprintDesc": "Enable fingerprint authentication for faster and secure login. You can still use your password anytime.",
+          "biometricNotAvailableWarning": "Biometric authentication is not available on this device. You can enable it later if supported.",
+          "notNow": "Not now",
+          "authenticating": "Authenticating...",
+          "enable": "Enable",
+
+          "errorSavingPreferences": "Error saving preferences",
+          "biometricNotSupported": "Biometric authentication not supported on this device.",
+          "authRequiredTitle": "Authentication Required",
+          "biometricNotRecognized": "Biometric not recognized. Try again.",
+          "biometricRequiredTitle": "Biometric required",
+          "cancel": "Cancel",
+          "authCanceledOrFailed": "Authentication canceled or failed.",
+          "authErrorOccurred": "Authentication error occurred.",
+          "biometricNotAvailable": "Biometric authentication is not available.",
+          "noFaceEnrolled": "No face biometric enrolled. Please set up Face ID in device settings.",
+          "noFingerprintEnrolled": "No fingerprint enrolled. Please set up fingerprint in device settings.",
+          "biometricLockedTemporary": "Biometric authentication is temporarily locked. Try again later or use passcode.",
+          "biometricLockedPermanent": "Biometric authentication is permanently locked. Please set up new biometrics.",
+          "passcodeNotSet": "Device passcode is not set. Please set a device passcode to use biometric authentication.",
+          "authFailedTryAgain": "Authentication failed. Please try again.",
+          "unknownErrorOccurred": "Unknown error occurred.",
+          "unableToStartBiometric": "Unable to start biometric authentication.",
+          "debugTestBiometric": "Debug: Test Biometric"
          }
 
 
