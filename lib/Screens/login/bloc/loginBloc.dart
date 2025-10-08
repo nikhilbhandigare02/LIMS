@@ -133,18 +133,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           }
         }
         emit(state.copyWith(
-          message: 'You have Logged in successfully',
+          message: 'loginSuccess',
           apiStatus: ApiStatus.success,
         ));
       } else {
         emit(state.copyWith(
-          message: 'No response from server',
+          message: 'serverNoResponse',
           apiStatus: ApiStatus.error,
         ));
       }
     } catch (e) {
       emit(state.copyWith(
-        message: 'Something went wrong: $e',
+        message: 'somethingWentWrong:$e',
         apiStatus: ApiStatus.error,
       ));
     }

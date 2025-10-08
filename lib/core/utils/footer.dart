@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
@@ -16,7 +18,7 @@ class Footer extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: '© $currentYear Designed & Developed by ',
+            text: '© $currentYear ${AppLocalizations.of(context)!.footer} ',
             style: const TextStyle(
              // fontWeight: FontWeight.bold,
             ),

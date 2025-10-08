@@ -277,9 +277,9 @@ class _SettingState extends State<Setting> {
               ),
               const SizedBox(height: 8),
               const Divider(height: 1),
-              _languageOption('Marathi'),
-              _languageOption('Hindi'),
-              _languageOption('English'),
+              _languageOption(AppLocalizations.of(context)!.marathi),
+              _languageOption(AppLocalizations.of(context)!.hindi),
+              _languageOption(AppLocalizations.of(context)!.english),
               const SizedBox(height: 8),
             ],
           ),
@@ -298,16 +298,14 @@ class _SettingState extends State<Setting> {
       onTap: () async {
         await _saveLanguagePref(language);
         // Update global app locale for live switch
-        switch (language.toLowerCase()) {
-          case 'hindi':
-            appLocale.value = const Locale('hi');
-            break;
-          case 'marathi':
-            appLocale.value = const Locale('mr');
-            break;
-          default:
-            appLocale.value = const Locale('en');
+        if (language.toLowerCase() == AppLocalizations.of(context)!.marathi.toLowerCase()) {
+          appLocale.value = const Locale('mr');
+        } else if (language.toLowerCase() == AppLocalizations.of(context)!.hindi.toLowerCase()) {
+          appLocale.value = const Locale('hi');
+        } else {
+          appLocale.value = const Locale('en');
         }
+
         if (mounted) Navigator.pop(context);
       },
     );

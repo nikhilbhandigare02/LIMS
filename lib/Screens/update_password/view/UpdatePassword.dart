@@ -20,6 +20,7 @@ import '../../../core/widgets/UpdatePassWidget/UpdatePassWidget.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
 import '../../../core/widgets/RegistrationInput/CustomTextField.dart';
 import '../../../core/utils/validators.dart';
+import '../../../l10n/app_localizations.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen({super.key});
@@ -169,7 +170,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                           child: Column(
                             children: [
                               CustomTextField(
-                                label: 'Username',
+                                label: AppLocalizations.of(context)!.username,
                                 icon: Icons.person_outline,
                                 obscureText: false,
                                 isPassword: false,
@@ -182,7 +183,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
 
                               const SizedBox(height: 16),
                               CustomTextField(
-                                label: 'Old Password',
+                                label: AppLocalizations.of(context)!.oldPass,
                                 icon: Icons.lock_outline,
                                 obscureText: _obscureOldPassword,
                                 isPassword: true,
@@ -205,7 +206,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                               ),
                               const SizedBox(height: 16),
                               CustomTextField(
-                                label: 'New Password',
+                                label: AppLocalizations.of(context)!.newPass,
                                 icon: Icons.lock,
                                 obscureText: _obscureNewPassword,
                                 isPassword: true,
@@ -259,9 +260,9 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                   },
                                   child: state.apiStatus == ApiStatus.loading
                                       ? const CircularProgressIndicator(color: customColors.white)
-                                      : const Text(
-                                    'UPDATE PASSWORD',
-                                    style: TextStyle(
+                                      : Text(
+                                    AppLocalizations.of(context)!.updatePass,
+                                    style: const TextStyle(
                                       color: customColors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

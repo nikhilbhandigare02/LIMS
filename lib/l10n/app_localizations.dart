@@ -241,6 +241,12 @@ abstract class AppLocalizations {
   /// **'Send Request'**
   String get sendRequest;
 
+  /// No description provided for @sendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOtp;
+
   /// No description provided for @resubmitSample.
   ///
   /// In en, this message translates to:
@@ -271,6 +277,12 @@ abstract class AppLocalizations {
   /// **'Validation'**
   String get validation;
 
+  /// No description provided for @rememberPass.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember your password'**
+  String get rememberPass;
+
   /// No description provided for @missingFields.
   ///
   /// In en, this message translates to:
@@ -280,7 +292,7 @@ abstract class AppLocalizations {
   /// No description provided for @error.
   ///
   /// In en, this message translates to:
-  /// **'Error'**
+  /// **'An error occurred'**
   String get error;
 
   /// No description provided for @success.
@@ -520,7 +532,7 @@ abstract class AppLocalizations {
   /// No description provided for @preservativeQuantity.
   ///
   /// In en, this message translates to:
-  /// **'Quantity'**
+  /// **'Preservative Quantity'**
   String get preservativeQuantity;
 
   /// No description provided for @verificationSecurity.
@@ -1291,6 +1303,12 @@ abstract class AppLocalizations {
   /// **'Enable'**
   String get enable;
 
+  /// No description provided for @verifyOTP.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFY OTP'**
+  String get verifyOTP;
+
   /// No description provided for @errorSavingPreferences.
   ///
   /// In en, this message translates to:
@@ -1398,6 +1416,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Debug: Test Biometric'**
   String get debugTestBiometric;
+
+  /// No description provided for @formViSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI data submitted succesfully'**
+  String get formViSuccess;
+
+  /// No description provided for @otpSentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent successfully'**
+  String get otpSentSuccessfully;
+
+  /// No description provided for @login_bio_face_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Face authentication is not available on this device or not enrolled.'**
+  String get login_bio_face_unavailable;
+
+  /// No description provided for @login_bio_fingerprint_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint authentication is not available on this device or not enrolled.'**
+  String get login_bio_fingerprint_unavailable;
+
+  /// No description provided for @login_bio_generic_face_or_fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'This device reports generic biometrics. The system may show Face or Fingerprint based on what is enrolled.'**
+  String get login_bio_generic_face_or_fingerprint;
+
+  /// No description provided for @login_bio_generic_fingerprint_or_face.
+  ///
+  /// In en, this message translates to:
+  /// **'This device reports generic biometrics. The system may show Fingerprint or Face based on what is enrolled.'**
+  String get login_bio_generic_fingerprint_or_face;
+
+  /// No description provided for @auth_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed'**
+  String get auth_failed;
+
+  /// No description provided for @biometricAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication error: {error}'**
+  String biometricAuthError(Object error);
+
+  /// No description provided for @otpVerifiedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP verified successfully'**
+  String get otpVerifiedSuccessfully;
+
+  /// No description provided for @otpInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong OTP, please enter a valid OTP'**
+  String get otpInvalid;
+
+  /// No description provided for @loginSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You have logged in successfully'**
+  String get loginSuccess;
+
+  /// No description provided for @serverNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'No response from server'**
+  String get serverNoResponse;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong: {error}'**
+  String somethingWentWrong(Object error);
+
+  /// No description provided for @oldPass.
+  ///
+  /// In en, this message translates to:
+  /// **'Old Password'**
+  String get oldPass;
+
+  /// No description provided for @newPass.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPass;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @passwordChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully'**
+  String get passwordChangedSuccessfully;
+
+  /// No description provided for @failedToDecryptServerResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to decrypt server response.'**
+  String get failedToDecryptServerResponse;
+
+  /// No description provided for @otpRequiredSixDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP is required and must be 6 digits.'**
+  String get otpRequiredSixDigits;
+
+  /// No description provided for @userIdNotFoundInSecureStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'User ID not found in secure storage.'**
+  String get userIdNotFoundInSecureStorage;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password & Confirm Password do not match'**
+  String get passwordMismatch;
+
+  /// No description provided for @footer.
+  ///
+  /// In en, this message translates to:
+  /// **'Designed & Developed by'**
+  String get footer;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
+  /// No description provided for @loginHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Here'**
+  String get loginHere;
+
+  /// No description provided for @loginWithBio.
+  ///
+  /// In en, this message translates to:
+  /// **'You can login using biometrics or password.'**
+  String get loginWithBio;
+
+  /// No description provided for @authorisedPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorized Personnel Only'**
+  String get authorisedPerson;
+
+  /// No description provided for @forgotPass.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPass;
+
+  /// No description provided for @faceOrFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Face or Fingerprint'**
+  String get faceOrFingerprint;
+
+  /// No description provided for @supported.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported'**
+  String get supported;
+
+  /// No description provided for @fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get fingerprint;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @marathi.
+  ///
+  /// In en, this message translates to:
+  /// **'Marathi'**
+  String get marathi;
+
+  /// No description provided for @hindi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi'**
+  String get hindi;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

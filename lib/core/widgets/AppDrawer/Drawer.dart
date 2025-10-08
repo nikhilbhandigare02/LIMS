@@ -44,6 +44,18 @@ class CustomDrawer extends StatelessWidget {
                   // ),
                   _buildMenuItem(
                     context,
+                    Icons.assignment_turned_in,
+                    AppLocalizations.of(context)!.menuRequestSlipNumber,
+                    onTap: () => Navigator.pushNamed(context, RouteName.requestForSlip),
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.info,
+                    AppLocalizations.of(context)!.menuSlipNumberInfo,
+                    onTap: () => Navigator.pushNamed(context, RouteName.SlipRequestDetailsScreen),
+                  ),
+                  _buildMenuItem(
+                    context,
                     Icons.money,
                     AppLocalizations.of(context)!.menuFormVI,
                     onTap: () => Navigator.push(
@@ -63,18 +75,8 @@ class CustomDrawer extends StatelessWidget {
                     AppLocalizations.of(context)!.menuSampleListRecords,
                     onTap: () => Navigator.pushNamed(context, RouteName.SampleAnalysisScreen),
                   ),
-                  _buildMenuItem(
-                    context,
-                    Icons.assignment_turned_in,
-                    AppLocalizations.of(context)!.menuRequestSlipNumber,
-                    onTap: () => Navigator.pushNamed(context, RouteName.requestForSlip),
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.info,
-                    AppLocalizations.of(context)!.menuSlipNumberInfo,
-                    onTap: () => Navigator.pushNamed(context, RouteName.SlipRequestDetailsScreen),
-                  ),
+
+
                   _buildMenuItem(
                     context,
                     Icons.replay_circle_filled,

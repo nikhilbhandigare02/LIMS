@@ -1201,8 +1201,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         print('Payload encryptedData length: ${encryptedPayload['encryptedData']?.length}');
         print('Payload encryptedAESKey length: ${encryptedPayload['encryptedAESKey']?.length}');
         print('Payload iv length: ${encryptedPayload['iv']?.length}');
-
-        // Additional validation
+            // Additional validation
         print('Payload size: ${encryptedPayload.length}');
         print('Payload contains encryptedData: ${encryptedPayload.containsKey('encryptedData')}');
         print('Payload contains encryptedAESKey: ${encryptedPayload.containsKey('encryptedAESKey')}');

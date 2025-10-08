@@ -81,6 +81,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendRequest => 'Send Request';
 
   @override
+  String get sendOtp => 'Send OTP';
+
+  @override
   String get resubmitSample => 'Resubmit Sample';
 
   @override
@@ -96,10 +99,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validation => 'Validation';
 
   @override
+  String get rememberPass => 'Remember your password';
+
+  @override
   String get missingFields => 'Missing serial number or user id';
 
   @override
-  String get error => 'Error';
+  String get error => 'An error occurred';
 
   @override
   String get success => 'Success';
@@ -219,7 +225,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preservativeName => 'Preservative Name';
 
   @override
-  String get preservativeQuantity => 'Quantity';
+  String get preservativeQuantity => 'Preservative Quantity';
 
   @override
   String get verificationSecurity => 'Verification & Security';
@@ -608,6 +614,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enable => 'Enable';
 
   @override
+  String get verifyOTP => 'VERIFY OTP';
+
+  @override
   String get errorSavingPreferences => 'Error saving preferences';
 
   @override
@@ -660,4 +669,116 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debugTestBiometric => 'Debug: Test Biometric';
+
+  @override
+  String get formViSuccess => 'Form VI data submitted succesfully';
+
+  @override
+  String get otpSentSuccessfully => 'OTP sent successfully';
+
+  @override
+  String get login_bio_face_unavailable => 'Face authentication is not available on this device or not enrolled.';
+
+  @override
+  String get login_bio_fingerprint_unavailable => 'Fingerprint authentication is not available on this device or not enrolled.';
+
+  @override
+  String get login_bio_generic_face_or_fingerprint => 'This device reports generic biometrics. The system may show Face or Fingerprint based on what is enrolled.';
+
+  @override
+  String get login_bio_generic_fingerprint_or_face => 'This device reports generic biometrics. The system may show Fingerprint or Face based on what is enrolled.';
+
+  @override
+  String get auth_failed => 'Authentication failed';
+
+  @override
+  String biometricAuthError(Object error) {
+    return 'Biometric authentication error: $error';
+  }
+
+  @override
+  String get otpVerifiedSuccessfully => 'OTP verified successfully';
+
+  @override
+  String get otpInvalid => 'Wrong OTP, please enter a valid OTP';
+
+  @override
+  String get loginSuccess => 'You have logged in successfully';
+
+  @override
+  String get serverNoResponse => 'No response from server';
+
+  @override
+  String somethingWentWrong(Object error) {
+    return 'Something went wrong: $error';
+  }
+
+  @override
+  String get oldPass => 'Old Password';
+
+  @override
+  String get newPass => 'New Password';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get passwordChangedSuccessfully => 'Password changed successfully';
+
+  @override
+  String get failedToDecryptServerResponse => 'Failed to decrypt server response.';
+
+  @override
+  String get otpRequiredSixDigits => 'OTP is required and must be 6 digits.';
+
+  @override
+  String get userIdNotFoundInSecureStorage => 'User ID not found in secure storage.';
+
+  @override
+  String get passwordMismatch => 'New Password & Confirm Password do not match';
+
+  @override
+  String get footer => 'Designed & Developed by';
+
+  @override
+  String get welcome => 'Welcome';
+
+  @override
+  String get loginHere => 'Login Here';
+
+  @override
+  String get loginWithBio => 'You can login using biometrics or password.';
+
+  @override
+  String get authorisedPerson => 'Authorized Personnel Only';
+
+  @override
+  String get forgotPass => 'Forgot Password?';
+
+  @override
+  String get faceOrFingerprint => 'Face or Fingerprint';
+
+  @override
+  String get supported => 'Supported';
+
+  @override
+  String get fingerprint => 'Fingerprint';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get marathi => 'Marathi';
+
+  @override
+  String get hindi => 'Hindi';
+
+  @override
+  String get english => 'English';
 }
