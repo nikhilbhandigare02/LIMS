@@ -21,6 +21,7 @@ import '../../Screens/profile/view/ProfileScreen.dart';
 import '../../Screens/registration/view/registration.dart';
 import '../../Screens/splash/view/SplashScreen.dart';
 import '../../Screens/update_password/view/UpdatePassword.dart';
+import '../../Screens/Instructions/view/InstructionScreen.dart';
 
 class Routes{
 static Route<dynamic> generateRoute(RouteSettings setting){
@@ -61,6 +62,8 @@ static Route<dynamic> generateRoute(RouteSettings setting){
       return  MaterialPageRoute(builder: (context) => SealRequestDetailsScreen(),);
     case RouteName.ResubmitSample:
       return  MaterialPageRoute(builder: (context) => ResubmitSample(),);
+    case RouteName.instructionScreen:
+      return MaterialPageRoute(builder: (context) => const InstructionScreen());
     default:
       return MaterialPageRoute(builder: (context) {
         return Scaffold(

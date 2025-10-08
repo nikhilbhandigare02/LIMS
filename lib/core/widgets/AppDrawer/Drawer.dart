@@ -93,6 +93,12 @@ class CustomDrawer extends StatelessWidget {
                     AppLocalizations.of(context)!.menuSettings,
                     onTap: () => Navigator.pushNamed(context, RouteName.settingScreen),
                   ),
+                  // _buildMenuItem(
+                  //   context,
+                  //   Icons.menu_book_outlined,
+                  //   'Instructions',
+                  //   onTap: () => Navigator.pushNamed(context, RouteName.instructionScreen),
+                  // ),
                   _buildMenuItem(
                     context,
                     Icons.support_agent_outlined,

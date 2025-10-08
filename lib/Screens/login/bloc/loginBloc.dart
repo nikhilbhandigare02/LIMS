@@ -88,6 +88,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await secureStorage.write(key: 'lastUsername', value: state.username);
           }
 
+            // Persist the password securely for biometric re-login
+            if (state.password.isNotEmpty) {
+              await secureStorage.write(key: 'savedPassword', value: state.password);
+            }
+
             print('Auth token and sender Name stored securely.');
           } else {
             print('Token & sender Name not found in login response.');
@@ -123,6 +128,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               // Persist last logged-in username for quick login (fallback)
               if (state.username.isNotEmpty) {
                 await secureStorage.write(key: 'lastUsername', value: state.username);
+              }
+              // Persist the password securely for biometric re-login (fallback)
+              if (state.password.isNotEmpty) {
+                await secureStorage.write(key: 'savedPassword', value: state.password);
               }
               print('Fallback auth token stored securely.');
             } else {

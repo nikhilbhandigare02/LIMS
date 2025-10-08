@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/login/repository/loginRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
@@ -228,22 +229,85 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       if (didAuth) {
         try {
           final storage = const FlutterSecureStorage();
-          final String? userId = await storage.read(key: 'user_id');
-          final deviceId = await DeviceIdProvider.getDeviceId();
-          if (userId != null && userId.isNotEmpty) {
-            final repo = LoginLogRepository();
-            repo.logUserLogin(body: {
-              'user_id': userId,
-              'device_id': deviceId,
-            });
+          final String? savedUser = await storage.read(key: 'lastUsername');
+          final String? savedPass = await storage.read(key: 'savedPassword');
+
+          if (savedUser == null || savedUser.isEmpty || savedPass == null || savedPass.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No saved credentials found for biometric login. Please sign in with password once.')),
+            );
+            return;
           }
-        } catch (_) {}
-        // Navigate
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          RouteName.SampleAnalysisScreen,
-              (route) => false,
-        );
+
+          // Dispatch login events to call the same encrypted API
+          loginBloc.add(UsernameEvent(username: savedUser));
+          loginBloc.add(PasswordEvent(password: savedPass));
+          loginBloc.add(LoginButtonEvent());
+
+          // Wait for success or error
+          final resultState = await loginBloc.stream.firstWhere(
+                (s) => s.apiStatus == ApiStatus.success || s.apiStatus == ApiStatus.error,
+          );
+
+          if (!mounted) return;
+
+          if (resultState.apiStatus == ApiStatus.success) {
+            // Fire-and-forget login log (biometric method)
+            try {
+              final String? userId = await storage.read(key: 'user_id');
+              final deviceId = await DeviceIdProvider.getDeviceId();
+              if (userId != null && userId.isNotEmpty) {
+                final repo = LoginLogRepository();
+                // ignore: unawaited_futures
+                repo.logUserLogin(body: {
+                  'user_id': userId,
+                  'device_id': deviceId,
+                });
+              }
+            } catch (_) {}
+
+            // Determine navigation based on PassResetFlag, mirroring submitButton.dart
+            try {
+              final loginDataStr = await storage.read(key: 'loginData');
+              int passResetFlag = 0;
+              if (loginDataStr != null) {
+                final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
+                final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
+                passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
+              }
+
+              if (passResetFlag == 0) {
+                Navigator.pushNamed(context, RouteName.updateScreen);
+              } else if (passResetFlag == 1) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.SampleAnalysisScreen,
+                      (route) => false,
+                );
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.loginScreen,
+                      (route) => false,
+                );
+              }
+            } catch (_) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteName.SampleAnalysisScreen,
+                    (route) => false,
+              );
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login failed after biometric authentication.')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Biometric quick login error: $e')),
+          );
+        }
       } else {
         // User cancelled or failed
         ScaffoldMessenger.of(context).showSnackBar(
