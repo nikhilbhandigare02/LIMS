@@ -81,6 +81,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sendRequest => 'अनुरोध भेजें';
 
   @override
+  String get sendOtp => 'ओटीपी भेजें';
+
+  @override
   String get resubmitSample => 'नमूना पुनः जमा करें';
 
   @override
@@ -96,10 +99,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get validation => 'सत्यापन';
 
   @override
+  String get rememberPass => 'अपना पासवर्ड याद रखें';
+
+  @override
   String get missingFields => 'क्रमांक या उपयोगकर्ता आईडी गायब है';
 
   @override
-  String get error => 'त्रुटि';
+  String get error => 'एक त्रुटि हुई';
 
   @override
   String get success => 'सफलता';
@@ -159,25 +165,25 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sampleFormViDetails => 'नमूना फॉर्म VI विवरण';
 
   @override
-  String get loadingSampleDetails => 'नमूना विवरण लोड हो रहा है...';
+  String get loadingSampleDetails => 'नमूना विवरण लोड हो रहे हैं...';
 
   @override
   String get noDetailsFound => 'कोई विवरण नहीं मिला';
 
   @override
-  String get basicInformation => 'मूल जानकारी';
+  String get basicInformation => 'मूलभूत जानकारी';
 
   @override
-  String get serialNo => 'सीरियल नंबर';
+  String get serialNo => 'क्रम संख्या';
 
   @override
   String get senderNameLabel => 'प्रेषक का नाम';
 
   @override
-  String get senderDesignationLabel => 'प्रेषक का पदनाम';
+  String get senderDesignationLabel => 'प्रेषक का पद';
 
   @override
-  String get doNumberLabel => 'डीओ नंबर';
+  String get doNumberLabel => 'डी.ओ. नंबर';
 
   @override
   String get locationDetails => 'स्थान विवरण';
@@ -204,7 +210,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get collectionPlace => 'संग्रह स्थान';
 
   @override
-  String get sampleName => 'नमूना नाम';
+  String get sampleName => 'नमूने का नाम';
 
   @override
   String get quantity => 'मात्रा';
@@ -216,10 +222,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get preservativeAdded => 'परिरक्षक जोड़ा गया';
 
   @override
-  String get preservativeName => 'परिरक्षक नाम';
+  String get preservativeName => 'परिरक्षक का नाम';
 
   @override
-  String get preservativeQuantity => 'मात्रा';
+  String get preservativeQuantity => 'परिरक्षक मात्रा';
 
   @override
   String get verificationSecurity => 'सत्यापन और सुरक्षा';
@@ -228,7 +234,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get witnessSignature => 'साक्षी हस्ताक्षर';
 
   @override
-  String get doSignature => 'डीओ हस्ताक्षर';
+  String get doSignature => 'डी.ओ. हस्ताक्षर';
 
   @override
   String get sealImpression => 'सील छाप';
@@ -240,19 +246,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get formViDetails => 'फॉर्म VI विवरण';
 
   @override
-  String get memoFormVi => 'फॉर्म VI मेमो';
+  String get memoFormVi => 'मेमो फॉर्म VI';
 
   @override
-  String get insideWrapper => 'भीतरी लपेट';
+  String get insideWrapper => 'आवरण के अंदर';
 
   @override
-  String get wrapperCode => 'लपेट कोड';
+  String get wrapperCode => 'आवरण कोड';
 
   @override
   String get uploadedDocument => 'अपलोड किया गया दस्तावेज़';
 
   @override
-  String get statusTransactions => 'स्थिति लेन-देन';
+  String get statusTransactions => 'स्थिति लेनदेन';
 
   @override
   String get yes => 'हाँ';
@@ -261,7 +267,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get no => 'नहीं';
 
   @override
-  String get na => 'एन/ए';
+  String get na => 'लागू नहीं';
 
   @override
   String get noDocumentsUploaded => 'कोई दस्तावेज़ अपलोड नहीं किया गया';
@@ -436,7 +442,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String showingRange(Object start, Object end, Object total) {
-    return 'Showing $start-$end of $total records';
+    return '$total में से $start-$end रिकॉर्ड दिखा रहे हैं';
   }
 
   @override
@@ -608,6 +614,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get enable => 'सक्षम करें';
 
   @override
+  String get verifyOTP => 'ओटीपी सत्यापित करें';
+
+  @override
   String get errorSavingPreferences => 'प्राथमिकताएँ सहेजने में त्रुटि';
 
   @override
@@ -660,4 +669,116 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get debugTestBiometric => 'डिबग: बायोमेट्रिक परीक्षण';
+
+  @override
+  String get formViSuccess => 'Form VI data submitted succesfully';
+
+  @override
+  String get otpSentSuccessfully => 'ओटीपी सफलतापूर्वक भेजा गया';
+
+  @override
+  String get login_bio_face_unavailable => 'इस डिवाइस पर फेस प्रमाणीकरण उपलब्ध नहीं है या नामांकित नहीं है।';
+
+  @override
+  String get login_bio_fingerprint_unavailable => 'इस डिवाइस पर फिंगरप्रिंट प्रमाणीकरण उपलब्ध नहीं है या नामांकित नहीं है।';
+
+  @override
+  String get login_bio_generic_face_or_fingerprint => 'यह डिवाइस सामान्य बायोमेट्रिक्स रिपोर्ट करता है। सिस्टम नामांकित के आधार पर फेस या फिंगरप्रिंट दिखा सकता है।';
+
+  @override
+  String get login_bio_generic_fingerprint_or_face => 'यह डिवाइस सामान्य बायोमेट्रिक्स रिपोर्ट करता है। सिस्टम नामांकित के आधार पर फिंगरप्रिंट या फेस दिखा सकता है।';
+
+  @override
+  String get auth_failed => 'प्रमाणीकरण विफल';
+
+  @override
+  String biometricAuthError(Object error) {
+    return 'बायोमेट्रिक प्रमाणीकरण त्रुटि: $error';
+  }
+
+  @override
+  String get otpVerifiedSuccessfully => 'ओटीपी सफलतापूर्वक सत्यापित';
+
+  @override
+  String get otpInvalid => 'गलत ओटीपी, कृपया मान्य ओटीपी दर्ज करें';
+
+  @override
+  String get loginSuccess => 'आप सफलतापूर्वक लॉगिन हो गए हैं';
+
+  @override
+  String get serverNoResponse => 'सर्वर से कोई प्रतिक्रिया नहीं';
+
+  @override
+  String somethingWentWrong(Object error) {
+    return 'कुछ गलत हो गया: $error';
+  }
+
+  @override
+  String get oldPass => 'पुराना पासवर्ड';
+
+  @override
+  String get newPass => 'नया पासवर्ड';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get passwordChangedSuccessfully => 'Password changed successfully';
+
+  @override
+  String get failedToDecryptServerResponse => 'Failed to decrypt server response.';
+
+  @override
+  String get otpRequiredSixDigits => 'OTP is required and must be 6 digits.';
+
+  @override
+  String get userIdNotFoundInSecureStorage => 'User ID not found in secure storage.';
+
+  @override
+  String get passwordMismatch => 'New Password & Confirm Password do not match';
+
+  @override
+  String get footer => 'डिज़ाइन और विकसित किया गया द्वारा';
+
+  @override
+  String get welcome => 'स्वागत है';
+
+  @override
+  String get loginHere => 'यहाँ लॉगिन करें';
+
+  @override
+  String get loginWithBio => 'आप बायोमेट्रिक या पासवर्ड का उपयोग करके लॉगिन कर सकते हैं।';
+
+  @override
+  String get authorisedPerson => 'केवल अधिकृत व्यक्ति';
+
+  @override
+  String get forgotPass => 'पासवर्ड भूल गए?';
+
+  @override
+  String get faceOrFingerprint => 'चेहरा या अंगूठा';
+
+  @override
+  String get supported => 'समर्थित';
+
+  @override
+  String get fingerprint => 'अंगूठा छाप';
+
+  @override
+  String get login => 'लॉगिन';
+
+  @override
+  String get marathi => 'मराठी';
+
+  @override
+  String get hindi => 'हिंदी';
+
+  @override
+  String get english => 'अंग्रेज़ी';
 }

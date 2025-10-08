@@ -9,6 +9,7 @@ import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
 import '../../../../config/Themes/colors/colorsTheme.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/widgets/RegistrationInput/CustomTextField.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
    OtpVerificationScreen({Key? key}) : super(key: key);
@@ -37,12 +38,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: BlocListener<OTPVerificationBloc, VerifyOTPState>(
         listener: (context, state) {
           if (state.apiStatus == ApiStatus.success && state.isOtpVerified) {
-           Message.showTopRightOverlay(context, 'Otp Verified Succesfully', MessageType.success);
+           final msg = AppLocalizations.of(context)?.otpVerifiedSuccessfully ?? 'OTP verified successfully';
+           Message.showTopRightOverlay(context, msg, MessageType.success);
             Navigator.pushReplacementNamed(context, RouteName.SampleAnalysisScreen);
           }
 
           if (state.apiStatus == ApiStatus.error) {
-            Message.showTopRightOverlay(context, 'Wrong OTP, Please enter valid otp', MessageType.success);
+            final msg = AppLocalizations.of(context)?.otpInvalid ?? 'Wrong OTP, please enter a valid OTP';
+            Message.showTopRightOverlay(context, msg, MessageType.success);
           }
         },
         child:BlocBuilder<OTPVerificationBloc, VerifyOTPState>(

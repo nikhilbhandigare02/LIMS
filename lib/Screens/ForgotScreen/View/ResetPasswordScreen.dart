@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/l10n/app_localizations.dart';
 import 'package:food_inspector/Screens/ForgotScreen/repository/ForgotPasswordRepository.dart';
 import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
@@ -32,7 +33,9 @@ class _ResetPasswordView extends StatelessWidget {
 
 
     if (state.newPassword != state.confirmPassword) {
-      Message.showTopRightOverlay(context, 'New Password & Confirm Password do not match', MessageType.error);
+      final l10n = AppLocalizations.of(context);
+      final msg = l10n != null ? l10n.error : 'Error';
+      Message.showTopRightOverlay(context, msg, MessageType.error);
       return;
     }
     if (_formKey.currentState!.validate()) {
@@ -47,10 +50,23 @@ class _ResetPasswordView extends StatelessWidget {
       body: SafeArea(
         child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
+            String _localizedMessage(String msg) {
+              final l10n = AppLocalizations.of(context);
+              if (l10n == null || msg.isEmpty) return msg;
+              if (msg == 'No response from server') return l10n.serverNoResponse;
+              if (msg.startsWith('Something went wrong:')) {
+                final idx = msg.indexOf(':');
+                final err = idx != -1 && idx + 1 < msg.length ? msg.substring(idx + 1).trim() : '';
+                return l10n.somethingWentWrong(err);
+              }
+              if (msg == 'Failed to decrypt server response.') return l10n.error;
+              if (msg == 'Password Changed successfully') return l10n.success;
+              return msg;
+            }
             if (state.apiStatus == ApiStatus.success) {
               Message.showTopRightOverlay(
                 context,
-                state.message,
+                _localizedMessage(state.message),
                 MessageType.success,
               );
               Future.delayed(const Duration(seconds: 1), () {
@@ -60,7 +76,7 @@ class _ResetPasswordView extends StatelessWidget {
             } else if (state.apiStatus == ApiStatus.error) {
               Message.showTopRightOverlay(
                 context,
-                state.message,
+                _localizedMessage(state.message),
                 MessageType.error,
               );
             }
@@ -75,12 +91,12 @@ class _ResetPasswordView extends StatelessWidget {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Row(
-                      children: const [
-                        Icon(Icons.arrow_back_ios, color: customColors.primary),
-                        SizedBox(width: 10),
+                      children: [
+                        const Icon(Icons.arrow_back_ios, color: customColors.primary),
+                        const SizedBox(width: 10),
                         Text(
-                          "Reset Password",
-                          style: TextStyle(
+                          (AppLocalizations.of(context)?.updatePass) ?? 'Reset Password',
+                          style: const TextStyle(
                             color: customColors.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -140,7 +156,7 @@ class _ResetPasswordView extends StatelessWidget {
                         children: [
                           // New Password
                           CustomTextField(
-                            label: 'New Password',
+                            label: (AppLocalizations.of(context)?.newPass) ?? 'New Password',
                             icon: Icons.lock,
                             obscureText: true,
                             isPassword: true,
@@ -188,9 +204,9 @@ class _ResetPasswordView extends StatelessWidget {
                                   ? const CircularProgressIndicator(
                                 color: customColors.white,
                               )
-                                  : const Text(
-                                'Reset Password',
-                                style: TextStyle(
+                                  : Text(
+                                (AppLocalizations.of(context)?.updatePass) ?? 'Reset Password',
+                                style: const TextStyle(
                                   color: customColors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

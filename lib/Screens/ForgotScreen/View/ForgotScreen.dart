@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_inspector/l10n/app_localizations.dart';
 
 import '../../../config/Routes/RouteName.dart';
 import '../../../config/Themes/colors/colorsTheme.dart';
@@ -20,6 +21,23 @@ class ForgotScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _localizedMessage(BuildContext ctx, String msg) {
+      final l10n = AppLocalizations.of(ctx);
+      if (l10n == null || msg.isEmpty) return msg;
+      // Map known Bloc messages to localized strings
+      if (msg == 'No response from server') return l10n.serverNoResponse;
+      if (msg.startsWith('Something went wrong:')) {
+        final idx = msg.indexOf(':');
+        final err = idx != -1 && idx + 1 < msg.length ? msg.substring(idx + 1).trim() : '';
+        return l10n.somethingWentWrong(err);
+      }
+      if (msg == 'Failed to decrypt server response.') return l10n.error;
+      if (msg == 'OTP sent successfully') {
+        // Fallback: show generic success if specific key not generated yet
+        return l10n.success;
+      }
+      return msg; // default
+    }
     return BlocProvider(
       create: (_) => ForgotPasswordBloc(
         forgotPasswordRepository: ForgotPasswordRepository(),
@@ -44,7 +62,7 @@ class ForgotScreen extends StatelessWidget {
                           ),
                           SizedBox(width: 10),
                           Text(
-                            "Forgot Password",
+                            AppLocalizations.of(context)!.forgotPass,
                             style: TextStyle(
                               color: customColors.primary,
                               fontSize: 18,
@@ -92,7 +110,7 @@ class ForgotScreen extends StatelessWidget {
                       if (state.apiStatus == ApiStatus.success && state.isOtpSent && !state.isOtpVerified) {
                         Message.showTopRightOverlay(
                           context,
-                          state.message,
+                          _localizedMessage(context, state.message),
                           MessageType.success,
                         );
                       }
@@ -101,7 +119,7 @@ class ForgotScreen extends StatelessWidget {
                       else if (state.apiStatus == ApiStatus.success && state.isOtpVerified) {
                         Message.showTopRightOverlay(
                           context,
-                          'OTP Verified Succesfully',
+                          AppLocalizations.of(context)!.otpVerifiedSuccessfully,
                           MessageType.success,
                         );
 
@@ -113,7 +131,7 @@ class ForgotScreen extends StatelessWidget {
                       else if (state.apiStatus == ApiStatus.error) {
                         Message.showTopRightOverlay(
                           context,
-                          state.message,
+                          _localizedMessage(context, state.message),
                           MessageType.error,
                         );
                       }
@@ -146,15 +164,15 @@ class ForgotScreen extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     CustomTextField(
-                                      label: 'Enter Email',
+                                      label: "${AppLocalizations.of(context)!.enter} ${AppLocalizations.of(context)!.email}",
                                       icon: Icons.email,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: Validators.validateEmail,
                                       value: state
                                           .email,
-                                      enabled: !(state.isOtpSent), // 🔒 disable once OTP is sent
+                                      enabled: !(state.isOtpSent),
                                       onChanged: (value) {
-                                        if (!state.isOtpSent) { // 🔐 block changes if OTP sent
+                                        if (!state.isOtpSent) {
                                           context.read<ForgotPasswordBloc>().add(EmailEvent(email: value));
                                         }
                                       },
@@ -203,7 +221,7 @@ class ForgotScreen extends StatelessWidget {
                                                     ),
                                               )
                                             :  Text(
-                                                'SEND OTP',
+                                                AppLocalizations.of(context)!.sendOtp,
                                                 style: TextStyle(
                                                   color: customColors.white,
                                                   fontSize: 16,
@@ -263,7 +281,7 @@ class ForgotScreen extends StatelessWidget {
                                                       ),
                                                 )
                                               :  Text(
-                                                  'VERIFY OTP',
+                                                  AppLocalizations.of(context)!.verifyOTP,
                                                   style: TextStyle(
                                                     color: customColors.white,
                                                     fontSize: 16,
@@ -279,7 +297,7 @@ class ForgotScreen extends StatelessWidget {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Remember your password? ",
+                                         "${ AppLocalizations.of(context)!.rememberPass}? ",
                                           style: TextStyle(
                                             color: customColors.black87,
                                           ),
@@ -289,7 +307,7 @@ class ForgotScreen extends StatelessWidget {
                                             Navigator.pop(context);
                                           },
                                           child: Text(
-                                            'Login',
+                                            AppLocalizations.of(context)!.login,
                                             style: TextStyle(
                                               color: customColors.primary,
                                             ),

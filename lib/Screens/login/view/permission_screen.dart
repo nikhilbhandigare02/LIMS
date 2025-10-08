@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,15 +36,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
   @override
   void initState() {
     super.initState();
-    _items = _buildPermissionListForPlatform();
-    _refreshStatuses();
+    _initPermissions();
   }
 
-  List<_PermissionItem> _buildPermissionListForPlatform() {
-    final isAndroid = Platform.isAndroid;
-    final isIOS = Platform.isIOS;
+  Future<void> _initPermissions() async {
+    setState(() => _loading = true);
 
-    return [
+    _items = [
       _PermissionItem(
         title: 'Location',
         icon: Icons.location_on_rounded,
@@ -57,16 +54,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
         permission: Permission.camera,
       ),
       _PermissionItem(
-        title: isIOS ? 'Photos' : 'Storage',
-        icon: isIOS ? Icons.photo_rounded : Icons.folder_rounded,
-        permission: isIOS ? Permission.photos : Permission.storage,
-      ),
-      _PermissionItem(
         title: 'Notifications',
         icon: Icons.notifications_active_rounded,
         permission: Permission.notification,
       ),
     ];
+
+    await _refreshStatuses();
   }
 
   Future<void> _refreshStatuses() async {
@@ -129,7 +123,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
-            // Scrollable content
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _refreshStatuses,
@@ -218,6 +211,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
   Widget _permissionTile(int index) {
     final item = _items[index];
     final status = item.status;
+    // For any permission not granted, we'll provide a direct shortcut to app settings.
 
     Color chipColor;
     String chipLabel;
@@ -288,19 +282,19 @@ class _PermissionScreenState extends State<PermissionScreen> {
               tooltip: status.isGranted
                   ? 'Granted'
                   : (status.isPermanentlyDenied || status.isRestricted)
-                  ? 'Settings'
-                  : 'Grant',
+                      ? 'Settings'
+                      : 'Grant',
               icon: Icon(
                 status.isGranted
                     ? Icons.check_circle
                     : (status.isPermanentlyDenied || status.isRestricted)
-                    ? Icons.settings
-                    : Icons.arrow_forward_ios_rounded,
+                        ? Icons.settings
+                        : Icons.arrow_forward_ios_rounded,
                 color: status.isGranted
                     ? Colors.green
                     : (status.isPermanentlyDenied || status.isRestricted)
-                    ? Colors.red
-                    : Colors.blueAccent,
+                        ? Colors.red
+                        : Colors.blueAccent,
               ),
               onPressed: () async {
                 if (status.isPermanentlyDenied || status.isRestricted) {
@@ -346,7 +340,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
-
         if (_allGranted)
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(

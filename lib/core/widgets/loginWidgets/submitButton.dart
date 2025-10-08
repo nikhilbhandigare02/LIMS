@@ -38,11 +38,30 @@ class LoginButton extends StatelessWidget {
               );
               break;
             case ApiStatus.success:
-              Message.showTopRightOverlay(
-                context,
-                state.message,
-                MessageType.success,
-              );
+              {
+                final l10n = AppLocalizations.of(context);
+                String msg = state.message;
+                if (state.message == 'loginSuccess') {
+                  msg = l10n?.loginSuccess ?? 'You have logged in successfully';
+                } else if (state.message == 'serverNoResponse') {
+                  msg = l10n?.serverNoResponse ?? 'No response from server';
+                } else if (state.message.startsWith('somethingWentWrong:')) {
+                  final err = state.message.substring('somethingWentWrong:'.length);
+                  // If the generated getter exists, use it with placeholder; else fallback
+                  try {
+                    // ignore: unnecessary_statements
+                    l10n?.somethingWentWrong; // probe existence
+                    msg = l10n?.somethingWentWrong(err) ?? 'Something went wrong: $err';
+                  } catch (_) {
+                    msg = 'Something went wrong: $err';
+                  }
+                }
+                Message.showTopRightOverlay(
+                  context,
+                  msg,
+                  MessageType.success,
+                );
+              }
               await Future.delayed(const Duration(seconds: 1));
               final secureStorage = FlutterSecureStorage();
               final loginDataStr = await secureStorage.read(key: 'loginData');
@@ -99,11 +118,27 @@ class LoginButton extends StatelessWidget {
               }
               break;
             case ApiStatus.error:
-              Message.showTopRightOverlay(
-                context,
-                state.message,
-                MessageType.error,
-              );
+              {
+                final l10n = AppLocalizations.of(context);
+                String msg = state.message;
+                if (state.message == 'serverNoResponse') {
+                  msg = l10n?.serverNoResponse ?? 'No response from server';
+                } else if (state.message.startsWith('somethingWentWrong:')) {
+                  final err = state.message.substring('somethingWentWrong:'.length);
+                  try {
+                    // ignore: unnecessary_statements
+                    l10n?.somethingWentWrong; // probe existence
+                    msg = l10n?.somethingWentWrong(err) ?? 'Something went wrong: $err';
+                  } catch (_) {
+                    msg = 'Something went wrong: $err';
+                  }
+                }
+                Message.showTopRightOverlay(
+                  context,
+                  msg,
+                  MessageType.error,
+                );
+              }
               break;
             default:
               break;

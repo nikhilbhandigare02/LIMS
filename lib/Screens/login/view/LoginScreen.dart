@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/login/repository/loginRepository.dart';
 import 'package:food_inspector/config/Routes/RouteName.dart';
+import 'package:food_inspector/l10n/app_localizations.dart';
 import '../../../core/utils/footer.dart';
 import '../../../core/widgets/RegistrationInput/Curved.dart';
 import '../../../core/widgets/loginWidgets/CaptchaWidget.dart';
@@ -227,22 +229,85 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       if (didAuth) {
         try {
           final storage = const FlutterSecureStorage();
-          final String? userId = await storage.read(key: 'user_id');
-          final deviceId = await DeviceIdProvider.getDeviceId();
-          if (userId != null && userId.isNotEmpty) {
-            final repo = LoginLogRepository();
-            repo.logUserLogin(body: {
-              'user_id': userId,
-              'device_id': deviceId,
-            });
+          final String? savedUser = await storage.read(key: 'lastUsername');
+          final String? savedPass = await storage.read(key: 'savedPassword');
+
+          if (savedUser == null || savedUser.isEmpty || savedPass == null || savedPass.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No saved credentials found for biometric login. Please sign in with password once.')),
+            );
+            return;
           }
-        } catch (_) {}
-        // Navigate
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          RouteName.SampleAnalysisScreen,
-              (route) => false,
-        );
+
+          // Dispatch login events to call the same encrypted API
+          loginBloc.add(UsernameEvent(username: savedUser));
+          loginBloc.add(PasswordEvent(password: savedPass));
+          loginBloc.add(LoginButtonEvent());
+
+          // Wait for success or error
+          final resultState = await loginBloc.stream.firstWhere(
+                (s) => s.apiStatus == ApiStatus.success || s.apiStatus == ApiStatus.error,
+          );
+
+          if (!mounted) return;
+
+          if (resultState.apiStatus == ApiStatus.success) {
+            // Fire-and-forget login log (biometric method)
+            try {
+              final String? userId = await storage.read(key: 'user_id');
+              final deviceId = await DeviceIdProvider.getDeviceId();
+              if (userId != null && userId.isNotEmpty) {
+                final repo = LoginLogRepository();
+                // ignore: unawaited_futures
+                repo.logUserLogin(body: {
+                  'user_id': userId,
+                  'device_id': deviceId,
+                });
+              }
+            } catch (_) {}
+
+            // Determine navigation based on PassResetFlag, mirroring submitButton.dart
+            try {
+              final loginDataStr = await storage.read(key: 'loginData');
+              int passResetFlag = 0;
+              if (loginDataStr != null) {
+                final loginDataMap = jsonDecode(loginDataStr) as Map<String, dynamic>;
+                final passResetStr = loginDataMap['PassResetFlag'] ?? '0';
+                passResetFlag = int.tryParse(passResetStr.toString()) ?? 0;
+              }
+
+              if (passResetFlag == 0) {
+                Navigator.pushNamed(context, RouteName.updateScreen);
+              } else if (passResetFlag == 1) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.SampleAnalysisScreen,
+                      (route) => false,
+                );
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RouteName.loginScreen,
+                      (route) => false,
+                );
+              }
+            } catch (_) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteName.SampleAnalysisScreen,
+                    (route) => false,
+              );
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login failed after biometric authentication.')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Biometric quick login error: $e')),
+          );
+        }
       } else {
         // User cancelled or failed
         ScaffoldMessenger.of(context).showSnackBar(
@@ -268,9 +333,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     // Some devices may return strong/weak instead of explicit types
     final hasGeneric = _availableBiometrics.contains(BiometricType.strong) || _availableBiometrics.contains(BiometricType.weak);
     if (hasGeneric && parts.isEmpty) {
-      parts.add('Face or Fingerprint');
+      parts.add(AppLocalizations.of(context)!.faceOrFingerprint);
     }
-    return 'Supported: ' + parts.join(' • ');
+    return '${AppLocalizations.of(context)!.supported}: ${parts.join(' • ')}';
   }
 
   @override
@@ -333,8 +398,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           SizedBox(height: 10),
                           Text(
                             _quickLoginAvailable && _senderName != null && _senderName!.isNotEmpty
-                                ? "Welcome, ${_senderName!}"
-                                : "Login Here",
+                                ? "${AppLocalizations.of(context)!.welcome}, ${_senderName!}"
+                                : AppLocalizations.of(context)!.loginHere,
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -344,8 +409,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           SizedBox(height: 8),
                           Text(
                             _quickLoginAvailable
-                                ? "You can login using biometrics or password."
-                                : "Authorized Personnel Only",
+                                ? AppLocalizations.of(context)!.loginWithBio
+                                : AppLocalizations.of(context)!.authorisedPerson,
                             style: TextStyle(
                               fontSize: 14,
                               color: customColors.grey,
@@ -400,7 +465,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                             ),
                                             onPressed: fingerEnabled ? () => _authenticateBiometric(PreferredBio.fingerprint) : null,
                                             icon: const Icon(Icons.fingerprint),
-                                            label: const Text('Fingerprint'),
+                                            label: Text(AppLocalizations.of(context)!.fingerprint),
                                           ),
                                         ),
                                       ],
@@ -452,7 +517,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                         Navigator.pushNamed(context, RouteName.forgotPasswordScreen);
                                       },
                                       child: Text(
-                                        "Forgot Password?",
+                                        AppLocalizations.of(context)!.forgotPass,
                                         style: TextStyle(
                                           color: customColors.primary,
                                           fontWeight: FontWeight.bold,

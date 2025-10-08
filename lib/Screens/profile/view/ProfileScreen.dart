@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:food_inspector/l10n/app_localizations.dart';
 
 import '../../../config/Themes/colors/colorsTheme.dart';
 
@@ -47,7 +48,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         if (doNumber != null) _doNumber = doNumber;
       });
     } catch (e) {
-      // ignore: avoid_print
       print('Failed to load user from secure storage: $e');
     }
   }
@@ -184,25 +184,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 children: [
                   _buildInfoCard(
                     icon: Icons.person_outline,
-                    title: 'Full Name',
+                    title: AppLocalizations.of(context)!.fullName,
                     value: _fullName,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
                     icon: Icons.alternate_email,
-                    title: 'Username',
+                    title: AppLocalizations.of(context)!.username,
                     value: _username,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
                     icon: Icons.badge_outlined,
-                    title: 'Official Designation',
+                    title: AppLocalizations.of(context)!.officialDesignation,
                     value: _designation,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(
                     icon: Icons.email_outlined,
-                    title: 'Email',
+                    title: AppLocalizations.of(context)!.email,
                     value: _email,
                   ),
                   const SizedBox(height: 30),
