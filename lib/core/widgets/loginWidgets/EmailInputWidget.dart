@@ -76,8 +76,8 @@ class EmailInput extends StatelessWidget {
           onChanged: (value) {
             context.read<LoginBloc>().add(UsernameEvent(username: value));
           },
-          onFieldSubmitted: (value) {},
-          validator: Validators.validateUsername,
+          onFieldSubmitted: (value) {}
+
         );
       },
     );

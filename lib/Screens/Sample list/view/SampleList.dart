@@ -375,7 +375,7 @@ class _SampleAnalysisScreenState extends State<SampleAnalysisScreen>
                                     });
                                   },
                                   // Optional validation hook
-                                  validator: (v) => Validators.validateEmptyField(v, 'Lab'),
+                                    validator: (v) => Validators.validateEmptyField(context, v, 'Lab'),
                                 );
                               },
                             ),

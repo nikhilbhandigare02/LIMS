@@ -79,7 +79,7 @@ class _ConfirmPasswordInputState extends State<ConfirmPasswordInput> {
             onChanged: (value) {
               context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
             },
-            validator: (value) => Validators.validateEmptyField(value, 'Password'),
+            validator: (value) => Validators.validateEmptyField(context,value, 'Password'),
           ),
         );
       },

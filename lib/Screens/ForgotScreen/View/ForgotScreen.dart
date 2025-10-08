@@ -167,7 +167,7 @@ class ForgotScreen extends StatelessWidget {
                                       label: "${AppLocalizations.of(context)!.enter} ${AppLocalizations.of(context)!.email}",
                                       icon: Icons.email,
                                       keyboardType: TextInputType.emailAddress,
-                                      validator: Validators.validateEmail,
+                                      validator: (value) => Validators.validateEmail(context, value),
                                       value: state
                                           .email,
                                       enabled: !(state.isOtpSent),
@@ -199,9 +199,7 @@ class ForgotScreen extends StatelessWidget {
                                             (state.apiStatus ==
                                                     ApiStatus.loading ||
                                                 state.email.isEmpty ||
-                                                Validators.validateEmail(
-                                                      state.email,
-                                                    ) !=
+                                                Validators.validateEmail(context, state.email) !=
                                                     null)
                                             ? null
                                             : () {
@@ -238,7 +236,7 @@ class ForgotScreen extends StatelessWidget {
                                         length: 6,
                                         obscureText: false,
                                         value: state.otp,
-                                        validator: (value) => Validators.validateOTP(value, length: 6),
+                                        validator: (value) => Validators.validateOTP(context, value, length: 6),
                                         onChanged: (value) {
                                           bloc.add(OTPEvent(value));
                                         },
@@ -260,7 +258,7 @@ class ForgotScreen extends StatelessWidget {
                                             elevation: 0,
                                           ),
                                           onPressed: (state.apiStatus == ApiStatus.loading ||
-                                                  Validators.validateOTP(state.otp, length: 6) != null)
+                                                  Validators.validateOTP(context,state.otp, length: 6) != null)
                                               ? null
                                               : () {
                                                   context

@@ -160,7 +160,7 @@ class _ResetPasswordView extends StatelessWidget {
                             icon: Icons.lock,
                             obscureText: true,
                             isPassword: true,
-                            validator: Validators.validatePassword,
+                            validator: (value)=>Validators.validatePassword(context,value),
                             onChanged: (value) {
                               context.read<ForgotPasswordBloc>().add(
                                 NewForgotPassEvent(newPassword: value),
@@ -176,7 +176,7 @@ class _ResetPasswordView extends StatelessWidget {
                             isPassword: true,
                             validator: (value) =>
                                 Validators.validateConfirmPassword(
-                                    value, state.newPassword),
+                                    context,value, state.newPassword),
                             onChanged: (value) {
                               context.read<ForgotPasswordBloc>().add(
                                 ConfirmForgotPassEvent(

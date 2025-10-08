@@ -1632,6 +1632,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get english;
+
+  /// No description provided for @usernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required'**
+  String get usernameRequired;
+
+  /// No description provided for @oldPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Old password is required'**
+  String get oldPasswordRequired;
+
+  /// No description provided for @nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameRequired;
+
+  /// No description provided for @otpRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP is required'**
+  String get otpRequired;
+
+  /// No description provided for @otpMustBeDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP must be {length} digits'**
+  String otpMustBeDigits(int length);
+
+  /// No description provided for @otpOnlyDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP must contain only digits'**
+  String get otpOnlyDigits;
+
+  /// No description provided for @captchaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Captcha is required'**
+  String get captchaRequired;
+
+  /// No description provided for @countryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Country is required'**
+  String get countryRequired;
+
+  /// No description provided for @stateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'State is required'**
+  String get stateRequired;
+
+  /// No description provided for @districtRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'District is required'**
+  String get districtRequired;
+
+  /// No description provided for @divisionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Division is required'**
+  String get divisionRequired;
+
+  /// No description provided for @regionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Region is required'**
+  String get regionRequired;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get passwordMinLength;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get emailInvalid;
+
+  /// No description provided for @mobileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number is required'**
+  String get mobileRequired;
+
+  /// No description provided for @mobileExactDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number must be exactly 10 digits'**
+  String get mobileExactDigits;
+
+  /// No description provided for @mobileOnlyDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number must contain only digits'**
+  String get mobileOnlyDigits;
+
+  /// No description provided for @otpMaxDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP cannot be more than 6 digits'**
+  String get otpMaxDigits;
+
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password is required'**
+  String get confirmPasswordRequired;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'{fieldName} is required'**
+  String fieldRequired(String fieldName);
+
+  /// No description provided for @doNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'DO Number is required'**
+  String get doNumberRequired;
+
+  /// No description provided for @doNumberOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'DO Number must contain only numbers'**
+  String get doNumberOnlyNumbers;
+
+  /// No description provided for @sampleCodeNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Code Number is required'**
+  String get sampleCodeNumberRequired;
+
+  /// No description provided for @sampleCodeNumberOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Code Number must contain only numbers'**
+  String get sampleCodeNumberOnlyNumbers;
+
+  /// No description provided for @slipNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Slip Number is required'**
+  String get slipNumberRequired;
+
+  /// No description provided for @slipNumberOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Slip Number must contain only numbers'**
+  String get slipNumberOnlyNumbers;
+
+  /// No description provided for @numberOfSlipsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Slips is required'**
+  String get numberOfSlipsRequired;
+
+  /// No description provided for @numberOfSlipsOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Slips must contain only numbers'**
+  String get numberOfSlipsOnlyNumbers;
+
+  /// No description provided for @numberOfSlipsGreaterThanZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Slips must be greater than 0'**
+  String get numberOfSlipsGreaterThanZero;
+
+  /// No description provided for @numberOfSlipsMaxFive.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Slips must not be greater than 5'**
+  String get numberOfSlipsMaxFive;
+
+  /// No description provided for @codeNumberOnWrapperRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Code Number on Wrapper is required'**
+  String get codeNumberOnWrapperRequired;
+
+  /// No description provided for @codeNumberOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Code Number must contain only numbers'**
+  String get codeNumberOnlyNumbers;
+
+  /// No description provided for @dateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Date is required'**
+  String get dateRequired;
+
+  /// No description provided for @dateCannotBeBeforeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Date cannot be before today'**
+  String get dateCannotBeBeforeToday;
+
+  /// No description provided for @dateMustBeWithinDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Date must be within the next {days} days'**
+  String dateMustBeWithinDays(int days);
+
+  /// No description provided for @senderNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sender Name is required'**
+  String get senderNameRequired;
+
+  /// No description provided for @senderDesignationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sender Designation is required'**
+  String get senderDesignationRequired;
+
+  /// No description provided for @areaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Area is required'**
+  String get areaRequired;
+
+  /// No description provided for @sampleCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Code is required'**
+  String get sampleCodeRequired;
+
+  /// No description provided for @collectionDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection Date is required'**
+  String get collectionDateRequired;
+
+  /// No description provided for @placeOfCollectionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Place of Collection is required'**
+  String get placeOfCollectionRequired;
+
+  /// No description provided for @sampleNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Name is required'**
+  String get sampleNameRequired;
+
+  /// No description provided for @quantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity is required'**
+  String get quantityRequired;
+
+  /// No description provided for @articleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Article is required'**
+  String get articleRequired;
+
+  /// No description provided for @preservativeInfoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Preservative info required'**
+  String get preservativeInfoRequired;
+
+  /// No description provided for @preservativeNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Preservative Name required'**
+  String get preservativeNameRequired;
+
+  /// No description provided for @preservativeQuantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Preservative Quantity required'**
+  String get preservativeQuantityRequired;
+
+  /// No description provided for @signatureConfirmationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature confirmation required'**
+  String get signatureConfirmationRequired;
+
+  /// No description provided for @doSignatureRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'DO Signature required'**
+  String get doSignatureRequired;
+
+  /// No description provided for @sealImpressionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Seal Impression is required'**
+  String get sealImpressionRequired;
+
+  /// No description provided for @formVICheckRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Form VI check required'**
+  String get formVICheckRequired;
+
+  /// No description provided for @wrapperCheckRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrapper check required'**
+  String get wrapperCheckRequired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

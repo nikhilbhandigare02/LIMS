@@ -781,4 +781,175 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get english => 'अंग्रेज़ी';
+
+  @override
+  String get usernameRequired => 'उपयोगकर्ता नाम आवश्यक है';
+
+  @override
+  String get oldPasswordRequired => 'पुराना पासवर्ड आवश्यक है';
+
+  @override
+  String get nameRequired => 'नाम आवश्यक है';
+
+  @override
+  String get otpRequired => 'OTP आवश्यक है';
+
+  @override
+  String otpMustBeDigits(int length) {
+    return 'OTP $length अंकों का होना चाहिए';
+  }
+
+  @override
+  String get otpOnlyDigits => 'OTP में केवल अंक होने चाहिए';
+
+  @override
+  String get captchaRequired => 'कैप्चा आवश्यक है';
+
+  @override
+  String get countryRequired => 'देश आवश्यक है';
+
+  @override
+  String get stateRequired => 'राज्य आवश्यक है';
+
+  @override
+  String get districtRequired => 'जिला आवश्यक है';
+
+  @override
+  String get divisionRequired => 'प्रभाग आवश्यक है';
+
+  @override
+  String get regionRequired => 'क्षेत्र आवश्यक है';
+
+  @override
+  String get passwordRequired => 'पासवर्ड आवश्यक है';
+
+  @override
+  String get passwordMinLength => 'पासवर्ड कम से कम 8 अक्षर का होना चाहिए';
+
+  @override
+  String get emailRequired => 'ईमेल आवश्यक है';
+
+  @override
+  String get emailInvalid => 'वैध ईमेल दर्ज करें';
+
+  @override
+  String get mobileRequired => 'मोबाइल नंबर आवश्यक है';
+
+  @override
+  String get mobileExactDigits => 'मोबाइल नंबर बिल्कुल 10 अंकों का होना चाहिए';
+
+  @override
+  String get mobileOnlyDigits => 'मोबाइल नंबर में केवल अंक होने चाहिए';
+
+  @override
+  String get otpMaxDigits => 'OTP 6 अंकों से अधिक नहीं हो सकता';
+
+  @override
+  String get confirmPasswordRequired => 'पासवर्ड की पुष्टि आवश्यक है';
+
+  @override
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खाते';
+
+  @override
+  String fieldRequired(String fieldName) {
+    return '$fieldName आवश्यक है';
+  }
+
+  @override
+  String get doNumberRequired => 'DO नंबर आवश्यक है';
+
+  @override
+  String get doNumberOnlyNumbers => 'DO नंबर में केवल संख्याएं होनी चाहिए';
+
+  @override
+  String get sampleCodeNumberRequired => 'नमूना कोड नंबर आवश्यक है';
+
+  @override
+  String get sampleCodeNumberOnlyNumbers => 'नमूना कोड नंबर में केवल संख्याएं होनी चाहिए';
+
+  @override
+  String get slipNumberRequired => 'स्लिप नंबर आवश्यक है';
+
+  @override
+  String get slipNumberOnlyNumbers => 'स्लिप नंबर में केवल संख्याएं होनी चाहिए';
+
+  @override
+  String get numberOfSlipsRequired => 'स्लिप की संख्या आवश्यक है';
+
+  @override
+  String get numberOfSlipsOnlyNumbers => 'स्लिप की संख्या में केवल संख्याएं होनी चाहिए';
+
+  @override
+  String get numberOfSlipsGreaterThanZero => 'स्लिप की संख्या 0 से अधिक होनी चाहिए';
+
+  @override
+  String get numberOfSlipsMaxFive => 'स्लिप की संख्या 5 से अधिक नहीं होनी चाहिए';
+
+  @override
+  String get codeNumberOnWrapperRequired => 'रैपर पर कोड नंबर आवश्यक है';
+
+  @override
+  String get codeNumberOnlyNumbers => 'कोड नंबर में केवल संख्याएं होनी चाहिए';
+
+  @override
+  String get dateRequired => 'तारीख आवश्यक है';
+
+  @override
+  String get dateCannotBeBeforeToday => 'तारीख आज से पहले नहीं हो सकती';
+
+  @override
+  String dateMustBeWithinDays(int days) {
+    return 'तारीख अगले $days दिनों के भीतर होनी चाहिए';
+  }
+
+  @override
+  String get senderNameRequired => 'प्रेषक का नाम आवश्यक है';
+
+  @override
+  String get senderDesignationRequired => 'प्रेषक का पदनाम आवश्यक है';
+
+  @override
+  String get areaRequired => 'क्षेत्र आवश्यक है';
+
+  @override
+  String get sampleCodeRequired => 'नमूना कोड आवश्यक है';
+
+  @override
+  String get collectionDateRequired => 'संग्रह तिथि आवश्यक है';
+
+  @override
+  String get placeOfCollectionRequired => 'संग्रह स्थान आवश्यक है';
+
+  @override
+  String get sampleNameRequired => 'नमूना नाम आवश्यक है';
+
+  @override
+  String get quantityRequired => 'मात्रा आवश्यक है';
+
+  @override
+  String get articleRequired => 'वस्तु आवश्यक है';
+
+  @override
+  String get preservativeInfoRequired => 'परिरक्षक जानकारी आवश्यक है';
+
+  @override
+  String get preservativeNameRequired => 'परिरक्षक नाम आवश्यक है';
+
+  @override
+  String get preservativeQuantityRequired => 'परिरक्षक मात्रा आवश्यक है';
+
+  @override
+  String get signatureConfirmationRequired => 'हस्ताक्षर की पुष्टि आवश्यक है';
+
+  @override
+  String get doSignatureRequired => 'DO हस्ताक्षर आवश्यक है';
+
+  @override
+  String get sealImpressionRequired => 'मुहर की छाप आवश्यक है';
+
+  @override
+  String get formVICheckRequired => 'फॉर्म VI जांच आवश्यक है';
+
+  @override
+  String get wrapperCheckRequired => 'रैपर जांच आवश्यक है';
 }

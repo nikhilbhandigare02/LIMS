@@ -293,5 +293,80 @@
   "somethingWentWrong": "काहीतरी चुकले: {error}",
   "@somethingWentWrong": {
     "placeholders": { "error": {} }
-  }
+  },"usernameRequired": "वापरकर्तानाव आवश्यक आहे",
+      "oldPasswordRequired": "जुना पासवर्ड आवश्यक आहे",
+      "nameRequired": "नाव आवश्यक आहे",
+      "otpRequired": "OTP आवश्यक आहे",
+      "otpMustBeDigits": "OTP {length} अंकांचा असावा",
+      "@otpMustBeDigits": {
+        "placeholders": {
+          "length": {
+            "type": "int"
+          }
+        }
+      },
+      "otpOnlyDigits": "OTP मध्ये फक्त अंक असावेत",
+      "captchaRequired": "कॅप्चा आवश्यक आहे",
+      "countryRequired": "देश आवश्यक आहे",
+      "stateRequired": "राज्य आवश्यक आहे",
+      "districtRequired": "जिल्हा आवश्यक आहे",
+      "divisionRequired": "विभाग आवश्यक आहे",
+      "regionRequired": "प्रदेश आवश्यक आहे",
+      "passwordRequired": "पासवर्ड आवश्यक आहे",
+      "passwordMinLength": "पासवर्ड किमान 8 वर्णांचा असावा",
+      "emailRequired": "ईमेल आवश्यक आहे",
+      "emailInvalid": "वैध ईमेल प्रविष्ट करा",
+      "mobileRequired": "मोबाईल नंबर आवश्यक आहे",
+      "mobileExactDigits": "मोबाईल नंबर अगदी 10 अंकांचा असावा",
+      "mobileOnlyDigits": "मोबाईल नंबरमध्ये फक्त अंक असावेत",
+      "otpMaxDigits": "OTP 6 अंकांपेक्षा जास्त असू शकत नाही",
+      "confirmPasswordRequired": "पासवर्ड पुष्टीकरण आवश्यक आहे",
+      "passwordsDoNotMatch": "पासवर्ड जुळत नाहीत",
+      "fieldRequired": "{fieldName} आवश्यक आहे",
+      "@fieldRequired": {
+        "placeholders": {
+          "fieldName": {
+            "type": "String"
+          }
+        }
+      },
+      "doNumberRequired": "DO नंबर आवश्यक आहे",
+      "doNumberOnlyNumbers": "DO नंबरमध्ये फक्त संख्या असाव्यात",
+      "sampleCodeNumberRequired": "नमुना कोड नंबर आवश्यक आहे",
+      "sampleCodeNumberOnlyNumbers": "नमुना कोड नंबरमध्ये फक्त संख्या असाव्यात",
+      "slipNumberRequired": "स्लिप नंबर आवश्यक आहे",
+      "slipNumberOnlyNumbers": "स्लिप नंबरमध्ये फक्त संख्या असाव्यात",
+      "numberOfSlipsRequired": "स्लिप्सची संख्या आवश्यक आहे",
+      "numberOfSlipsOnlyNumbers": "स्लिप्सच्या संख्येमध्ये फक्त संख्या असाव्यात",
+      "numberOfSlipsGreaterThanZero": "स्लिप्सची संख्या 0 पेक्षा जास्त असावी",
+      "numberOfSlipsMaxFive": "स्लिप्सची संख्या 5 पेक्षा जास्त नसावी",
+      "codeNumberOnWrapperRequired": "रॅपरवरील कोड नंबर आवश्यक आहे",
+      "codeNumberOnlyNumbers": "कोड नंबरमध्ये फक्त संख्या असाव्यात",
+      "dateRequired": "तारीख आवश्यक आहे",
+      "dateCannotBeBeforeToday": "तारीख आजच्या आधीची असू शकत नाही",
+      "dateMustBeWithinDays": "तारीख पुढील {days} दिवसांच्या आत असावी",
+      "@dateMustBeWithinDays": {
+        "placeholders": {
+          "days": {
+            "type": "int"
+          }
+        }
+      },
+      "senderNameRequired": "प्रेषकाचे नाव आवश्यक आहे",
+      "senderDesignationRequired": "प्रेषकाचे पदनाम आवश्यक आहे",
+      "areaRequired": "क्षेत्र आवश्यक आहे",
+      "sampleCodeRequired": "नमुना कोड आवश्यक आहे",
+      "collectionDateRequired": "संकलन तारीख आवश्यक आहे",
+      "placeOfCollectionRequired": "संकलन स्थळ आवश्यक आहे",
+      "sampleNameRequired": "नमुन्याचे नाव आवश्यक आहे",
+      "quantityRequired": "प्रमाण आवश्यक आहे",
+      "articleRequired": "वस्तू आवश्यक आहे",
+      "preservativeInfoRequired": "संरक्षक माहिती आवश्यक आहे",
+      "preservativeNameRequired": "संरक्षकाचे नाव आवश्यक आहे",
+      "preservativeQuantityRequired": "संरक्षकाचे प्रमाण आवश्यक आहे",
+      "signatureConfirmationRequired": "स्वाक्षरी पुष्टीकरण आवश्यक आहे",
+      "doSignatureRequired": "DO स्वाक्षरी आवश्यक आहे",
+      "sealImpressionRequired": "शिक्का ठसा आवश्यक आहे",
+      "formVICheckRequired": "फॉर्म VI तपासणी आवश्यक आहे",
+      "wrapperCheckRequired": "रॅपर तपासणी आवश्यक आहे"
 }

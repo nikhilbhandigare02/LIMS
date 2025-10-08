@@ -37,31 +37,23 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
     _dateError = null;
   }
 
-  Future<void> _pickDate(BuildContext context) async {
-    final DateTime today = DateTime.now();
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? today,
-      firstDate: DateTime(today.year, today.month, today.day),
-      lastDate: DateTime(
-        today.year,
-        today.month,
-        today.day,
-      ).add(const Duration(days: _maxDaysAhead)),
-    );
-
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        _dateError = null;
-      });
-
-      final String apiDate = DateFormat(
-        "dd/MM/yyyy HH:mm:ss",
-      ).format(DateTime(picked.year, picked.month, picked.day, 0, 0, 0));
-
-      context.read<RequestStateBloc>().add(RequestDateEvent(picked));
+  static String? validateDateInRange(
+      BuildContext context,
+      DateTime? selectedDate, {
+        int minDaysFromToday = 0,
+        int maxDaysFromToday = 30,
+      }) {
+    if (selectedDate == null) {
+      return AppLocalizations.of(context)!.dateRequired;
     }
+
+    final now = DateTime.now();
+    final minDate = now.add(Duration(days: minDaysFromToday));
+    final maxDate = now.add(Duration(days: maxDaysFromToday));
+
+
+
+    return null;
   }
 
   @override
@@ -160,7 +152,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                           ),
                         ),
                         validator: (value) =>
-                            Validators.validateNumberOfSeals(value),
+                         Validators.validateNumberOfSeals(context, value),
                         onChanged: (value) {
                           context.read<RequestStateBloc>().add(
                             RequestCountEvent(value),
@@ -184,12 +176,12 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                           onPressed: state.apiStatus == ApiStatus.loading
                               ? null
                               : () {
-                                  final String? dateValidation =
-                                      Validators.validateDateInRange(
-                                        selectedDate,
-                                        minDaysFromToday: 0,
-                                        maxDaysFromToday: _maxDaysAhead,
-                                      );
+                            final String? dateValidation = Validators.validateDateInRange(
+                              context,
+                              selectedDate,
+                              minDaysFromToday: 0,
+                              maxDaysFromToday: _maxDaysAhead,
+                            );;
                                   setState(() {
                                     _dateError = dateValidation;
                                   });

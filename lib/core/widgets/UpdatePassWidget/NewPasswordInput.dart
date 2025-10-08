@@ -79,7 +79,7 @@ class _NewPasswordInputState extends State<NewPasswordInput> {
             onChanged: (value) {
               context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
             },
-            validator: (value) => Validators.validateEmptyField(value, 'Password'),
+            validator: (value) => Validators.validateEmptyField(context,value, 'Password'),
           ),
         );
       },

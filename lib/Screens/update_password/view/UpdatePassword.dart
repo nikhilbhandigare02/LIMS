@@ -175,7 +175,8 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 obscureText: false,
                                 isPassword: false,
                                 value: state.Username,
-                                validator: Validators.validateUsername,
+                                validator: (value) => Validators.validateUsername(context, value),
+
                                 onChanged: (value) {
                                   context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
                                 },
@@ -188,7 +189,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 obscureText: _obscureOldPassword,
                                 isPassword: true,
                                 value: state.confirmPassword,
-                                validator: Validators.validateOldPassword,
+                                validator: (value) => Validators.validateOldPassword(context, value),
                                 onChanged: (value) {
                                   context.read<UpdatePasswordBloc>().add(ConformPasswordEvent(confirmPassword: value));
                                 },
@@ -211,7 +212,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen>
                                 obscureText: _obscureNewPassword,
                                 isPassword: true,
                                 value: state.NewPassword,
-                                validator: Validators.validatePassword,
+                                validator: (value) =>Validators.validatePassword(context, value),
                                 onChanged: (value) {
                                   context.read<UpdatePasswordBloc>().add(NewPasswordEvent(NewPassword: value));
                                 },

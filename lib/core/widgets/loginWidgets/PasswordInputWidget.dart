@@ -96,7 +96,7 @@ class _PasswordInputState extends State<PasswordInput> {
             context.read<LoginBloc>().add(PasswordEvent(password: value));
           },
           onFieldSubmitted: (value) {},
-          validator: Validators.validatePassword,
+          validator:  (value)=>Validators. validatePassword(context,value),
         );
       },
     );

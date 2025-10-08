@@ -79,7 +79,7 @@ class _CurrentPasswordInputState extends State<CurrentPasswordInput> {
             onChanged: (value) {
               context.read<UpdatePasswordBloc>().add(updateUsernameEvent(username: value));
             },
-            validator: (value) => Validators.validateEmptyField(value, 'Password'),
+            validator: (value) => Validators.validateEmptyField(context,value, 'Password'),
           ),
         );
       },

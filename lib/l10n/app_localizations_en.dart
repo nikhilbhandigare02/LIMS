@@ -781,4 +781,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get usernameRequired => 'Username is required';
+
+  @override
+  String get oldPasswordRequired => 'Old password is required';
+
+  @override
+  String get nameRequired => 'Name is required';
+
+  @override
+  String get otpRequired => 'OTP is required';
+
+  @override
+  String otpMustBeDigits(int length) {
+    return 'OTP must be $length digits';
+  }
+
+  @override
+  String get otpOnlyDigits => 'OTP must contain only digits';
+
+  @override
+  String get captchaRequired => 'Captcha is required';
+
+  @override
+  String get countryRequired => 'Country is required';
+
+  @override
+  String get stateRequired => 'State is required';
+
+  @override
+  String get districtRequired => 'District is required';
+
+  @override
+  String get divisionRequired => 'Division is required';
+
+  @override
+  String get regionRequired => 'Region is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 8 characters';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get emailInvalid => 'Enter a valid email';
+
+  @override
+  String get mobileRequired => 'Mobile number is required';
+
+  @override
+  String get mobileExactDigits => 'Mobile number must be exactly 10 digits';
+
+  @override
+  String get mobileOnlyDigits => 'Mobile number must contain only digits';
+
+  @override
+  String get otpMaxDigits => 'OTP cannot be more than 6 digits';
+
+  @override
+  String get confirmPasswordRequired => 'Confirm password is required';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String fieldRequired(String fieldName) {
+    return '$fieldName is required';
+  }
+
+  @override
+  String get doNumberRequired => 'DO Number is required';
+
+  @override
+  String get doNumberOnlyNumbers => 'DO Number must contain only numbers';
+
+  @override
+  String get sampleCodeNumberRequired => 'Sample Code Number is required';
+
+  @override
+  String get sampleCodeNumberOnlyNumbers => 'Sample Code Number must contain only numbers';
+
+  @override
+  String get slipNumberRequired => 'Slip Number is required';
+
+  @override
+  String get slipNumberOnlyNumbers => 'Slip Number must contain only numbers';
+
+  @override
+  String get numberOfSlipsRequired => 'Number of Slips is required';
+
+  @override
+  String get numberOfSlipsOnlyNumbers => 'Number of Slips must contain only numbers';
+
+  @override
+  String get numberOfSlipsGreaterThanZero => 'Number of Slips must be greater than 0';
+
+  @override
+  String get numberOfSlipsMaxFive => 'Number of Slips must not be greater than 5';
+
+  @override
+  String get codeNumberOnWrapperRequired => 'Code Number on Wrapper is required';
+
+  @override
+  String get codeNumberOnlyNumbers => 'Code Number must contain only numbers';
+
+  @override
+  String get dateRequired => 'Date is required';
+
+  @override
+  String get dateCannotBeBeforeToday => 'Date cannot be before today';
+
+  @override
+  String dateMustBeWithinDays(int days) {
+    return 'Date must be within the next $days days';
+  }
+
+  @override
+  String get senderNameRequired => 'Sender Name is required';
+
+  @override
+  String get senderDesignationRequired => 'Sender Designation is required';
+
+  @override
+  String get areaRequired => 'Area is required';
+
+  @override
+  String get sampleCodeRequired => 'Sample Code is required';
+
+  @override
+  String get collectionDateRequired => 'Collection Date is required';
+
+  @override
+  String get placeOfCollectionRequired => 'Place of Collection is required';
+
+  @override
+  String get sampleNameRequired => 'Sample Name is required';
+
+  @override
+  String get quantityRequired => 'Quantity is required';
+
+  @override
+  String get articleRequired => 'Article is required';
+
+  @override
+  String get preservativeInfoRequired => 'Preservative info required';
+
+  @override
+  String get preservativeNameRequired => 'Preservative Name required';
+
+  @override
+  String get preservativeQuantityRequired => 'Preservative Quantity required';
+
+  @override
+  String get signatureConfirmationRequired => 'Signature confirmation required';
+
+  @override
+  String get doSignatureRequired => 'DO Signature required';
+
+  @override
+  String get sealImpressionRequired => 'Seal Impression is required';
+
+  @override
+  String get formVICheckRequired => 'Form VI check required';
+
+  @override
+  String get wrapperCheckRequired => 'Wrapper check required';
 }

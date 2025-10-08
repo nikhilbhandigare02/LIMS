@@ -319,7 +319,83 @@
             "login": "Login",
             "marathi": "Marathi",
             "hindi": "Hindi",
-            "english": "English"
+            "english": "English",
+            "usernameRequired": "Username is required",
+              "oldPasswordRequired": "Old password is required",
+              "nameRequired": "Name is required",
+              "otpRequired": "OTP is required",
+              "otpMustBeDigits": "OTP must be {length} digits",
+              "@otpMustBeDigits": {
+                "placeholders": {
+                  "length": {
+                    "type": "int"
+                  }
+                }
+              },
+              "otpOnlyDigits": "OTP must contain only digits",
+              "captchaRequired": "Captcha is required",
+              "countryRequired": "Country is required",
+              "stateRequired": "State is required",
+              "districtRequired": "District is required",
+              "divisionRequired": "Division is required",
+              "regionRequired": "Region is required",
+              "passwordRequired": "Password is required",
+              "passwordMinLength": "Password must be at least 8 characters",
+              "emailRequired": "Email is required",
+              "emailInvalid": "Enter a valid email",
+              "mobileRequired": "Mobile number is required",
+              "mobileExactDigits": "Mobile number must be exactly 10 digits",
+              "mobileOnlyDigits": "Mobile number must contain only digits",
+              "otpMaxDigits": "OTP cannot be more than 6 digits",
+              "confirmPasswordRequired": "Confirm password is required",
+              "passwordsDoNotMatch": "Passwords do not match",
+              "fieldRequired": "{fieldName} is required",
+              "@fieldRequired": {
+                "placeholders": {
+                  "fieldName": {
+                    "type": "String"
+                  }
+                }
+              },
+              "doNumberRequired": "DO Number is required",
+              "doNumberOnlyNumbers": "DO Number must contain only numbers",
+              "sampleCodeNumberRequired": "Sample Code Number is required",
+              "sampleCodeNumberOnlyNumbers": "Sample Code Number must contain only numbers",
+              "slipNumberRequired": "Slip Number is required",
+              "slipNumberOnlyNumbers": "Slip Number must contain only numbers",
+              "numberOfSlipsRequired": "Number of Slips is required",
+              "numberOfSlipsOnlyNumbers": "Number of Slips must contain only numbers",
+              "numberOfSlipsGreaterThanZero": "Number of Slips must be greater than 0",
+              "numberOfSlipsMaxFive": "Number of Slips must not be greater than 5",
+              "codeNumberOnWrapperRequired": "Code Number on Wrapper is required",
+              "codeNumberOnlyNumbers": "Code Number must contain only numbers",
+              "dateRequired": "Date is required",
+              "dateCannotBeBeforeToday": "Date cannot be before today",
+              "dateMustBeWithinDays": "Date must be within the next {days} days",
+              "@dateMustBeWithinDays": {
+                "placeholders": {
+                  "days": {
+                    "type": "int"
+                  }
+                }
+              },
+              "senderNameRequired": "Sender Name is required",
+              "senderDesignationRequired": "Sender Designation is required",
+              "areaRequired": "Area is required",
+              "sampleCodeRequired": "Sample Code is required",
+              "collectionDateRequired": "Collection Date is required",
+              "placeOfCollectionRequired": "Place of Collection is required",
+              "sampleNameRequired": "Sample Name is required",
+              "quantityRequired": "Quantity is required",
+              "articleRequired": "Article is required",
+              "preservativeInfoRequired": "Preservative info required",
+              "preservativeNameRequired": "Preservative Name required",
+              "preservativeQuantityRequired": "Preservative Quantity required",
+              "signatureConfirmationRequired": "Signature confirmation required",
+              "doSignatureRequired": "DO Signature required",
+              "sealImpressionRequired": "Seal Impression is required",
+              "formVICheckRequired": "Form VI check required",
+              "wrapperCheckRequired": "Wrapper check required"
 
          }
 

@@ -147,7 +147,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                               length: _otpLength,
                               value: _otpValue,
                               onChanged: _onOtpChanged,
-                              validator: Validators.validateOTP,
+                                validator: (value) => Validators.validateOTP(context, value, length: 6),
                             ),
 
                             if (_otpError != null)

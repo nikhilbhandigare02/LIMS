@@ -107,7 +107,7 @@ List<List<Widget>> getOtherInformationSteps(
         //icon: Icons.numbers,
         initialValue: state.DONumber,
         onChanged: (val) => bloc.add(DONumberChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, l.doNumber),
+        validator: (v) => Validators.validateEmptyField(context,v, l.doNumber),
         // validator: Validators.validateDONumber,
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -134,7 +134,7 @@ List<List<Widget>> getOtherInformationSteps(
                     bloc.add(FetchDivisionsRequested(districtId));
                   }
                 },
-                validator: Validators.validateDistrict,
+                validator: (value)=>Validators.validateDistrict(context,value),
               ),
             ),
           );
@@ -196,7 +196,7 @@ List<List<Widget>> getOtherInformationSteps(
                     bloc.add(FetchRegionsRequested(divisionId));
                   }
                 },
-                validator: Validators.validateDivision,
+                validator:  (value)=>Validators.validateDivision(context,value),
               ),
             ),
           );
@@ -253,7 +253,7 @@ List<List<Widget>> getOtherInformationSteps(
                   if (val == null) return;
                   bloc.add(RegionChanged(val));
                 },
-                validator: Validators.validateRegion,
+                validator:  (value)=>Validators.validateRegion(context,value),
               ),
             ),
           );
@@ -265,7 +265,7 @@ List<List<Widget>> getOtherInformationSteps(
         //icon: Icons.home,
         initialValue: state.area,
         onChanged: (val) => bloc.add(AreaChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, l.area),
+        validator: (v) => Validators.validateEmptyField(context,v, l.area),
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -274,7 +274,7 @@ List<List<Widget>> getOtherInformationSteps(
         initialValue: state.sendingSampleLocation ??  '',
         onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, l.sendingSampleLocation),
+            Validators.validateEmptyField(context,v, l.sendingSampleLocation),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -308,7 +308,7 @@ List<List<Widget>> getOtherInformationSteps(
               if (val == null) return;
               bloc.add(LabChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, l.labLabel),
+            validator: (v) => Validators.validateEmptyField(context,v, l.labLabel),
           );
         },
       ),
@@ -417,7 +417,7 @@ List<List<Widget>> getSampleDetailsSteps(
               if (val == null) return;
               bloc.add(DoSealNumbersChanged(val));
             },
-            validator: (v) => Validators.validateEmptyField(v, l.doSlipNumbers),
+            validator: (v) => Validators.validateEmptyField(context,v, l.doSlipNumbers),
           );
         },
       ),
@@ -428,7 +428,7 @@ List<List<Widget>> getSampleDetailsSteps(
         initialValue: state.sampleCodeData,
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, l.sampleCodeNumber),
+            Validators.validateEmptyField(context,v, l.sampleCodeNumber),
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
       ),
@@ -460,7 +460,7 @@ List<List<Widget>> getSampleDetailsSteps(
         initialValue: state.placeOfCollection,
         onChanged: (val) => bloc.add(PlaceChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, l.collectionPlace),
+            Validators.validateEmptyField(context,v, l.collectionPlace),
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -468,7 +468,7 @@ List<List<Widget>> getSampleDetailsSteps(
         // icon: Icons.label,
         initialValue: state.SampleName,
         onChanged: (val) => bloc.add(SampleNameChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, l.sampleName),
+        validator: (v) => Validators.validateEmptyField(context,v, l.sampleName),
       ),
       SizedBox(height: 16),
       BlocTextInput(
@@ -477,7 +477,7 @@ List<List<Widget>> getSampleDetailsSteps(
         initialValue: state.QuantitySample,
         onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, l.quantity),
+            Validators.validateEmptyField(context,v, l.quantity),
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -512,7 +512,7 @@ List<List<Widget>> getSampleDetailsSteps(
               bloc.add(articleChanged(val));
             },
             validator: (v) =>
-                Validators.validateEmptyField(v, l.natureOfSample),
+                Validators.validateEmptyField(context,v, l.natureOfSample),
           );
         },
       ),
@@ -562,7 +562,7 @@ List<List<Widget>> getSampleDetailsSteps(
                     preservativeNameChanged(val),
                   ),
                   validator: (v) => state.preservativeAdded == true
-                      ? Validators.validateEmptyField(v, l.preservativeName)
+                      ? Validators.validateEmptyField(context,v, l.preservativeName)
                       : null,
                 ),
                 SizedBox(height: 16),
@@ -575,7 +575,7 @@ List<List<Widget>> getSampleDetailsSteps(
                   ),
                   validator: (v) => state.preservativeAdded == true
                       ? Validators.validateEmptyField(
-                          v,
+                          context,v,
                           l.preservativeQuantity,
                         )
                       : null,
@@ -652,7 +652,7 @@ List<List<Widget>> getSampleDetailsSteps(
 
         onChanged: (val) => bloc.add(sampleCodeNumberChanged(val)),
         validator: (v) =>
-            Validators.validateEmptyField(v, l.wrapperCode),
+            Validators.validateEmptyField(context,v, l.wrapperCode),
 
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -688,7 +688,7 @@ List<List<Widget>> getSampleDetailsSteps(
         // icon: Icons.lock,
         initialValue: state.numberofSeal,
         onChanged: (val) => bloc.add(numberofSealChanged(val)),
-        validator: (v) => Validators.validateEmptyField(v, l.sealNumber),
+        validator: (v) => Validators.validateEmptyField(context,v, l.sealNumber),
 
         inputFormatters: Validators.getNumberOnlyInputFormatters(),
         keyboardType: TextInputType.number,
@@ -785,7 +785,7 @@ List<List<Widget>> getSampleDetailsSteps(
                             return TextFormField(
                               initialValue: baseName,
                               autovalidateMode: AutovalidateMode.onUserInteraction,
-                              validator: (v) => Validators.validateEmptyField(v, l.documentName),
+                              validator: (v) => Validators.validateEmptyField(context,v, l.documentName),
                               onChanged: (v) {
                                 final newName = (v.isEmpty ? '' : v) + '.' + ext;
                                 context.read<SampleFormBloc>().add(
@@ -836,7 +836,7 @@ List<List<Widget>> getSampleDetailsSteps(
                               onChanged: (val) => context.read<SampleFormBloc>().add(
                                 UpdateUploadedDocumentName(index: index, name: val),
                               ),
-                              validator: (v) => Validators.validateEmptyField(v, l.documentName),
+                              validator: (v) => Validators.validateEmptyField(context,v, l.documentName),
                             );
                           }
                         })(),
