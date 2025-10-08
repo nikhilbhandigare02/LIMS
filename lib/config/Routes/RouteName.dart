@@ -17,4 +17,5 @@ class RouteName{
   static const String SlipRequestDetailsScreen = 'SealRequestDetailsScreen';
   static const String biometricOptInScreen = 'biometricOptInScreen';
   static const String ResubmitSample = 'ResubmitSample';
+  static const String instructionScreen = 'instructionScreen';
 }
