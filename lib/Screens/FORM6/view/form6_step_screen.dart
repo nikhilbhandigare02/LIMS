@@ -45,7 +45,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     print("🔄 Form6StepScreen initialized for section: ${widget.section} with initial step: $currentStep");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
     context.read<SampleFormBloc>().add(const FetchDistrictsRequested(1));
-    context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
+    // context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
   }
 
   @override

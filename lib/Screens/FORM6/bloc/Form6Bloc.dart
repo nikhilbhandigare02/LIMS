@@ -177,6 +177,19 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<UploadFinished>((event, emit) {
       emit(state.copyWith(isUploading: false));
     });
+    // New textarea fields handlers
+    on<SpecialRequestReasonChanged>((event, emit) {
+      emit(state.copyWith(specialRequestReason: event.value));
+    });
+    on<AdditionalInfoChanged>((event, emit) {
+      emit(state.copyWith(additionalRelevantInfo: event.value));
+    });
+    on<ParametersAsPerFSSAIChanged>((event, emit) {
+      emit(state.copyWith(parametersAsPerFSSAI: event.value));
+    });
+    on<AdditionalTestsChanged>((event, emit) {
+      emit(state.copyWith(additionalTests: event.value));
+    });
     on<LoadSavedFormData>((event, emit) {
       // Preserve in-memory uploads if storage has none (we no longer persist base64)
       final mergedState = event.savedState.copyWith(
@@ -192,9 +205,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       // If dropdown options are missing, load them
       if (event.savedState.districtOptions.isEmpty) {
         add(const FetchDistrictsRequested(1));
-      }
-      if (event.savedState.natureOptions.isEmpty) {
-        add(const FetchNatureOfSampleRequested());
       }
       if (event.savedState.sealNumberOptions.isEmpty) {
         add(const FetchSealNumberChanged());
@@ -321,12 +331,18 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       emit(state.copyWith(QuantitySample: event.value));
     });
+
+    on<NumberOfSampleChanged>((event, emit) {
+      print(state.NumberOfSample);
+
+      emit(state.copyWith(NumberOfSample: event.value));
+    });
     on<articleChanged>((event, emit) {
       print(state.article);
 
       emit(state.copyWith(article: event.value));
     });
-    on<FetchNatureOfSampleRequested>(_onFetchNatureOfSampleRequested);
+
     on<RegionChanged>((event, emit) {
       print(state.region);
       emit(state.copyWith(region: event.value));
@@ -490,7 +506,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     // Schedule initial fetches after all handlers are registered
     Future.microtask(() {
       add(const FetchDistrictsRequested(1));
-      add(const FetchNatureOfSampleRequested());
       add(const FetchLabMasterRequested());
       add(const FetchSealNumberChanged());
       add(const FetchDoSealNumbersRequested());
@@ -767,74 +782,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     } catch (_) {}
   }
 
-  Future<void> _onFetchNatureOfSampleRequested(
-      FetchNatureOfSampleRequested event,
-      Emitter<SampleFormState> emit,
-      ) async {
-    try {
-      final request = <String, dynamic>{};
-      if (event.categoryId != null) request['CategoryId'] = event.categoryId;
 
-      final session = await encryptWithSession(
-        data: request,
-        rsaPublicKeyPem: rsaPublicKeyPem,
-      );
-
-      final encryptedResponse = await form6repository.getNatureOfSample(session.payloadForServer);
-      if (encryptedResponse == null) return;
-
-      try {
-        final String encryptedDataBase64 =
-        (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-        final String serverIvBase64 = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
-
-        final String decrypted = utf8.decode(
-          aesCbcDecrypt(
-            base64ToBytes(encryptedDataBase64),
-            session.aesKeyBytes,
-            base64ToBytes(serverIvBase64),
-          ),
-        );
-
-        final parsed = _parseIdNameList(
-          decrypted,
-          idKeys: ['natureId', 'NatureId', 'Id', 'id'],
-          nameKeys: ['natureName', 'NatureName', 'name', 'Name', 'text', 'Text', 'label', 'Label'],
-        );
-        emit(state.copyWith(
-          natureOptions: parsed.names,
-          natureIdByName: parsed.nameToId,
-          article: state.article,
-        ));
-      } catch (e) {
-        try {
-          final String encryptedAESKey =
-          (encryptedResponse['encryptedAESKey'] ?? encryptedResponse['EncryptedAESKey']) as String;
-          final String encryptedData =
-          (encryptedResponse['encryptedData'] ?? encryptedResponse['EncryptedData']) as String;
-          final String iv = (encryptedResponse['iv'] ?? encryptedResponse['IV']) as String;
-
-          final String decryptedFallback = await decrypt(
-            encryptedAESKeyBase64: encryptedAESKey,
-            encryptedDataBase64: encryptedData,
-            ivBase64: iv,
-            rsaPrivateKeyPem: rsaPrivateKeyPem,
-          );
-          final parsed = _parseIdNameList(
-            decryptedFallback,
-            idKeys: ['natureId', 'NatureId', 'Id', 'id'],
-            nameKeys: ['natureName', 'NatureName', 'name', 'Name', 'text', 'Text', 'label', 'Label'],
-          );
-          emit(state.copyWith(
-            natureOptions: parsed.names,
-            natureIdByName: parsed.nameToId,
-            // keep user's current selection; do not auto-select the first option
-            article: state.article,
-          ));
-        } catch (_) {}
-      }
-    } catch (_) {}
-  }
 
   List<String> _parseRegionNames(String decryptedJson) {
     try {
@@ -1032,11 +980,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         }
       }
 
-      if (state.natureOptions.isEmpty) {
-        print("🔄 Loading nature of sample options...");
-        await _onFetchNatureOfSampleRequested(const FetchNatureOfSampleRequested(), emit);
-      }
-
       if (state.sealNumberOptions.isEmpty) {
         print("🔄 Loading seal number options...");
         await _onFetchSealNumberChanged(const FetchSealNumberChanged(), emit);
@@ -1045,23 +988,19 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       final int? districtId = state.districtIdByName[state.district];
       final int? regionId = state.regionIdByName[state.region];
       final int? divisionId = state.divisionIdByName[state.division];
-      final int? sampleId = state.natureIdByName[state.article];
-
       // Debug logging
       print("🔍 Submit validation - District: '${state.district}' -> ID: $districtId");
       print("🔍 Submit validation - Region: '${state.region}' -> ID: $regionId");
       print("🔍 Submit validation - Division: '${state.division}' -> ID: $divisionId");
-      print("🔍 Submit validation - Article: '${state.article}' -> ID: $sampleId");
       print("🔍 Submit validation - Seal Number: '${state.sealNumber}'");
       print("🔍 Submit validation - DO Seal Number: '${state.doSlipNumbers}'");
       print("🔍 Available district IDs: ${state.districtIdByName}");
       print("🔍 Available region IDs: ${state.regionIdByName}");
       print("🔍 Available division IDs: ${state.divisionIdByName}");
-      print("🔍 Available nature IDs: ${state.natureIdByName}");
       print("🔍 Available seal numbers: ${state.sealNumberOptions}");
       print("🔍 Available DO seal numbers: ${state.doSealNumbersOptions}");
 
-      if (districtId == null || regionId == null || divisionId == null || sampleId == null) {
+      if (districtId == null || regionId == null || divisionId == null) {
         print("⚠️ Some IDs are still null, waiting a bit more for options to load...");
         await Future.delayed(const Duration(milliseconds: 1000));
 
@@ -1069,12 +1008,10 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         final retryDistrictId = state.districtIdByName[state.district];
         final retryRegionId = state.regionIdByName[state.region];
         final retryDivisionId = state.divisionIdByName[state.division];
-        final retrySampleId = state.natureIdByName[state.article];
 
         print("🔍 Retry validation - District: '${state.district}' -> ID: $retryDistrictId");
         print("🔍 Retry validation - Region: '${state.region}' -> ID: $retryRegionId");
         print("🔍 Retry validation - Division: '${state.division}' -> ID: $retryDivisionId");
-        print("🔍 Retry validation - Article: '${state.article}' -> ID: $retrySampleId");
       }
 
       // Validate required IDs before submitting
@@ -1092,12 +1029,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       }
       if (regionId == null) {
         final errorMsg = 'Region not found. Please re-select Region. Available: ${state.regionOptions.join(", ")}';
-        print("❌ $errorMsg");
-        emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
-        return;
-      }
-      if (sampleId == null) {
-        final errorMsg = 'Nature of Sample not found. Please re-select Nature of Sample. Available: ${state.natureOptions.join(", ")}';
         print("❌ $errorMsg");
         emit(state.copyWith(message: errorMsg, apiStatus: ApiStatus.error));
         return;
@@ -1129,7 +1060,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'PlaceOfCollection': state.placeOfCollection,
         'SampleName': state.SampleName,
         'QuantityOfSample': state.QuantitySample,
-        'SampleId': sampleId,
         'PreservativeAdded': state.preservativeAdded == true,
         'PreservativeName': state.preservativeName,
         'QuantityOfPreservative': state.preservativeQuantity,
@@ -1201,7 +1131,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         print('Payload encryptedData length: ${encryptedPayload['encryptedData']?.length}');
         print('Payload encryptedAESKey length: ${encryptedPayload['encryptedAESKey']?.length}');
         print('Payload iv length: ${encryptedPayload['iv']?.length}');
-            // Additional validation
+        // Additional validation
         print('Payload size: ${encryptedPayload.length}');
         print('Payload contains encryptedData: ${encryptedPayload.containsKey('encryptedData')}');
         print('Payload contains encryptedAESKey: ${encryptedPayload.containsKey('encryptedAESKey')}');

@@ -35,7 +35,6 @@ class Form6Storage {
     if (userId == null) throw Exception('User not logged in');
     final userIdStr = userId.toString(); // ✅ convert int to String
 
-    // Only persist document metadata locally to avoid huge rows
     final List<Map<String, dynamic>> documentsJson = state.uploadedDocs.map((doc) => {
       'name': doc.name,
       'mimeType': doc.mimeType,
@@ -56,6 +55,7 @@ class Form6Storage {
       'placeOfCollection': state.placeOfCollection,
       'SampleName': state.SampleName,
       'QuantitySample': state.QuantitySample,
+      'NumberOfSample': state.NumberOfSample,
       'article': state.article,
       'preservativeAdded': state.preservativeAdded == null ? null : (state.preservativeAdded! ? 1 : 0),
       'preservativeName': state.preservativeName,
@@ -73,8 +73,6 @@ class Form6Storage {
       'regionIdByName': jsonEncode(state.regionIdByName),
       'divisionOptions': jsonEncode(state.divisionOptions),
       'divisionIdByName': jsonEncode(state.divisionIdByName),
-      'natureOptions': jsonEncode(state.natureOptions),
-      'natureIdByName': jsonEncode(state.natureIdByName),
       'lab': state.lab,
       'labOptions': jsonEncode(state.labOptions),
       'labIdByName': jsonEncode(state.labIdByName),
@@ -89,6 +87,11 @@ class Form6Storage {
       'documentName': state.documentName,
       'Lattitude': state.Lattitude,
       'Longitude': state.Longitude,
+      // New additional details fields (vi)-(viii)
+      'specialRequestReason': state.specialRequestReason,
+      'additionalRelevantInfo': state.additionalRelevantInfo,
+      'parametersAsPerFSSAI': state.parametersAsPerFSSAI,
+      'additionalTests': state.additionalTests,
     };
 
     // ✅ Save data per user
@@ -159,6 +162,7 @@ class Form6Storage {
       placeOfCollection: data['placeOfCollection'] ?? '',
       SampleName: data['SampleName'] ?? '',
       QuantitySample: data['QuantitySample'] ?? '',
+      NumberOfSample: data['NumberOfSample'] ?? '',
       article: data['article'] ?? '',
       preservativeAdded: toBool(data['preservativeAdded']),
       preservativeName: data['preservativeName'] ?? '',
@@ -176,8 +180,6 @@ class Form6Storage {
       regionIdByName: parseStringIntMap(data['regionIdByName']),
       divisionOptions: parseStringList(data['divisionOptions']),
       divisionIdByName: parseStringIntMap(data['divisionIdByName']),
-      natureOptions: parseStringList(data['natureOptions']),
-      natureIdByName: parseStringIntMap(data['natureIdByName']),
       lab: data['lab'] ?? '',
       labOptions: parseStringList(data['labOptions']),
       labIdByName: parseStringIntMap(data['labIdByName']),
@@ -192,6 +194,10 @@ class Form6Storage {
       documentName: data['documentName'] ?? '',
       Lattitude: data['Lattitude'] ?? '',
       Longitude: data['Longitude'] ?? '',
+      specialRequestReason: data['specialRequestReason'] ?? '',
+      additionalRelevantInfo: data['additionalRelevantInfo'] ?? '',
+      parametersAsPerFSSAI: data['parametersAsPerFSSAI'] ?? '',
+      additionalTests: data['additionalTests'] ?? '',
     );
 
     // ⬇️ Rehydrate documents from chunk table

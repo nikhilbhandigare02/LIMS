@@ -96,18 +96,18 @@ class QuantitySampleChanged extends SampleFormEvent {
   List<Object?> get props => [value];
 }
 
-class articleChanged extends SampleFormEvent {
-  final String? value;
-  const articleChanged(this.value);
+class NumberOfSampleChanged extends SampleFormEvent {
+  final String value;
+  const NumberOfSampleChanged(this.value);
   @override
   List<Object?> get props => [value];
 }
 
-class FetchNatureOfSampleRequested extends SampleFormEvent {
-  final int? categoryId; // optional filter if backend supports
-  const FetchNatureOfSampleRequested({this.categoryId});
+class articleChanged extends SampleFormEvent {
+  final String value;
+  const articleChanged(this.value);
   @override
-  List<Object?> get props => [categoryId];
+  List<Object?> get props => [value];
 }
 
 class PreservativeAddedChanged extends SampleFormEvent {
@@ -339,4 +339,33 @@ class UploadFinished extends SampleFormEvent {}
 class UploadFailed extends SampleFormEvent {
   final String message;
   UploadFailed(this.message);
+}
+
+// ===== New events for extra step (vi)-(viii) =====
+class SpecialRequestReasonChanged extends SampleFormEvent {
+  final String value;
+  const SpecialRequestReasonChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class AdditionalInfoChanged extends SampleFormEvent {
+  final String value;
+  const AdditionalInfoChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class ParametersAsPerFSSAIChanged extends SampleFormEvent {
+  final String value;
+  const ParametersAsPerFSSAIChanged(this.value);
+  @override
+  List<Object?> get props => [value];
+}
+
+class AdditionalTestsChanged extends SampleFormEvent {
+  final String value;
+  const AdditionalTestsChanged(this.value);
+  @override
+  List<Object?> get props => [value];
 }

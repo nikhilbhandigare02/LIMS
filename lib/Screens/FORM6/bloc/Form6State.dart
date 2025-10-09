@@ -25,9 +25,8 @@ class SampleFormState extends Equatable {
   final String placeOfCollection;
   final String SampleName;
   final String QuantitySample;
+  final String NumberOfSample;
   final String article;
-  final List<String> natureOptions;
-  final Map<String, int> natureIdByName;
   final bool? preservativeAdded;
   final String preservativeName;
   final String preservativeQuantity;
@@ -55,6 +54,11 @@ class SampleFormState extends Equatable {
   final String doSlipNumbers;
   final List<String> doSealNumbersOptions;
   final Map<String, int> doSealNumbersIdByName;
+  // New fields for extra step (vi)-(viii)
+  final String specialRequestReason;
+  final String additionalRelevantInfo;
+  final String parametersAsPerFSSAI;
+  final String additionalTests;
 
   const SampleFormState({
     this.senderName = '',
@@ -70,6 +74,7 @@ class SampleFormState extends Equatable {
     this.Longitude = '',
     this.Lattitude = '',
     this.region = '',
+    this.article = '',
     this.regionOptions = const [],
     this.regionIdByName = const {},
     this.division = '',
@@ -83,9 +88,7 @@ class SampleFormState extends Equatable {
     this.documentName = '',
     this.uploadedDocument = '',
     this.QuantitySample = '',
-    this.article = '',
-    this.natureOptions = const [],
-    this.natureIdByName = const {},
+    this.NumberOfSample = '',
     this.preservativeAdded, // default null
     this.preservativeName = '',
     this.preservativeQuantity = '',
@@ -111,6 +114,10 @@ class SampleFormState extends Equatable {
     this.doSlipNumbers = '',
     this.doSealNumbersOptions = const [],
     this.doSealNumbersIdByName = const {},
+    this.specialRequestReason = '',
+    this.additionalRelevantInfo = '',
+    this.parametersAsPerFSSAI = '',
+    this.additionalTests = '',
   });
 
   SampleFormState copyWith({
@@ -121,6 +128,7 @@ class SampleFormState extends Equatable {
     String? DONumber,
     String? senderDesignation,
     String? district,
+    String? article,
     bool? isUploading,
     int? requestId,
     String? documentName,
@@ -140,9 +148,7 @@ class SampleFormState extends Equatable {
     String? placeOfCollection,
     String? SampleName,
     String? QuantitySample,
-    String? article,
-    List<String>? natureOptions,
-    Map<String, int>? natureIdByName,
+    String? NumberOfSample,
     bool? preservativeAdded,
     String? preservativeName,
     String? preservativeQuantity,
@@ -169,6 +175,10 @@ class SampleFormState extends Equatable {
     List<String>? doSealNumbersOptions,
     Map<String, int>? doSealNumbersIdByName,
     bool clearUploadError = false, // use to explicitly clear the error
+    String? specialRequestReason,
+    String? additionalRelevantInfo,
+    String? parametersAsPerFSSAI,
+    String? additionalTests,
 
   }) {
     return SampleFormState(
@@ -179,6 +189,7 @@ class SampleFormState extends Equatable {
       senderDesignation: senderDesignation ?? this.senderDesignation,
       district: district ?? this.district,
       requestId: requestId ?? this.requestId,
+      article: article ?? this.article,
       documentName: documentName ?? this.documentName,
       uploadedDocument: uploadedDocument ?? this.uploadedDocument,
       districtOptions: districtOptions ?? this.districtOptions,
@@ -197,9 +208,7 @@ class SampleFormState extends Equatable {
       placeOfCollection: placeOfCollection ?? this.placeOfCollection,
       SampleName: SampleName ?? this.SampleName,
       QuantitySample: QuantitySample ?? this.QuantitySample,
-      article: article ?? this.article,
-      natureOptions: natureOptions ?? this.natureOptions,
-      natureIdByName: natureIdByName ?? this.natureIdByName,
+      NumberOfSample: NumberOfSample ?? this.NumberOfSample,
       preservativeAdded: preservativeAdded ?? this.preservativeAdded,
       preservativeName: preservativeName ?? this.preservativeName,
       preservativeQuantity: preservativeQuantity ?? this.preservativeQuantity,
@@ -225,6 +234,10 @@ class SampleFormState extends Equatable {
       doSlipNumbers: doSlipNumbers ?? this.doSlipNumbers,
       doSealNumbersOptions: doSealNumbersOptions ?? this.doSealNumbersOptions,
       doSealNumbersIdByName: doSealNumbersIdByName ?? this.doSealNumbersIdByName,
+      specialRequestReason: specialRequestReason ?? this.specialRequestReason,
+      additionalRelevantInfo: additionalRelevantInfo ?? this.additionalRelevantInfo,
+      parametersAsPerFSSAI: parametersAsPerFSSAI ?? this.parametersAsPerFSSAI,
+      additionalTests: additionalTests ?? this.additionalTests,
 
     );
   }
@@ -235,6 +248,7 @@ class SampleFormState extends Equatable {
     DONumber,
     senderDesignation,
     district,
+    article,
     requestId,
     districtOptions,
     districtIdByName,
@@ -253,11 +267,9 @@ class SampleFormState extends Equatable {
     sampleCodeData,
     collectionDate,
     placeOfCollection,
+    NumberOfSample,
     SampleName,
     QuantitySample,
-    article,
-    natureOptions,
-    natureIdByName,
     preservativeAdded,
     preservativeName,
     preservativeQuantity,
@@ -282,7 +294,11 @@ class SampleFormState extends Equatable {
     doSealNumbersOptions,
     doSealNumbersIdByName,
     uploadError,
-    isUploading
+    isUploading,
+    specialRequestReason,
+    additionalRelevantInfo,
+    parametersAsPerFSSAI,
+    additionalTests,
   ];
 
   bool get isOtherInfoComplete {
@@ -299,7 +315,7 @@ class SampleFormState extends Equatable {
 
   bool get isSampleInfoComplete {
     final bool hasAtLeastOneValidDoc = uploadedDocs.any(
-      (d) => d.name.isNotEmpty && d.base64Data.isNotEmpty,
+          (d) => d.name.isNotEmpty && d.base64Data.isNotEmpty,
     );
 
     return sampleCodeData.isNotEmpty &&
@@ -307,6 +323,7 @@ class SampleFormState extends Equatable {
         placeOfCollection.isNotEmpty &&
         SampleName.isNotEmpty &&
         QuantitySample.isNotEmpty &&
+        NumberOfSample.isNotEmpty &&
         article.isNotEmpty &&
         preservativeAdded != null &&
         personSignature != null &&
@@ -335,6 +352,7 @@ class SampleFormState extends Equatable {
       'placeOfCollection': placeOfCollection,
       'SampleName': SampleName,
       'QuantitySample': QuantitySample,
+      'NumberOfSample': NumberOfSample,
       'article': article,
       'preservativeAdded': preservativeAdded == null ? null : (preservativeAdded! ? 1 : 0),
       'preservativeName': preservativeName,
@@ -360,6 +378,10 @@ class SampleFormState extends Equatable {
       'uploadedDocs': uploadedDocs.map((e) => e.toMap()).toList(),
       'doSlipNumbers': doSlipNumbers,
       'doSealNumbersIdByName': doSealNumbersIdByName,
+      'specialRequestReason': specialRequestReason,
+      'additionalRelevantInfo': additionalRelevantInfo,
+      'parametersAsPerFSSAI': parametersAsPerFSSAI,
+      'additionalTests': additionalTests,
     };
   }
 
@@ -380,6 +402,7 @@ class SampleFormState extends Equatable {
       placeOfCollection: map['placeOfCollection'] ?? '',
       SampleName: map['SampleName'] ?? '',
       QuantitySample: map['QuantitySample'] ?? '',
+      NumberOfSample: map['NumberOfSample'] ?? '',
       article: map['article'] ?? '',
       preservativeAdded: map['preservativeAdded'] == null
           ? null
@@ -415,13 +438,17 @@ class SampleFormState extends Equatable {
       sendingSampleLocation: map['sendingSampleLocation'] ?? '',
       uploadedDocs: map['uploadedDocs'] != null
           ? List<Map<String, dynamic>>.from(map['uploadedDocs'])
-              .map((m) => UploadedDoc.fromMap(m))
-              .toList()
+          .map((m) => UploadedDoc.fromMap(m))
+          .toList()
           : const [],
       documentNames: map['documentNames'] != null ? List<String>.from(map['documentNames']) : const [],
       doSlipNumbers: map['doSlipNumbers'] ?? '',
       doSealNumbersOptions: map['doSealNumbersOptions'] != null ? List<String>.from(map['doSealNumbersOptions']) : const [],
       doSealNumbersIdByName: map['doSealNumbersIdByName'] != null ? Map<String, int>.from(map['doSealNumbersIdByName']) : const {},
+      specialRequestReason: map['specialRequestReason'] ?? '',
+      additionalRelevantInfo: map['additionalRelevantInfo'] ?? '',
+      parametersAsPerFSSAI: map['parametersAsPerFSSAI'] ?? '',
+      additionalTests: map['additionalTests'] ?? '',
     );
   }
 }

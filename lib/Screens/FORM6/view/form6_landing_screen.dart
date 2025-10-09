@@ -26,6 +26,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   bool isSampleInfoComplete = false; // Sample Info
   bool isPreservativeComplete = false; // Preservative Info
   bool isSealComplete = false; // Seal Details
+  bool isAdditionalDetailsComplete = false; // (vi)-(viii) Additional details
   bool isReviewComplete = false; // Review & Submit
   final Form6Storage storage = Form6Storage();
 
@@ -48,19 +49,20 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
     final savedState = await storage.fetchStoredState();
     if (mounted) {
       setState(() {
-        // Compute completion from saved fields for resilience across app restarts
         if (savedState != null) {
           final s = savedState;
           isOtherInfoComplete = _isFsoInfoComplete(s);
           isSampleInfoComplete = _isSampleInfoComplete(s);
           isPreservativeComplete = _isPreservativeInfoComplete(s);
           isSealComplete = _isSealInfoComplete(s);
+          isAdditionalDetailsComplete = _isAdditionalDetailsComplete(s);
           isReviewComplete = isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete;
         } else {
           isOtherInfoComplete = false;
           isSampleInfoComplete = false;
           isPreservativeComplete = false;
           isSealComplete = false;
+          isAdditionalDetailsComplete = false;
           isReviewComplete = false;
         }
       });
@@ -102,11 +104,11 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         },
         child:  BlocListener<SampleFormBloc, SampleFormState>(
           listener: (context, state) async {
-            // Update completion status whenever state changes
             final newOtherComplete = _isFsoInfoComplete(state);
             final newSampleComplete = _isSampleInfoComplete(state);
             final newPreservativeComplete = _isPreservativeInfoComplete(state);
             final newSealComplete = _isSealInfoComplete(state);
+            final newAdditionalDetailsComplete = _isAdditionalDetailsComplete(state);
             final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete;
 
             final changed =
@@ -114,6 +116,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                     newSampleComplete != isSampleInfoComplete ||
                     newPreservativeComplete != isPreservativeComplete ||
                     newSealComplete != isSealComplete ||
+                    newAdditionalDetailsComplete != isAdditionalDetailsComplete ||
                     newReviewComplete != isReviewComplete;
 
             if (changed) {
@@ -123,6 +126,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 isSampleInfoComplete = newSampleComplete;
                 isPreservativeComplete = newPreservativeComplete;
                 isSealComplete = newSealComplete;
+                isAdditionalDetailsComplete = newAdditionalDetailsComplete;
                 isReviewComplete = newReviewComplete;
               });
             }
@@ -239,6 +243,14 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'section': 'sample',
       },
       {
+        'title': 'Additional details (vi)-(viii)',
+        'subtitle': 'Special request, additional info, parameters to test',
+        'icon': Icons.assignment_outlined,
+        'isComplete': isAdditionalDetailsComplete,
+        'color': Colors.teal,
+        'section': 'sample',
+      },
+      {
         'title': localizations.form6_landing_review_submit_title,
         'subtitle': localizations.form6_landing_review_submit_subtitle,
         'icon': Icons.send_outlined,
@@ -266,6 +278,8 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                   initialStep = 1; // Second step for preservative info
                 } else if (step['title'] == localizations.form6_landing_seal_details_title) {
                   initialStep = 2; // Third step for seal details
+                } else if (step['title'] == 'Additional details (vi)-(viii)') {
+                  initialStep = 3; // Fourth step for additional details
                 } else if (step['title'] == localizations.form6_landing_review_submit_title) {
                   initialStep = 2; // Use last available step for review
                 }
@@ -476,8 +490,8 @@ bool _isSampleInfoComplete(SampleFormState s) {
       s.collectionDate != null &&
       s.placeOfCollection.isNotEmpty &&
       s.SampleName.isNotEmpty &&
-      s.QuantitySample.isNotEmpty &&
-      s.article.isNotEmpty;
+      s.QuantitySample.isNotEmpty;
+  // s.article.isNotEmpty;
 }
 
 bool _isPreservativeInfoComplete(SampleFormState s) {
@@ -495,4 +509,12 @@ bool _isSealInfoComplete(SampleFormState s) {
       s.sealImpression != null &&
       s.numberofSeal.isNotEmpty &&
       hasDoSeal;
+}
+
+// New helper: completion for additional details step (vi)-(viii)
+bool _isAdditionalDetailsComplete(SampleFormState s) {
+  // additionalTests is optional; other three are required
+  return s.specialRequestReason.isNotEmpty &&
+      s.additionalRelevantInfo.isNotEmpty &&
+      s.parametersAsPerFSSAI.isNotEmpty;
 }
