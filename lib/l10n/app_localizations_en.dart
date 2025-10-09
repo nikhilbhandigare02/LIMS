@@ -198,7 +198,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sampleInformation => 'Sample Information';
 
   @override
-  String get sampleCode => 'Sample Code';
+  String get sampleCode => 'Sample Code Number';
 
   @override
   String get slipNumber => 'Slip Number';
@@ -207,52 +207,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collectionDate => 'Collection Date';
 
   @override
-  String get collectionPlace => 'Collection Place';
+  String get collectionPlace => 'Place Of Collection';
 
   @override
   String get sampleName => 'Sample Name';
 
   @override
-  String get quantity => 'Quantity';
+  String get quantity => 'Quantity Of Sample';
 
   @override
   String get preservativeDetails => 'Preservative Details';
 
   @override
-  String get preservativeAdded => 'Preservative Added';
+  String get preservativeAdded => 'Preservative Added ?';
 
   @override
-  String get preservativeName => 'Preservative Name';
+  String get preservativeName => 'Mention the Name of Preservative';
 
   @override
-  String get preservativeQuantity => 'Preservative Quantity';
+  String get preservativeQuantity => ' Quantity of Preservative';
 
   @override
   String get verificationSecurity => 'Verification & Security';
 
   @override
-  String get witnessSignature => 'Witness Signature';
+  String get witnessSignature => 'Signature & Thumb impression of the person/witness from whom the sample has been taken';
 
   @override
-  String get doSignature => 'DO Signature';
+  String get doSignature => 'Signature of DO OR any officer authorized by FSO';
 
   @override
-  String get sealImpression => 'Seal Impression';
+  String get sealImpression => 'Impression of seal of the sender';
 
   @override
-  String get sealNumber => 'Seal Number';
+  String get sealNumber => 'Number Of Seal';
 
   @override
   String get formViDetails => 'Form VI Details';
 
   @override
-  String get memoFormVi => 'Memo Form VI';
+  String get memoFormVi => 'Memorandum in Form VI (Sealed packed & Specimen of the seal)';
 
   @override
-  String get insideWrapper => 'Inside Wrapper';
+  String get insideWrapper => 'Form VI is inside the wrapper?';
 
   @override
-  String get wrapperCode => 'Wrapper Code';
+  String get wrapperCode => 'Code Number of Sample on Wrapper';
 
   @override
   String get uploadedDocument => 'Uploaded Document';

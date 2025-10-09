@@ -177,16 +177,16 @@ class AppLocalizationsMr extends AppLocalizations {
   String get serialNo => 'क्रमांक';
 
   @override
-  String get senderNameLabel => 'पाठवणाऱ्याचे नाव';
+  String get senderNameLabel => 'प्रेषकाचे नाव';
 
   @override
-  String get senderDesignationLabel => 'पाठवणाऱ्याचे पद';
+  String get senderDesignationLabel => 'प्रेषकाचे पदनाम';
 
   @override
-  String get doNumberLabel => 'डी.ओ. नंबर';
+  String get doNumberLabel => 'डी.ओ. क्रमांक';
 
   @override
-  String get locationDetails => 'स्थान तपशील';
+  String get locationDetails => 'स्थानाचे तपशील';
 
   @override
   String get latitude => 'अक्षांश';
@@ -198,61 +198,61 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sampleInformation => 'नमुना माहिती';
 
   @override
-  String get sampleCode => 'नमुना कोड';
+  String get sampleCode => 'नमुना कोड क्रमांक';
 
   @override
-  String get slipNumber => 'स्लिप नंबर';
+  String get slipNumber => 'स्लिप क्रमांक';
 
   @override
-  String get collectionDate => 'संग्रह तारीख';
+  String get collectionDate => 'संकलन तारीख';
 
   @override
-  String get collectionPlace => 'संग्रह स्थान';
+  String get collectionPlace => 'संकलन स्थळ';
 
   @override
   String get sampleName => 'नमुन्याचे नाव';
 
   @override
-  String get quantity => 'प्रमाण';
+  String get quantity => 'नमुन्याचे प्रमाण';
 
   @override
   String get preservativeDetails => 'संरक्षक तपशील';
 
   @override
-  String get preservativeAdded => 'संरक्षक घातले';
+  String get preservativeAdded => 'संरक्षक जोडला आहे का?';
 
   @override
-  String get preservativeName => 'संरक्षकाचे नाव';
+  String get preservativeName => 'संरक्षकाचे नाव नमूद करा';
 
   @override
-  String get preservativeQuantity => 'संरक्षक प्रमाण';
+  String get preservativeQuantity => 'संरक्षकाचे प्रमाण';
 
   @override
   String get verificationSecurity => 'सत्यापन आणि सुरक्षा';
 
   @override
-  String get witnessSignature => 'साक्षीदार सही';
+  String get witnessSignature => 'ज्या व्यक्तीकडून नमुना घेतला आहे त्या व्यक्ती/साक्षीदाराचे स्वाक्षरी आणि अंगठ्याचा ठसा';
 
   @override
-  String get doSignature => 'डी.ओ. सही';
+  String get doSignature => 'डी.ओ. किंवा एफएसओ द्वारे अधिकृत अधिकाऱ्याची स्वाक्षरी';
 
   @override
-  String get sealImpression => 'शिक्का छाप';
+  String get sealImpression => 'प्रेषकाच्या सीलची छाप';
 
   @override
-  String get sealNumber => 'शिक्का नंबर';
+  String get sealNumber => 'सील क्रमांक';
 
   @override
   String get formViDetails => 'फॉर्म VI तपशील';
 
   @override
-  String get memoFormVi => 'मेमो फॉर्म VI';
+  String get memoFormVi => 'फॉर्म VI मधील मेमोरँडम (सीलबंद पॅक आणि सीलचे नमुने)';
 
   @override
-  String get insideWrapper => 'आतील रॅपर';
+  String get insideWrapper => 'फॉर्म VI रॅपरच्या आत आहे का?';
 
   @override
-  String get wrapperCode => 'रॅपर कोड';
+  String get wrapperCode => 'रॅपरवरील नमुन्याचा कोड क्रमांक';
 
   @override
   String get uploadedDocument => 'अपलोड केलेला दस्तऐवज';

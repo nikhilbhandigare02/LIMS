@@ -478,7 +478,7 @@ abstract class AppLocalizations {
   /// No description provided for @sampleCode.
   ///
   /// In en, this message translates to:
-  /// **'Sample Code'**
+  /// **'Sample Code Number'**
   String get sampleCode;
 
   /// No description provided for @slipNumber.
@@ -496,7 +496,7 @@ abstract class AppLocalizations {
   /// No description provided for @collectionPlace.
   ///
   /// In en, this message translates to:
-  /// **'Collection Place'**
+  /// **'Place Of Collection'**
   String get collectionPlace;
 
   /// No description provided for @sampleName.
@@ -508,7 +508,7 @@ abstract class AppLocalizations {
   /// No description provided for @quantity.
   ///
   /// In en, this message translates to:
-  /// **'Quantity'**
+  /// **'Quantity Of Sample'**
   String get quantity;
 
   /// No description provided for @preservativeDetails.
@@ -520,19 +520,19 @@ abstract class AppLocalizations {
   /// No description provided for @preservativeAdded.
   ///
   /// In en, this message translates to:
-  /// **'Preservative Added'**
+  /// **'Preservative Added ?'**
   String get preservativeAdded;
 
   /// No description provided for @preservativeName.
   ///
   /// In en, this message translates to:
-  /// **'Preservative Name'**
+  /// **'Mention the Name of Preservative'**
   String get preservativeName;
 
   /// No description provided for @preservativeQuantity.
   ///
   /// In en, this message translates to:
-  /// **'Preservative Quantity'**
+  /// **' Quantity of Preservative'**
   String get preservativeQuantity;
 
   /// No description provided for @verificationSecurity.
@@ -544,25 +544,25 @@ abstract class AppLocalizations {
   /// No description provided for @witnessSignature.
   ///
   /// In en, this message translates to:
-  /// **'Witness Signature'**
+  /// **'Signature & Thumb impression of the person/witness from whom the sample has been taken'**
   String get witnessSignature;
 
   /// No description provided for @doSignature.
   ///
   /// In en, this message translates to:
-  /// **'DO Signature'**
+  /// **'Signature of DO OR any officer authorized by FSO'**
   String get doSignature;
 
   /// No description provided for @sealImpression.
   ///
   /// In en, this message translates to:
-  /// **'Seal Impression'**
+  /// **'Impression of seal of the sender'**
   String get sealImpression;
 
   /// No description provided for @sealNumber.
   ///
   /// In en, this message translates to:
-  /// **'Seal Number'**
+  /// **'Number Of Seal'**
   String get sealNumber;
 
   /// No description provided for @formViDetails.
@@ -574,19 +574,19 @@ abstract class AppLocalizations {
   /// No description provided for @memoFormVi.
   ///
   /// In en, this message translates to:
-  /// **'Memo Form VI'**
+  /// **'Memorandum in Form VI (Sealed packed & Specimen of the seal)'**
   String get memoFormVi;
 
   /// No description provided for @insideWrapper.
   ///
   /// In en, this message translates to:
-  /// **'Inside Wrapper'**
+  /// **'Form VI is inside the wrapper?'**
   String get insideWrapper;
 
   /// No description provided for @wrapperCode.
   ///
   /// In en, this message translates to:
-  /// **'Wrapper Code'**
+  /// **'Code Number of Sample on Wrapper'**
   String get wrapperCode;
 
   /// No description provided for @uploadedDocument.

@@ -67,7 +67,7 @@ class Form6Details {
     String? placeOfCollection,
     String? sampleName,
     String? quantityOfSample,
-    String? sampleId,
+    String? NatureOfSample,
     String? preservativeAdded,
     String? preservativeName,
     String? quantityOfPreservative,
@@ -105,7 +105,7 @@ class Form6Details {
     _placeOfCollection = placeOfCollection;
     _sampleName = sampleName;
     _quantityOfSample = quantityOfSample;
-    _sampleId = sampleId;
+    _NatureOfSample = NatureOfSample;
     _preservativeAdded = preservativeAdded;
     _preservativeName = preservativeName;
     _quantityOfPreservative = quantityOfPreservative;
@@ -145,7 +145,7 @@ class Form6Details {
     _placeOfCollection = (json['placeOfCollection'] ?? json['PlaceOfCollection'] ?? json['place_of_collection'])?.toString();
     _sampleName = (json['sampleName'] ?? json['SampleName'])?.toString();
     _quantityOfSample = (json['quantityOfSample'] ?? json['QuantityOfSample'])?.toString();
-    _sampleId = (json['sampleId'] ?? json['SampleId'])?.toString();
+    _NatureOfSample= (json['NatureOfSample'] ?? json['NatureOfSample'])?.toString();
     _preservativeAdded = (json['preservativeAdded'] ?? json['PreservativeAdded'])?.toString();
     _preservativeName = (json['preservativeName'] ?? json['PreservativeName'])?.toString();
     _quantityOfPreservative = (json['quantityOfPreservative'] ?? json['QuantityOfPreservative'])?.toString();
@@ -255,7 +255,7 @@ class Form6Details {
   String? _placeOfCollection;
   String? _sampleName;
   String? _quantityOfSample;
-  String? _sampleId;
+  String? _NatureOfSample;
   String? _preservativeAdded;
   String? _preservativeName;
   String? _quantityOfPreservative;
@@ -294,7 +294,7 @@ class Form6Details {
     String? placeOfCollection,
     String? sampleName,
     String? quantityOfSample,
-    String? sampleId,
+    String? NatureOfSample,
     String? preservativeAdded,
     String? preservativeName,
     String? quantityOfPreservative,
@@ -333,7 +333,7 @@ class Form6Details {
         placeOfCollection: placeOfCollection ?? _placeOfCollection,
         sampleName: sampleName ?? _sampleName,
         quantityOfSample: quantityOfSample ?? _quantityOfSample,
-        sampleId: sampleId ?? _sampleId,
+        NatureOfSample: NatureOfSample ?? _NatureOfSample,
         preservativeAdded: preservativeAdded ?? _preservativeAdded,
         preservativeName: preservativeName ?? _preservativeName,
         quantityOfPreservative: quantityOfPreservative ?? _quantityOfPreservative,
@@ -372,7 +372,7 @@ class Form6Details {
   String? get placeOfCollection => _placeOfCollection;
   String? get sampleName => _sampleName;
   String? get quantityOfSample => _quantityOfSample;
-  String? get sampleId => _sampleId;
+  String? get NatureOfSample => _NatureOfSample;
   String? get preservativeAdded => _preservativeAdded;
   String? get preservativeName => _preservativeName;
   String? get quantityOfPreservative => _quantityOfPreservative;
@@ -412,7 +412,7 @@ class Form6Details {
     map['placeOfCollection'] = _placeOfCollection;
     map['sampleName'] = _sampleName;
     map['quantityOfSample'] = _quantityOfSample;
-    map['sampleId'] = _sampleId;
+    map['NatureOfSample'] = _NatureOfSample;
     map['preservativeAdded'] = _preservativeAdded;
     map['preservativeName'] = _preservativeName;
     map['quantityOfPreservative'] = _quantityOfPreservative;

@@ -278,6 +278,11 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "value": details.quantityOfSample,
                 "icon": Icons.scale,
               },
+              {
+                "label": "${AppLocalizations.of(context)!.natureOfSample}:",
+                "value": details.NatureOfSample,
+                "icon": Icons.scale,
+              },
             ],
           ),
 

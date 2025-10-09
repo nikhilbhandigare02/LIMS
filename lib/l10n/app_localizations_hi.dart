@@ -180,7 +180,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get senderNameLabel => 'प्रेषक का नाम';
 
   @override
-  String get senderDesignationLabel => 'प्रेषक का पद';
+  String get senderDesignationLabel => 'प्रेषक का पदनाम';
 
   @override
   String get doNumberLabel => 'डी.ओ. नंबर';
@@ -198,7 +198,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sampleInformation => 'नमूना जानकारी';
 
   @override
-  String get sampleCode => 'नमूना कोड';
+  String get sampleCode => 'नमूना कोड संख्या';
 
   @override
   String get slipNumber => 'स्लिप नंबर';
@@ -213,46 +213,46 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sampleName => 'नमूने का नाम';
 
   @override
-  String get quantity => 'मात्रा';
+  String get quantity => 'नमूने की मात्रा';
 
   @override
-  String get preservativeDetails => 'परिरक्षक विवरण';
+  String get preservativeDetails => 'संरक्षक विवरण';
 
   @override
-  String get preservativeAdded => 'परिरक्षक जोड़ा गया';
+  String get preservativeAdded => 'क्या संरक्षक जोड़ा गया है?';
 
   @override
-  String get preservativeName => 'परिरक्षक का नाम';
+  String get preservativeName => 'संरक्षक का नाम बताएं';
 
   @override
-  String get preservativeQuantity => 'परिरक्षक मात्रा';
+  String get preservativeQuantity => 'संरक्षक की मात्रा';
 
   @override
-  String get verificationSecurity => 'सत्यापन और सुरक्षा';
+  String get verificationSecurity => 'सत्यापन एवं सुरक्षा';
 
   @override
-  String get witnessSignature => 'साक्षी हस्ताक्षर';
+  String get witnessSignature => 'उस व्यक्ति/गवाह के हस्ताक्षर और अंगूठे का निशान जिससे नमूना लिया गया है';
 
   @override
-  String get doSignature => 'डी.ओ. हस्ताक्षर';
+  String get doSignature => 'डी.ओ. या एफएसओ द्वारा अधिकृत किसी अधिकारी के हस्ताक्षर';
 
   @override
-  String get sealImpression => 'सील छाप';
+  String get sealImpression => 'प्रेषक की मुहर की छाप';
 
   @override
-  String get sealNumber => 'सील नंबर';
+  String get sealNumber => 'मुहर की संख्या';
 
   @override
   String get formViDetails => 'फॉर्म VI विवरण';
 
   @override
-  String get memoFormVi => 'मेमो फॉर्म VI';
+  String get memoFormVi => 'फॉर्म VI में ज्ञापन (सीलबंद पैक और मुहर का नमूना)';
 
   @override
-  String get insideWrapper => 'आवरण के अंदर';
+  String get insideWrapper => 'क्या फॉर्म VI रैपर के अंदर है?';
 
   @override
-  String get wrapperCode => 'आवरण कोड';
+  String get wrapperCode => 'रैपर पर नमूने का कोड नंबर';
 
   @override
   String get uploadedDocument => 'अपलोड किया गया दस्तावेज़';
