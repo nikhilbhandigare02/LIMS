@@ -26,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     print(state.username);
     emit(state.copyWith(username: event.username));
   }
-
+//
   void password(PasswordEvent event, Emitter<LoginState> emit) {
     print(state.password);
     emit(state.copyWith(password: event.password));
