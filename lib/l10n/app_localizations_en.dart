@@ -198,7 +198,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sampleInformation => 'Sample Information';
 
   @override
-  String get sampleCode => 'Sample Code Number';
+  String get sampleCode => 'Sample Code';
 
   @override
   String get slipNumber => 'Slip Number';
@@ -222,37 +222,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preservativeAdded => 'Preservative Added ?';
 
   @override
-  String get preservativeName => 'Mention the Name of Preservative';
+  String get preservativeName => 'Preservative Name';
 
   @override
-  String get preservativeQuantity => ' Quantity of Preservative';
+  String get preservativeQuantity => 'Quantity';
 
   @override
   String get verificationSecurity => 'Verification & Security';
 
   @override
-  String get witnessSignature => 'Signature & Thumb impression of the person/witness from whom the sample has been taken';
+  String get witnessSignature => 'Signature & Thumb impression of the person/witness from whom the sample has been taken :';
 
   @override
-  String get doSignature => 'Signature of DO OR any officer authorized by FSO';
+  String get doSignature => 'Code Number of Sample on Wrapper :';
 
   @override
-  String get sealImpression => 'Impression of seal of the sender';
+  String get sealImpression => 'Impression of seal of the sender :';
 
   @override
-  String get sealNumber => 'Number Of Seal';
+  String get sealNumber => 'Number of Seal:';
 
   @override
   String get formViDetails => 'Form VI Details';
 
   @override
-  String get memoFormVi => 'Memorandum in Form VI (Sealed packed & Specimen of the seal)';
+  String get memoFormVi => 'Memorandum in Form VI (Sealed packed & Specimen of the seal):';
 
   @override
-  String get insideWrapper => 'Form VI is inside the wrapper?';
+  String get insideWrapper => 'Form VI is inside the sample wrapper?';
 
   @override
-  String get wrapperCode => 'Code Number of Sample on Wrapper';
+  String get wrapperCode => 'Code Number of Sample on Wrapper :';
 
   @override
   String get uploadedDocument => 'Uploaded Document';

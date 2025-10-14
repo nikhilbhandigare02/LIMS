@@ -17,25 +17,14 @@ class Form6Storage {
     if (loginDataJson != null && loginDataJson.isNotEmpty) {
       try {
         final map = jsonDecode(loginDataJson) as Map<String, dynamic>;
-        // Try multiple common key variants and nested structures
-        dynamic uid = map['userId'] ?? map['UserId'] ?? map['user_id'] ?? map['userid'] ?? map['Id'] ?? map['ID'] ?? map['id'];
-        if (uid == null && map['user'] is Map<String, dynamic>) {
-          final u = map['user'] as Map<String, dynamic>;
-          uid = u['userId'] ?? u['UserId'] ?? u['user_id'] ?? u['userid'] ?? u['Id'] ?? u['ID'] ?? u['id'];
-        }
+        final dynamic uid = map['userId'] ?? map['UserId'] ?? map['user_id'];
         if (uid is int) {
           userId = uid;
         } else if (uid != null) {
           userId = int.tryParse(uid.toString());
         }
-        if (userId == null) {
-          // Log keys to help diagnose schema mismatches
-          try {
-            print('⚠️ Could not parse userId from loginData. Available keys: ${map.keys.join(', ')}');
-          } catch (_) {}
-        }
-      } catch (e) {
-        print('⚠️ Failed to decode loginData for userId: $e');
+      } catch (_) {
+        // ignore errors
       }
     }
 
@@ -43,10 +32,7 @@ class Form6Storage {
   }
   Future<void> saveForm6Data(SampleFormState state) async {
     final userId = await getCurrentUserId();
-    if (userId == null) {
-      print('⚠️ saveForm6Data skipped: no logged-in userId found.');
-      return;
-    }
+    if (userId == null) throw Exception('User not logged in');
     final userIdStr = userId.toString(); // ✅ convert int to String
 
     final List<Map<String, dynamic>> documentsJson = state.uploadedDocs.map((doc) => {
@@ -118,11 +104,9 @@ class Form6Storage {
 
   Future<SampleFormState?> fetchStoredState() async {
     final userId = await getCurrentUserId();
-    if (userId == null) {
-      print('ℹ️ fetchStoredState: no userId found, returning null');
-      return null;
-    }
+    if (userId == null) throw Exception('User not logged in');
     final userIdStr = userId.toString();
+    if (userId == null) return null;
 
     final data = await db.fetchForm6Data(userId: userIdStr);
     if (data == null) return null;
@@ -341,6 +325,7 @@ class Form6Storage {
   }
 }
 
+// Private helpers
 extension on Form6Storage {
   Future<void> _saveDocumentsForUser(String userId, List<UploadedDoc> docs) async {
     // Clear existing rows and insert new ones atomically

@@ -478,7 +478,7 @@ abstract class AppLocalizations {
   /// No description provided for @sampleCode.
   ///
   /// In en, this message translates to:
-  /// **'Sample Code Number'**
+  /// **'Sample Code'**
   String get sampleCode;
 
   /// No description provided for @slipNumber.
@@ -526,13 +526,13 @@ abstract class AppLocalizations {
   /// No description provided for @preservativeName.
   ///
   /// In en, this message translates to:
-  /// **'Mention the Name of Preservative'**
+  /// **'Preservative Name'**
   String get preservativeName;
 
   /// No description provided for @preservativeQuantity.
   ///
   /// In en, this message translates to:
-  /// **' Quantity of Preservative'**
+  /// **'Quantity'**
   String get preservativeQuantity;
 
   /// No description provided for @verificationSecurity.
@@ -544,25 +544,25 @@ abstract class AppLocalizations {
   /// No description provided for @witnessSignature.
   ///
   /// In en, this message translates to:
-  /// **'Signature & Thumb impression of the person/witness from whom the sample has been taken'**
+  /// **'Signature & Thumb impression of the person/witness from whom the sample has been taken :'**
   String get witnessSignature;
 
   /// No description provided for @doSignature.
   ///
   /// In en, this message translates to:
-  /// **'Signature of DO OR any officer authorized by FSO'**
+  /// **'Code Number of Sample on Wrapper :'**
   String get doSignature;
 
   /// No description provided for @sealImpression.
   ///
   /// In en, this message translates to:
-  /// **'Impression of seal of the sender'**
+  /// **'Impression of seal of the sender :'**
   String get sealImpression;
 
   /// No description provided for @sealNumber.
   ///
   /// In en, this message translates to:
-  /// **'Number Of Seal'**
+  /// **'Number of Seal:'**
   String get sealNumber;
 
   /// No description provided for @formViDetails.
@@ -574,19 +574,19 @@ abstract class AppLocalizations {
   /// No description provided for @memoFormVi.
   ///
   /// In en, this message translates to:
-  /// **'Memorandum in Form VI (Sealed packed & Specimen of the seal)'**
+  /// **'Memorandum in Form VI (Sealed packed & Specimen of the seal):'**
   String get memoFormVi;
 
   /// No description provided for @insideWrapper.
   ///
   /// In en, this message translates to:
-  /// **'Form VI is inside the wrapper?'**
+  /// **'Form VI is inside the sample wrapper?'**
   String get insideWrapper;
 
   /// No description provided for @wrapperCode.
   ///
   /// In en, this message translates to:
-  /// **'Code Number of Sample on Wrapper'**
+  /// **'Code Number of Sample on Wrapper :'**
   String get wrapperCode;
 
   /// No description provided for @uploadedDocument.

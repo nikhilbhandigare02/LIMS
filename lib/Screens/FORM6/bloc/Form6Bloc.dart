@@ -1060,6 +1060,8 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'PlaceOfCollection': state.placeOfCollection,
         'SampleName': state.SampleName,
         'QuantityOfSample': state.QuantitySample,
+        'NumberOfSample': state.NumberOfSample,
+        'NatureOfSample': state.article,
         'PreservativeAdded': state.preservativeAdded == true,
         'PreservativeName': state.preservativeName,
         'QuantityOfPreservative': state.preservativeQuantity,
@@ -1077,6 +1079,12 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'SampleIsActive': true,
         'insertedBy': userId,
         'sampleInsertedBy': userId,
+
+        // additional fields (vi)-(viii)
+        'SpecialRequestReason': state.specialRequestReason,
+        'AdditionalRelevantInfo': state.additionalRelevantInfo,
+        'ParametersAsPerFssai': state.parametersAsPerFSSAI,
+        'AdditionalTests': state.additionalTests,
 
         'documentName': state.documentName,
       };

@@ -279,9 +279,14 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "icon": Icons.scale,
               },
               {
-                "label": "${AppLocalizations.of(context)!.natureOfSample}:",
-                "value": details.NatureOfSample,
-                "icon": Icons.scale,
+                "label": "Number Of Sample:",
+                "value": details.numberOfSample,
+                "icon": Icons.numbers,
+              },
+              {
+                "label": "Nature Of Sample:",
+                "value": details.natureOfSample,
+                "icon": Icons.category,
               },
             ],
           ),
@@ -362,6 +367,29 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               {"label": AppLocalizations.of(context)!.uploadedDocument, "value": _buildDocumentsList(details),  },
              // {"label": "Status", "value": details.status,  },
 
+            ],
+          ),
+
+          _buildSection(
+            title: "Additional Information",
+            color: const Color(0xFF3B82F6),
+            fields: [
+              {
+                "label": "Special Request Reason:",
+                "value": details.specialRequestReason,
+              },
+              {
+                "label": "Additional Relevant Information:",
+                "value": details.additionalRelevantInfo,
+              },
+              {
+                "label": "Parameters As Per FSSAI:",
+                "value": details.parametersAsPerFssai,
+              },
+              {
+                "label": "Additional Tests:",
+                "value": details.additionalTests,
+              },
             ],
           ),
 
@@ -759,11 +787,11 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               color: Colors.blue[700],
               decoration: TextDecoration.underline,
             ),
-           ),
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }),
     );
   }
 
 }
-//

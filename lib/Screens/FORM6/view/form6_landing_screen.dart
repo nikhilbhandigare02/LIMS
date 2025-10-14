@@ -56,7 +56,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           isPreservativeComplete = _isPreservativeInfoComplete(s);
           isSealComplete = _isSealInfoComplete(s);
           isAdditionalDetailsComplete = _isAdditionalDetailsComplete(s);
-          isReviewComplete = isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete;
+          isReviewComplete = isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete;
         } else {
           isOtherInfoComplete = false;
           isSampleInfoComplete = false;
@@ -71,7 +71,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Future<void> handleSubmit() async {
-    if (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete) {
+    if (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete) {
       context.read<SampleFormBloc>().add(FormSubmit());
     } else {
       Message.showTopRightOverlay(
@@ -109,7 +109,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             final newPreservativeComplete = _isPreservativeInfoComplete(state);
             final newSealComplete = _isSealInfoComplete(state);
             final newAdditionalDetailsComplete = _isAdditionalDetailsComplete(state);
-            final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete;
+            final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete && newAdditionalDetailsComplete;
 
             final changed =
                 newOtherComplete != isOtherInfoComplete ||
@@ -244,7 +244,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
       },
       {
         'title': 'Additional details (vi)-(viii)',
-        'subtitle': 'additional info, parameters to test',
+        'subtitle': 'Special request, additional info, parameters to test',
         'icon': Icons.assignment_outlined,
         'isComplete': isAdditionalDetailsComplete,
         'color': Colors.teal,
@@ -438,7 +438,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           ),
         );
       },
-      child: (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete)
+      child: (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete)
           ? Container(
         width: double.infinity,
         child: TextButton.icon(

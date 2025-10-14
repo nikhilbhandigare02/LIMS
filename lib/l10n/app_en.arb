@@ -62,26 +62,25 @@
   "latitude": "Latitude",
   "longitude": "Longitude",
   "sampleInformation": "Sample Information",
-  "sampleCode": "Sample Code Number",
+  "sampleCode": "Sample Code",
   "slipNumber": "Slip Number",
   "collectionDate": "Collection Date",
   "collectionPlace": "Place Of Collection",
   "sampleName": "Sample Name",
   "quantity": "Quantity Of Sample",
-
   "preservativeDetails": "Preservative Details",
   "preservativeAdded": "Preservative Added ?",
-  "preservativeName": "Mention the Name of Preservative",
-  "preservativeQuantity": " Quantity of Preservative",
+  "preservativeName": "Preservative Name",
+  "preservativeQuantity": "Quantity",
   "verificationSecurity": "Verification & Security",
-  "witnessSignature": "Signature & Thumb impression of the person/witness from whom the sample has been taken",
-  "doSignature": "Signature of DO OR any officer authorized by FSO",
-  "sealImpression": "Impression of seal of the sender",
-  "sealNumber": "Number Of Seal",
+  "witnessSignature": "Signature & Thumb impression of the person/witness from whom the sample has been taken :",
+  "doSignature": "Code Number of Sample on Wrapper :",
+  "sealImpression": "Impression of seal of the sender :",
+  "sealNumber": "Number of Seal:",
   "formViDetails": "Form VI Details",
-  "memoFormVi": "Memorandum in Form VI (Sealed packed & Specimen of the seal)",
-  "insideWrapper": "Form VI is inside the wrapper?",
-  "wrapperCode": "Code Number of Sample on Wrapper",
+  "memoFormVi": "Memorandum in Form VI (Sealed packed & Specimen of the seal):",
+  "insideWrapper": "Form VI is inside the sample wrapper?",
+  "wrapperCode": "Code Number of Sample on Wrapper :",
   "uploadedDocument": "Uploaded Document",
   "statusTransactions": "Status Transactions",
   "yes": "Yes",
@@ -260,6 +259,9 @@
       "error": {}
     }
   },
+
+
+
 
 
 

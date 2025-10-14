@@ -67,7 +67,7 @@ class Form6Details {
     String? placeOfCollection,
     String? sampleName,
     String? quantityOfSample,
-    String? NatureOfSample,
+    String? sampleId,
     String? preservativeAdded,
     String? preservativeName,
     String? quantityOfPreservative,
@@ -95,6 +95,12 @@ class Form6Details {
     String? documents,
     List<String>? documentNames,
     List<String>? documentUrls,
+    String? numberOfSample,
+    String? natureOfSample,
+    String? additionalTests,
+    String? parametersAsPerFssai,
+    String? additionalRelevantInfo,
+    String? specialRequestReason,
   }) {
     _success = success;
     _message = message;
@@ -105,7 +111,7 @@ class Form6Details {
     _placeOfCollection = placeOfCollection;
     _sampleName = sampleName;
     _quantityOfSample = quantityOfSample;
-    _NatureOfSample = NatureOfSample;
+    _sampleId = sampleId;
     _preservativeAdded = preservativeAdded;
     _preservativeName = preservativeName;
     _quantityOfPreservative = quantityOfPreservative;
@@ -133,6 +139,12 @@ class Form6Details {
     _documents = documents;
     _documentNames = documentNames;
     _documentUrls = documentUrls;
+    _numberOfSample = numberOfSample;
+    _natureOfSample = natureOfSample;
+    _additionalTests = additionalTests;
+    _parametersAsPerFssai = parametersAsPerFssai;
+    _additionalRelevantInfo = additionalRelevantInfo;
+    _specialRequestReason = specialRequestReason;
   }
 
   Form6Details.fromJson(dynamic json) {
@@ -145,7 +157,7 @@ class Form6Details {
     _placeOfCollection = (json['placeOfCollection'] ?? json['PlaceOfCollection'] ?? json['place_of_collection'])?.toString();
     _sampleName = (json['sampleName'] ?? json['SampleName'])?.toString();
     _quantityOfSample = (json['quantityOfSample'] ?? json['QuantityOfSample'])?.toString();
-    _NatureOfSample= (json['NatureOfSample'] ?? json['NatureOfSample'])?.toString();
+    _sampleId = (json['sampleId'] ?? json['SampleId'])?.toString();
     _preservativeAdded = (json['preservativeAdded'] ?? json['PreservativeAdded'])?.toString();
     _preservativeName = (json['preservativeName'] ?? json['PreservativeName'])?.toString();
     _quantityOfPreservative = (json['quantityOfPreservative'] ?? json['QuantityOfPreservative'])?.toString();
@@ -242,6 +254,12 @@ class Form6Details {
     }
     _documentNames = names.isNotEmpty ? names : null;
     _documentUrls = urls.isNotEmpty ? urls : null;
+    _numberOfSample = (json['NumberOfSample'] ?? json['numberOfSample'])?.toString();
+    _natureOfSample = (json['NatureOfSample'] ?? json['natureOfSample'] ?? json['article'] ?? json['Article'])?.toString();
+    _additionalTests = (json['AdditionalTests'] ?? json['additionalTests'])?.toString();
+    _parametersAsPerFssai = (json['ParametersAsPerFssai'] ?? json['parametersAsPerFssai'] ?? json['ParametersAsPerFSSAI'])?.toString();
+    _additionalRelevantInfo = (json['AdditionalRelevantInfo'] ?? json['additionalRelevantInfo'])?.toString();
+    _specialRequestReason = (json['SpecialRequestReason'] ?? json['specialRequestReason'])?.toString();
     // ignore: avoid_print
     print('[Form6Details] Parsed documents -> names=${_documentNames?.length ?? 0}, urls=${_documentUrls?.length ?? 0}');
   }
@@ -255,7 +273,7 @@ class Form6Details {
   String? _placeOfCollection;
   String? _sampleName;
   String? _quantityOfSample;
-  String? _NatureOfSample;
+  String? _sampleId;
   String? _preservativeAdded;
   String? _preservativeName;
   String? _quantityOfPreservative;
@@ -283,6 +301,12 @@ class Form6Details {
   String? _documents;
   List<String>? _documentNames;
   List<String>? _documentUrls;
+  String? _numberOfSample;
+  String? _natureOfSample;
+  String? _additionalTests;
+  String? _parametersAsPerFssai;
+  String? _additionalRelevantInfo;
+  String? _specialRequestReason;
 
   Form6Details copyWith({
     num? success,
@@ -294,7 +318,7 @@ class Form6Details {
     String? placeOfCollection,
     String? sampleName,
     String? quantityOfSample,
-    String? NatureOfSample,
+    String? sampleId,
     String? preservativeAdded,
     String? preservativeName,
     String? quantityOfPreservative,
@@ -322,6 +346,12 @@ class Form6Details {
     String? documents,
     List<String>? documentNames,
     List<String>? documentUrls,
+    String? numberOfSample,
+    String? natureOfSample,
+    String? additionalTests,
+    String? parametersAsPerFssai,
+    String? additionalRelevantInfo,
+    String? specialRequestReason,
   }) =>
       Form6Details(
         success: success ?? _success,
@@ -333,7 +363,7 @@ class Form6Details {
         placeOfCollection: placeOfCollection ?? _placeOfCollection,
         sampleName: sampleName ?? _sampleName,
         quantityOfSample: quantityOfSample ?? _quantityOfSample,
-        NatureOfSample: NatureOfSample ?? _NatureOfSample,
+        sampleId: sampleId ?? _sampleId,
         preservativeAdded: preservativeAdded ?? _preservativeAdded,
         preservativeName: preservativeName ?? _preservativeName,
         quantityOfPreservative: quantityOfPreservative ?? _quantityOfPreservative,
@@ -361,6 +391,12 @@ class Form6Details {
         documents: documents ?? _documents,
         documentNames: documentNames ?? _documentNames,
         documentUrls: documentUrls ?? _documentUrls,
+        numberOfSample: numberOfSample ?? _numberOfSample,
+        natureOfSample: natureOfSample ?? _natureOfSample,
+        additionalTests: additionalTests ?? _additionalTests,
+        parametersAsPerFssai: parametersAsPerFssai ?? _parametersAsPerFssai,
+        additionalRelevantInfo: additionalRelevantInfo ?? _additionalRelevantInfo,
+        specialRequestReason: specialRequestReason ?? _specialRequestReason,
       );
 
   num? get success => _success;
@@ -372,7 +408,7 @@ class Form6Details {
   String? get placeOfCollection => _placeOfCollection;
   String? get sampleName => _sampleName;
   String? get quantityOfSample => _quantityOfSample;
-  String? get NatureOfSample => _NatureOfSample;
+  String? get sampleId => _sampleId;
   String? get preservativeAdded => _preservativeAdded;
   String? get preservativeName => _preservativeName;
   String? get quantityOfPreservative => _quantityOfPreservative;
@@ -400,6 +436,12 @@ class Form6Details {
 
   List<String>? get documentNames => _documentNames;
   List<String>? get documentUrls => _documentUrls;
+  String? get numberOfSample => _numberOfSample;
+  String? get natureOfSample => _natureOfSample;
+  String? get additionalTests => _additionalTests;
+  String? get parametersAsPerFssai => _parametersAsPerFssai;
+  String? get additionalRelevantInfo => _additionalRelevantInfo;
+  String? get specialRequestReason => _specialRequestReason;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -412,7 +454,7 @@ class Form6Details {
     map['placeOfCollection'] = _placeOfCollection;
     map['sampleName'] = _sampleName;
     map['quantityOfSample'] = _quantityOfSample;
-    map['NatureOfSample'] = _NatureOfSample;
+    map['sampleId'] = _sampleId;
     map['preservativeAdded'] = _preservativeAdded;
     map['preservativeName'] = _preservativeName;
     map['quantityOfPreservative'] = _quantityOfPreservative;
@@ -440,6 +482,12 @@ class Form6Details {
     map['documents'] = _documents;
     map['documentName'] = _documentNames;
     map['documentUrl'] = _documentUrls;
+    map['NumberOfSample'] = _numberOfSample;
+    map['NatureOfSample'] = _natureOfSample;
+    map['AdditionalTests'] = _additionalTests;
+    map['ParametersAsPerFssai'] = _parametersAsPerFssai;
+    map['AdditionalRelevantInfo'] = _additionalRelevantInfo;
+    map['SpecialRequestReason'] = _specialRequestReason;
     return map;
   }
 }

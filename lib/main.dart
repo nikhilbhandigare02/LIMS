@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:no_screenshot/no_screenshot.dart';
-//import 'package:no_screenshot/no_screenshot.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 
@@ -79,23 +78,23 @@ Future<void> _showNotification(RemoteMessage message) async {
   // Prefer a Messaging-style layout when possible to better match the design
   final styleInfo = (avatarUrl != null && avatarUrl.isNotEmpty)
       ? MessagingStyleInformation(
-    const Person(name: ' '),
-    conversationTitle: title,
-    groupConversation: false,
-    messages: [
-      Message(body, DateTime.now(), const Person(name: ' ')),
-    ],
-  )
+          const Person(name: ' '),
+          conversationTitle: title,
+          groupConversation: false,
+          messages: [
+            Message(body, DateTime.now(), const Person(name: ' ')),
+          ],
+        )
       : ((imageUrl != null && imageUrl.isNotEmpty)
-      ? BigPictureStyleInformation(
-    FilePathAndroidBitmap(imageUrl),
-    contentTitle: title,
-    summaryText: body,
-  )
-      : BigTextStyleInformation(
-    body,
-    contentTitle: title,
-  ));
+          ? BigPictureStyleInformation(
+              FilePathAndroidBitmap(imageUrl),
+              contentTitle: title,
+              summaryText: body,
+            )
+          : BigTextStyleInformation(
+              body,
+              contentTitle: title,
+            ));
 
   // Use a new channel ID to force Android to apply MAX importance (if an older
   // lower-importance channel existed with the previous ID, Android would keep it).
@@ -149,7 +148,7 @@ void _showInAppAnimatedMessage(RemoteMessage message) {
   final isDark = context != null && Theme.of(context).brightness == Brightness.dark;
 
   showOverlayNotification(
-        (overlayContext) {
+    (overlayContext) {
       final Color cardBg = isDark ? const Color(0xFF121212) : Colors.white;
       final Color textPrimary = isDark ? Colors.white : Colors.black87;
       final Color textSecondary = isDark ? Colors.white70 : Colors.black54;
@@ -362,7 +361,6 @@ Future<void> _initFirebaseMessaging(BuildContext context) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NoScreenshot.instance.screenshotOff();
 
 
 
@@ -393,6 +391,8 @@ void main() async {
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
 
+  // Clear any stale system notifications from previous sessions to avoid
+  // them reappearing when the app restarts.
   await flutterLocalNotificationsPlugin.cancelAll();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -429,7 +429,8 @@ class _MyAppState extends State<MyApp> {
   Locale? _locale;
   @override
   void initState() {
-     super.initState();
+    super.initState();
+    NoScreenshot.instance.screenshotOff();
     _initFirebaseMessaging(context);
     _loadSavedLocale();
     WidgetsBinding.instance.addPostFrameCallback((_) {

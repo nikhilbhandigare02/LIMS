@@ -26,6 +26,7 @@ String _formatBytes(int bytes) {
   return bytes.toString() + ' B';
 }
 
+
 Future<void> loadSenderNameIfNeeded(
     SampleFormState state,
     SampleFormBloc bloc,
@@ -350,40 +351,7 @@ List<List<Widget>> getSampleDetailsSteps(
   final l = AppLocalizations.of(context)!;
   return [
     [
-      // BlocBuilder<SampleFormBloc, SampleFormState>(
-      //   builder: (context, s) {
-      //     if (s.sealNumberOptions.isEmpty) {
-      //       bloc.add(FetchSealNumberChanged());
-      //       const loading = "Loading slip Number...";
-      //       return Opacity(
-      //         opacity: 0.7,
-      //         child: IgnorePointer(
-      //           ignoring: true,
-      //           child: BlocDropdown(
-      //             label: "Slip Numbers",
-      //             // icon: Icons.science,
-      //             value: loading,
-      //             items: const [loading],
-      //             onChanged: (_) {},
-      //           ),
-      //         ),
-      //       );
-      //     }
-      //     final selected = s.sealNumber;
-      //     final items = s.sealNumberOptions;
-      //     return BlocDropdown(
-      //       label: "Slip Number  ",
-      //       //  icon: Icons.science,
-      //       value: selected.isEmpty ? null : selected,
-      //       items: items,
-      //       onChanged: (val) {
-      //         if (val == null) return;
-      //         bloc.add(SealNumberChanged(val));
-      //       },
-      //       validator: (v) => Validators.validateEmptyField(v, 'Slip Number'),
-      //     );
-      //   },
-      // ),
+
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
@@ -488,14 +456,14 @@ List<List<Widget>> getSampleDetailsSteps(
             Validators.validateEmptyField(context,v, 'Number Of Sample'),
       ),
       SizedBox(height: 16),
-      // BlocTextInput(
-      //   label: 'Nature of Sample',
-      //   //icon: Icons.scale,
-      //   initialValue: state.article,
-      //   onChanged: (val) => bloc.add(articleChanged(val)),
-      //   validator: (v) =>
-      //       Validators.validateEmptyField(context,v, 'Nature Of Sample'),
-      // ),
+      BlocTextInput(
+        label: 'Nature of Sample',
+        //icon: Icons.scale,
+        initialValue: state.article,
+        onChanged: (val) => bloc.add(articleChanged(val)),
+        validator: (v) =>
+            Validators.validateEmptyField(context,v, 'Nature Of Sample'),
+      ),
       // BlocBuilder<SampleFormBloc, SampleFormState>(
       //   builder: (context, s) {
       //     if (s.natureOptions.isEmpty) {
@@ -1079,6 +1047,7 @@ List<List<Widget>> getSampleDetailsSteps(
     ],
 
 
+    // New Step: (vi)-(viii) Additional details
     [
       Text(
         '(vi) Special request with reason',
@@ -1088,7 +1057,7 @@ List<List<Widget>> getSampleDetailsSteps(
       BlocTextArea(
         label: 'Special request with reason',
         initialValue: state.specialRequestReason.isEmpty
-            ? ''
+            ? ' '
             : state.specialRequestReason,
         onChanged: (val) => bloc.add(SpecialRequestReasonChanged(val)),
         validator: (v) => Validators.validateEmptyField(context, v, 'Special request with reason'),
@@ -1096,7 +1065,7 @@ List<List<Widget>> getSampleDetailsSteps(
       ),
       const SizedBox(height: 16),
       Text(
-        ' Any additional relevant information',
+        '(vii) Any additional relevant information',
         style: Theme.of(context).textTheme.titleMedium,
       ),
       const SizedBox(height: 8),
