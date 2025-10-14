@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_inspector/Screens/FORM6/Storage/form6_storage.dart';
 import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 import 'package:food_inspector/core/widgets/AppHeader/AppHeader.dart';
+import 'dart:async';
 
 import '../../../core/utils/Message.dart';
 import '../../../core/utils/enums.dart';
@@ -33,6 +34,19 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   bool _depsInitialized = false;
 
   final Form6Storage storage = Form6Storage();
+  Timer? _saveDebounce;
+
+  void _scheduleAutoSave(SampleFormState state) {
+    _saveDebounce?.cancel();
+    _saveDebounce = Timer(const Duration(milliseconds: 350), () async {
+      try {
+        await storage.saveForm6Data(state);
+        // print("📝 Auto-saved form state.");
+      } catch (e) {
+        // print("⚠️ Auto-save failed: $e");
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -45,7 +59,13 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     print("🔄 Form6StepScreen initialized for section: ${widget.section} with initial step: $currentStep");
     context.read<SampleFormBloc>().add(FetchLocationRequested());
     context.read<SampleFormBloc>().add(const FetchDistrictsRequested(1));
-    context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
+    // context.read<SampleFormBloc>().add(const FetchNatureOfSampleRequested());
+  }
+
+  @override
+  void dispose() {
+    _saveDebounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -98,10 +118,27 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   }
 
   void _goToNextStep() async {
+    final bloc = context.read<SampleFormBloc>();
+    final state = bloc.state;
+    // Compute steps from latest state to be consistent with UI
+    final steps = widget.section == 'other'
+        ? getOtherInformationSteps(state, bloc, context)
+        : getSampleDetailsSteps(state, bloc, context);
+
+    // Ensure form keys are in sync with steps before validation
+    if (_formKeys.length != steps.length) {
+      _formKeys = List.generate(steps.length, (_) => GlobalKey<FormState>());
+      // Clamp current step to bounds
+      final int maxIndex = steps.isNotEmpty ? steps.length - 1 : 0;
+      if (currentStep > maxIndex) currentStep = maxIndex;
+      if (currentStep < 0) currentStep = 0;
+    }
+
     final currentFormKey = _formKeys[currentStep];
     final isValid = currentFormKey.currentState?.validate() ?? true;
 
     if (!isValid) {
+      print("⛔ Validation failed at step $currentStep for section ${widget.section}");
       AppDialog.show(
           context,
           AppLocalizations.of(context)!.form6_step_validation_error,
@@ -110,21 +147,19 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       return;
     }
 
-    final bloc = context.read<SampleFormBloc>();
-    final state = bloc.state;
-
-    await storage.saveForm6Data(state);
+    try {
+      await storage.saveForm6Data(state);
+    } catch (e) {
+      print("❗ Failed to save Form6 data locally: $e");
+    }
     await Future.delayed(const Duration(milliseconds: 50));
 
     // If still steps left in current section
-    if (currentStep < stepFields.length - 1) {
+    if (currentStep < steps.length - 1) {
       setState(() {
         currentStep++;
-        stepFields = _generateStepFields(state);
-        if (_formKeys.length != stepFields.length) {
-          _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
-        }
       });
+      print("➡️ Moved to next step: $currentStep/${steps.length - 1} in section ${widget.section}");
       return;
     }
 
@@ -134,17 +169,21 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     if (widget.section == 'other') {
       isComplete = state.isOtherInfoComplete;
       errorMessage = AppLocalizations.of(context)!.form6_step_other_section_incomplete;
+      print("ℹ️ Other completeness: $isComplete | senderName='${state.senderName}' senderDesignation='${state.senderDesignation}' DONumber='${state.DONumber}' district='${state.district}' division='${state.division}' region='${state.region}' area='${state.area}' lab='${state.lab}' sendingSampleLocation='${state.sendingSampleLocation}'");
     } else if (widget.section == 'sample') {
       isComplete = state.isSampleInfoComplete;
       errorMessage = AppLocalizations.of(context)!.form6_step_sample_section_incomplete;
+      print("ℹ️ Sample completeness: $isComplete | sampleCodeData='${state.sampleCodeData}' collectionDate='${state.collectionDate}' place='${state.placeOfCollection}' SampleName='${state.SampleName}' Quantity='${state.QuantitySample}' NumberOfSample='${state.NumberOfSample}' article='${state.article}' preservativeAdded='${state.preservativeAdded}' personSignature='${state.personSignature}' DOSignature='${state.DOSignature}' sampleCodeNumber='${state.sampleCodeNumber}' sealImpression='${state.sealImpression}' numberofSeal='${state.numberofSeal}' formVI='${state.formVI}' FoemVIWrapper='${state.FoemVIWrapper}' uploadedDocs='${state.uploadedDocs.length}' doSlipNumbers='${state.doSlipNumbers}'");
     }
 
     if (!isComplete) {
+      print("⛔ Section '${widget.section}' incomplete. Staying on last step.");
       AppDialog.show(context, errorMessage, MessageType.error);
       return;
     }
 
     if (widget.section == 'other') {
+      print("✅ Other section complete. Navigating to 'sample' section.");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -156,6 +195,7 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
       );
     } else {
       // If last section → go back to landing
+      print("✅ Sample section complete. Finishing and returning to landing.");
       Navigator.pop(context, 'completed');
     }
   }
@@ -194,6 +234,12 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<SampleFormBloc, SampleFormState>(
+          listenWhen: (prev, curr) => prev != curr,
+          listener: (context, state) {
+            _scheduleAutoSave(state);
+          },
+        ),
+        BlocListener<SampleFormBloc, SampleFormState>(
           listenWhen: (prev, curr) => prev.documentName != curr.documentName,
           listener: (context, state) async {
             await storage.saveForm6Data(state);
@@ -224,6 +270,15 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                     final steps = widget.section == 'other'
                         ? getOtherInformationSteps(state, context.read<SampleFormBloc>(), context)
                         : getSampleDetailsSteps(state, context.read<SampleFormBloc>(), context);
+
+                    // Keep form keys in sync with steps
+                    if (_formKeys.length != steps.length) {
+                      _formKeys = List.generate(steps.length, (_) => GlobalKey<FormState>());
+                      // Clamp current step to bounds
+                      final int maxIndex = steps.isNotEmpty ? steps.length - 1 : 0;
+                      if (currentStep > maxIndex) currentStep = maxIndex;
+                      if (currentStep < 0) currentStep = 0;
+                    }
 
                     return Form(
                       key: _formKeys[currentStep],
@@ -264,13 +319,23 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
                       ),
                       child: Row(
                         children: [
-                          Text(
-                            currentStep < stepFields.length - 1
-                                ? localizations.form6_step_save_next_button
-                                : widget.section == 'other'
-                                ? localizations.form6_step_save_next_button
-                                : localizations.form6_step_submit_button,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          BlocBuilder<SampleFormBloc, SampleFormState>(
+                            buildWhen: (p, n) => false, // label depends on currentStep and steps length
+                            builder: (context, state) {
+                              final steps = widget.section == 'other'
+                                  ? getOtherInformationSteps(state, context.read<SampleFormBloc>(), context)
+                                  : getSampleDetailsSteps(state, context.read<SampleFormBloc>(), context);
+                              final isLastStep = !(currentStep < (steps.length - 1));
+                              final label = !isLastStep
+                                  ? localizations.form6_step_save_next_button
+                                  : (widget.section == 'other'
+                                      ? localizations.form6_step_save_next_button
+                                      : localizations.form6_step_submit_button);
+                              return Text(
+                                label,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              );
+                            },
                           ),
                           const SizedBox(width: 6),
                           const Icon(CupertinoIcons.right_chevron, color: customColors.white),

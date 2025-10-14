@@ -19,7 +19,7 @@ class Form6Database {
 
     return await openDatabase(
       path,
-      version: 12,
+      version: 13,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -42,6 +42,7 @@ class Form6Database {
       placeOfCollection TEXT,
       SampleName TEXT,
       QuantitySample TEXT,
+      NumberOfSample TEXT,
       article TEXT,
       preservativeAdded INTEGER,
       preservativeName TEXT,
@@ -117,6 +118,18 @@ class Form6Database {
       )
       ''');
     }
+    // v13: ensure any missing columns exist on FSOLIMS
+    if (oldVersion < 13) {
+      await _ensureColumn(db, 'FSOLIMS', 'NumberOfSample', 'TEXT');
+    }
+  }
+
+  Future<void> _ensureColumn(Database db, String table, String column, String type) async {
+    final result = await db.rawQuery('PRAGMA table_info($table)');
+    final hasColumn = result.any((row) => (row['name'] as String?) == column);
+    if (!hasColumn) {
+      await db.execute('ALTER TABLE $table ADD COLUMN $column $type');
+    }
   }
 
   // Insert or update per user
@@ -157,6 +170,7 @@ class Form6Database {
         'placeOfCollection',
         'SampleName',
         'QuantitySample',
+        'NumberOfSample',
         'article',
         'preservativeAdded',
         'preservativeName',
@@ -264,13 +278,13 @@ class Form6Database {
     final db = await instance.database;
     return await db.query('FSOLIMS');
   }
-  
+
   Future<void> resetFSOLIMSTable() async {
     final db = await instance.database;
     // Drop existing table
     await db.execute('DROP TABLE IF EXISTS FSOLIMS');
     // Recreate schema (FSOLIMS and ensure Form6Documents exists)
-    await _createDB(db, 12);
+    await _createDB(db, 13);
   }
 
 }

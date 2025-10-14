@@ -759,8 +759,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
               color: Colors.blue[700],
               decoration: TextDecoration.underline,
             ),
-            overflow: TextOverflow.ellipsis,
-          ),
+           ),
         );
       }),
     );

@@ -199,6 +199,89 @@ class BlocDropdown extends StatelessWidget {
 }
 
 
+
+// Multiline text area field that mirrors BlocTextInput API but supports maxLines
+class BlocTextArea extends StatefulWidget {
+  final String label;
+  final String initialValue;
+  final ValueChanged<String> onChanged;
+  final String? Function(String?)? validator;
+  final int maxLines;
+
+  const BlocTextArea({
+    super.key,
+    required this.label,
+    required this.initialValue,
+    required this.onChanged,
+    this.validator,
+    this.maxLines = 4,
+  });
+
+  @override
+  State<BlocTextArea> createState() => _BlocTextAreaState();
+}
+
+class _BlocTextAreaState extends State<BlocTextArea> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void didUpdateWidget(covariant BlocTextArea oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != _controller.text) {
+      _controller.text = widget.initialValue;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      onChanged: widget.onChanged,
+      validator: widget.validator,
+      maxLines: widget.maxLines,
+      keyboardType: TextInputType.multiline,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
+      ),
+      decoration: InputDecoration(
+        hintText: '${AppLocalizations.of(context)?.enter ?? "Enter"} ${widget.label}',
+        hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
+        filled: true,
+        fillColor: customColors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: customColors.primary),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: const BorderSide(color: customColors.primary),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: customColors.primary, width: 0.5),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
 class BlocDatePicker extends StatelessWidget {
   final String label;
   final DateTime? selectedDate;
@@ -299,7 +382,7 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
     super.initState();
     _searchController = TextEditingController();
     _filteredItems = widget.items;
-    
+
     // Set initial text if value is provided
     if (widget.value != null && widget.value!.isNotEmpty) {
       _searchController.text = widget.value!;
@@ -309,12 +392,12 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
   @override
   void didUpdateWidget(covariant BlocSearchableDropdown oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Update filtered items if items list changes
     if (widget.items != oldWidget.items) {
       _filteredItems = widget.items;
     }
-    
+
     // Update text field if value changes externally
     if (widget.value != oldWidget.value) {
       if (widget.value != null && widget.value!.isNotEmpty) {
@@ -335,7 +418,7 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
             .toList();
       }
     });
-    
+
     if (_overlayEntry != null) {
       _overlayEntry!.markNeedsBuild();
     }
@@ -343,17 +426,17 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
 
   void _showDropdown() {
     if (_isDropdownOpen) return;
-    
+
     _isDropdownOpen = true;
     _filteredItems = widget.items;
-    
+
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
   }
 
   void _hideDropdown() {
     if (!_isDropdownOpen) return;
-    
+
     _isDropdownOpen = false;
     _overlayEntry?.remove();
     _overlayEntry = null;
@@ -382,54 +465,54 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
               ),
               child: _filteredItems.isEmpty
                   ? const Padding(
-                      padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'No items found',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              )
+                  : ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = _filteredItems[index];
+                  return InkWell(
+                    onTap: () {
+                      _searchController.text = item;
+                      widget.onChanged(item);
+                      _hideDropdown();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        border: index < _filteredItems.length - 1
+                            ? Border(
+                          bottom: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 0.5,
+                          ),
+                        )
+                            : null,
+                      ),
                       child: Text(
-                        'No items found',
-                        style: TextStyle(
+                        item,
+                        style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.grey,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
                         ),
                       ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: _filteredItems.length,
-                      itemBuilder: (context, index) {
-                        final item = _filteredItems[index];
-                        return InkWell(
-                          onTap: () {
-                            _searchController.text = item;
-                            widget.onChanged(item);
-                            _hideDropdown();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              border: index < _filteredItems.length - 1
-                                  ? Border(
-                                      bottom: BorderSide(
-                                        color: Colors.grey.shade300,
-                                        width: 0.5,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
                     ),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -452,7 +535,7 @@ class _BlocSearchableDropdownState extends State<BlocSearchableDropdown> {
         child: TextFormField(
           controller: _searchController,
           validator: widget.validator ??
-              (val) => val == null || val.isEmpty ? '${widget.label} is required' : null,
+                  (val) => val == null || val.isEmpty ? '${widget.label} is required' : null,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: const TextStyle(
             fontSize: 16,

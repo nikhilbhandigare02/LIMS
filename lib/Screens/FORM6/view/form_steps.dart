@@ -25,19 +25,18 @@ String _formatBytes(int bytes) {
   if (bytes >= kb) return (bytes / kb).toStringAsFixed(2) + ' KB';
   return bytes.toString() + ' B';
 }
- 
 
 Future<void> loadSenderNameIfNeeded(
-  SampleFormState state,
-  SampleFormBloc bloc,
-) async {
+    SampleFormState state,
+    SampleFormBloc bloc,
+    ) async {
   if (state.senderName.isEmpty) {
     const storage = FlutterSecureStorage();
     final String? jsonString = await storage.read(key: 'loginData');
     if (jsonString != null && jsonString.isNotEmpty) {
       try {
         final Map<String, dynamic> data =
-            jsonDecode(jsonString) as Map<String, dynamic>;
+        jsonDecode(jsonString) as Map<String, dynamic>;
         String? name;
         for (final k in [
           'fullName',
@@ -75,10 +74,10 @@ void setCollectionDateIfNeeded(SampleFormState state, SampleFormBloc bloc) {
 }
 
 List<List<Widget>> getOtherInformationSteps(
-  SampleFormState state,
-  SampleFormBloc bloc,
-  BuildContext context,
-) {
+    SampleFormState state,
+    SampleFormBloc bloc,
+    BuildContext context,
+    ) {
   final l = AppLocalizations.of(context)!;
 
   loadSenderNameIfNeeded(state, bloc);
@@ -344,10 +343,10 @@ List<List<Widget>> getOtherInformationSteps(
 }
 
 List<List<Widget>> getSampleDetailsSteps(
-  SampleFormState state,
-  SampleFormBloc bloc,
-  BuildContext context,
-) {
+    SampleFormState state,
+    SampleFormBloc bloc,
+    BuildContext context,
+    ) {
   final l = AppLocalizations.of(context)!;
   return [
     [
@@ -480,42 +479,59 @@ List<List<Widget>> getSampleDetailsSteps(
             Validators.validateEmptyField(context,v, l.quantity),
       ),
       SizedBox(height: 16),
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, s) {
-          if (s.natureOptions.isEmpty) {
-            final loading = l.loading;
-            return Opacity(
-              opacity: 0.7,
-              child: IgnorePointer(
-                ignoring: true,
-                child: BlocDropdown(
-                  label: l.natureOfSample,
-                  // icon: Icons.category,
-                  value: loading,
-                  items:   [loading],
-                  onChanged: (_) {},
-                ),
-              ),
-            );
-          }
-          final items = s.natureOptions;
-          final selected = (s.article.isNotEmpty && items.contains(s.article))
-              ? s.article
-              : null;
-          return BlocDropdown(
-            label: l.natureOfSample,
-            // icon: Icons.category,
-            value: selected,
-            items: items,
-            onChanged: (val) {
-              if (val == null) return;
-              bloc.add(articleChanged(val));
-            },
-            validator: (v) =>
-                Validators.validateEmptyField(context,v, l.natureOfSample),
-          );
-        },
+      BlocTextInput(
+        label: 'Number Of Sample',
+        //icon: Icons.scale,
+        initialValue: state.NumberOfSample,
+        onChanged: (val) => bloc.add(NumberOfSampleChanged(val)),
+        validator: (v) =>
+            Validators.validateEmptyField(context,v, 'Number Of Sample'),
       ),
+      SizedBox(height: 16),
+      // BlocTextInput(
+      //   label: 'Nature of Sample',
+      //   //icon: Icons.scale,
+      //   initialValue: state.article,
+      //   onChanged: (val) => bloc.add(articleChanged(val)),
+      //   validator: (v) =>
+      //       Validators.validateEmptyField(context,v, 'Nature Of Sample'),
+      // ),
+      // BlocBuilder<SampleFormBloc, SampleFormState>(
+      //   builder: (context, s) {
+      //     if (s.natureOptions.isEmpty) {
+      //       final loading = l.loading;
+      //       return Opacity(
+      //         opacity: 0.7,
+      //         child: IgnorePointer(
+      //           ignoring: true,
+      //           child: BlocDropdown(
+      //             label: l.natureOfSample,
+      //             // icon: Icons.category,
+      //             value: loading,
+      //             items:   [loading],
+      //             onChanged: (_) {},
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //     final items = s.natureOptions;
+      //     final selected = null
+      //         : null;
+      //     return BlocDropdown(
+      //       label: l.natureOfSample,
+      //       // icon: Icons.category,
+      //       value: null,
+      //       items: items,
+      //       onChanged: (val) {
+      //         if (val == null) return;
+      //         // removed
+      //       },
+      //       validator: (v) =>
+      //           Validators.validateEmptyField(context,v, l.natureOfSample),
+      //     );
+      //   },
+      // ),
+      ///////////////////////////////////////////////////
     ],
     [
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -575,9 +591,9 @@ List<List<Widget>> getSampleDetailsSteps(
                   ),
                   validator: (v) => state.preservativeAdded == true
                       ? Validators.validateEmptyField(
-                          context,v,
-                          l.preservativeQuantity,
-                        )
+                    context,v,
+                    l.preservativeQuantity,
+                  )
                       : null,
                 ),
               ],
@@ -769,11 +785,11 @@ List<List<Widget>> getSampleDetailsSteps(
                           final String? ext = (doc.extension != null && doc.extension!.isNotEmpty)
                               ? doc.extension
                               : (() {
-                                  final n = doc.name;
-                                  final i = n.lastIndexOf('.');
-                                  if (i > 0 && i < n.length - 1) return n.substring(i + 1);
-                                  return null;
-                                })();
+                            final n = doc.name;
+                            final i = n.lastIndexOf('.');
+                            if (i > 0 && i < n.length - 1) return n.substring(i + 1);
+                            return null;
+                          })();
                           if (ext != null && ext.isNotEmpty) {
                             final String baseName = (() {
                               final n = doc.name;
@@ -842,131 +858,131 @@ List<List<Widget>> getSampleDetailsSteps(
                         })(),
                         SizedBox(height: 12),
                         Row(
-                          children: [
-                            ElevatedButton.icon(
-                              icon: state.isUploading
-                                  ? SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: customColors.white),
-                                    )
-                                  : const Icon(Icons.upload_file),
-                              label: Text(state.isUploading ? l.uploading : (doc.base64Data.isEmpty ? l.chooseFile : l.replaceFile)),
-                              onPressed: state.isUploading
-                                  ? null
-                                  : () async {
-                                      final result = await FilePicker.platform.pickFiles(
-                                        type: FileType.any,
-                                        allowMultiple: false,
-                                        withData: true,
-                                      );
-                                      if (result == null || result.files.isEmpty) return;
-                                      final f = result.files.first;
-                                      final bytes = f.path != null
-                                          ? await File(f.path!).readAsBytes()
-                                          : f.bytes;
-                                      if (bytes == null) return;
+                            children: [
+                              ElevatedButton.icon(
+                                icon: state.isUploading
+                                    ? SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: customColors.white),
+                                )
+                                    : const Icon(Icons.upload_file),
+                                label: Text(state.isUploading ? l.uploading : (doc.base64Data.isEmpty ? l.chooseFile : l.replaceFile)),
+                                onPressed: state.isUploading
+                                    ? null
+                                    : () async {
+                                  final result = await FilePicker.platform.pickFiles(
+                                    type: FileType.any,
+                                    allowMultiple: false,
+                                    withData: true,
+                                  );
+                                  if (result == null || result.files.isEmpty) return;
+                                  final f = result.files.first;
+                                  final bytes = f.path != null
+                                      ? await File(f.path!).readAsBytes()
+                                      : f.bytes;
+                                  if (bytes == null) return;
 
-                                      const int maxTotalSize = 5 * 1024 * 1024;
-                                      int totalSize = 0;
-                                      for (int i = 0; i < state.uploadedDocs.length; i++) {
-                                        if (i == index) continue; // we'll replace this index
-                                        final d = state.uploadedDocs[i];
-                                        if (d.base64Data.isNotEmpty) {
-                                          totalSize += (d.sizeBytes ?? base64Decode(d.base64Data).length);
-                                        }
-                                      }
-                                      totalSize += bytes.length;
-                                      if (totalSize > maxTotalSize) {
-                                        Message.showTopRightOverlay(context, 'Total file size must not exceed 5 MB.', MessageType.error);
-                                        return;
-                                      }
-
-                                      final newDoc = UploadedDoc(
-                                        name: (doc.name.isEmpty ? (f.name) : doc.name),
-                                        base64Data: base64Encode(bytes),
-                                        mimeType: null,
-                                        extension: f.extension,
-                                        sizeBytes: bytes.length,
-                                      );
-                                      context.read<SampleFormBloc>().add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
-
-                                      if (doc.name.isEmpty) {
-                                        context.read<SampleFormBloc>().add(UpdateUploadedDocumentName(index: index, name: f.name));
-                                      }
-                                    },
-                            ),
-                            const SizedBox(width: 4),
-                            OutlinedButton(
-                              onPressed: state.isUploading
-                                  ? null
-                                  : () async {
-                                final picker = ImagePicker();
-                                final XFile? photo = await picker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 85,
-                                );
-                                if (photo == null) return;
-                                final bytes = await photo.readAsBytes();
-
-                                const int maxTotalSize = 5 * 1024 * 1024;
-                                int totalSize = 0;
-                                for (int i = 0; i < state.uploadedDocs.length; i++) {
-                                  if (i == index) continue;
-                                  final d = state.uploadedDocs[i];
-                                  if (d.base64Data.isNotEmpty) {
-                                    totalSize += base64Decode(d.base64Data).length;
+                                  const int maxTotalSize = 5 * 1024 * 1024;
+                                  int totalSize = 0;
+                                  for (int i = 0; i < state.uploadedDocs.length; i++) {
+                                    if (i == index) continue; // we'll replace this index
+                                    final d = state.uploadedDocs[i];
+                                    if (d.base64Data.isNotEmpty) {
+                                      totalSize += (d.sizeBytes ?? base64Decode(d.base64Data).length);
+                                    }
                                   }
-                                }
-                                totalSize += bytes.length;
-                                if (totalSize > maxTotalSize) {
-                                  Message.showTopRightOverlay(
-                                      context,
-                                      'Total file size must not exceed 5 MB.',
-                                      MessageType.error);
-                                  return;
-                                }
+                                  totalSize += bytes.length;
+                                  if (totalSize > maxTotalSize) {
+                                    Message.showTopRightOverlay(context, 'Total file size must not exceed 5 MB.', MessageType.error);
+                                    return;
+                                  }
 
-                                final String ext = 'jpg';
-                                final String displayName =
-                                doc.name.isEmpty ? photo.name : doc.name;
-                                final newDoc = UploadedDoc(
-                                  name: displayName,
-                                  base64Data: base64Encode(bytes),
-                                  mimeType: 'image/jpeg',
-                                  extension: ext,
-                                  sizeBytes: bytes.length,
-                                );
-                                context
-                                    .read<SampleFormBloc>()
-                                    .add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
+                                  final newDoc = UploadedDoc(
+                                    name: (doc.name.isEmpty ? (f.name) : doc.name),
+                                    base64Data: base64Encode(bytes),
+                                    mimeType: null,
+                                    extension: f.extension,
+                                    sizeBytes: bytes.length,
+                                  );
+                                  context.read<SampleFormBloc>().add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
 
-                                if (doc.name.isEmpty) {
-                                  context
-                                      .read<SampleFormBloc>()
-                                      .add(UpdateUploadedDocumentName(index: index, name: displayName));
-                                }
-                              },
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.all(8), // smaller padding
-                                minimumSize: const Size(40, 40), // compact square button
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Icon(Icons.photo_camera, size: 20, color: customColors.black87),
-                          ),
-                            const SizedBox(width: 8),
-                            if (doc.base64Data.isNotEmpty)
-                              IconButton(
-                                icon: Icon(Icons.open_in_new, color: customColors.primary),
-                                tooltip: 'Open',
-                                onPressed: () async {
-                                  await _openUploadedDoc(doc);
+                                  if (doc.name.isEmpty) {
+                                    context.read<SampleFormBloc>().add(UpdateUploadedDocumentName(index: index, name: f.name));
+                                  }
                                 },
                               ),
+                              const SizedBox(width: 4),
+                              OutlinedButton(
+                                onPressed: state.isUploading
+                                    ? null
+                                    : () async {
+                                  final picker = ImagePicker();
+                                  final XFile? photo = await picker.pickImage(
+                                    source: ImageSource.camera,
+                                    imageQuality: 85,
+                                  );
+                                  if (photo == null) return;
+                                  final bytes = await photo.readAsBytes();
 
-                          ]),
+                                  const int maxTotalSize = 5 * 1024 * 1024;
+                                  int totalSize = 0;
+                                  for (int i = 0; i < state.uploadedDocs.length; i++) {
+                                    if (i == index) continue;
+                                    final d = state.uploadedDocs[i];
+                                    if (d.base64Data.isNotEmpty) {
+                                      totalSize += base64Decode(d.base64Data).length;
+                                    }
+                                  }
+                                  totalSize += bytes.length;
+                                  if (totalSize > maxTotalSize) {
+                                    Message.showTopRightOverlay(
+                                        context,
+                                        'Total file size must not exceed 5 MB.',
+                                        MessageType.error);
+                                    return;
+                                  }
+
+                                  final String ext = 'jpg';
+                                  final String displayName =
+                                  doc.name.isEmpty ? photo.name : doc.name;
+                                  final newDoc = UploadedDoc(
+                                    name: displayName,
+                                    base64Data: base64Encode(bytes),
+                                    mimeType: 'image/jpeg',
+                                    extension: ext,
+                                    sizeBytes: bytes.length,
+                                  );
+                                  context
+                                      .read<SampleFormBloc>()
+                                      .add(ReplaceUploadedDocumentAt(index: index, document: newDoc));
+
+                                  if (doc.name.isEmpty) {
+                                    context
+                                        .read<SampleFormBloc>()
+                                        .add(UpdateUploadedDocumentName(index: index, name: displayName));
+                                  }
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.all(8), // smaller padding
+                                  minimumSize: const Size(40, 40), // compact square button
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Icon(Icons.photo_camera, size: 20, color: customColors.black87),
+                              ),
+                              const SizedBox(width: 8),
+                              if (doc.base64Data.isNotEmpty)
+                                IconButton(
+                                  icon: Icon(Icons.open_in_new, color: customColors.primary),
+                                  tooltip: 'Open',
+                                  onPressed: () async {
+                                    await _openUploadedDoc(doc);
+                                  },
+                                ),
+
+                            ]),
                         if (doc.base64Data.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 6.0),
@@ -1039,15 +1055,15 @@ List<List<Widget>> getSampleDetailsSteps(
                   Text(
                     state.uploadedDocs.isNotEmpty
                         ? (() {
-                            final count = state.uploadedDocs.where((d) => d.base64Data.isNotEmpty).length;
-                            int total = 0;
-                            for (final d in state.uploadedDocs) {
-                              if (d.base64Data.isNotEmpty) {
-                                total += (d.sizeBytes ?? base64Decode(d.base64Data).length);
-                              }
-                            }
-                            return '$count file(s) selected • ' + _formatBytes(total);
-                          })()
+                      final count = state.uploadedDocs.where((d) => d.base64Data.isNotEmpty).length;
+                      int total = 0;
+                      for (final d in state.uploadedDocs) {
+                        if (d.base64Data.isNotEmpty) {
+                          total += (d.sizeBytes ?? base64Decode(d.base64Data).length);
+                        }
+                      }
+                      return '$count file(s) selected • ' + _formatBytes(total);
+                    })()
                         : 'No documents added',
                     style: TextStyle(
                       fontSize: 12,
@@ -1059,6 +1075,60 @@ List<List<Widget>> getSampleDetailsSteps(
             ],
           );
         },
+      ),
+    ],
+
+
+    [
+      Text(
+        '(vi) Special request with reason',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 8),
+      BlocTextArea(
+        label: 'Special request with reason',
+        initialValue: state.specialRequestReason.isEmpty
+            ? ''
+            : state.specialRequestReason,
+        onChanged: (val) => bloc.add(SpecialRequestReasonChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Special request with reason'),
+        maxLines: 4,
+      ),
+      const SizedBox(height: 16),
+      Text(
+        ' Any additional relevant information',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 8),
+      BlocTextArea(
+        label: 'Any additional relevant information',
+        initialValue: state.additionalRelevantInfo.isEmpty
+            ? ''
+            : state.additionalRelevantInfo,
+        onChanged: (val) => bloc.add(AdditionalInfoChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Additional relevant information'),
+        maxLines: 4,
+      ),
+      const SizedBox(height: 16),
+      Text(
+        '(viii) Parameter to be tested',
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      const SizedBox(height: 8),
+      BlocTextArea(
+        label: '(a) As per the Food Safety and Standards Authority of India Standards for the specific products',
+        initialValue: state.parametersAsPerFSSAI,
+        onChanged: (val) => bloc.add(ParametersAsPerFSSAIChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Parameters as per FSSAI'),
+        maxLines: 5,
+      ),
+      const SizedBox(height: 12),
+      BlocTextArea(
+        label: '(b) Any additional test to be performed if any',
+        initialValue: state.additionalTests,
+        onChanged: (val) => bloc.add(AdditionalTestsChanged(val)),
+        validator: (v) => null, // optional
+        maxLines: 4,
       ),
     ],
   ];
