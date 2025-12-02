@@ -263,11 +263,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "value": formatDate(details.collectionDate),
                 "icon": Icons.calendar_today,
               },
-              {
-                "label": "${AppLocalizations.of(context)!.collectionPlace}:",
-                "value": details.placeOfCollection,
-                "icon": Icons.location_pin,
-              },
+
               {
                 "label": "${AppLocalizations.of(context)!.sampleName}:",
                 "value": details.sampleName,
@@ -284,91 +280,15 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "icon": Icons.numbers,
               },
               {
-                "label": "Nature Of Sample:",
-                "value": details.natureOfSample,
-                "icon": Icons.category,
-              },
-            ],
-          ),
-
-          _buildSection(
-            title: AppLocalizations.of(context)!.preservativeDetails,
-            color:  Color(0xFF3B82F6),
-
-            fields: [
-              {
-                "label": "${AppLocalizations.of(context)!.preservativeAdded}:",
-                "value": formatYesNo(details.preservativeAdded),
-                "icon": Icons.add_circle_outline,
-              },
-              {
                 "label": "${AppLocalizations.of(context)!.preservativeName}:",
                 "value": details.preservativeName,
                 "icon": Icons.science,
               },
-              {
-                "label": "${AppLocalizations.of(context)!.preservativeQuantity}:",
-                "value": details.quantityOfPreservative,
-                "icon": Icons.water_drop,
-              },
-            ],
-          ),
-
-          _buildSection(
-            title: AppLocalizations.of(context)!.verificationSecurity,
-
-            color:  Color(0xFF3B82F6),
-
-            fields: [
-              {
-                "label": "${AppLocalizations.of(context)!.witnessSignature}:",
-                "value": formatYesNo(details.witnessSignature),
-
-              },
-
-              {
-                "label": "${AppLocalizations.of(context)!.doSignature}:",
-                "value": formatYesNo(details.signatureOfDO),
-                "icon": Icons.draw,
-              },
-              {
-                "label": "${AppLocalizations.of(context)!.sealImpression}:",
-                "value": formatYesNo(details.sealImpression),
-                "icon": Icons.verified,
-              },
-              {
-                "label": "${AppLocalizations.of(context)!.sealNumber}:",
-                "value": details.sealNumber,
-                "icon": Icons.security,
-              },
-            ],
-          ),
-
-          _buildSection(
-            title: AppLocalizations.of(context)!.formViDetails,
-            color:  Color(0xFF3B82F6),
-
-            fields: [
-              {
-                "label": AppLocalizations.of(context)!.memoFormVi,
-                "value": formatYesNo(details.memoFormVI),
-
-              },
-              {
-                "label": AppLocalizations.of(context)!.insideWrapper,
-                "value": formatYesNo(details.wrapperFormVI),
-
-              },
-              {
-                "label": AppLocalizations.of(context)!.wrapperCode,
-                "value": details.wrapperCodeNumber,
-              },
-
-              {"label": AppLocalizations.of(context)!.uploadedDocument, "value": _buildDocumentsList(details),  },
-             // {"label": "Status", "value": details.status,  },
 
             ],
           ),
+
+
 
           _buildSection(
             title: "Additional Information",
@@ -390,6 +310,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "label": "Additional Tests:",
                 "value": details.additionalTests,
               },
+              {"label": AppLocalizations.of(context)!.uploadedDocument, "value": _buildDocumentsList(details),  },
             ],
           ),
 
@@ -406,8 +327,7 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
     );
   }
 
-  // Parse details.status which is a JSON array string of objects with keys
-  // Status and TransactionDate, and build fields for _buildSection
+
   List<Map<String, dynamic>> _buildStatusTransactionFields(String? statusJson) {
     if (statusJson == null || statusJson.trim().isEmpty) return const [];
     try {

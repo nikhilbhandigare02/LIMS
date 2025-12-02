@@ -255,7 +255,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         regionIdByName: {},
         // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
-        sendingSampleLocation: state.sendingSampleLocation,
+
       ));
     });
     on<CollectionDateChanged>((event, emit) {
@@ -267,10 +267,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
       emit(state.copyWith(fieldErrors: event.errors));
     });
 
-    on<PlaceChanged>((event, emit) {
-      print(state.placeOfCollection);
-      emit(state.copyWith(placeOfCollection: event.value));
-    });
+
     on<PreservativeAddedChanged>((event, emit) {
       print(state.preservativeAdded);
       emit(state.copyWith(preservativeAdded: event.value));
@@ -337,12 +334,6 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
 
       emit(state.copyWith(NumberOfSample: event.value));
     });
-    on<articleChanged>((event, emit) {
-      print(state.article);
-
-      emit(state.copyWith(article: event.value));
-    });
-
     on<RegionChanged>((event, emit) {
       print(state.region);
       emit(state.copyWith(region: event.value));
@@ -369,7 +360,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         regionIdByName: {},
         // Keep lab and sendingSampleLocation unchanged
         lab: state.lab,
-        sendingSampleLocation: state.sendingSampleLocation,
+
       ));
     });
     on<AreaChanged>((event, emit) {
@@ -499,11 +490,7 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
     on<Lattitude>((event, emit) => emit(state.copyWith(Lattitude: event.value)));
     on<Longitude>((event, emit) => emit(state.copyWith(Longitude: event.value)));
     on<FetchLocationRequested>(_onFetchLocationRequested);
-    on<SendingSampleLocationChanged>((event, emit) {
-      emit(state.copyWith(sendingSampleLocation: event.value));
-    });
 
-    // Schedule initial fetches after all handlers are registered
     Future.microtask(() {
       add(const FetchDistrictsRequested(1));
       add(const FetchLabMasterRequested());
@@ -1051,17 +1038,15 @@ class SampleFormBloc extends Bloc<SampleFormEvent, SampleFormState> {
         'RegionId': regionId,
         'DivisionId': divisionId,
         'Area': state.area,
-        'SampleSendLocation': state.sendingSampleLocation,
         'LabMastId': state.labIdByName[state.lab],
 
         // sample_details inputs
         'SampleCodeNumber': state.sampleCodeNumber.isNotEmpty ? state.sampleCodeNumber : state.sampleCodeData,
         'CollectionDate': state.collectionDate?.toIso8601String(),
-        'PlaceOfCollection': state.placeOfCollection,
         'SampleName': state.SampleName,
         'QuantityOfSample': state.QuantitySample,
         'NumberOfSample': state.NumberOfSample,
-        'NatureOfSample': state.article,
+
         'PreservativeAdded': state.preservativeAdded == true,
         'PreservativeName': state.preservativeName,
         'QuantityOfPreservative': state.preservativeQuantity,

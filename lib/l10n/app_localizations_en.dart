@@ -126,6 +126,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuRequestNewSample => 'Request For New Sample';
 
   @override
+  String get finalReports => 'Report Generated Samples';
+
+  @override
   String get menuOthers => 'Others';
 
   @override
@@ -210,10 +213,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collectionPlace => 'Place Of Collection';
 
   @override
-  String get sampleName => 'Sample Name';
+  String get sampleName => 'Name, Nature of articles submitted for analysis';
 
   @override
   String get quantity => 'Quantity Of Sample';
+
+  @override
+  String get numberOfSample => 'Number Of Sample';
 
   @override
   String get preservativeDetails => 'Preservative Details';
@@ -222,7 +228,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preservativeAdded => 'Preservative Added ?';
 
   @override
-  String get preservativeName => 'Preservative Name';
+  String get preservativeName => 'Name, Nature and quantity of preservative, if any!';
 
   @override
   String get preservativeQuantity => 'Quantity';

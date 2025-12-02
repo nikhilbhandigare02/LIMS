@@ -6,6 +6,7 @@ import 'package:food_inspector/config/Themes/colors/colorsTheme.dart';
 
 
 // For showing resubmit notifications count when available
+import '../../../Screens/ReportGeneratedSamples/view/ReportGeneratedSamples.dart';
 import '../../../core/utils/enums.dart';
 import '../../../Screens/ResubmitSample/bloc/resubmit_bloc.dart';
 import '../../../Screens/ResubmitSample/repository/resubmit_repository.dart';
@@ -83,6 +84,13 @@ class CustomDrawer extends StatelessWidget {
                     AppLocalizations.of(context)!.menuRequestNewSample,
                     trailing: _resubmitBellBadge(context),
                     onTap: () => Navigator.pushNamed(context, RouteName.ResubmitSample),
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.document_scanner_sharp,
+                    AppLocalizations.of(context)!.finalReports,
+                    trailing: _resubmitBellBadge(context),
+                    onTap: () => Navigator.pushNamed(context, RouteName.FinalReports),
                   ),
                   const Divider(),
                   _buildSectionTitle(AppLocalizations.of(context)!.menuOthers),

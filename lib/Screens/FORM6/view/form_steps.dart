@@ -14,7 +14,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
-
 import 'package:image_picker/image_picker.dart';
 
 
@@ -268,20 +267,10 @@ List<List<Widget>> getOtherInformationSteps(
         validator: (v) => Validators.validateEmptyField(context,v, l.area),
       ),
       SizedBox(height: 16),
-      BlocTextInput(
-        label: l.sendingSampleLocation,
-        //  icon: Icons.location_city,
-        initialValue: state.sendingSampleLocation ??  '',
-        onChanged: (val) => bloc.add(SendingSampleLocationChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, l.sendingSampleLocation),
-      ),
-      SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, s) {
           if (s.labOptions.isEmpty) {
-            // Trigger fetch if not already fetched
-            bloc.add(FetchLabMasterRequested());
+             bloc.add(FetchLabMasterRequested());
             final loading = l.loadingLabs;
             return Opacity(
               opacity: 0.7,
@@ -396,8 +385,8 @@ List<List<Widget>> getSampleDetailsSteps(
         onChanged: (val) => bloc.add(SampleCodeDataChanged(val)),
         validator: (v) =>
             Validators.validateEmptyField(context,v, l.sampleCodeNumber),
-        inputFormatters: Validators.getNumberOnlyInputFormatters(),
-        keyboardType: TextInputType.number,
+
+
       ),
       SizedBox(height: 16),
       BlocBuilder<SampleFormBloc, SampleFormState>(
@@ -409,6 +398,7 @@ List<List<Widget>> getSampleDetailsSteps(
               child: BlocDatePicker(
                 label: l.collectionDate,
                 selectedDate: state.collectionDate,
+                validator: (d) => d == null ? '${l.collectionDate} is required' : null,
                 onChanged: (date) {
                   context.read<SampleFormBloc>().add(
                     CollectionDateChanged(date),
@@ -421,15 +411,7 @@ List<List<Widget>> getSampleDetailsSteps(
       ),
 
       SizedBox(height: 16),
-      BlocTextInput(
-        label: l.collectionPlace,
-        // icon: Icons.place,
-        initialValue: state.placeOfCollection,
-        onChanged: (val) => bloc.add(PlaceChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, l.collectionPlace),
-      ),
-      SizedBox(height: 16),
+
       BlocTextInput(
         label: l.sampleName,
         // icon: Icons.label,
@@ -438,31 +420,40 @@ List<List<Widget>> getSampleDetailsSteps(
         validator: (v) => Validators.validateEmptyField(context,v, l.sampleName),
       ),
       SizedBox(height: 16),
-      BlocTextInput(
-        label: l.quantity,
-        //icon: Icons.scale,
-        initialValue: state.QuantitySample,
-        onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, l.quantity),
+      Row(
+        children: [
+          Expanded(
+            child: BlocTextInput(
+              label: l.quantity,
+              initialValue: state.QuantitySample,
+              onChanged: (val) => bloc.add(QuantitySampleChanged(val)),
+              validator: (v) => Validators.validateEmptyField(context, v, l.quantity),
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: BlocTextInput(
+              label: l.numberOfSample,
+              initialValue: state.NumberOfSample,
+              onChanged: (val) => bloc.add(NumberOfSampleChanged(val)),
+              validator: (v) => Validators.validateEmptyField(context, v, 'Number Of Sample'),
+            ),
+          ),
+
+
+
+        ],
       ),
       SizedBox(height: 16),
       BlocTextInput(
-        label: 'Number Of Sample',
-        //icon: Icons.scale,
-        initialValue: state.NumberOfSample,
-        onChanged: (val) => bloc.add(NumberOfSampleChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, 'Number Of Sample'),
-      ),
-      SizedBox(height: 16),
-      BlocTextInput(
-        label: 'Nature of Sample',
-        //icon: Icons.scale,
-        initialValue: state.article,
-        onChanged: (val) => bloc.add(articleChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, 'Nature Of Sample'),
+        label: l.preservativeName,
+        initialValue: state.preservativeName,
+        onChanged: (val) => context.read<SampleFormBloc>().add(
+          preservativeNameChanged(val),
+        ),
+        validator: (v) => state.preservativeAdded == true
+            ? Validators.validateEmptyField(context, v, l.preservativeName)
+            : null,
       ),
       // BlocBuilder<SampleFormBloc, SampleFormState>(
       //   builder: (context, s) {
@@ -501,234 +492,291 @@ List<List<Widget>> getSampleDetailsSteps(
       // ),
       ///////////////////////////////////////////////////
     ],
-    [
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          final l = AppLocalizations.of(context)!;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BlocYesNoRadio(
-                label: l.preservativeAdded,
-                value: state.preservativeAdded,
-                autovalidate: true, // Enable auto-validation
-                validator: (value) {
-                  if (value == null) {
-                    return l.pleaseSelectYesOrNo;
-                  }
+    // [
+    //   BlocBuilder<SampleFormBloc, SampleFormState>(
+    //     builder: (context, state) {
+    //       final l = AppLocalizations.of(context)!;
+    //       return Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           BlocYesNoRadio(
+    //             label: l.preservativeAdded,
+    //             value: state.preservativeAdded,
+    //             autovalidate: true, // Enable auto-validation
+    //             validator: (value) {
+    //               if (value == null) {
+    //                 return l.pleaseSelectYesOrNo;
+    //               }
+    //
+    //               return null; // Valid
+    //             }, // ← from BLoC state
+    //             // icon: Icons.add_circle_outline,
+    //             onChanged: (newValue) {
+    //               context.read<SampleFormBloc>().add(
+    //                 PreservativeAddedChanged(newValue),
+    //               );
+    //
+    //               // Optional: clear fields when "No" is selected
+    //               if (newValue == false) {
+    //                 context.read<SampleFormBloc>().add(
+    //                   preservativeNameChanged(''),
+    //                 );
+    //                 context.read<SampleFormBloc>().add(
+    //                   preservativeQuantityChanged(''),
+    //                 );
+    //               }
+    //             },
+    //           ),
+    //           if (state.preservativeAdded == true) ...[
+    //             SizedBox(height: 16),
+    //             BlocTextInput(
+    //               label: l.preservativeName,
+    //               // icon: Icons.medication,
+    //               initialValue: state.preservativeName,
+    //               onChanged: (val) => context.read<SampleFormBloc>().add(
+    //                 preservativeNameChanged(val),
+    //               ),
+    //               validator: (v) => state.preservativeAdded == true
+    //                   ? Validators.validateEmptyField(context,v, l.preservativeName)
+    //                   : null,
+    //             ),
+    //             SizedBox(height: 16),
+    //             BlocTextInput(
+    //               label: l.preservativeQuantity,
+    //               //  icon: Icons.scale,
+    //               initialValue: state.preservativeQuantity,
+    //               onChanged: (val) => context.read<SampleFormBloc>().add(
+    //                 preservativeQuantityChanged(val),
+    //               ),
+    //               validator: (v) => state.preservativeAdded == true
+    //                   ? Validators.validateEmptyField(
+    //                 context,v,
+    //                 l.preservativeQuantity,
+    //               )
+    //                   : null,
+    //             ),
+    //           ],
+    //         ],
+    //       );
+    //     },
+    //   ),
+    //   SizedBox(height: 16),
+    //
+    //   BlocBuilder<SampleFormBloc, SampleFormState>(
+    //     builder: (context, state) {
+    //       return BlocYesNoRadio(
+    //         label: l.witnessSignature,
+    //         value: state.personSignature,
+    //         autovalidate: true, // Enable auto-validation
+    //         validator: (value) {
+    //           if (value == null) {
+    //             return l.pleaseSelectYesOrNo;
+    //           }
+    //
+    //           return null; // Valid
+    //         },
+    //         //icon: Icons.fingerprint,
+    //         onChanged: (newValue) {
+    //           context.read<SampleFormBloc>().add(
+    //             personSignatureChanged(newValue),
+    //           );
+    //         },
+    //       );
+    //     },
+    //   ),
+    //   SizedBox(height: 16),
+    //   // BlocTextInput(
+    //   //   label: "Paper Slip Number",
+    //   //   // icon: Icons.sticky_note_2,
+    //   //   initialValue: state.slipNumber,
+    //   //   onChanged: (val) => bloc.add(slipNumberChanged(val)),
+    //   //   validator: (v) => Validators.validateEmptyField(v, 'Paper Slip Number'),
+    //   //
+    //   //   inputFormatters: Validators.getNumberOnlyInputFormatters(),
+    //   //   keyboardType: TextInputType.number,
+    //   // ),
+    //   SizedBox(height: 16),
+    //
+    //   BlocBuilder<SampleFormBloc, SampleFormState>(
+    //     builder: (context, state) {
+    //       return BlocYesNoRadio(
+    //         label: l.doSignature,
+    //         value: state.DOSignature,
+    //         autovalidate: true, // Enable auto-validation
+    //         validator: (value) {
+    //           if (value == null) {
+    //             return l.pleaseSelectYesOrNo;
+    //           }
+    //
+    //           return null; // Valid
+    //         }, // ← from BLoC state
+    //         // icon: Icons.verified_user,
+    //         onChanged: (newValue) {
+    //           context.read<SampleFormBloc>().add(DOSignatureChanged(newValue));
+    //         },
+    //       );
+    //     },
+    //   ),
+    // ],
 
-                  return null; // Valid
-                }, // ← from BLoC state
-                // icon: Icons.add_circle_outline,
-                onChanged: (newValue) {
-                  context.read<SampleFormBloc>().add(
-                    PreservativeAddedChanged(newValue),
-                  );
-
-                  // Optional: clear fields when "No" is selected
-                  if (newValue == false) {
-                    context.read<SampleFormBloc>().add(
-                      preservativeNameChanged(''),
-                    );
-                    context.read<SampleFormBloc>().add(
-                      preservativeQuantityChanged(''),
-                    );
-                  }
-                },
-              ),
-              if (state.preservativeAdded == true) ...[
-                SizedBox(height: 16),
-                BlocTextInput(
-                  label: l.preservativeName,
-                  // icon: Icons.medication,
-                  initialValue: state.preservativeName,
-                  onChanged: (val) => context.read<SampleFormBloc>().add(
-                    preservativeNameChanged(val),
-                  ),
-                  validator: (v) => state.preservativeAdded == true
-                      ? Validators.validateEmptyField(context,v, l.preservativeName)
-                      : null,
-                ),
-                SizedBox(height: 16),
-                BlocTextInput(
-                  label: l.preservativeQuantity,
-                  //  icon: Icons.scale,
-                  initialValue: state.preservativeQuantity,
-                  onChanged: (val) => context.read<SampleFormBloc>().add(
-                    preservativeQuantityChanged(val),
-                  ),
-                  validator: (v) => state.preservativeAdded == true
-                      ? Validators.validateEmptyField(
-                    context,v,
-                    l.preservativeQuantity,
-                  )
-                      : null,
-                ),
-              ],
-            ],
-          );
-        },
-      ),
-      SizedBox(height: 16),
-
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          return BlocYesNoRadio(
-            label: l.witnessSignature,
-            value: state.personSignature,
-            autovalidate: true, // Enable auto-validation
-            validator: (value) {
-              if (value == null) {
-                return l.pleaseSelectYesOrNo;
-              }
-
-              return null; // Valid
-            },
-            //icon: Icons.fingerprint,
-            onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(
-                personSignatureChanged(newValue),
-              );
-            },
-          );
-        },
-      ),
-      SizedBox(height: 16),
+    //[
       // BlocTextInput(
-      //   label: "Paper Slip Number",
-      //   // icon: Icons.sticky_note_2,
-      //   initialValue: state.slipNumber,
-      //   onChanged: (val) => bloc.add(slipNumberChanged(val)),
-      //   validator: (v) => Validators.validateEmptyField(v, 'Paper Slip Number'),
+      //   label: l.wrapperCode,
+      //   // icon: Icons.code,
+      //   initialValue: state.sampleCodeNumber,
+      //
+      //   onChanged: (val) => bloc.add(sampleCodeNumberChanged(val)),
+      //   validator: (v) =>
+      //       Validators.validateEmptyField(context,v, l.wrapperCode),
       //
       //   inputFormatters: Validators.getNumberOnlyInputFormatters(),
       //   keyboardType: TextInputType.number,
       // ),
-      SizedBox(height: 16),
+      // SizedBox(height: 16),
+      //
+      // BlocBuilder<SampleFormBloc, SampleFormState>(
+      //   builder: (context, state) {
+      //     return BlocYesNoRadio(
+      //       label: l.insideWrapper,
+      //       value: state.FoemVIWrapper,
+      //       // icon: Icons.inventory,
+      //       autovalidate: true, // Enable auto-validation
+      //       validator: (value) {
+      //         if (value == null) {
+      //           return l.pleaseSelectYesOrNo;
+      //         }
+      //
+      //         return null; // Valid
+      //       },
+      //       onChanged: (newValue) {
+      //         context.read<SampleFormBloc>().add(
+      //           FoemVIWrapperChanged(newValue),
+      //         ); // ← dispatch event
+      //       },
+      //     );
+      //   },
+      // ),
+      //
+      // SizedBox(height: 16),
+      // BlocTextInput(
+      //   label: l.sealNumber,
+      //   // icon: Icons.lock,
+      //   initialValue: state.numberofSeal,
+      //   onChanged: (val) => bloc.add(numberofSealChanged(val)),
+      //   validator: (v) => Validators.validateEmptyField(context,v, l.sealNumber),
+      //
+      //   inputFormatters: Validators.getNumberOnlyInputFormatters(),
+      //   keyboardType: TextInputType.number,
+      // ),
+      // SizedBox(height: 16),
+      //
+      // BlocBuilder<SampleFormBloc, SampleFormState>(
+      //   builder: (context, state) {
+      //     return BlocYesNoRadio(
+      //       label: l.memoFormVi,
+      //       value: state.formVI,
+      //       autovalidate: true,
+      //       validator: (value) {
+      //         if (value == null) {
+      //           return l.pleaseSelectYesOrNo;
+      //         }
+      //
+      //         return null; // Valid
+      //       }, // ← from BLoC state
+      //       //icon: Icons.description,
+      //       onChanged: (newValue) {
+      //         context.read<SampleFormBloc>().add(
+      //           formVIChanged(newValue),
+      //         ); // ← dispatch event
+      //       },
+      //     );
+      //   },
+      // ),
+      //
+      // SizedBox(height: 16),
+      //
+      // BlocBuilder<SampleFormBloc, SampleFormState>(
+      //   builder: (context, state) {
+      //     return BlocYesNoRadio(
+      //       label: l.sealImpression,
+      //       value: state.sealImpression,
+      //       autovalidate: true, // Enable auto-validation
+      //       validator: (value) {
+      //         if (value == null) {
+      //           return l.pleaseSelectYesOrNo;
+      //         }
+      //
+      //         return null; // Valid
+      //       }, // ← from BLoC state
+      //       // icon: Icons.verified,
+      //       onChanged: (newValue) {
+      //         context.read<SampleFormBloc>().add(
+      //           sealImpressionChanged(newValue),
+      //         ); // ← dispatch event
+      //       },
+      //     );
+      //   },
+      // ),
+      // SizedBox(height: 16),
 
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          return BlocYesNoRadio(
-            label: l.doSignature,
-            value: state.DOSignature,
-            autovalidate: true, // Enable auto-validation
-            validator: (value) {
-              if (value == null) {
-                return l.pleaseSelectYesOrNo;
-              }
 
-              return null; // Valid
-            }, // ← from BLoC state
-            // icon: Icons.verified_user,
-            onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(DOSignatureChanged(newValue));
-            },
-          );
-        },
-      ),
-    ],
+   // ],
 
+
+    // New Step: (vi)-(viii) Additional details
     [
-      BlocTextInput(
-        label: l.wrapperCode,
-        // icon: Icons.code,
-        initialValue: state.sampleCodeNumber,
-
-        onChanged: (val) => bloc.add(sampleCodeNumberChanged(val)),
-        validator: (v) =>
-            Validators.validateEmptyField(context,v, l.wrapperCode),
-
-        inputFormatters: Validators.getNumberOnlyInputFormatters(),
-        keyboardType: TextInputType.number,
+      Text(
+        'Special request with reason',
+        style: Theme.of(context).textTheme.titleMedium,
       ),
-      SizedBox(height: 16),
+      const SizedBox(height: 8),
 
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          return BlocYesNoRadio(
-            label: l.insideWrapper,
-            value: state.FoemVIWrapper,
-            // icon: Icons.inventory,
-            autovalidate: true, // Enable auto-validation
-            validator: (value) {
-              if (value == null) {
-                return l.pleaseSelectYesOrNo;
-              }
-
-              return null; // Valid
-            },
-            onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(
-                FoemVIWrapperChanged(newValue),
-              ); // ← dispatch event
-            },
-          );
-        },
+      BlocTextArea(
+        label: 'Special request with reason',
+        initialValue: state.specialRequestReason.isEmpty
+            ? ''
+            : state.specialRequestReason,
+        onChanged: (val) => bloc.add(SpecialRequestReasonChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Special request with reason'),
+        maxLines: 4,
       ),
-
-      SizedBox(height: 16),
-      BlocTextInput(
-        label: l.sealNumber,
-        // icon: Icons.lock,
-        initialValue: state.numberofSeal,
-        onChanged: (val) => bloc.add(numberofSealChanged(val)),
-        validator: (v) => Validators.validateEmptyField(context,v, l.sealNumber),
-
-        inputFormatters: Validators.getNumberOnlyInputFormatters(),
-        keyboardType: TextInputType.number,
+      const SizedBox(height: 16),
+      Text(
+        'Any additional relevant information',
+        style: Theme.of(context).textTheme.titleMedium,
       ),
-      SizedBox(height: 16),
-
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          return BlocYesNoRadio(
-            label: l.memoFormVi,
-            value: state.formVI,
-            autovalidate: true,
-            validator: (value) {
-              if (value == null) {
-                return l.pleaseSelectYesOrNo;
-              }
-
-              return null; // Valid
-            }, // ← from BLoC state
-            //icon: Icons.description,
-            onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(
-                formVIChanged(newValue),
-              ); // ← dispatch event
-            },
-          );
-        },
+      const SizedBox(height: 8),
+      BlocTextArea(
+        label: 'Any additional relevant information',
+        initialValue: state.additionalRelevantInfo.isEmpty
+            ? ''
+            : state.additionalRelevantInfo,
+        onChanged: (val) => bloc.add(AdditionalInfoChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Additional relevant information'),
+        maxLines: 4,
       ),
-
-      SizedBox(height: 16),
-
-      BlocBuilder<SampleFormBloc, SampleFormState>(
-        builder: (context, state) {
-          return BlocYesNoRadio(
-            label: l.sealImpression,
-            value: state.sealImpression,
-            autovalidate: true, // Enable auto-validation
-            validator: (value) {
-              if (value == null) {
-                return l.pleaseSelectYesOrNo;
-              }
-
-              return null; // Valid
-            }, // ← from BLoC state
-            // icon: Icons.verified,
-            onChanged: (newValue) {
-              context.read<SampleFormBloc>().add(
-                sealImpressionChanged(newValue),
-              ); // ← dispatch event
-            },
-          );
-        },
+      const SizedBox(height: 16),
+      Text(
+        'Parameter to be tested',
+        style: Theme.of(context).textTheme.titleMedium,
       ),
-      SizedBox(height: 16),
-
-
+      const SizedBox(height: 8),
+      BlocTextArea(
+        label: '(a) As per the Food Safety and Standards Authority of India Standards for the specific products',
+        initialValue: state.parametersAsPerFSSAI,
+        onChanged: (val) => bloc.add(ParametersAsPerFSSAIChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context, v, 'Parameters as per FSSAI'),
+        maxLines: 5,
+      ),
+      const SizedBox(height: 12),
+      BlocTextArea(
+        label: '(b) Any additional test to be performed if any',
+        initialValue: state.additionalTests,
+        onChanged: (val) => bloc.add(AdditionalTestsChanged(val)),
+        validator: (v) => null, // optional
+        maxLines: 4,
+      ),
+      const SizedBox(height: 12),
       BlocBuilder<SampleFormBloc, SampleFormState>(
         builder: (context, state) {
           final l = AppLocalizations.of(context)!;
@@ -1043,61 +1091,6 @@ List<List<Widget>> getSampleDetailsSteps(
             ],
           );
         },
-      ),
-    ],
-
-
-    // New Step: (vi)-(viii) Additional details
-    [
-      Text(
-        '(vi) Special request with reason',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      BlocTextArea(
-        label: 'Special request with reason',
-        initialValue: state.specialRequestReason.isEmpty
-            ? ' '
-            : state.specialRequestReason,
-        onChanged: (val) => bloc.add(SpecialRequestReasonChanged(val)),
-        validator: (v) => Validators.validateEmptyField(context, v, 'Special request with reason'),
-        maxLines: 4,
-      ),
-      const SizedBox(height: 16),
-      Text(
-        '(vii) Any additional relevant information',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      BlocTextArea(
-        label: 'Any additional relevant information',
-        initialValue: state.additionalRelevantInfo.isEmpty
-            ? ''
-            : state.additionalRelevantInfo,
-        onChanged: (val) => bloc.add(AdditionalInfoChanged(val)),
-        validator: (v) => Validators.validateEmptyField(context, v, 'Additional relevant information'),
-        maxLines: 4,
-      ),
-      const SizedBox(height: 16),
-      Text(
-        '(viii) Parameter to be tested',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 8),
-      BlocTextArea(
-        label: '(a) As per the Food Safety and Standards Authority of India Standards for the specific products',
-        initialValue: state.parametersAsPerFSSAI,
-        onChanged: (val) => bloc.add(ParametersAsPerFSSAIChanged(val)),
-        validator: (v) => Validators.validateEmptyField(context, v, 'Parameters as per FSSAI'),
-        maxLines: 5,
-      ),
-      const SizedBox(height: 12),
-      BlocTextArea(
-        label: '(b) Any additional test to be performed if any',
-        initialValue: state.additionalTests,
-        onChanged: (val) => bloc.add(AdditionalTestsChanged(val)),
-        validator: (v) => null, // optional
-        maxLines: 4,
       ),
     ],
   ];

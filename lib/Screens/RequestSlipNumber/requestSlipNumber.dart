@@ -181,7 +181,7 @@ class _RequestslipnumberState extends State<Requestslipnumber> {
                               selectedDate,
                               minDaysFromToday: 0,
                               maxDaysFromToday: _maxDaysAhead,
-                            );;
+                            );  ;
                                   setState(() {
                                     _dateError = dateValidation;
                                   });

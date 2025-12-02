@@ -268,18 +268,14 @@ class Form6Validators {
         case 'collectionDate':
           errors[field] = state.collectionDate == null ? AppLocalizations.of(context)!.collectionDateRequired : null;
           break;
-        case 'placeOfCollection':
-          errors[field] = state.placeOfCollection.isEmpty ? AppLocalizations.of(context)!.placeOfCollectionRequired : null;
-          break;
+
         case 'SampleName':
           errors[field] = state.SampleName.isEmpty ? AppLocalizations.of(context)!.sampleNameRequired : null;
           break;
         case 'QuantitySample':
           errors[field] = state.QuantitySample.isEmpty ? AppLocalizations.of(context)!.quantityRequired : null;
           break;
-        case 'article':
-          errors[field] = state.article.isEmpty ? AppLocalizations.of(context)!.articleRequired : null;
-          break;
+
         case 'preservativeAdded':
           errors[field] = state.preservativeAdded == null ? AppLocalizations.of(context)!.preservativeInfoRequired : null;
           break;

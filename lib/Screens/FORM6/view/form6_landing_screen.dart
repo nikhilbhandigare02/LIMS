@@ -56,7 +56,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
           isPreservativeComplete = _isPreservativeInfoComplete(s);
           isSealComplete = _isSealInfoComplete(s);
           isAdditionalDetailsComplete = _isAdditionalDetailsComplete(s);
-          isReviewComplete = isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete;
+          isReviewComplete = isOtherInfoComplete && isSampleInfoComplete && isAdditionalDetailsComplete;
         } else {
           isOtherInfoComplete = false;
           isSampleInfoComplete = false;
@@ -71,7 +71,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Future<void> handleSubmit() async {
-    if (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete) {
+    if (isOtherInfoComplete && isSampleInfoComplete && isAdditionalDetailsComplete) {
       context.read<SampleFormBloc>().add(FormSubmit());
     } else {
       Message.showTopRightOverlay(
@@ -109,7 +109,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
             final newPreservativeComplete = _isPreservativeInfoComplete(state);
             final newSealComplete = _isSealInfoComplete(state);
             final newAdditionalDetailsComplete = _isAdditionalDetailsComplete(state);
-            final newReviewComplete = newOtherComplete && newSampleComplete && newPreservativeComplete && newSealComplete && newAdditionalDetailsComplete;
+            final newReviewComplete = newOtherComplete && newSampleComplete && newAdditionalDetailsComplete;
 
             final changed =
                 newOtherComplete != isOtherInfoComplete ||
@@ -226,22 +226,22 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'color': Colors.green,
         'section': 'sample',
       },
-      {
-        'title': localizations.form6_landing_preservative_info_title,
-        'subtitle': localizations.form6_landing_preservative_info_subtitle,
-        'icon': Icons.local_pharmacy_outlined,
-        'isComplete': isPreservativeComplete,
-        'color': Colors.purple,
-        'section': 'sample',
-      },
-      {
-        'title': localizations.form6_landing_seal_details_title,
-        'subtitle': localizations.form6_landing_seal_details_subtitle,
-        'icon': Icons.security_outlined,
-        'isComplete': isSealComplete,
-        'color': Colors.orange,
-        'section': 'sample',
-      },
+      // {
+      //   'title': localizations.form6_landing_preservative_info_title,
+      //   'subtitle': localizations.form6_landing_preservative_info_subtitle,
+      //   'icon': Icons.local_pharmacy_outlined,
+      //   'isComplete': isPreservativeComplete,
+      //   'color': Colors.purple,
+      //   'section': 'sample',
+      // },
+      // {
+      //   'title': localizations.form6_landing_seal_details_title,
+      //   'subtitle': localizations.form6_landing_seal_details_subtitle,
+      //   'icon': Icons.security_outlined,
+      //   'isComplete': isSealComplete,
+      //   'color': Colors.orange,
+      //   'section': 'sample',
+      // },
       {
         'title': 'Additional details (vi)-(viii)',
         'subtitle': 'Special request, additional info, parameters to test',
@@ -250,14 +250,14 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
         'color': Colors.teal,
         'section': 'sample',
       },
-      {
-        'title': localizations.form6_landing_review_submit_title,
-        'subtitle': localizations.form6_landing_review_submit_subtitle,
-        'icon': Icons.send_outlined,
-        'isComplete': isReviewComplete,
-        'color': Colors.indigo,
-        'section': 'sample',
-      },
+      // {
+      //   'title': localizations.form6_landing_review_submit_title,
+      //   'subtitle': localizations.form6_landing_review_submit_subtitle,
+      //   'icon': Icons.send_outlined,
+      //   'isComplete': isReviewComplete,
+      //   'color': Colors.indigo,
+      //   'section': 'sample',
+      // },
     ];
 
     return Column(
@@ -272,7 +272,6 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
               onTap: () async {
                 print("🔄 Navigating to section: ${step['section']}");
 
-                // Determine the initial step based on the section
                 int initialStep = 0;
                 if (step['title'] == localizations.form6_landing_preservative_info_title) {
                   initialStep = 1; // Second step for preservative info
@@ -281,7 +280,7 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
                 } else if (step['title'] == 'Additional details (vi)-(viii)') {
                   initialStep = 3; // Fourth step for additional details
                 } else if (step['title'] == localizations.form6_landing_review_submit_title) {
-                  initialStep = 2; // Use last available step for review
+                  initialStep = 2;
                 }
 
                 final result = await Navigator.push(
@@ -424,51 +423,27 @@ class _Form6LandingScreenState extends State<Form6LandingScreen> {
   }
 
   Widget _buildSubmitButton(AppLocalizations localizations) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      switchInCurve: Curves.easeIn,
-      switchOutCurve: Curves.easeOut,
-      transitionBuilder: (child, animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SizeTransition(
-            sizeFactor: animation,
-            axisAlignment: 0.0,
-            child: child,
-          ),
-        );
-      },
-      child: (isOtherInfoComplete && isSampleInfoComplete && isPreservativeComplete && isSealComplete && isAdditionalDetailsComplete)
-          ? Container(
-        width: double.infinity,
-        child: TextButton.icon(
-          key: const ValueKey("submitButton"),
-          onPressed: handleSubmit,
-          icon: Icon(Icons.check_circle, color: customColors.white),
-          label: Text(
-            localizations.form6_landing_submit_button,
-            style: TextStyle(color: customColors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: customColors.primary,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            textStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
+    if (!isReviewComplete) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      child: TextButton.icon(
+        key: const ValueKey("submitButton"),
+        onPressed: handleSubmit,
+        icon: Icon(Icons.check_circle, color: customColors.white),
+        label: Text(
+          localizations.form6_landing_submit_button,
+          style: TextStyle(color: customColors.white),
         ),
-      )
-          : Card(
-        key: const ValueKey("warningText"),
-        color: customColors.red50,
-        margin: const EdgeInsets.only(top: 10),
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: customColors.primary,
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
         ),
       ),
     );
@@ -488,7 +463,7 @@ bool _isSampleInfoComplete(SampleFormState s) {
   final bool hasAnyCode = s.sampleCodeNumber.isNotEmpty || s.sampleCodeData.isNotEmpty;
   return hasAnyCode &&
       s.collectionDate != null &&
-      s.placeOfCollection.isNotEmpty &&
+
       s.SampleName.isNotEmpty &&
       s.QuantitySample.isNotEmpty;
   // s.article.isNotEmpty;

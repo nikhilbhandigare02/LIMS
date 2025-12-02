@@ -11,6 +11,7 @@ import '../../Screens/ForgotScreen/View/ResetPasswordScreen.dart';
 import '../../Screens/FORM6/view/form6_landing_screen.dart';
 
 // import '../../Screens/Help_Support/view/Help_Suport.dart';
+import '../../Screens/ReportGeneratedSamples/view/ReportGeneratedSamples.dart';
 import '../../Screens/ResubmitSample/view/resubmitSample.dart';
 import '../../Screens/Sample list/view/SampleList.dart';
 import '../../Screens/SlipRequestDetails/SlipRequestDetailsScreen.dart';
@@ -63,7 +64,9 @@ static Route<dynamic> generateRoute(RouteSettings setting){
     case RouteName.ResubmitSample:
       return  MaterialPageRoute(builder: (context) => ResubmitSample(),);
     case RouteName.instructionScreen:
-      return MaterialPageRoute(builder: (context) => const InstructionScreen());
+      return MaterialPageRoute(builder: (context) =>   InstructionScreen());
+    case RouteName.FinalReports:
+      return MaterialPageRoute(builder: (context) =>   FinalReports());
     default:
       return MaterialPageRoute(builder: (context) {
         return Scaffold(

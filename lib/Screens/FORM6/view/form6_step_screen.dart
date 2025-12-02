@@ -98,14 +98,12 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
   }
 
   void _goToNextStep() async {
-    final currentFormKey = _formKeys[currentStep];
-    final isValid = currentFormKey.currentState?.validate() ?? true;
-
-    if (!isValid) {
-      AppDialog.show(
-          context,
-          AppLocalizations.of(context)!.form6_step_validation_error,
-          MessageType.error
+    final currentForm = _formKeys[currentStep].currentState;
+    if (currentForm == null || !currentForm.validate()) {
+      await AppDialog.show(
+        context,
+        'Please complete all required fields before proceeding.',
+        MessageType.error,
       );
       return;
     }
@@ -134,22 +132,6 @@ class _Form6StepScreenState extends State<Form6StepScreen> {
           _formKeys = List.generate(stepFields.length, (_) => GlobalKey<FormState>());
         }
       });
-      return;
-    }
-
-    bool isComplete = false;
-    String errorMessage = "";
-
-    if (widget.section == 'other') {
-      isComplete = state.isOtherInfoComplete;
-      errorMessage = AppLocalizations.of(context)!.form6_step_other_section_incomplete;
-    } else if (widget.section == 'sample') {
-      isComplete = state.isSampleInfoComplete;
-      errorMessage = AppLocalizations.of(context)!.form6_step_sample_section_incomplete;
-    }
-
-    if (!isComplete) {
-      AppDialog.show(context, errorMessage, MessageType.error);
       return;
     }
 

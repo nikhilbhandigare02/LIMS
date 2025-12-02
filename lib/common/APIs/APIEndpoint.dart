@@ -27,4 +27,5 @@ class ApiEndpoints {
     static const String appUpdate = 'mobile/GetAppUpdate';
     // Login audit/log endpoint (adjust path if backend differs)
     static const String userLoginLog = 'mobile/UserLoginLog';
+    static const String getGeneratedReports = 'mobile/get_generated_reports';
   }

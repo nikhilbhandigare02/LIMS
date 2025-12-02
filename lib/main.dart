@@ -10,8 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:no_screenshot/no_screenshot.dart';
 import 'package:overlay_support/overlay_support.dart';
-
-
 import 'fcm/bloc/token_bloc.dart';
 import 'fcm/repository/token_repository.dart';
 import 'firebase_options.dart';
@@ -26,8 +24,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 String? _pendingRoute;
 String? _postLoginRoute; // set when we should navigate after a forced login
 
-/// Always navigate to Login first; only go to ResubmitSample after login
-/// when triggered explicitly from a "View message" action (fromView == true).
 Future<void> _navigateToResubmitSampleGuarded({required bool fromView}) async {
   try {
     const storage = FlutterSecureStorage();
@@ -40,7 +36,7 @@ Future<void> _navigateToResubmitSampleGuarded({required bool fromView}) async {
 
     if (nav != null) {
       await nav.pushNamed(RouteName.loginScreen);
-      // After returning from Login, check again
+
       final String? after = await storage.read(key: 'loginData');
       if ((after != null && after.isNotEmpty) && _postLoginRoute != null) {
         final next = _postLoginRoute!;

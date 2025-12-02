@@ -103,13 +103,6 @@ class NumberOfSampleChanged extends SampleFormEvent {
   List<Object?> get props => [value];
 }
 
-class articleChanged extends SampleFormEvent {
-  final String value;
-  const articleChanged(this.value);
-  @override
-  List<Object?> get props => [value];
-}
-
 class PreservativeAddedChanged extends SampleFormEvent {
   final bool? value;
   const PreservativeAddedChanged(this.value);
@@ -298,12 +291,6 @@ class LabChanged extends SampleFormEvent {
   List<Object?> get props => [value];
 }
 
-class SendingSampleLocationChanged extends SampleFormEvent {
-  final String value;
-  const SendingSampleLocationChanged(this.value);
-  @override
-  List<Object?> get props => [value];
-}
 class SealNumberChanged extends SampleFormEvent {
   final String? value;
   const SealNumberChanged(this.value);

@@ -331,6 +331,12 @@ abstract class AppLocalizations {
   /// **'Request For New Sample'**
   String get menuRequestNewSample;
 
+  /// No description provided for @finalReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Generated Samples'**
+  String get finalReports;
+
   /// No description provided for @menuOthers.
   ///
   /// In en, this message translates to:
@@ -502,7 +508,7 @@ abstract class AppLocalizations {
   /// No description provided for @sampleName.
   ///
   /// In en, this message translates to:
-  /// **'Sample Name'**
+  /// **'Name, Nature of articles submitted for analysis'**
   String get sampleName;
 
   /// No description provided for @quantity.
@@ -510,6 +516,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quantity Of Sample'**
   String get quantity;
+
+  /// No description provided for @numberOfSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Of Sample'**
+  String get numberOfSample;
 
   /// No description provided for @preservativeDetails.
   ///
@@ -526,7 +538,7 @@ abstract class AppLocalizations {
   /// No description provided for @preservativeName.
   ///
   /// In en, this message translates to:
-  /// **'Preservative Name'**
+  /// **'Name, Nature and quantity of preservative, if any!'**
   String get preservativeName;
 
   /// No description provided for @preservativeQuantity.

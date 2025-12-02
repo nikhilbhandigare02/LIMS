@@ -126,6 +126,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get menuRequestNewSample => 'नए नमूने के लिए अनुरोध';
 
   @override
+  String get finalReports => 'अंतिम रिपोर्ट्स';
+
+  @override
   String get menuOthers => 'अन्य';
 
   @override
@@ -214,6 +217,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get quantity => 'मात्रा';
+
+  @override
+  String get numberOfSample => 'मात्रा नंबर';
 
   @override
   String get preservativeDetails => 'परिरक्षक विवरण';

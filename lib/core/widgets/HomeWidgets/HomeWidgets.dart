@@ -21,6 +21,18 @@ BoxDecoration fieldBoxDecoration = BoxDecoration(
 
 
 
+Widget _scrollableText(String text, {TextStyle? style}) {
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    physics: const BouncingScrollPhysics(),
+    child: Text(
+      text,
+      style: style,
+      softWrap: false,
+      overflow: TextOverflow.visible,
+    ),
+  );
+}
 
 class BlocTextInput extends StatefulWidget {
   final String label;
@@ -50,6 +62,7 @@ class BlocTextInput extends StatefulWidget {
 
 class _BlocTextInputState extends State<BlocTextInput> {
   late TextEditingController _controller;
+  bool _suppressOnChanged = false;
 
   @override
   void initState() {
@@ -62,7 +75,9 @@ class _BlocTextInputState extends State<BlocTextInput> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialValue != oldWidget.initialValue &&
         widget.initialValue != _controller.text) {
+      _suppressOnChanged = true;
       _controller.text = widget.initialValue;
+      _suppressOnChanged = false;
     }
   }
 
@@ -70,7 +85,10 @@ class _BlocTextInputState extends State<BlocTextInput> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _controller,
-      onChanged: widget.onChanged,
+      onChanged: (val) {
+        if (_suppressOnChanged) return;
+        widget.onChanged(val);
+      },
       readOnly: widget.readOnly,
       enabled: !widget.readOnly,
       validator: widget.validator,
@@ -83,8 +101,8 @@ class _BlocTextInputState extends State<BlocTextInput> {
         color: widget.readOnly ? Colors.black54 : Colors.black,
       ),
       decoration: InputDecoration(
+        labelText: widget.label,
         hintText: '${AppLocalizations.of(context)?.enter ?? "Enter"} ${widget.label ?? ""}',
-        hintStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal),
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, color: customColors.primary)
             : null,
@@ -154,7 +172,7 @@ class BlocDropdown extends StatelessWidget {
       dropdownColor: dropdownColor ?? customColors.white,
       decoration: InputDecoration(
         hintText: 'Select $label',
-        hintStyle: theme.bodyMedium?.copyWith( // ✅ theme font
+        hintStyle: theme.bodyMedium?.copyWith(
           fontSize: 16,
           color: Colors.black,
           fontWeight: FontWeight.normal,
@@ -287,6 +305,7 @@ class BlocDatePicker extends StatelessWidget {
   final DateTime? selectedDate;
   final ValueChanged<DateTime> onChanged;
   final IconData? icon;
+  final String? Function(DateTime?)? validator;
 
   const BlocDatePicker({
     super.key,
@@ -294,56 +313,65 @@ class BlocDatePicker extends StatelessWidget {
     required this.selectedDate,
     required this.onChanged,
     this.icon,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: selectedDate ?? DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
+    return FormField<DateTime>(
+      initialValue: selectedDate,
+      validator: validator ?? (v) => v == null ? '$label is required' : null,
+      builder: (state) {
+        return InkWell(
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: selectedDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) {
+              onChanged(picked);
+              state.didChange(picked);
+            }
+          },
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: label,
+              hintText: 'Select Date',
+              errorText: state.errorText,
+              prefixIcon: icon != null
+                  ? Icon(icon, color: customColors.primary)
+                  : null,
+              filled: true,
+              fillColor: customColors.white,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.greyDivider),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: const BorderSide(color: customColors.primary),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(color: customColors.primary, width: 0.5),
+              ),
+            ),
+            child: Text(
+              state.value != null
+                  ? "${state.value!.day}-${state.value!.month}-${state.value!.year}"
+                  : "Select Date",
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ),
         );
-        if (picked != null) {
-          onChanged(picked); // Trigger BLoC event
-        }
       },
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: 'Select Date',
-          prefixIcon: icon != null
-              ? Icon(icon, color: customColors.primary)
-              : null,
-          filled: true,
-          fillColor: customColors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: customColors.greyDivider),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(color: customColors.primary),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: customColors.primary, width: 0.5),
-          ),
-        ),
-        child: Text(
-          selectedDate != null
-              ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
-              : "Select Date",
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.black,
-          ),
-        ),
-      ),
     );
   }
 }
@@ -718,4 +746,3 @@ class _BlocYesNoRadioState extends State<BlocYesNoRadio> {
     );
   }
 }
-
