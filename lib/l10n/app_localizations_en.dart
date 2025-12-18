@@ -246,7 +246,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sealImpression => 'Impression of seal of the sender :';
 
   @override
-  String get sealNumber => 'Number of Seal:';
+  String get sealNumber => 'Contain Container specimen impression and seal ? ';
 
   @override
   String get formViDetails => 'Form VI Details';
@@ -563,7 +563,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doSlipNumbers => 'DO Slip Numbers';
 
   @override
-  String get sampleCodeNumber => 'Sample Code Number';
+  String get sampleCodeNumber => 'Code Number';
 
   @override
   String get natureOfSample => 'Nature of Sample';

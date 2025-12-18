@@ -574,7 +574,7 @@ abstract class AppLocalizations {
   /// No description provided for @sealNumber.
   ///
   /// In en, this message translates to:
-  /// **'Number of Seal:'**
+  /// **'Contain Container specimen impression and seal ? '**
   String get sealNumber;
 
   /// No description provided for @formViDetails.
@@ -1204,7 +1204,7 @@ abstract class AppLocalizations {
   /// No description provided for @sampleCodeNumber.
   ///
   /// In en, this message translates to:
-  /// **'Sample Code Number'**
+  /// **'Code Number'**
   String get sampleCodeNumber;
 
   /// No description provided for @natureOfSample.

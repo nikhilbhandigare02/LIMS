@@ -66,7 +66,6 @@ dependencies:
   flutter_localization: ^0.3.3
   device_info_plus: ^11.1.0
   permission_handler:
-  no_screenshot:
 
 
 

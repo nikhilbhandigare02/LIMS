@@ -284,6 +284,11 @@ class _SampleDetailsScreenState extends State<SampleDetailsScreen> {
                 "value": details.preservativeName,
                 "icon": Icons.science,
               },
+              {
+                "label": "${AppLocalizations.of(context)!.sealNumber}:",
+                "value": details.sealNumber,
+                "icon": Icons.science,
+              },
 
             ],
           ),

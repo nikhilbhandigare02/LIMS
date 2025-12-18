@@ -420,6 +420,17 @@ List<List<Widget>> getSampleDetailsSteps(
         validator: (v) => Validators.validateEmptyField(context,v, l.sampleName),
       ),
       SizedBox(height: 16),
+      BlocTextInput(
+        label: l.preservativeName,
+        initialValue: state.preservativeName,
+        onChanged: (val) => context.read<SampleFormBloc>().add(
+          preservativeNameChanged(val),
+        ),
+        validator: (v) => state.preservativeAdded == true
+            ? Validators.validateEmptyField(context, v, l.preservativeName)
+            : null,
+      ),
+      SizedBox(height: 16),
       Row(
         children: [
           Expanded(
@@ -445,16 +456,7 @@ List<List<Widget>> getSampleDetailsSteps(
         ],
       ),
       SizedBox(height: 16),
-      BlocTextInput(
-        label: l.preservativeName,
-        initialValue: state.preservativeName,
-        onChanged: (val) => context.read<SampleFormBloc>().add(
-          preservativeNameChanged(val),
-        ),
-        validator: (v) => state.preservativeAdded == true
-            ? Validators.validateEmptyField(context, v, l.preservativeName)
-            : null,
-      ),
+
       // BlocBuilder<SampleFormBloc, SampleFormState>(
       //   builder: (context, s) {
       //     if (s.natureOptions.isEmpty) {
@@ -775,6 +777,17 @@ List<List<Widget>> getSampleDetailsSteps(
         onChanged: (val) => bloc.add(AdditionalTestsChanged(val)),
         validator: (v) => null, // optional
         maxLines: 4,
+      ),
+      const SizedBox(height: 12),
+      BlocTextInput(
+        label: l.sealNumber,
+        // icon: Icons.lock,
+        initialValue: state.numberofSeal,
+        onChanged: (val) => bloc.add(numberofSealChanged(val)),
+        validator: (v) => Validators.validateEmptyField(context,v, l.sealNumber),
+
+        // inputFormatters: Validators.getNumberOnlyInputFormatters(),
+        // keyboardType: TextInputType.number,
       ),
       const SizedBox(height: 12),
       BlocBuilder<SampleFormBloc, SampleFormState>(

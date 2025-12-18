@@ -8,7 +8,6 @@ import 'package:food_inspector/config/Routes/RouteName.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:no_screenshot/no_screenshot.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'fcm/bloc/token_bloc.dart';
 import 'fcm/repository/token_repository.dart';
@@ -426,7 +425,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    NoScreenshot.instance.screenshotOff();
     _initFirebaseMessaging(context);
     _loadSavedLocale();
     WidgetsBinding.instance.addPostFrameCallback((_) {
